@@ -1,0 +1,124 @@
+import { redirect } from "next/navigation";
+import { requireUser } from "@/src/lib/auth/require-user";
+import { getOnboardingState } from "@/src/lib/onboarding/repository";
+
+type OnboardingPageProps = {
+  searchParams: Promise<{
+    error?: string;
+  }>;
+};
+
+const errorMessages: Record<string, string> = {
+  display_name_required: "표시 이름을 입력해주세요.",
+  duplicate_slug: "이미 사용 중인 주소입니다.",
+  already_completed: "이미 온보딩이 완료되었습니다.",
+  too_short: "주소는 3자 이상이어야 합니다.",
+  too_long: "주소는 32자 이하여야 합니다.",
+  invalid_format: "주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+};
+
+export default async function OnboardingPage({
+  searchParams,
+}: OnboardingPageProps) {
+  const user = await requireUser();
+  const state = await getOnboardingState(user.id);
+
+  if (state.isComplete) {
+    redirect("/admin");
+  }
+
+  const { error } = await searchParams;
+  const errorMessage = error ? errorMessages[error] : null;
+
+  return (
+    <main className="min-h-dvh bg-[#f7f5f0] px-6 py-12 text-[#171717]">
+      <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
+        <section className="border border-[#171717] bg-white p-6 shadow-[6px_6px_0_#111827]">
+          <div className="space-y-2">
+            <p className="text-sm font-semibold text-[#0f766e]">온보딩</p>
+            <h1 className="text-3xl font-bold tracking-normal">
+              기본 위시리스트 만들기
+            </h1>
+            <p className="text-sm leading-6 text-[#4b5563]">
+              처음 공유할 공개 위시리스트의 이름과 주소를 정합니다.
+            </p>
+          </div>
+
+          {errorMessage ? (
+            <p className="mt-5 rounded-md border border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
+              {errorMessage}
+            </p>
+          ) : null}
+
+          <form
+            action="/api/onboarding"
+            method="post"
+            className="mt-8 space-y-5"
+          >
+            <div className="space-y-2">
+              <label htmlFor="displayName" className="text-sm font-semibold">
+                표시 이름
+              </label>
+              <input
+                id="displayName"
+                name="displayName"
+                type="text"
+                defaultValue={user.name ?? ""}
+                required
+                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="slug" className="text-sm font-semibold">
+                공개 주소
+              </label>
+              <input
+                id="slug"
+                name="slug"
+                type="text"
+                minLength={3}
+                maxLength={32}
+                pattern="[a-zA-Z0-9-]+"
+                required
+                placeholder="birthday-wish"
+                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="birthday" className="text-sm font-semibold">
+                생일
+              </label>
+              <input
+                id="birthday"
+                name="birthday"
+                type="date"
+                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="description" className="text-sm font-semibold">
+                소개
+              </label>
+              <textarea
+                id="description"
+                name="description"
+                rows={4}
+                className="w-full resize-none rounded-md border border-[#d1d5db] px-3 py-2 text-sm outline-none focus:border-[#0f766e]"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="h-12 w-full rounded-md bg-[#111827] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0f766e]"
+            >
+              위시리스트 만들기
+            </button>
+          </form>
+        </section>
+      </div>
+    </main>
+  );
+}

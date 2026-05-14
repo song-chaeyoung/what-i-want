@@ -90,7 +90,7 @@
 
 초기 구조는 `단일 Next.js repo 기반 모듈러 모놀리스`로 갑니다.
 
-물리적 배포와 Git 저장소는 하나로 시작합니다. 코드 내부에서는 웹 UI, 도메인 정책, 유스케이스, DB 접근을 폴더 경계로 분리합니다. 이렇게 하면 초반 배포와 운영 복잡도를 낮추면서도, 나중에 API 서버나 모바일 앱이 필요해질 때 각각 별도 Git repo로 분리할 수 있습니다.
+물리적 배포와 Git 저장소는 하나로 시작합니다. 코드 구조는 참고 프로젝트 `song-chaeyoung/birthday-wishlist`의 `app/api/**`와 `src/lib/**` 패턴을 따릅니다. 웹 UI는 `app/**`, HTTP 진입점은 `app/api/**`, 도메인 규칙과 DB 접근은 `src/lib/**`에 둡니다. 이렇게 하면 초반 배포와 운영 복잡도를 낮추면서도, 나중에 API 서버나 모바일 앱이 필요해질 때 각각 별도 Git repo로 분리할 수 있습니다.
 
 ### 5.2 추천 단일 repo 구조
 
@@ -102,50 +102,28 @@ app/
   onboarding/
   admin/
   api/
+    auth/[...nextauth]/route.ts
+    onboarding/route.ts
 
 components/
   ui/
   layout/
 
-features/
-  landing/
-  auth/
-  onboarding/
-  admin/
-  public-wishlist/
-
-server/
-  domain/
+src/
+  lib/
     wishlist/
     wish-item/
-    message/
-    funding/
-    account/
-
-  application/
-    wishlists/
-    wish-items/
-    messages/
-    funding/
     onboarding/
-
-  db/
-    schema/
-    repositories/
-    migrations/
-
-  auth/
-    require-user.ts
-
-lib/
-  env/
-  utils/
+    auth/
+    db/
+      schema/
+      migrations/
 
 public/
 docs/
 ```
 
-현재 프로젝트는 루트에 `app/`, `public/`, `package.json`이 있는 단일 Next 앱으로 시작되어 있습니다. 따라서 `apps/`, `packages/`, workspace package alias를 만들지 않고, 새 기능부터 위 폴더 경계를 기준으로 배치합니다.
+현재 프로젝트는 루트에 `app/`, `public/`, `package.json`이 있는 단일 Next 앱으로 시작되어 있습니다. 따라서 `apps/`, `packages/`, workspace package alias를 만들지 않고, 새 기능부터 `app/api/**`와 `src/lib/**` 기준으로 배치합니다.
 
 향후 분리 원칙:
 
@@ -879,7 +857,7 @@ CTA:
 - 서비스는 빠른 임시 MVP가 아니라 확장 가능한 서비스 골격으로 설계합니다.
 - 초기 배포는 단일 Next.js repo 기반 모듈러 모놀리스로 시작합니다.
 - monorepo 전환은 1차 범위에서 제외하고, API 서버나 모바일 앱은 필요해질 때 별도 Git repo로 분리합니다.
-- 도메인, application service, repository, DB 구현은 `server/` 내부 폴더 경계로 분리합니다.
+- 도메인 규칙, 온보딩 로직, repository, DB 구현은 `src/lib/**` 내부 폴더 경계로 분리하고 HTTP mutation은 `app/api/**` Route Handler로 노출합니다.
 - 인증은 Auth.js 기반 Google/Kakao OAuth를 사용합니다.
 - 신규 로그인 사용자는 온보딩으로 이동합니다.
 - 친구 방문자는 로그인하지 않습니다.

@@ -1,36 +1,50 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 뭐갖고싶어
 
-## Getting Started
+받고 싶은 선물을 링크 하나로 공유하는 Next.js 기반 위시리스트 서비스입니다.
 
-First, run the development server:
+## 구조
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+이 저장소는 단일 Next.js repo입니다. 구조는 참고 프로젝트
+`song-chaeyoung/birthday-wishlist`처럼 `app/api/**`와 `src/lib/**`를 중심으로 둡니다.
+
+- `app`: App Router 페이지와 화면 라우트
+- `app/api`: Route Handler 기반 API 진입점
+- `src/lib`: 도메인 규칙, DB 접근, 인증 helper, 온보딩 로직
+- `src/lib/db/schema`: Drizzle schema
+- `src/lib/db/migrations`: Drizzle migration 출력
+
+## 환경 설정
+
+```powershell
+corepack pnpm install
+Copy-Item .env.example .env.local
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+`.env.local`에는 다음 값이 필요합니다.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- `DATABASE_URL`
+- `AUTH_SECRET`
+- `AUTH_GOOGLE_ID`
+- `AUTH_GOOGLE_SECRET`
+- `AUTH_KAKAO_ID`
+- `AUTH_KAKAO_SECRET`
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 개발 명령
 
-## Learn More
+```powershell
+corepack pnpm dev
+corepack pnpm db:generate
+corepack pnpm typecheck
+corepack pnpm test
+corepack pnpm lint
+corepack pnpm build
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 데이터베이스
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Drizzle schema는 `src/lib/db/schema/index.ts`에서 export합니다. migration 출력은 `src/lib/db/migrations`에 생성됩니다.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```powershell
+corepack pnpm db:generate
+corepack pnpm db:push
+```
