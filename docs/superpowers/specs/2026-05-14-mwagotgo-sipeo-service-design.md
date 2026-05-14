@@ -88,21 +88,33 @@
 
 ### 5.1 선택한 구조
 
-초기 구조는 `Next.js 모듈러 모놀리스`로 갑니다.
+초기 구조는 `단일 Next.js repo 기반 모듈러 모놀리스`로 갑니다.
 
-물리적 배포는 하나로 시작하지만, 코드 내부에서는 웹 UI, 도메인 정책, 유스케이스, DB 접근을 분리합니다. 이렇게 하면 초반 운영 복잡도는 낮추면서도, 나중에 `apps/api` 별도 백엔드를 분리할 수 있습니다.
+물리적 배포와 Git 저장소는 하나로 시작합니다. 코드 내부에서는 웹 UI, 도메인 정책, 유스케이스, DB 접근을 폴더 경계로 분리합니다. 이렇게 하면 초반 배포와 운영 복잡도를 낮추면서도, 나중에 API 서버나 모바일 앱이 필요해질 때 각각 별도 Git repo로 분리할 수 있습니다.
 
-### 5.2 추천 monorepo 구조
+### 5.2 추천 단일 repo 구조
 
 ```text
-apps/
-  web/
-    app/
-    components/
-    features/
-    public/
+app/
+  page.tsx
+  layout.tsx
+  login/
+  onboarding/
+  admin/
+  api/
 
-packages/
+components/
+  ui/
+  layout/
+
+features/
+  landing/
+  auth/
+  onboarding/
+  admin/
+  public-wishlist/
+
+server/
   domain/
     wishlist/
     wish-item/
@@ -122,17 +134,25 @@ packages/
     repositories/
     migrations/
 
-  ui/
-    components/
-    styles/
+  auth/
+    require-user.ts
 
-  config/
-    eslint/
-    tsconfig/
-    env/
+lib/
+  env/
+  utils/
+
+public/
+docs/
 ```
 
-현재 프로젝트가 단일 Next 앱으로 시작되어 있다면, 바로 대규모 monorepo 전환을 강제하지 않아도 됩니다. 다만 새 기능부터 위 경계를 기준으로 배치하여 점진적으로 구조를 맞춥니다.
+현재 프로젝트는 루트에 `app/`, `public/`, `package.json`이 있는 단일 Next 앱으로 시작되어 있습니다. 따라서 `apps/`, `packages/`, workspace package alias를 만들지 않고, 새 기능부터 위 폴더 경계를 기준으로 배치합니다.
+
+향후 분리 원칙:
+
+- 웹 서비스는 현재 repo에 남깁니다.
+- 별도 API 서버가 필요해지면 monorepo 하위 앱이 아니라 새 Git repo로 만듭니다.
+- 모바일 앱이 필요해지면 새 Git repo로 만듭니다.
+- 공통 로직 공유가 필요해지는 시점에는 npm package, private package, 또는 명시적인 복사 전략을 별도 결정합니다.
 
 ### 5.3 요청 흐름
 
@@ -857,8 +877,9 @@ CTA:
 ## 15. 설계 결정 요약
 
 - 서비스는 빠른 임시 MVP가 아니라 확장 가능한 서비스 골격으로 설계합니다.
-- 초기 배포는 Next.js 모듈러 모놀리스로 시작합니다.
-- 도메인, application service, repository, DB 구현을 분리합니다.
+- 초기 배포는 단일 Next.js repo 기반 모듈러 모놀리스로 시작합니다.
+- monorepo 전환은 1차 범위에서 제외하고, API 서버나 모바일 앱은 필요해질 때 별도 Git repo로 분리합니다.
+- 도메인, application service, repository, DB 구현은 `server/` 내부 폴더 경계로 분리합니다.
 - 인증은 Auth.js 기반 Google/Kakao OAuth를 사용합니다.
 - 신규 로그인 사용자는 온보딩으로 이동합니다.
 - 친구 방문자는 로그인하지 않습니다.
