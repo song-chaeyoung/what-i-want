@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -29,6 +30,20 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           </div>
           <p className="text-sm text-[#4b5563]">{user.email}</p>
         </header>
+        <nav className="flex gap-2 border-b border-[#e5e7eb] py-4">
+          <Link
+            href="/admin"
+            className="rounded-md border border-[#d1d5db] bg-white px-3 py-2 text-sm font-semibold transition-colors hover:border-[#0f766e]"
+          >
+            대시보드
+          </Link>
+          <Link
+            href="/admin/wishes"
+            className="rounded-md border border-[#d1d5db] bg-white px-3 py-2 text-sm font-semibold transition-colors hover:border-[#0f766e]"
+          >
+            선물 관리
+          </Link>
+        </nav>
         {children}
       </div>
     </main>
