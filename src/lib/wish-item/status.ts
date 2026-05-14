@@ -1,10 +1,10 @@
 export type WishStatus = "open" | "fulfilled" | "hidden" | "paused";
 
 export const WISH_STATUS_LABELS = {
-  open: "모으는 중",
+  open: "마음 모으는 중",
   fulfilled: "완료",
   hidden: "숨김",
-  paused: "일시중지",
+  paused: "잠시 멈춤",
 } satisfies Record<WishStatus, string>;
 
 export function isWishComplete(status: WishStatus, progress: number): boolean {

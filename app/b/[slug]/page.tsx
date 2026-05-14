@@ -1,5 +1,9 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import {
+  PUBLIC_WISHLIST_COPY,
+  formatWishCount,
+} from "@/src/lib/design/copy";
 import { DrizzlePublicWishlistRepository } from "@/src/lib/public-wishlist/repository";
 import { getPublicWishlist } from "@/src/lib/public-wishlist/service";
 import type { PublicWishItemView } from "@/src/lib/public-wishlist/types";
@@ -30,49 +34,54 @@ export default async function PublicWishlistPage({
   );
 
   return (
-    <main className="min-h-dvh bg-[#fff7ed] text-[#171717]">
+    <main className="pixel-dot-bg min-h-dvh text-[#171717]">
       <section className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
         <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <header className="border-2 border-[#171717] bg-[#fef3c7] p-6 shadow-[8px_8px_0_#111827] lg:sticky lg:top-8">
-            <p className="text-sm font-bold text-[#0f766e]">
-              /b/{result.wishlist.slug}
-            </p>
-            <h1 className="mt-4 text-4xl font-black leading-tight tracking-normal sm:text-5xl">
+          <header className="pixel-board bg-[#fffdf7] p-6 lg:sticky lg:top-8">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <p className="sticker-label">birthday wishlist</p>
+              <p className="text-sm font-black text-[#0f766e]">
+                /b/{result.wishlist.slug}
+              </p>
+            </div>
+            <h1 className="mt-5 text-4xl font-black leading-tight tracking-normal text-[#4c1d95] sm:text-5xl">
               {result.wishlist.title}
             </h1>
-            <p className="mt-5 text-base leading-7 text-[#4b5563]">
-              받고 싶은 선물을 모아둔 공개 위시리스트입니다. 마음에 드는 선물을
-              확인하고 상품 링크로 바로 이동할 수 있습니다.
+            <p className="mt-5 text-base font-semibold leading-7 text-[#4b5563]">
+              {PUBLIC_WISHLIST_COPY.description}
             </p>
 
             <dl className="mt-6 grid grid-cols-2 gap-3">
-              <SummaryBox label="선물" value={`${result.items.length}개`} />
               <SummaryBox
-                label="모인 금액"
+                label={PUBLIC_WISHLIST_COPY.summaryWishLabel}
+                value={formatWishCount(result.items.length)}
+              />
+              <SummaryBox
+                label={PUBLIC_WISHLIST_COPY.summaryFundedLabel}
                 value={formatCurrency(totalFundedAmount)}
               />
             </dl>
 
             <Link
               href="/login"
-              className="mt-6 inline-flex h-11 items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 text-sm font-bold transition-colors hover:bg-[#ccfbf1]"
+              className="mt-6 inline-flex h-11 items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 text-sm font-black transition-colors hover:bg-[#ccfbf1]"
             >
-              내 위시리스트 만들기
+              {PUBLIC_WISHLIST_COPY.createMineCta}
             </Link>
           </header>
 
           <section className="space-y-4">
             {result.items.length > 0 ? (
-              result.items.map((item) => (
-                <PublicWishCard key={item.id} item={item} />
+              result.items.map((item, index) => (
+                <PublicWishCard key={item.id} index={index} item={item} />
               ))
             ) : (
-              <div className="border-2 border-[#171717] bg-white p-6 shadow-[6px_6px_0_#111827]">
-                <h2 className="text-xl font-black tracking-normal">
-                  아직 공개된 선물이 없습니다.
+              <div className="pixel-card bg-white p-6">
+                <h2 className="text-2xl font-black tracking-normal text-[#4c1d95]">
+                  {PUBLIC_WISHLIST_COPY.emptyTitle}
                 </h2>
-                <p className="mt-3 text-sm leading-6 text-[#4b5563]">
-                  생일자가 선물을 추가하면 이 페이지에 표시됩니다.
+                <p className="mt-3 text-sm font-semibold leading-6 text-[#4b5563]">
+                  {PUBLIC_WISHLIST_COPY.emptyDescription}
                 </p>
               </div>
             )}
@@ -83,12 +92,18 @@ export default async function PublicWishlistPage({
   );
 }
 
-function PublicWishCard({ item }: { item: PublicWishItemView }) {
+function PublicWishCard({
+  index,
+  item,
+}: {
+  index: number;
+  item: PublicWishItemView;
+}) {
   const productUrl = getHttpUrl(item.productUrl);
   const imageUrl = getHttpUrl(item.imageUrl);
 
   return (
-    <article className="overflow-hidden border-2 border-[#171717] bg-white shadow-[6px_6px_0_#111827]">
+    <article className="pixel-card overflow-hidden bg-white">
       <div className="grid gap-0 md:grid-cols-[220px_1fr]">
         <div
           className="grid aspect-[4/3] min-h-44 place-items-center border-b-2 border-[#171717] bg-[#ccfbf1] bg-cover bg-center md:aspect-auto md:border-r-2 md:border-b-0"
@@ -98,20 +113,21 @@ function PublicWishCard({ item }: { item: PublicWishItemView }) {
               : undefined
           }
         >
-          {!imageUrl ? (
-            <div className="grid h-24 w-24 place-items-center border-2 border-[#171717] bg-[#f97316] text-3xl font-black text-white shadow-[4px_4px_0_#111827]">
-              GIFT
-            </div>
-          ) : null}
+          {!imageUrl ? <PixelGift /> : null}
         </div>
 
         <div className="p-5">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
-              <p className="text-xs font-bold text-[#0f766e]">
-                {item.isComplete ? "완료" : getWishStatusLabel(item.status)}
-              </p>
-              <h2 className="mt-1 text-2xl font-black leading-tight tracking-normal">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="sticker-label">NO. {index + 1}</p>
+                <p className="text-xs font-black text-[#0f766e]">
+                  {item.isComplete
+                    ? PUBLIC_WISHLIST_COPY.completeLabel
+                    : getWishStatusLabel(item.status)}
+                </p>
+              </div>
+              <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal">
                 {item.title}
               </h2>
             </div>
@@ -120,36 +136,36 @@ function PublicWishCard({ item }: { item: PublicWishItemView }) {
                 href={productUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center rounded-md bg-[#111827] px-4 text-sm font-bold text-white transition-colors hover:bg-[#0f766e]"
+                className="inline-flex h-10 items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
               >
-                상품 보기
+                {PUBLIC_WISHLIST_COPY.productLinkCta}
               </a>
             ) : null}
           </div>
 
           {item.description ? (
-            <p className="mt-4 text-sm leading-6 text-[#4b5563]">
+            <p className="mt-4 text-sm font-semibold leading-6 text-[#4b5563]">
               {item.description}
             </p>
           ) : null}
 
           <div className="mt-5">
-            <div className="flex items-center justify-between gap-3 text-sm font-bold">
+            <div className="flex items-center justify-between gap-3 text-sm font-black">
               <span>{formatCurrency(item.fundedAmount)}</span>
               <span>
                 {item.targetAmount
                   ? formatCurrency(item.targetAmount)
-                  : "목표 금액 없음"}
+                  : PUBLIC_WISHLIST_COPY.noTargetAmount}
               </span>
             </div>
-            <div className="mt-2 h-3 border border-[#171717] bg-[#f3f4f6]">
+            <div className="mt-2 h-3 border-2 border-[#171717] bg-[#f3f4f6]">
               <div
                 className="h-full bg-[#0f766e]"
                 style={{ width: `${item.progress}%` }}
               />
             </div>
-            <p className="mt-2 text-xs font-semibold text-[#4b5563]">
-              {item.progress}% 달성
+            <p className="mt-2 text-xs font-black text-[#4b5563]">
+              {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
             </p>
           </div>
         </div>
@@ -158,11 +174,26 @@ function PublicWishCard({ item }: { item: PublicWishItemView }) {
   );
 }
 
+function PixelGift() {
+  return (
+    <div className="grid h-28 w-28 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827]">
+      <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
+      <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
+      <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-sm font-black text-[#4c1d95]">
+        GIFT
+      </div>
+      <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />
+    </div>
+  );
+}
+
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-2 border-[#171717] bg-white p-4">
-      <dt className="text-xs font-bold text-[#4b5563]">{label}</dt>
-      <dd className="mt-1 text-lg font-black tracking-normal">{value}</dd>
+      <dt className="text-xs font-black text-[#4b5563]">{label}</dt>
+      <dd className="mt-1 text-lg font-black tracking-normal text-[#4c1d95]">
+        {value}
+      </dd>
     </div>
   );
 }

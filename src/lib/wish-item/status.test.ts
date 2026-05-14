@@ -17,11 +17,11 @@ describe("wish item status", () => {
 
   test("defines Korean labels for every status", () => {
     expect(WISH_STATUS_LABELS).toEqual({
-      open: "모으는 중",
+      open: "마음 모으는 중",
       fulfilled: "완료",
       hidden: "숨김",
-      paused: "일시중지",
+      paused: "잠시 멈춤",
     });
-    expect(getWishStatusLabel("paused")).toBe("일시중지");
+    expect(getWishStatusLabel("paused")).toBe("잠시 멈춤");
   });
 });

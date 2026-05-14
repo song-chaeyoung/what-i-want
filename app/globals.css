@@ -3,6 +3,16 @@
 :root {
   --background: #f7f5f0;
   --foreground: #171717;
+  --brand-ink: #171717;
+  --brand-paper: #fffdf7;
+  --brand-cream: #fff7ed;
+  --brand-yellow: #fef3c7;
+  --brand-mint: #ccfbf1;
+  --brand-blush: #ffe4e6;
+  --brand-orange: #f97316;
+  --brand-teal: #0f766e;
+  --brand-purple: #4c1d95;
+  --brand-line: #d1d5db;
 }
 
 @theme inline {
@@ -12,8 +22,41 @@
   --font-mono: "Courier New", Courier, monospace;
 }
 
+html {
+  background: var(--background);
+}
+
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: Arial, Helvetica, sans-serif;
+}
+
+.pixel-dot-bg {
+  background-color: var(--brand-cream);
+  background-image: radial-gradient(#fecdd3 1.2px, transparent 1.2px);
+  background-size: 18px 18px;
+}
+
+.pixel-board {
+  border: 2px solid var(--brand-ink);
+  box-shadow: 8px 8px 0 #111827;
+}
+
+.pixel-card {
+  border: 2px solid var(--brand-ink);
+  box-shadow: 6px 6px 0 #111827;
+}
+
+.sticker-label {
+  display: inline-flex;
+  align-items: center;
+  border: 2px solid var(--brand-ink);
+  background: var(--brand-yellow);
+  padding: 0.25rem 0.625rem;
+  font-size: 0.75rem;
+  font-weight: 900;
+  line-height: 1;
+  color: var(--brand-purple);
+  box-shadow: 3px 3px 0 #111827;
 }

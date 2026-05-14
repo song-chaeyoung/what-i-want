@@ -31,7 +31,7 @@ export default async function OnboardingPage({
   const errorMessage = error ? errorMessages[error] : null;
 
   return (
-    <main className="min-h-dvh bg-[#f7f5f0] px-6 py-12 text-[#171717]">
+    <main className="min-h-dvh bg-[#f7f5f0] px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
         <section className="border border-[#171717] bg-white p-6 shadow-[6px_6px_0_#111827]">
           <div className="space-y-2">
@@ -55,24 +55,18 @@ export default async function OnboardingPage({
             method="post"
             className="mt-8 space-y-5"
           >
-            <div className="space-y-2">
-              <label htmlFor="displayName" className="text-sm font-semibold">
-                표시 이름
-              </label>
+            <Field label="표시 이름" htmlFor="displayName">
               <input
                 id="displayName"
                 name="displayName"
                 type="text"
                 defaultValue={user.name ?? ""}
                 required
-                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+                className={inputClassName}
               />
-            </div>
+            </Field>
 
-            <div className="space-y-2">
-              <label htmlFor="slug" className="text-sm font-semibold">
-                공개 주소
-              </label>
+            <Field label="공개 주소" htmlFor="slug">
               <input
                 id="slug"
                 name="slug"
@@ -82,33 +76,27 @@ export default async function OnboardingPage({
                 pattern="[a-zA-Z0-9-]+"
                 required
                 placeholder="birthday-wish"
-                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+                className={inputClassName}
               />
-            </div>
+            </Field>
 
-            <div className="space-y-2">
-              <label htmlFor="birthday" className="text-sm font-semibold">
-                생일
-              </label>
+            <Field label="생일" htmlFor="birthday">
               <input
                 id="birthday"
                 name="birthday"
                 type="date"
-                className="h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]"
+                className={inputClassName}
               />
-            </div>
+            </Field>
 
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-semibold">
-                소개
-              </label>
+            <Field label="소개" htmlFor="description">
               <textarea
                 id="description"
                 name="description"
                 rows={4}
-                className="w-full resize-none rounded-md border border-[#d1d5db] px-3 py-2 text-sm outline-none focus:border-[#0f766e]"
+                className={textareaClassName}
               />
-            </div>
+            </Field>
 
             <button
               type="submit"
@@ -122,3 +110,28 @@ export default async function OnboardingPage({
     </main>
   );
 }
+
+function Field({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <label htmlFor={htmlFor} className="text-sm font-semibold">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+const inputClassName =
+  "h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]";
+
+const textareaClassName =
+  "w-full resize-none rounded-md border border-[#d1d5db] px-3 py-2 text-sm outline-none focus:border-[#0f766e]";

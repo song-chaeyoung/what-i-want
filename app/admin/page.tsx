@@ -19,15 +19,18 @@ export default function AdminPage() {
             선물 관리하기
           </Link>
         </div>
-        <div className="border border-[#d1d5db] bg-white p-5">
-          <p className="text-sm font-semibold">선물</p>
-          <p className="mt-2 text-3xl font-bold">0</p>
-        </div>
-        <div className="border border-[#d1d5db] bg-white p-5">
-          <p className="text-sm font-semibold">메시지</p>
-          <p className="mt-2 text-3xl font-bold">0</p>
-        </div>
+        <SummaryCard label="선물" value="0" />
+        <SummaryCard label="메시지" value="0" />
       </div>
     </section>
+  );
+}
+
+function SummaryCard({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="border border-[#d1d5db] bg-white p-5">
+      <p className="text-sm font-semibold">{label}</p>
+      <p className="mt-2 text-3xl font-bold">{value}</p>
+    </div>
   );
 }

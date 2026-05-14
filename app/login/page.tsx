@@ -1,12 +1,13 @@
 import Link from "next/link";
+import { BRAND_NAME } from "@/src/lib/design/copy";
 import { signInWithGoogle, signInWithKakao } from "./actions";
 
 export default function LoginPage() {
   return (
-    <main className="min-h-dvh bg-[#f7f5f0] px-6 py-12 text-[#171717]">
+    <main className="min-h-dvh bg-[#f7f5f0] px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-md flex-col justify-center">
-        <Link href="/" className="mb-8 text-sm font-semibold text-[#0f766e]">
-          뭐갖고싶어
+        <Link href="/" className="mb-8 text-sm font-bold text-[#0f766e]">
+          {BRAND_NAME}
         </Link>
         <section className="border border-[#171717] bg-white p-6 shadow-[6px_6px_0_#111827]">
           <div className="space-y-2">

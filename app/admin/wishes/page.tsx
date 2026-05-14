@@ -1,9 +1,9 @@
 import Link from "next/link";
-import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
+import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
 
 type AdminWishesPageProps = {
   searchParams: Promise<{
@@ -150,7 +150,9 @@ export default async function AdminWishesPage({
             result.items.map((item) => <WishItemEditor key={item.id} item={item} />)
           ) : (
             <div className="border border-[#d1d5db] bg-white p-6">
-              <p className="text-sm font-semibold">등록된 선물이 없습니다.</p>
+              <p className="text-sm font-semibold">
+                등록된 선물이 없습니다.
+              </p>
               <p className="mt-2 text-sm leading-6 text-[#4b5563]">
                 왼쪽 입력 영역에서 첫 번째 선물을 추가해주세요.
               </p>
@@ -180,7 +182,9 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           </h3>
           <p className="mt-2 text-sm text-[#4b5563]">
             {formatCurrency(item.fundedAmount)} /{" "}
-            {item.targetAmount ? formatCurrency(item.targetAmount) : "목표 금액 없음"}
+            {item.targetAmount
+              ? formatCurrency(item.targetAmount)
+              : "목표 금액 없음"}
           </p>
         </div>
         <div className="h-2 w-full bg-[#e5e7eb] sm:w-40">
@@ -313,13 +317,13 @@ function getSuccessMessage(params: {
   deleted?: string;
 }): string | null {
   if (params.created) {
-    return "선물을 추가했습니다.";
+    return "선물이 추가되었습니다.";
   }
   if (params.updated) {
-    return "선물을 저장했습니다.";
+    return "선물이 저장되었습니다.";
   }
   if (params.deleted) {
-    return "선물을 삭제했습니다.";
+    return "선물이 삭제되었습니다.";
   }
   return null;
 }
