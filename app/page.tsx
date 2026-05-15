@@ -8,7 +8,7 @@ export default function Home() {
         <div className="space-y-7">
           <p className="sticker-label">{HOME_COPY.eyebrow}</p>
           <div className="space-y-4">
-            <h1 className="max-w-2xl text-5xl font-black leading-tight tracking-normal text-[#4c1d95] sm:text-6xl">
+            <h1 className="font-pixel max-w-2xl text-5xl leading-tight tracking-normal text-[#4c1d95] sm:text-6xl">
               {HOME_COPY.headline}
             </h1>
             <p className="max-w-xl text-lg font-semibold leading-8 text-[#4b5563]">
@@ -37,11 +37,11 @@ export default function Home() {
               <p className="text-xs font-black text-[#0f766e]">
                 /b/{HOME_COPY.previewSlug}
               </p>
-              <h2 className="mt-1 text-2xl font-black tracking-normal text-[#4c1d95]">
+              <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95]">
                 민지님이 갖고 싶은 것들
               </h2>
             </div>
-            <div className="grid h-14 w-14 place-items-center border-2 border-[#171717] bg-[#f97316] text-xl font-black text-white shadow-[4px_4px_0_#111827]">
+            <div className="font-pixel grid h-14 w-14 place-items-center border-2 border-[#171717] bg-[#f97316] text-xl text-white shadow-[4px_4px_0_#111827]">
               GIFT
             </div>
           </div>
@@ -98,10 +98,10 @@ function PreviewWish({
         WANT
       </div>
       <div className="p-4">
-        <p className="text-xs font-black text-[#0f766e]">{label}</p>
+        <p className="font-pixel text-xs text-[#0f766e]">{label}</p>
         <div className="mt-1 flex items-start justify-between gap-3">
-          <h3 className="text-lg font-black tracking-normal">{title}</h3>
-          <p className="text-sm font-black">{amount}</p>
+          <h3 className="font-pixel text-lg tracking-normal">{title}</h3>
+          <p className="font-pixel text-sm">{amount}</p>
         </div>
         <div className="mt-3 h-3 border border-[#171717] bg-[#f3f4f6]">
           <div className="h-full bg-[#0f766e]" style={{ width: progress }} />
@@ -114,7 +114,7 @@ function PreviewWish({
 function SmallSignal({ title, body }: { title: string; body: string }) {
   return (
     <div className="border-2 border-[#171717] bg-white p-4">
-      <h2 className="text-sm font-black tracking-normal">{title}</h2>
+      <h2 className="font-pixel text-sm tracking-normal">{title}</h2>
       <p className="mt-2 text-sm leading-6 text-[#4b5563]">{body}</p>
     </div>
   );

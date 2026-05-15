@@ -32,6 +32,12 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
+.font-pixel {
+  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
+  font-weight: 700;
+  letter-spacing: 0;
+}
+
 .pixel-dot-bg {
   background-color: var(--brand-cream);
   background-image: radial-gradient(#fecdd3 1.2px, transparent 1.2px);
@@ -54,6 +60,7 @@ body {
   border: 2px solid var(--brand-ink);
   background: var(--brand-yellow);
   padding: 0.25rem 0.625rem;
+  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   font-weight: 900;
   line-height: 1;

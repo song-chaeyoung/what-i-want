@@ -44,7 +44,7 @@ export default async function PublicWishlistPage({
                 /b/{result.wishlist.slug}
               </p>
             </div>
-            <h1 className="mt-5 text-4xl font-black leading-tight tracking-normal text-[#4c1d95] sm:text-5xl">
+            <h1 className="font-pixel mt-5 text-4xl leading-tight tracking-normal text-[#4c1d95] sm:text-5xl">
               {result.wishlist.title}
             </h1>
             <p className="mt-5 text-base font-semibold leading-7 text-[#4b5563]">
@@ -121,13 +121,13 @@ function PublicWishCard({
             <div>
               <div className="flex flex-wrap items-center gap-2">
                 <p className="sticker-label">NO. {index + 1}</p>
-                <p className="text-xs font-black text-[#0f766e]">
+                <p className="font-pixel text-xs text-[#0f766e]">
                   {item.isComplete
                     ? PUBLIC_WISHLIST_COPY.completeLabel
                     : getWishStatusLabel(item.status)}
                 </p>
               </div>
-              <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal">
+              <h2 className="font-pixel mt-3 text-2xl leading-tight tracking-normal">
                 {item.title}
               </h2>
             </div>
@@ -176,7 +176,7 @@ function PublicWishCard({
 
 function PixelGift() {
   return (
-    <div className="grid h-28 w-28 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827]">
+    <div className="font-pixel grid h-28 w-28 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827]">
       <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
       <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
       <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-sm font-black text-[#4c1d95]">
@@ -191,7 +191,7 @@ function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="border-2 border-[#171717] bg-white p-4">
       <dt className="text-xs font-black text-[#4b5563]">{label}</dt>
-      <dd className="mt-1 text-lg font-black tracking-normal text-[#4c1d95]">
+      <dd className="font-pixel mt-1 text-lg tracking-normal text-[#4c1d95]">
         {value}
       </dd>
     </div>
