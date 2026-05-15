@@ -13,12 +13,17 @@ type PublicWishlistPageProps = {
   params: Promise<{
     slug: string;
   }>;
+  searchParams: Promise<{
+    sent?: string;
+    error?: string;
+  }>;
 };
 
 export default async function PublicWishlistPage({
   params,
+  searchParams,
 }: PublicWishlistPageProps) {
-  const { slug } = await params;
+  const [{ slug }, query] = await Promise.all([params, searchParams]);
   const result = await getPublicWishlist(
     slug,
     new DrizzlePublicWishlistRepository(),
@@ -62,6 +67,25 @@ export default async function PublicWishlistPage({
               />
             </dl>
 
+            {query.sent ? (
+              <p className="mt-5 border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
+                {PUBLIC_WISHLIST_COPY.participationSuccess}
+              </p>
+            ) : null}
+
+            {query.error ? (
+              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+                {getParticipationErrorMessage(query.error)}
+              </p>
+            ) : null}
+
+            {result.items.length > 0 ? (
+              <ParticipationForm
+                slug={result.wishlist.slug}
+                items={result.items}
+              />
+            ) : null}
+
             <Link
               href="/login"
               className="mt-6 inline-flex h-11 items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 text-sm font-black transition-colors hover:bg-[#ccfbf1]"
@@ -89,6 +113,100 @@ export default async function PublicWishlistPage({
         </div>
       </section>
     </main>
+  );
+}
+
+function ParticipationForm({
+  slug,
+  items,
+}: {
+  slug: string;
+  items: PublicWishItemView[];
+}) {
+  return (
+    <form
+      action={`/api/public/wishlists/${slug}/participation`}
+      method="post"
+      className="mt-6 space-y-4 border-2 border-[#171717] bg-white p-4 shadow-[4px_4px_0_#111827]"
+    >
+      <div>
+        <p className="font-pixel text-xl tracking-normal text-[#4c1d95]">
+          {PUBLIC_WISHLIST_COPY.participationTitle}
+        </p>
+        <p className="mt-2 text-sm font-semibold leading-6 text-[#4b5563]">
+          {PUBLIC_WISHLIST_COPY.participationDescription}
+        </p>
+      </div>
+
+      <PublicField
+        label={PUBLIC_WISHLIST_COPY.participationWishLabel}
+        htmlFor="participation-wish"
+      >
+        <select
+          id="participation-wish"
+          name="wishItemId"
+          required
+          className={publicInputClassName}
+        >
+          {items.map((item) => (
+            <option key={item.id} value={item.id}>
+              {item.title}
+            </option>
+          ))}
+        </select>
+      </PublicField>
+
+      <PublicField
+        label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
+        htmlFor="participation-amount"
+      >
+        <input
+          id="participation-amount"
+          name="amount"
+          type="number"
+          min={1}
+          step={1}
+          required
+          placeholder="10000"
+          className={publicInputClassName}
+        />
+      </PublicField>
+
+      <PublicField
+        label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
+        htmlFor="participation-sender"
+      >
+        <input
+          id="participation-sender"
+          name="senderName"
+          type="text"
+          maxLength={80}
+          placeholder="이름"
+          className={publicInputClassName}
+        />
+      </PublicField>
+
+      <PublicField
+        label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
+        htmlFor="participation-body"
+      >
+        <textarea
+          id="participation-body"
+          name="body"
+          rows={4}
+          maxLength={500}
+          required
+          className={publicTextareaClassName}
+        />
+      </PublicField>
+
+      <button
+        type="submit"
+        className="h-11 w-full rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
+      >
+        {PUBLIC_WISHLIST_COPY.participationSubmitCta}
+      </button>
+    </form>
   );
 }
 
@@ -198,6 +316,33 @@ function SummaryBox({ label, value }: { label: string; value: string }) {
   );
 }
 
+function PublicField({
+  label,
+  htmlFor,
+  children,
+}: {
+  label: string;
+  htmlFor: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="space-y-2">
+      <label htmlFor={htmlFor} className="text-sm font-black">
+        {label}
+      </label>
+      {children}
+    </div>
+  );
+}
+
+function getParticipationErrorMessage(error: string): string {
+  return (
+    PUBLIC_WISHLIST_COPY.participationErrors[
+      error as keyof typeof PUBLIC_WISHLIST_COPY.participationErrors
+    ] ?? PUBLIC_WISHLIST_COPY.participationErrors.wishlist_not_found
+  );
+}
+
 function getHttpUrl(value: string | null): string | null {
   if (!value) {
     return null;
@@ -220,3 +365,9 @@ function formatCurrency(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
+
+const publicInputClassName =
+  "h-10 w-full rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 text-sm font-bold outline-none focus:bg-white";
+
+const publicTextareaClassName =
+  "w-full resize-none rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 py-2 text-sm font-bold outline-none focus:bg-white";

@@ -27,6 +27,17 @@ describe("visual system copy", () => {
     );
   });
 
+  test("defines public participation form copy", () => {
+    expect(PUBLIC_WISHLIST_COPY.participationTitle).toBe("마음 보내기");
+    expect(PUBLIC_WISHLIST_COPY.participationSubmitCta).toBe("마음 보내기");
+    expect(PUBLIC_WISHLIST_COPY.participationSuccess).toBe(
+      "마음이 전해졌어요.",
+    );
+    expect(PUBLIC_WISHLIST_COPY.participationErrors.invalid_amount).toBe(
+      "금액은 1원 이상으로 입력해주세요.",
+    );
+  });
+
   test("formats wish counts in Korean", () => {
     expect(formatWishCount(0)).toBe("0개");
     expect(formatWishCount(3)).toBe("3개");

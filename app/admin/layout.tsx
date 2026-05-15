@@ -42,6 +42,12 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           >
             선물 관리
           </Link>
+          <Link
+            href="/admin/messages"
+            className="rounded-md border border-[#d1d5db] bg-white px-3 py-2 text-sm font-semibold transition-colors hover:border-[#0f766e]"
+          >
+            메시지함
+          </Link>
         </nav>
         {children}
       </div>
