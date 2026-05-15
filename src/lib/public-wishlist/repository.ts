@@ -1,7 +1,8 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { db, type Database } from "@/src/lib/db/client";
-import { wishItems, wishlists } from "@/src/lib/db/schema";
+import { bankAccounts, wishItems, wishlists } from "@/src/lib/db/schema";
 import type {
+  PublicBankAccountRecord,
   PublicWishItemRecord,
   PublicWishlistRecord,
   PublicWishlistRepository,
@@ -37,6 +38,24 @@ export class DrizzlePublicWishlistRepository
       .orderBy(asc(wishItems.sortOrder), desc(wishItems.createdAt));
 
     return rows.map(toPublicWishItemRecord);
+  }
+
+  async findBankAccountByWishlistId(
+    wishlistId: string,
+  ): Promise<PublicBankAccountRecord | null> {
+    const [row] = await this.database
+      .select({
+        bankName: bankAccounts.bankName,
+        accountHolder: bankAccounts.accountHolder,
+        accountNumberEncrypted: bankAccounts.accountNumberEncrypted,
+        visibility: bankAccounts.visibility,
+      })
+      .from(wishlists)
+      .innerJoin(bankAccounts, eq(bankAccounts.userId, wishlists.ownerId))
+      .where(eq(wishlists.id, wishlistId))
+      .limit(1);
+
+    return row ?? null;
   }
 }
 

@@ -24,6 +24,7 @@ Copy-Item .env.example .env.local
 
 - `DATABASE_URL`
 - `AUTH_SECRET`
+- `ACCOUNT_ENCRYPTION_SECRET` 계좌번호 암호화 키. 없으면 `AUTH_SECRET`을 사용합니다.
 - `AUTH_GOOGLE_ID`
 - `AUTH_GOOGLE_SECRET`
 - `AUTH_KAKAO_ID`

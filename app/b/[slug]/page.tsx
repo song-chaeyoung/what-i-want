@@ -6,7 +6,10 @@ import {
 } from "@/src/lib/design/copy";
 import { DrizzlePublicWishlistRepository } from "@/src/lib/public-wishlist/repository";
 import { getPublicWishlist } from "@/src/lib/public-wishlist/service";
-import type { PublicWishItemView } from "@/src/lib/public-wishlist/types";
+import type {
+  PublicBankAccountView,
+  PublicWishItemView,
+} from "@/src/lib/public-wishlist/types";
 import { getWishStatusLabel } from "@/src/lib/wish-item/status";
 
 type PublicWishlistPageProps = {
@@ -67,6 +70,8 @@ export default async function PublicWishlistPage({
               />
             </dl>
 
+            <AccountGuidance account={result.account} />
+
             {query.sent ? (
               <p className="mt-5 border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
                 {PUBLIC_WISHLIST_COPY.participationSuccess}
@@ -113,6 +118,50 @@ export default async function PublicWishlistPage({
         </div>
       </section>
     </main>
+  );
+}
+
+function AccountGuidance({
+  account,
+}: {
+  account: PublicBankAccountView | null;
+}) {
+  if (!account) {
+    return null;
+  }
+
+  const accountBody = (
+    <div className="mt-3 grid gap-2 text-sm font-black">
+      <p>
+        {account.bankName} {account.accountHolder}
+      </p>
+      <input
+        type="text"
+        readOnly
+        value={account.accountNumber}
+        className="h-10 w-full rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 text-sm font-black outline-none"
+      />
+    </div>
+  );
+
+  if (account.visibility === "reveal_on_click") {
+    return (
+      <details className="mt-5 border-2 border-[#171717] bg-[#fef3c7] p-4 shadow-[4px_4px_0_#111827]">
+        <summary className="cursor-pointer font-pixel text-lg tracking-normal text-[#4c1d95]">
+          계좌 안내
+        </summary>
+        {accountBody}
+      </details>
+    );
+  }
+
+  return (
+    <section className="mt-5 border-2 border-[#171717] bg-[#fef3c7] p-4 shadow-[4px_4px_0_#111827]">
+      <p className="font-pixel text-lg tracking-normal text-[#4c1d95]">
+        {account.visibility === "copy_only" ? "계좌 복사" : "계좌 안내"}
+      </p>
+      {accountBody}
+    </section>
   );
 }
 

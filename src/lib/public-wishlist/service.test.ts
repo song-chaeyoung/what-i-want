@@ -1,6 +1,8 @@
 import { describe, expect, test } from "vitest";
+import { encryptAccountNumber } from "@/src/lib/settings/account-crypto";
 import { getPublicWishlist } from "./service";
 import type {
+  PublicBankAccountRecord,
   PublicWishItemRecord,
   PublicWishlistRecord,
   PublicWishlistRepository,
@@ -14,6 +16,7 @@ class FakePublicWishlistRepository implements PublicWishlistRepository {
     themeId: "pixel_y2k",
   };
   items: PublicWishItemRecord[] = [];
+  account: PublicBankAccountRecord | null = null;
   requestedSlugs: string[] = [];
 
   async findPublicWishlistBySlug(
@@ -25,6 +28,10 @@ class FakePublicWishlistRepository implements PublicWishlistRepository {
 
   async listWishItems(): Promise<PublicWishItemRecord[]> {
     return this.items;
+  }
+
+  async findBankAccountByWishlistId(): Promise<PublicBankAccountRecord | null> {
+    return this.account;
   }
 }
 
@@ -117,6 +124,55 @@ describe("public wishlist service", () => {
       ],
     });
   });
+
+  test("hides bank account guidance when account visibility is hidden", async () => {
+    const repository = new FakePublicWishlistRepository();
+    repository.account = makeBankAccount({ visibility: "hidden" });
+
+    const result = await getPublicWishlist(
+      "birthday",
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      account: null,
+    });
+  });
+
+  test("decrypts visible bank account guidance for public visitors", async () => {
+    const repository = new FakePublicWishlistRepository();
+    const encrypted = encryptAccountNumber(
+      "3333-12-1234567",
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    if (!encrypted.ok) {
+      throw new Error("expected encryption fixture to be created");
+    }
+
+    repository.account = makeBankAccount({
+      accountNumberEncrypted: encrypted.value,
+      visibility: "reveal_on_click",
+    });
+
+    const result = await getPublicWishlist(
+      "birthday",
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      account: {
+        bankName: "카카오뱅크",
+        accountHolder: "차차",
+        accountNumber: "3333-12-1234567",
+        visibility: "reveal_on_click",
+      },
+    });
+  });
 });
 
 function makeWishItem(
@@ -135,5 +191,17 @@ function makeWishItem(
     sortOrder: overrides.sortOrder ?? 0,
     createdAt: overrides.createdAt ?? new Date("2026-05-14T00:00:00.000Z"),
     updatedAt: overrides.updatedAt ?? new Date("2026-05-14T00:00:00.000Z"),
+  };
+}
+
+function makeBankAccount(
+  overrides: Partial<PublicBankAccountRecord> = {},
+): PublicBankAccountRecord {
+  return {
+    bankName: "카카오뱅크",
+    accountHolder: "차차",
+    accountNumberEncrypted: "v1:ciphertext",
+    visibility: "always_visible",
+    ...overrides,
   };
 }

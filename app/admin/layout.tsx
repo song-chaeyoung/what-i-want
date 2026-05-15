@@ -48,6 +48,12 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           >
             메시지함
           </Link>
+          <Link
+            href="/admin/settings"
+            className="rounded-md border border-[#d1d5db] bg-white px-3 py-2 text-sm font-semibold transition-colors hover:border-[#0f766e]"
+          >
+            설정
+          </Link>
         </nav>
         {children}
       </div>
