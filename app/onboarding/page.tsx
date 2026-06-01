@@ -1,6 +1,7 @@
 import { redirect } from "next/navigation";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
+import { BirthdayPicker } from "./birthday-picker";
 
 type OnboardingPageProps = {
   searchParams: Promise<{
@@ -10,6 +11,7 @@ type OnboardingPageProps = {
 
 const errorMessages: Record<string, string> = {
   display_name_required: "표시 이름을 입력해주세요.",
+  invalid_birthday: "생일은 YYYY-MM-DD 형식의 실제 날짜로 선택해주세요.",
   duplicate_slug: "공개 주소를 만드는 중 문제가 발생했습니다. 다시 시도해주세요.",
   already_completed: "이미 온보딩이 완료되었습니다.",
 };
@@ -28,15 +30,15 @@ export default async function OnboardingPage({
   const errorMessage = error ? errorMessages[error] : null;
 
   return (
-    <main className="min-h-dvh bg-[#f7f5f0] px-5 py-12 text-[#171717]">
+    <main className="min-h-dvh bg-[#fafaf9] px-5 py-12 text-ink">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
-        <section className="border border-[#171717] bg-white p-6 shadow-[6px_6px_0_#111827]">
+        <section className="rounded-md border border-line bg-white p-6 shadow-pub">
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-[#0f766e]">온보딩</p>
-            <h1 className="text-3xl font-bold tracking-normal">
+            <p className="text-sm font-semibold text-teal">온보딩</p>
+            <h1 className="text-3xl font-semibold tracking-normal text-ink">
               기본 위시리스트 만들기
             </h1>
-            <p className="text-sm leading-6 text-[#4b5563]">
+            <p className="text-sm leading-6 text-zinc-600">
               처음 공유할 공개 위시리스트의 기본 정보를 정합니다.
             </p>
           </div>
@@ -64,12 +66,7 @@ export default async function OnboardingPage({
             </Field>
 
             <Field label="생일" htmlFor="birthday">
-              <input
-                id="birthday"
-                name="birthday"
-                type="date"
-                className={inputClassName}
-              />
+              <BirthdayPicker id="birthday" name="birthday" />
             </Field>
 
             <Field label="소개" htmlFor="description">
@@ -83,7 +80,7 @@ export default async function OnboardingPage({
 
             <button
               type="submit"
-              className="h-12 w-full rounded-md bg-[#111827] px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0f766e]"
+              className="h-12 w-full rounded-md border border-ink bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
             >
               위시리스트 만들기
             </button>
@@ -105,7 +102,7 @@ function Field({
 }) {
   return (
     <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold">
+      <label htmlFor={htmlFor} className="text-sm font-semibold text-ink">
         {label}
       </label>
       {children}
@@ -114,7 +111,7 @@ function Field({
 }
 
 const inputClassName =
-  "h-11 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]";
+  "h-11 w-full rounded-md border border-line px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
 
 const textareaClassName =
-  "w-full resize-none rounded-md border border-[#d1d5db] px-3 py-2 text-sm outline-none focus:border-[#0f766e]";
+  "w-full resize-none rounded-md border border-line px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";

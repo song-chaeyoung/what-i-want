@@ -33,9 +33,14 @@ export async function completeOnboarding(
   options: CompleteOnboardingOptions = {},
 ): Promise<CompleteOnboardingResult> {
   const displayName = input.displayName.trim();
+  const birthday = normalizeBirthday(input.birthday);
 
   if (!displayName) {
     return { ok: false, error: "display_name_required" };
+  }
+
+  if (!birthday.ok) {
+    return { ok: false, error: "invalid_birthday" };
   }
 
   if (await repository.hasCompletedOnboarding(input.userId)) {
@@ -55,7 +60,7 @@ export async function completeOnboarding(
     userId: input.userId,
     displayName,
     description: normalizeOptionalText(input.description),
-    birthday: input.birthday,
+    birthday: birthday.value,
     wishlistSlug: slug,
     wishlistTitle: `${displayName}님의 위시리스트`,
     wishlistThemeId: DEFAULT_PUBLIC_THEME_ID,
@@ -73,6 +78,63 @@ export async function completeOnboarding(
 function normalizeOptionalText(value: string | null): string | null {
   const normalized = value?.trim() ?? "";
   return normalized.length > 0 ? normalized : null;
+}
+
+function normalizeBirthday(
+  value: string | null,
+): { ok: true; value: string | null } | { ok: false } {
+  const normalized = value?.trim() ?? "";
+
+  if (!normalized) {
+    return { ok: true, value: null };
+  }
+
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec(normalized);
+
+  if (!match) {
+    return { ok: false };
+  }
+
+  const year = Number(match[1]);
+  const month = Number(match[2]);
+  const day = Number(match[3]);
+
+  if (!isValidCalendarDate(year, month, day)) {
+    return { ok: false };
+  }
+
+  return { ok: true, value: normalized };
+}
+
+function isValidCalendarDate(
+  year: number,
+  month: number,
+  day: number,
+): boolean {
+  if (year < 1 || month < 1 || month > 12) {
+    return false;
+  }
+
+  const daysInMonth = [
+    31,
+    isLeapYear(year) ? 29 : 28,
+    31,
+    30,
+    31,
+    30,
+    31,
+    31,
+    30,
+    31,
+    30,
+    31,
+  ];
+
+  return day >= 1 && day <= daysInMonth[month - 1];
+}
+
+function isLeapYear(year: number): boolean {
+  return year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
 }
 
 async function createAvailableWishlistSlug(

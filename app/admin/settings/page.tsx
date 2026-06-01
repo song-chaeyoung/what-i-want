@@ -58,8 +58,8 @@ export default async function AdminSettingsPage({
 
   if (!result.ok) {
     return (
-      <section className="py-8">
-        <div className="border border-[#f97316] bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
+      <section>
+        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
           {errorMessages[result.error]}
         </div>
       </section>
@@ -69,30 +69,30 @@ export default async function AdminSettingsPage({
   const { settings } = result;
 
   return (
-    <section className="py-8">
+    <section className="space-y-6">
       <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
-          <p className="text-sm font-semibold text-[#0f766e]">
+          <p className="text-sm font-semibold text-teal">
             /b/{settings.wishlist.slug}
           </p>
           <h2 className="mt-2 text-2xl font-bold tracking-normal">설정</h2>
         </div>
         <Link
           href={`/b/${settings.wishlist.slug}`}
-          className="inline-flex h-10 items-center justify-center rounded-md border border-[#171717] bg-white px-4 text-sm font-semibold transition-colors hover:bg-[#f3f4f6]"
+          className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
         >
           공개 페이지 보기
         </Link>
       </div>
 
       {params.saved ? (
-        <p className="mt-5 rounded-md border border-[#0f766e] bg-[#ecfdf5] px-4 py-3 text-sm font-medium text-[#0f766e]">
+        <p className="rounded-md border border-teal/30 bg-[#ecfdf5] px-4 py-3 text-sm font-medium text-teal">
           설정이 저장되었습니다.
         </p>
       ) : null}
 
       {errorMessage ? (
-        <p className="mt-5 rounded-md border border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
+        <p className="rounded-md border border-orange/40 bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
           {errorMessage}
         </p>
       ) : null}
@@ -100,9 +100,9 @@ export default async function AdminSettingsPage({
       <form
         action="/api/admin/settings"
         method="post"
-        className="mt-6 grid gap-6 lg:grid-cols-[1fr_1fr]"
+        className="grid gap-6 lg:grid-cols-[1fr_1fr]"
       >
-        <section className="border border-[#171717] bg-white p-5 shadow-[4px_4px_0_#111827]">
+        <section className="rounded-md border border-line bg-white p-5 shadow-pub">
           <h3 className="text-lg font-bold tracking-normal">프로필</h3>
           <div className="mt-5 space-y-4">
             <Field label="이름" htmlFor="displayName">
@@ -139,12 +139,12 @@ export default async function AdminSettingsPage({
           </div>
         </section>
 
-        <section className="border border-[#171717] bg-white p-5 shadow-[4px_4px_0_#111827]">
+        <section className="rounded-md border border-line bg-white p-5 shadow-pub">
           <h3 className="text-lg font-bold tracking-normal">공개 페이지</h3>
           <div className="mt-5 space-y-4">
             <Field label="공개 주소" htmlFor="wishlistSlug">
-              <div className="flex overflow-hidden rounded-md border border-[#d1d5db] bg-[#f9fafb] focus-within:border-[#0f766e]">
-                <span className="inline-flex items-center border-r border-[#d1d5db] px-3 text-sm font-semibold text-[#4b5563]">
+              <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
+                <span className="inline-flex items-center border-r border-line px-3 text-sm font-semibold text-zinc-600">
                   /b/
                 </span>
                 <input
@@ -155,7 +155,7 @@ export default async function AdminSettingsPage({
                   maxLength={32}
                   required
                   defaultValue={settings.wishlist.slug}
-                  className="h-10 w-full bg-white px-3 text-sm outline-none"
+                  className="h-10 w-full bg-white px-3 text-sm text-zinc-800 outline-none"
                 />
               </div>
             </Field>
@@ -189,11 +189,11 @@ export default async function AdminSettingsPage({
           </div>
         </section>
 
-        <section className="border border-[#171717] bg-white p-5 shadow-[4px_4px_0_#111827] lg:col-span-2">
+        <section className="rounded-md border border-line bg-white p-5 shadow-pub lg:col-span-2">
           <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
             <div>
               <h3 className="text-lg font-bold tracking-normal">계좌 안내</h3>
-              <p className="mt-2 text-sm leading-6 text-[#4b5563]">
+              <p className="mt-2 text-sm leading-6 text-zinc-600">
                 계좌번호는 저장 전에 암호화됩니다.
               </p>
             </div>
@@ -254,7 +254,7 @@ export default async function AdminSettingsPage({
         <div className="lg:col-span-2">
           <button
             type="submit"
-            className="h-11 rounded-md bg-[#111827] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#0f766e]"
+            className="h-11 rounded-md border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-black"
           >
             저장하기
           </button>
@@ -275,7 +275,7 @@ function Field({
 }) {
   return (
     <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold">
+      <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
         {label}
       </label>
       {children}
@@ -284,7 +284,7 @@ function Field({
 }
 
 const inputClassName =
-  "h-10 w-full rounded-md border border-[#d1d5db] px-3 text-sm outline-none focus:border-[#0f766e]";
+  "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
 
 const textareaClassName =
-  "w-full resize-none rounded-md border border-[#d1d5db] px-3 py-2 text-sm outline-none focus:border-[#0f766e]";
+  "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
