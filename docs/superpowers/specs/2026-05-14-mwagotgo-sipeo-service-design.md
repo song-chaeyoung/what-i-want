@@ -14,7 +14,7 @@
 - 현재 배포본은 선물 카드, 진행률, 상품 링크, 계좌 복사, 비공개 메시지 작성, `내 페이지도 만들기` CTA를 보여줍니다.
 - Next.js는 Route Handler, Server Action, 서버 컴포넌트를 통해 웹 프론트와 BFF 역할을 함께 수행할 수 있습니다.
 - Auth.js는 Google, Kakao OAuth provider와 Drizzle Adapter를 공식 지원합니다.
-- Supabase와 Neon은 무료 Postgres 호스팅 선택지가 될 수 있지만, 서비스 코드를 특정 BaaS SDK에 강하게 묶는 것은 장기 확장성 측면에서 피해야 합니다.
+- DB 호스팅은 Neon Postgres를 기본 선택으로 두되, 서비스 코드를 특정 BaaS SDK에 강하게 묶는 것은 장기 확장성 측면에서 피해야 합니다.
 
 참고:
 
@@ -648,14 +648,30 @@ URL:
 
 DB는 Postgres 기준으로 설계합니다.
 
-초기 무료 호스팅 후보:
+기본 호스팅 선택:
+
+- Neon Postgres
+
+대안:
 
 - Supabase Postgres
-- Neon Postgres
 
 서비스 코드는 특정 호스팅 SDK에 종속되지 않습니다. DB 접근은 repository 구현체에 격리합니다.
 
-### 12.2 Supabase를 사용할 경우
+### 12.2 Neon을 사용할 경우
+
+사용 가능 기능:
+
+- 순수 Postgres 호스팅
+- 서버리스 친화적인 DB 연결
+
+주의점:
+
+- Auth, Storage, 파일 업로드는 별도 설계가 필요합니다.
+- 런타임 `DATABASE_URL`은 pooled connection URL을 사용하고, Drizzle schema push와 migration에는 direct connection URL을 사용합니다.
+- 이미지 저장소는 Cloudflare R2, S3 계열, Supabase Storage 중 하나를 별도로 선택해야 합니다.
+
+### 12.3 Supabase를 사용할 경우
 
 사용 가능 기능:
 
@@ -666,27 +682,16 @@ DB는 Postgres 기준으로 설계합니다.
 
 주의점:
 
+- Supabase는 대안으로만 둡니다.
 - Auth.js를 쓰는 경우 Supabase Auth와 역할이 겹칩니다.
 - Supabase SDK를 UI와 service 곳곳에서 직접 호출하지 않습니다.
 - RLS는 보조 안전장치로 사용하되, 애플리케이션 권한 검증을 생략하지 않습니다.
 
-### 12.3 Neon을 사용할 경우
-
-사용 가능 기능:
-
-- 순수 Postgres 호스팅
-- 서버리스 친화적인 DB 연결
-
-주의점:
-
-- Auth, Storage, 파일 업로드는 별도 설계가 필요합니다.
-- 이미지 저장소는 Cloudflare R2, Supabase Storage, S3 계열 중 하나를 별도로 선택해야 합니다.
-
 ### 12.4 1차 추천
 
-1차 설계는 `Postgres + Drizzle + Auth.js`를 기준으로 작성합니다.
+1차 설계는 `Neon Postgres + Drizzle + Auth.js`를 기준으로 작성합니다.
 
-DB 호스팅은 초기에는 Supabase 또는 Neon 중 선택할 수 있습니다. 다만 설계 문서와 코드 구조에서는 `Postgres`만 전제하고, 특정 호스팅 업체를 전제로 도메인 정책을 만들지 않습니다.
+DB 호스팅은 Neon Postgres를 기본 선택으로 둡니다. Supabase는 대안으로만 검토합니다. 다만 코드 구조에서는 `Postgres`만 전제하고, 특정 호스팅 업체를 전제로 도메인 정책을 만들지 않습니다.
 
 ## 13. UI/카피 방향
 
@@ -861,8 +866,8 @@ CTA:
 - 인증은 Auth.js 기반 Google/Kakao OAuth를 사용합니다.
 - 신규 로그인 사용자는 온보딩으로 이동합니다.
 - 친구 방문자는 로그인하지 않습니다.
-- DB는 Postgres 기준으로 설계합니다.
-- Supabase와 Neon은 호스팅 선택지로만 둡니다.
+- DB는 Neon Postgres를 기본 선택으로 두되, 도메인 정책은 Postgres 기준으로 설계합니다.
+- Supabase는 대안으로만 둡니다.
 - 공개 페이지는 테마 프리셋을 지원하고, 어드민 UI는 테마와 분리합니다.
 - 닉네임이나 slug는 PK로 쓰지 않습니다.
 - 계좌 정보와 메시지는 공개 권한을 엄격히 분리합니다.

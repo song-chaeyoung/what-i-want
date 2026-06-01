@@ -22,7 +22,8 @@ Copy-Item .env.example .env.local
 
 `.env.local`에는 다음 값이 필요합니다.
 
-- `DATABASE_URL`
+- `DATABASE_URL` 앱 런타임 DB URL. Neon 배포 환경에서는 pooled connection URL을 사용합니다.
+- `DATABASE_DIRECT_URL` Drizzle schema push와 migration용 direct DB URL. 없으면 `DATABASE_URL`을 사용합니다.
 - `AUTH_SECRET`
 - `ACCOUNT_ENCRYPTION_SECRET` 계좌번호 암호화 키. 없으면 `AUTH_SECRET`을 사용합니다.
 - `AUTH_GOOGLE_ID`
@@ -44,6 +45,8 @@ corepack pnpm build
 ## 데이터베이스
 
 Drizzle schema는 `src/lib/db/schema/index.ts`에서 export합니다. migration 출력은 `src/lib/db/migrations`에 생성됩니다.
+
+Neon을 사용할 때는 앱 런타임의 `DATABASE_URL`에는 pooled connection URL을, `corepack pnpm db:push` 같은 schema 작업용 `DATABASE_DIRECT_URL`에는 direct connection URL을 설정합니다. 실제 연결 문자열은 `.env.local`과 배포 환경 변수에만 저장합니다.
 
 ```powershell
 corepack pnpm db:generate
