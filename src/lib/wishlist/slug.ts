@@ -38,3 +38,9 @@ export function parseWishlistSlug(value: string): WishlistSlugParseResult {
 
   return { ok: true, value: normalized };
 }
+
+export function createRandomWishlistSlug(
+  randomUuid: () => string = () => crypto.randomUUID(),
+): string {
+  return `w-${randomUuid().replaceAll("-", "").slice(0, 16)}`;
+}

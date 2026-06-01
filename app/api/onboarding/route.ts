@@ -18,7 +18,6 @@ export async function POST(request: Request): Promise<Response> {
     {
       userId: session.user.id,
       displayName: getFormString(formData, "displayName"),
-      slug: getFormString(formData, "slug"),
       birthday: getOptionalFormString(formData, "birthday"),
       description: getOptionalFormString(formData, "description"),
     },

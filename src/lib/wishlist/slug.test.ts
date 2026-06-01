@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { parseWishlistSlug } from "./slug";
+import { createRandomWishlistSlug, parseWishlistSlug } from "./slug";
 
 describe("parseWishlistSlug", () => {
   test("normalizes uppercase letters and surrounding spaces", () => {
@@ -34,6 +34,20 @@ describe("parseWishlistSlug", () => {
     expect(parseWishlistSlug("a".repeat(33))).toEqual({
       ok: false,
       error: "too_long",
+    });
+  });
+});
+
+describe("createRandomWishlistSlug", () => {
+  test("creates a valid slug from a random UUID", () => {
+    const slug = createRandomWishlistSlug(
+      () => "a3f91c0e-7b42-d8aa-bbbb-cccccccccccc",
+    );
+
+    expect(slug).toBe("w-a3f91c0e7b42d8aa");
+    expect(parseWishlistSlug(slug)).toEqual({
+      ok: true,
+      value: "w-a3f91c0e7b42d8aa",
     });
   });
 });

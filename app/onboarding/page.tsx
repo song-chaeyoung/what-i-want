@@ -10,11 +10,8 @@ type OnboardingPageProps = {
 
 const errorMessages: Record<string, string> = {
   display_name_required: "표시 이름을 입력해주세요.",
-  duplicate_slug: "이미 사용 중인 주소입니다.",
+  duplicate_slug: "공개 주소를 만드는 중 문제가 발생했습니다. 다시 시도해주세요.",
   already_completed: "이미 온보딩이 완료되었습니다.",
-  too_short: "주소는 3자 이상이어야 합니다.",
-  too_long: "주소는 32자 이하여야 합니다.",
-  invalid_format: "주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
 };
 
 export default async function OnboardingPage({
@@ -40,7 +37,7 @@ export default async function OnboardingPage({
               기본 위시리스트 만들기
             </h1>
             <p className="text-sm leading-6 text-[#4b5563]">
-              처음 공유할 공개 위시리스트의 이름과 주소를 정합니다.
+              처음 공유할 공개 위시리스트의 기본 정보를 정합니다.
             </p>
           </div>
 
@@ -62,20 +59,6 @@ export default async function OnboardingPage({
                 type="text"
                 defaultValue={user.name ?? ""}
                 required
-                className={inputClassName}
-              />
-            </Field>
-
-            <Field label="공개 주소" htmlFor="slug">
-              <input
-                id="slug"
-                name="slug"
-                type="text"
-                minLength={3}
-                maxLength={32}
-                pattern="[a-zA-Z0-9-]+"
-                required
-                placeholder="birthday-wish"
                 className={inputClassName}
               />
             </Field>

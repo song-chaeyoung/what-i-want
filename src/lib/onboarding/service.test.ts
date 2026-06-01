@@ -7,15 +7,17 @@ import type {
 
 class FakeOnboardingRepository implements OnboardingRepository {
   completed = false;
-  slugAvailable = true;
+  slugAvailability: boolean[] = [true];
+  requestedSlugs: string[] = [];
   records: CompleteOnboardingRecord[] = [];
 
   async hasCompletedOnboarding(): Promise<boolean> {
     return this.completed;
   }
 
-  async isWishlistSlugAvailable(): Promise<boolean> {
-    return this.slugAvailable;
+  async isWishlistSlugAvailable(slug: string): Promise<boolean> {
+    this.requestedSlugs.push(slug);
+    return this.slugAvailability.shift() ?? true;
   }
 
   async completeOnboarding(record: CompleteOnboardingRecord): Promise<void> {
@@ -31,7 +33,6 @@ describe("completeOnboarding", () => {
       {
         userId: "user-1",
         displayName: "   ",
-        slug: "birthday",
         birthday: null,
         description: null,
       },
@@ -45,40 +46,72 @@ describe("completeOnboarding", () => {
     expect(repository.records).toEqual([]);
   });
 
-  test("normalizes and validates the wishlist slug", async () => {
+  test("generates and stores a random wishlist slug", async () => {
     const repository = new FakeOnboardingRepository();
 
     const result = await completeOnboarding(
       {
         userId: "user-1",
         displayName: "민지",
-        slug: "  Birthday-Wish  ",
         birthday: null,
         description: null,
       },
       repository,
+      {
+        createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
+      },
     );
 
-    expect(result).toEqual({ ok: true, wishlistSlug: "birthday-wish" });
-    expect(repository.records[0]?.wishlistSlug).toBe("birthday-wish");
+    expect(result).toEqual({ ok: true, wishlistSlug: "w-a3f91c0e7b42d8aa" });
+    expect(repository.requestedSlugs).toEqual(["w-a3f91c0e7b42d8aa"]);
+    expect(repository.records[0]?.wishlistSlug).toBe("w-a3f91c0e7b42d8aa");
   });
 
-  test("returns a domain-specific error for duplicate slugs", async () => {
+  test("retries when a generated wishlist slug is unavailable", async () => {
     const repository = new FakeOnboardingRepository();
-    repository.slugAvailable = false;
+    repository.slugAvailability = [false, true];
+    const generatedSlugs = ["w-1111111111111111", "w-2222222222222222"];
 
     const result = await completeOnboarding(
       {
         userId: "user-1",
         displayName: "민지",
-        slug: "birthday",
         birthday: null,
         description: null,
       },
       repository,
+      {
+        createWishlistSlug: () => generatedSlugs.shift() ?? "w-fallback",
+      },
+    );
+
+    expect(result).toEqual({ ok: true, wishlistSlug: "w-2222222222222222" });
+    expect(repository.requestedSlugs).toEqual([
+      "w-1111111111111111",
+      "w-2222222222222222",
+    ]);
+    expect(repository.records[0]?.wishlistSlug).toBe("w-2222222222222222");
+  });
+
+  test("returns a domain-specific error after exhausting generated slugs", async () => {
+    const repository = new FakeOnboardingRepository();
+    repository.slugAvailability = Array.from({ length: 5 }, () => false);
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: "민지",
+        birthday: null,
+        description: null,
+      },
+      repository,
+      {
+        createWishlistSlug: () => "w-1111111111111111",
+      },
     );
 
     expect(result).toEqual({ ok: false, error: "duplicate_slug" });
+    expect(repository.requestedSlugs).toHaveLength(5);
     expect(repository.records).toEqual([]);
   });
 
@@ -89,11 +122,13 @@ describe("completeOnboarding", () => {
       {
         userId: "user-1",
         displayName: "민지",
-        slug: "birthday",
         birthday: null,
         description: null,
       },
       repository,
+      {
+        createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
+      },
     );
 
     expect(repository.records[0]?.birthday).toBeNull();
@@ -106,21 +141,23 @@ describe("completeOnboarding", () => {
       {
         userId: "user-1",
         displayName: "민지",
-        slug: "birthday",
         birthday: "2026-05-14",
         description: "생일 선물 목록",
       },
       repository,
+      {
+        createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
+      },
     );
 
-    expect(result).toEqual({ ok: true, wishlistSlug: "birthday" });
+    expect(result).toEqual({ ok: true, wishlistSlug: "w-a3f91c0e7b42d8aa" });
     expect(repository.records).toEqual([
       {
         userId: "user-1",
         displayName: "민지",
         description: "생일 선물 목록",
         birthday: "2026-05-14",
-        wishlistSlug: "birthday",
+        wishlistSlug: "w-a3f91c0e7b42d8aa",
         wishlistTitle: "민지님의 위시리스트",
         wishlistThemeId: "pixel_y2k",
         wishlistVisibility: "public",

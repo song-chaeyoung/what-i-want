@@ -3,15 +3,18 @@ import type {
   OnboardingRepository,
 } from "./types";
 import type { CompleteOnboardingError } from "./errors";
-import { parseWishlistSlug } from "@/src/lib/wishlist/slug";
+import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
 export type CompleteOnboardingInput = {
   userId: string;
   displayName: string;
-  slug: string;
   birthday: string | null;
   description: string | null;
+};
+
+type CompleteOnboardingOptions = {
+  createWishlistSlug?: () => string;
 };
 
 export type CompleteOnboardingResult =
@@ -27,6 +30,7 @@ export type CompleteOnboardingResult =
 export async function completeOnboarding(
   input: CompleteOnboardingInput,
   repository: OnboardingRepository,
+  options: CompleteOnboardingOptions = {},
 ): Promise<CompleteOnboardingResult> {
   const displayName = input.displayName.trim();
 
@@ -38,13 +42,12 @@ export async function completeOnboarding(
     return { ok: false, error: "already_completed" };
   }
 
-  const slug = parseWishlistSlug(input.slug);
+  const slug = await createAvailableWishlistSlug(
+    repository,
+    options.createWishlistSlug ?? createRandomWishlistSlug,
+  );
 
-  if (!slug.ok) {
-    return { ok: false, error: slug.error };
-  }
-
-  if (!(await repository.isWishlistSlugAvailable(slug.value))) {
+  if (!slug) {
     return { ok: false, error: "duplicate_slug" };
   }
 
@@ -53,7 +56,7 @@ export async function completeOnboarding(
     displayName,
     description: normalizeOptionalText(input.description),
     birthday: input.birthday,
-    wishlistSlug: slug.value,
+    wishlistSlug: slug,
     wishlistTitle: `${displayName}님의 위시리스트`,
     wishlistThemeId: DEFAULT_PUBLIC_THEME_ID,
     wishlistVisibility: "public",
@@ -63,11 +66,28 @@ export async function completeOnboarding(
 
   return {
     ok: true,
-    wishlistSlug: slug.value,
+    wishlistSlug: slug,
   };
 }
 
 function normalizeOptionalText(value: string | null): string | null {
   const normalized = value?.trim() ?? "";
   return normalized.length > 0 ? normalized : null;
+}
+
+async function createAvailableWishlistSlug(
+  repository: OnboardingRepository,
+  createWishlistSlug: () => string,
+): Promise<string | null> {
+  const maxAttempts = 5;
+
+  for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
+    const slug = createWishlistSlug();
+
+    if (await repository.isWishlistSlugAvailable(slug)) {
+      return slug;
+    }
+  }
+
+  return null;
 }
