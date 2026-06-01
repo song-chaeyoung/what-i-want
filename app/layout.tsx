@@ -1,6 +1,10 @@
 import type { Metadata } from "next";
 import { monaPixel } from "./fonts";
 import "./globals.css";
+import { Geist } from "next/font/google";
+import { cn } from "@/lib/utils";
+
+const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   title: "뭐갖고싶어",
@@ -13,7 +17,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={`${monaPixel.variable} h-full antialiased`}>
+    <html lang="ko" className={cn("h-full", "antialiased", monaPixel.variable, "font-sans", geist.variable)}>
       <body className="flex min-h-full flex-col">{children}</body>
     </html>
   );
