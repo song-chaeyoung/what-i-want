@@ -42,80 +42,70 @@ export default async function PublicWishlistPage({
   );
 
   return (
-    <main className="pixel-dot-bg min-h-dvh text-[#171717]">
-      <section className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
-        <div className="grid gap-8 lg:grid-cols-[0.9fr_1.1fr] lg:items-start">
-          <header className="pixel-board bg-[#fffdf7] p-6 lg:sticky lg:top-8">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <p className="sticker-label">birthday wishlist</p>
-              <p className="text-sm font-black text-[#0f766e]">
-                /b/{result.wishlist.slug}
-              </p>
-            </div>
-            <h1 className="font-pixel mt-5 text-4xl leading-tight tracking-normal text-[#4c1d95] sm:text-5xl">
-              {result.wishlist.title}
-            </h1>
-            <p className="mt-5 text-base font-semibold leading-7 text-[#4b5563]">
-              {PUBLIC_WISHLIST_COPY.description}
-            </p>
+    <main className="pub-page min-h-dvh" data-theme={result.wishlist.themeId}>
+      <header className="pub-header">
+        <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <p className="pub-pill">birthday wishlist</p>
+            <p className="pub-label text-sm">/b/{result.wishlist.slug}</p>
+          </div>
+          <h1 className="pub-headline mt-5 sm:text-5xl">
+            {result.wishlist.title}
+          </h1>
+          <p className="mt-5 text-base font-semibold leading-7 text-[var(--pub-header-sub)]">
+            {PUBLIC_WISHLIST_COPY.description}
+          </p>
 
-            <dl className="mt-6 grid grid-cols-2 gap-3">
-              <SummaryBox
-                label={PUBLIC_WISHLIST_COPY.summaryWishLabel}
-                value={formatWishCount(result.items.length)}
-              />
-              <SummaryBox
-                label={PUBLIC_WISHLIST_COPY.summaryFundedLabel}
-                value={formatCurrency(totalFundedAmount)}
-              />
-            </dl>
+          <dl className="mt-6 grid grid-cols-2 gap-3">
+            <SummaryBox
+              label={PUBLIC_WISHLIST_COPY.summaryWishLabel}
+              value={formatWishCount(result.items.length)}
+            />
+            <SummaryBox
+              label={PUBLIC_WISHLIST_COPY.summaryFundedLabel}
+              value={formatCurrency(totalFundedAmount)}
+            />
+          </dl>
 
-            <AccountGuidance account={result.account} />
-
-            {query.sent ? (
-              <p className="mt-5 border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
-                {PUBLIC_WISHLIST_COPY.participationSuccess}
-              </p>
-            ) : null}
-
-            {query.error ? (
-              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
-                {getParticipationErrorMessage(query.error)}
-              </p>
-            ) : null}
-
-            {result.items.length > 0 ? (
-              <ParticipationForm
-                slug={result.wishlist.slug}
-                items={result.items}
-              />
-            ) : null}
-
-            <Link
-              href="/login"
-              className="mt-6 inline-flex h-11 items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 text-sm font-black transition-colors hover:bg-[#ccfbf1]"
-            >
-              {PUBLIC_WISHLIST_COPY.createMineCta}
-            </Link>
-          </header>
-
-          <section className="space-y-4">
-            {result.items.length > 0 ? (
-              result.items.map((item, index) => (
-                <PublicWishCard key={item.id} index={index} item={item} />
-              ))
-            ) : (
-              <div className="pixel-card bg-white p-6">
-                <h2 className="text-2xl font-black tracking-normal text-[#4c1d95]">
-                  {PUBLIC_WISHLIST_COPY.emptyTitle}
-                </h2>
-                <p className="mt-3 text-sm font-semibold leading-6 text-[#4b5563]">
-                  {PUBLIC_WISHLIST_COPY.emptyDescription}
-                </p>
-              </div>
-            )}
-          </section>
+          <Link href="/login" className="pub-btn mt-6 h-11 px-5 text-sm">
+            {PUBLIC_WISHLIST_COPY.createMineCta}
+          </Link>
         </div>
+      </header>
+
+      <section className="mx-auto w-full max-w-6xl space-y-4 px-5 py-6 sm:px-8 lg:py-8">
+        {result.items.length > 0 ? (
+          result.items.map((item, index) => (
+            <PublicWishCard key={item.id} index={index} item={item} />
+          ))
+        ) : (
+          <div className="pub-card p-6">
+            <h2 className="text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+              {PUBLIC_WISHLIST_COPY.emptyTitle}
+            </h2>
+            <p className="mt-3 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+              {PUBLIC_WISHLIST_COPY.emptyDescription}
+            </p>
+          </div>
+        )}
+
+        <AccountGuidance account={result.account} />
+
+        {query.sent ? (
+          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
+            {PUBLIC_WISHLIST_COPY.participationSuccess}
+          </p>
+        ) : null}
+
+        {query.error ? (
+          <p className="border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+            {getParticipationErrorMessage(query.error)}
+          </p>
+        ) : null}
+
+        {result.items.length > 0 ? (
+          <ParticipationForm slug={result.wishlist.slug} items={result.items} />
+        ) : null}
       </section>
     </main>
   );
@@ -139,15 +129,15 @@ function AccountGuidance({
         type="text"
         readOnly
         value={account.accountNumber}
-        className="h-10 w-full rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 text-sm font-black outline-none"
+        className="pub-field h-10 w-full px-3 text-sm font-black outline-none"
       />
     </div>
   );
 
   if (account.visibility === "reveal_on_click") {
     return (
-      <details className="mt-5 border-2 border-[#171717] bg-[#fef3c7] p-4 shadow-[4px_4px_0_#111827]">
-        <summary className="cursor-pointer font-pixel text-lg tracking-normal text-[#4c1d95]">
+      <details className="pub-card pub-bank mt-5 p-4">
+        <summary className="cursor-pointer text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
           계좌 안내
         </summary>
         {accountBody}
@@ -156,8 +146,8 @@ function AccountGuidance({
   }
 
   return (
-    <section className="mt-5 border-2 border-[#171717] bg-[#fef3c7] p-4 shadow-[4px_4px_0_#111827]">
-      <p className="font-pixel text-lg tracking-normal text-[#4c1d95]">
+    <section className="pub-card pub-bank mt-5 p-4">
+      <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
         {account.visibility === "copy_only" ? "계좌 복사" : "계좌 안내"}
       </p>
       {accountBody}
@@ -176,13 +166,13 @@ function ParticipationForm({
     <form
       action={`/api/public/wishlists/${slug}/participation`}
       method="post"
-      className="mt-6 space-y-4 border-2 border-[#171717] bg-white p-4 shadow-[4px_4px_0_#111827]"
+      className="pub-card mt-6 space-y-4 p-4"
     >
       <div>
-        <p className="font-pixel text-xl tracking-normal text-[#4c1d95]">
+        <p className="text-xl font-black tracking-normal text-[var(--pub-headline-color)]">
           {PUBLIC_WISHLIST_COPY.participationTitle}
         </p>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[#4b5563]">
+        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
           {PUBLIC_WISHLIST_COPY.participationDescription}
         </p>
       </div>
@@ -251,7 +241,7 @@ function ParticipationForm({
 
       <button
         type="submit"
-        className="h-11 w-full rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
+        className="pub-btn pub-btn-accent pub-btn-block h-11 text-sm"
       >
         {PUBLIC_WISHLIST_COPY.participationSubmitCta}
       </button>
@@ -270,10 +260,10 @@ function PublicWishCard({
   const imageUrl = getHttpUrl(item.imageUrl);
 
   return (
-    <article className="pixel-card overflow-hidden bg-white">
+    <article className="pub-card overflow-hidden">
       <div className="grid gap-0 md:grid-cols-[220px_1fr]">
         <div
-          className="grid aspect-[4/3] min-h-44 place-items-center border-b-2 border-[#171717] bg-[#ccfbf1] bg-cover bg-center md:aspect-auto md:border-r-2 md:border-b-0"
+          className="pub-fallback grid aspect-[4/3] min-h-44 place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center md:aspect-auto md:border-r-2 md:border-b-0"
           style={
             imageUrl
               ? { backgroundImage: `url(${JSON.stringify(imageUrl)})` }
@@ -287,14 +277,14 @@ function PublicWishCard({
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <div className="flex flex-wrap items-center gap-2">
-                <p className="sticker-label">NO. {index + 1}</p>
-                <p className="font-pixel text-xs text-[#0f766e]">
+                <p className="pub-pill">NO. {index + 1}</p>
+                <p className="pub-label text-xs">
                   {item.isComplete
                     ? PUBLIC_WISHLIST_COPY.completeLabel
                     : getWishStatusLabel(item.status)}
                 </p>
               </div>
-              <h2 className="font-pixel mt-3 text-2xl leading-tight tracking-normal">
+              <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)]">
                 {item.title}
               </h2>
             </div>
@@ -303,7 +293,7 @@ function PublicWishCard({
                 href={productUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="inline-flex h-10 items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
+                className="pub-btn pub-btn-primary h-10 px-4 text-sm"
               >
                 {PUBLIC_WISHLIST_COPY.productLinkCta}
               </a>
@@ -311,7 +301,7 @@ function PublicWishCard({
           </div>
 
           {item.description ? (
-            <p className="mt-4 text-sm font-semibold leading-6 text-[#4b5563]">
+            <p className="mt-4 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
               {item.description}
             </p>
           ) : null}
@@ -325,13 +315,10 @@ function PublicWishCard({
                   : PUBLIC_WISHLIST_COPY.noTargetAmount}
               </span>
             </div>
-            <div className="mt-2 h-3 border-2 border-[#171717] bg-[#f3f4f6]">
-              <div
-                className="h-full bg-[#0f766e]"
-                style={{ width: `${item.progress}%` }}
-              />
+            <div className="pub-progress mt-2">
+              <i style={{ width: `${item.progress}%` }} />
             </div>
-            <p className="mt-2 text-xs font-black text-[#4b5563]">
+            <p className="mt-2 text-xs font-black text-[var(--pub-sub)]">
               {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
             </p>
           </div>
@@ -356,9 +343,9 @@ function PixelGift() {
 
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="border-2 border-[#171717] bg-white p-4">
-      <dt className="text-xs font-black text-[#4b5563]">{label}</dt>
-      <dd className="font-pixel mt-1 text-lg tracking-normal text-[#4c1d95]">
+    <div className="pub-stat p-4">
+      <dt className="pub-label text-xs">{label}</dt>
+      <dd className="mt-1 text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
         {value}
       </dd>
     </div>
@@ -416,7 +403,7 @@ function formatCurrency(amount: number): string {
 }
 
 const publicInputClassName =
-  "h-10 w-full rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 text-sm font-bold outline-none focus:bg-white";
+  "pub-field h-10 w-full px-3 text-sm font-bold outline-none";
 
 const publicTextareaClassName =
-  "w-full resize-none rounded-md border-2 border-[#171717] bg-[#fffdf7] px-3 py-2 text-sm font-bold outline-none focus:bg-white";
+  "pub-field w-full resize-none px-3 py-2 text-sm font-bold outline-none";
