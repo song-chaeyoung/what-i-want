@@ -12,6 +12,7 @@ import {
   AdminPageHeader,
   adminInputClassName,
   adminTextareaClassName,
+  formatCurrency,
 } from "../admin-ui";
 
 type AdminWishesPageProps = {
@@ -442,10 +443,3 @@ function getSuccessMessage(params: {
   return null;
 }
 
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-    maximumFractionDigits: 0,
-  }).format(amount);
-}

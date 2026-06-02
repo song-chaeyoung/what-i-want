@@ -11,6 +11,7 @@ import {
   AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
+  formatCurrency,
 } from "./admin-ui";
 
 const errorMessages: Record<string, string> = {
@@ -205,14 +206,6 @@ function formatMessageMeta(message: AdminMessageRecord): string {
   const amount = message.amount ? formatCurrency(message.amount) : "금액 없음";
 
   return `${message.wishTitle ?? "선물 없음"} · ${amount}`;
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 function formatDate(value: Date): string {

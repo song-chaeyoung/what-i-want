@@ -21,22 +21,15 @@ export function AdminNotice({
 export function AdminOverviewCard({
   header,
   children,
-  description,
 }: {
   header: ReactNode;
   children?: ReactNode;
-  description?: string;
 }) {
   return (
     <div className="rounded-md border border-line bg-[#fbfbfa] p-4 sm:p-5">
       <div className="space-y-4">
         <div className="space-y-3">
           {header}
-          {description ? (
-            <p className="max-w-xl text-sm leading-6 text-zinc-600">
-              {description}
-            </p>
-          ) : null}
         </div>
         {children}
       </div>
@@ -161,3 +154,11 @@ export const adminInputClassName =
 
 export const adminTextareaClassName =
   "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
+
+export function formatCurrency(amount: number): string {
+  return new Intl.NumberFormat("ko-KR", {
+    style: "currency",
+    currency: "KRW",
+    maximumFractionDigits: 0,
+  }).format(amount);
+}

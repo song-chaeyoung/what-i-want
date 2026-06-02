@@ -8,6 +8,7 @@ import {
   AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
+  formatCurrency,
 } from "../admin-ui";
 
 const errorMessages: Record<string, string> = {
@@ -102,14 +103,6 @@ function MessageRow({ message }: { message: AdminMessageRecord }) {
       </div>
     </article>
   );
-}
-
-function formatCurrency(amount: number): string {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-    maximumFractionDigits: 0,
-  }).format(amount);
 }
 
 function formatDate(value: Date): string {
