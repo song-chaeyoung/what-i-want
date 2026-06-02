@@ -4,6 +4,14 @@ import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
 import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
+import {
+  AdminField,
+  AdminMetric,
+  AdminNotice,
+  AdminPageHeader,
+  adminInputClassName,
+  adminTextareaClassName,
+} from "../admin-ui";
 
 type AdminWishesPageProps = {
   searchParams: Promise<{
@@ -58,9 +66,7 @@ export default async function AdminWishesPage({
   if (!result.ok) {
     return (
       <section>
-        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
-          {errorMessages[result.error]}
-        </div>
+        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
       </section>
     );
   }
@@ -90,26 +96,19 @@ export default async function AdminWishesPage({
   return (
     <section className="space-y-4">
       <div className="rounded-md border border-line bg-[#fbfbfa] p-4">
-        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-          <div className="min-w-0">
-            <p className="truncate text-sm font-semibold text-teal">
-              /b/{result.wishlist.slug}
-            </p>
-            <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
-              선물 관리
-            </h2>
-          </div>
-          <Link
-            href={`/b/${result.wishlist.slug}`}
-            className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-          >
-            공개 페이지 보기
-          </Link>
-        </div>
+        <AdminPageHeader slug={result.wishlist.slug} title="선물 관리" />
 
         <div className="mt-4 grid grid-cols-2 gap-4 border-t border-line pt-3">
-          <OverviewMetric label="총 선물" value={`${result.items.length}개`} />
-          <OverviewMetric label="모인 금액" value={formatCurrency(totalFundedAmount)} />
+          <AdminMetric
+            label="총 선물"
+            value={`${result.items.length}개`}
+            variant="inline"
+          />
+          <AdminMetric
+            label="모인 금액"
+            value={formatCurrency(totalFundedAmount)}
+            variant="inline"
+          />
         </div>
       </div>
 
@@ -149,15 +148,11 @@ export default async function AdminWishesPage({
       </nav>
 
       {errorMessage ? (
-        <p className="rounded-md border border-orange/40 bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
-          {errorMessage}
-        </p>
+        <AdminNotice>{errorMessage}</AdminNotice>
       ) : null}
 
       {successMessage ? (
-        <p className="rounded-md border border-teal/30 bg-[#ecfdf5] px-4 py-3 text-sm font-medium text-teal">
-          {successMessage}
-        </p>
+        <AdminNotice tone="success">{successMessage}</AdminNotice>
       ) : null}
 
       <details
@@ -176,18 +171,18 @@ export default async function AdminWishesPage({
           method="post"
           className="grid gap-4 border-t border-line bg-[#fbfbfa] p-4 md:grid-cols-2"
         >
-          <Field label="선물 이름" htmlFor="create-title">
+          <AdminField label="선물 이름" htmlFor="create-title">
             <input
               id="create-title"
               name="title"
               type="text"
               maxLength={120}
               required
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="목표 금액" htmlFor="create-targetAmount">
+          <AdminField label="목표 금액" htmlFor="create-targetAmount">
             <input
               id="create-targetAmount"
               name="targetAmount"
@@ -195,39 +190,39 @@ export default async function AdminWishesPage({
               min={0}
               step={1}
               placeholder="45000"
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="상품 링크" htmlFor="create-productUrl">
+          <AdminField label="상품 링크" htmlFor="create-productUrl">
             <input
               id="create-productUrl"
               name="productUrl"
               type="url"
               placeholder="https://..."
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="이미지 링크" htmlFor="create-imageUrl">
+          <AdminField label="이미지 링크" htmlFor="create-imageUrl">
             <input
               id="create-imageUrl"
               name="imageUrl"
               type="url"
               placeholder="https://..."
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
           <div className="md:col-span-2">
-            <Field label="메모" htmlFor="create-description">
+            <AdminField label="메모" htmlFor="create-description">
               <textarea
                 id="create-description"
                 name="description"
                 rows={3}
-                className={textareaClassName}
+                className={adminTextareaClassName}
               />
-            </Field>
+            </AdminField>
           </div>
 
           <div className="md:col-span-2">
@@ -310,7 +305,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           className="grid gap-4 md:grid-cols-2"
         >
           <input type="hidden" name="_method" value="patch" />
-          <Field label="선물 이름" htmlFor={`title-${item.id}`}>
+          <AdminField label="선물 이름" htmlFor={`title-${item.id}`}>
             <input
               id={`title-${item.id}`}
               name="title"
@@ -318,16 +313,16 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               maxLength={120}
               required
               defaultValue={item.title}
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="상태" htmlFor={`status-${item.id}`}>
+          <AdminField label="상태" htmlFor={`status-${item.id}`}>
             <select
               id={`status-${item.id}`}
               name="status"
               defaultValue={item.status}
-              className={inputClassName}
+              className={adminInputClassName}
             >
               {statusOptions.map((status) => (
                 <option key={status} value={status}>
@@ -335,9 +330,9 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
                 </option>
               ))}
             </select>
-          </Field>
+          </AdminField>
 
-          <Field label="목표 금액" htmlFor={`targetAmount-${item.id}`}>
+          <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`}>
             <input
               id={`targetAmount-${item.id}`}
               name="targetAmount"
@@ -345,40 +340,40 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               min={0}
               step={1}
               defaultValue={item.targetAmount ?? ""}
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="상품 링크" htmlFor={`productUrl-${item.id}`}>
+          <AdminField label="상품 링크" htmlFor={`productUrl-${item.id}`}>
             <input
               id={`productUrl-${item.id}`}
               name="productUrl"
               type="url"
               defaultValue={item.productUrl ?? ""}
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
-          <Field label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
+          <AdminField label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
             <input
               id={`imageUrl-${item.id}`}
               name="imageUrl"
               type="url"
               defaultValue={item.imageUrl ?? ""}
-              className={inputClassName}
+              className={adminInputClassName}
             />
-          </Field>
+          </AdminField>
 
           <div className="md:col-span-2">
-            <Field label="메모" htmlFor={`description-${item.id}`}>
+            <AdminField label="메모" htmlFor={`description-${item.id}`}>
               <textarea
                 id={`description-${item.id}`}
                 name="description"
                 rows={3}
                 defaultValue={item.description ?? ""}
-                className={textareaClassName}
+                className={adminTextareaClassName}
               />
-            </Field>
+            </AdminField>
           </div>
 
           <div className="md:col-span-2">
@@ -405,15 +400,6 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
   );
 }
 
-function OverviewMetric({ label, value }: { label: string; value: string }) {
-  return (
-    <div className="min-w-0">
-      <p className="text-xs font-semibold text-zinc-500">{label}</p>
-      <p className="mt-1 truncate text-lg font-extrabold text-ink">{value}</p>
-    </div>
-  );
-}
-
 function WishThumbnail({ item }: { item: WishItemRecord }) {
   return (
     <div
@@ -432,25 +418,6 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
 
 function getSelectedStatus(value: string | undefined): WishStatus | null {
   return statusOptions.find((status) => status === value) ?? null;
-}
-
-function Field({
-  label,
-  htmlFor,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
-        {label}
-      </label>
-      {children}
-    </div>
-  );
 }
 
 function getSuccessMessage(params: {
@@ -477,9 +444,3 @@ function formatCurrency(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-
-const inputClassName =
-  "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
-
-const textareaClassName =
-  "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";

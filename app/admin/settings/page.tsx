@@ -1,9 +1,15 @@
-import Link from "next/link";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { ACCOUNT_VISIBILITIES, type AccountVisibility } from "@/src/lib/settings/types";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
+import {
+  AdminField,
+  AdminNotice,
+  AdminPageHeader,
+  adminInputClassName,
+  adminTextareaClassName,
+} from "../admin-ui";
 
 type AdminSettingsPageProps = {
   searchParams: Promise<{
@@ -59,9 +65,7 @@ export default async function AdminSettingsPage({
   if (!result.ok) {
     return (
       <section>
-        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
-          {errorMessages[result.error]}
-        </div>
+        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
       </section>
     );
   }
@@ -70,33 +74,14 @@ export default async function AdminSettingsPage({
 
   return (
     <section className="space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-semibold text-teal">
-            /b/{settings.wishlist.slug}
-          </p>
-          <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
-            설정
-          </h2>
-        </div>
-        <Link
-          href={`/b/${settings.wishlist.slug}`}
-          className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-        >
-          공개 페이지 보기
-        </Link>
-      </div>
+      <AdminPageHeader slug={settings.wishlist.slug} title="설정" />
 
       {params.saved ? (
-        <p className="rounded-md border border-teal/30 bg-[#ecfdf5] px-4 py-3 text-sm font-medium text-teal">
-          설정이 저장되었습니다.
-        </p>
+        <AdminNotice tone="success">설정이 저장되었습니다.</AdminNotice>
       ) : null}
 
       {errorMessage ? (
-        <p className="rounded-md border border-orange/40 bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
-          {errorMessage}
-        </p>
+        <AdminNotice>{errorMessage}</AdminNotice>
       ) : null}
 
       <form action="/api/admin/settings" method="post" className="space-y-4">
@@ -105,7 +90,7 @@ export default async function AdminSettingsPage({
           description="공개 페이지에 보이는 기본 소개를 정리합니다."
         >
           <SettingsRow>
-            <Field
+            <AdminField
               label="이름"
               htmlFor="displayName"
               badge="필수"
@@ -118,31 +103,31 @@ export default async function AdminSettingsPage({
                 maxLength={80}
                 required
                 defaultValue={settings.profile.displayName}
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="생일" htmlFor="birthday" badge="선택" hint="공개 페이지 안내에 사용됩니다.">
+            <AdminField label="생일" htmlFor="birthday" badge="선택" hint="공개 페이지 안내에 사용됩니다.">
               <input
                 id="birthday"
                 name="birthday"
                 type="date"
                 defaultValue={settings.profile.birthday ?? ""}
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="소개" htmlFor="description" badge="선택" hint="짧게 비워두어도 됩니다.">
+            <AdminField label="소개" htmlFor="description" badge="선택" hint="짧게 비워두어도 됩니다.">
               <textarea
                 id="description"
                 name="description"
                 rows={3}
                 defaultValue={settings.profile.description ?? ""}
-                className={textareaClassName}
+                className={adminTextareaClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
         </SettingsSection>
 
@@ -151,7 +136,7 @@ export default async function AdminSettingsPage({
           description="방문자가 보는 주소, 제목, 테마를 관리합니다."
         >
           <SettingsRow>
-            <Field
+            <AdminField
               label="공개 주소"
               htmlFor="wishlistSlug"
               badge="필수"
@@ -172,10 +157,10 @@ export default async function AdminSettingsPage({
                   className="h-10 w-full bg-white px-3 text-sm text-zinc-800 outline-none"
                 />
               </div>
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="제목" htmlFor="wishlistTitle" badge="필수" hint="120자 이내로 입력해주세요.">
+            <AdminField label="제목" htmlFor="wishlistTitle" badge="필수" hint="120자 이내로 입력해주세요.">
               <input
                 id="wishlistTitle"
                 name="wishlistTitle"
@@ -183,17 +168,17 @@ export default async function AdminSettingsPage({
                 maxLength={120}
                 required
                 defaultValue={settings.wishlist.title}
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="테마" htmlFor="themeId" badge="필수" hint="공개 페이지에만 적용됩니다.">
+            <AdminField label="테마" htmlFor="themeId" badge="필수" hint="공개 페이지에만 적용됩니다.">
               <select
                 id="themeId"
                 name="themeId"
                 defaultValue={settings.wishlist.themeId}
-                className={inputClassName}
+                className={adminInputClassName}
               >
                 {PUBLIC_THEME_IDS.map((themeId) => (
                   <option key={themeId} value={themeId}>
@@ -201,7 +186,7 @@ export default async function AdminSettingsPage({
                   </option>
                 ))}
               </select>
-            </Field>
+            </AdminField>
           </SettingsRow>
         </SettingsSection>
 
@@ -210,31 +195,31 @@ export default async function AdminSettingsPage({
           description="계좌번호는 저장 전에 암호화됩니다."
         >
           <SettingsRow>
-            <Field label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+            <AdminField label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
               <input
                 id="bankName"
                 name="bankName"
                 type="text"
                 maxLength={80}
                 defaultValue={settings.bankAccount?.bankName ?? ""}
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+            <AdminField label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
               <input
                 id="accountHolder"
                 name="accountHolder"
                 type="text"
                 maxLength={80}
                 defaultValue={settings.bankAccount?.accountHolder ?? ""}
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field
+            <AdminField
               label="계좌번호"
               htmlFor="accountNumber"
               badge="선택"
@@ -248,17 +233,17 @@ export default async function AdminSettingsPage({
                 placeholder={
                   settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
                 }
-                className={inputClassName}
+                className={adminInputClassName}
               />
-            </Field>
+            </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <Field label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
+            <AdminField label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
               <select
                 id="accountVisibility"
                 name="accountVisibility"
                 defaultValue={settings.bankAccount?.visibility ?? "hidden"}
-                className={inputClassName}
+                className={adminInputClassName}
               >
                 {ACCOUNT_VISIBILITIES.map((visibility) => (
                   <option key={visibility} value={visibility}>
@@ -266,7 +251,7 @@ export default async function AdminSettingsPage({
                   </option>
                 ))}
               </select>
-            </Field>
+            </AdminField>
           </SettingsRow>
         </SettingsSection>
 
@@ -280,37 +265,6 @@ export default async function AdminSettingsPage({
         </div>
       </form>
     </section>
-  );
-}
-
-function Field({
-  label,
-  htmlFor,
-  badge,
-  hint,
-  children,
-}: {
-  label: string;
-  htmlFor: string;
-  badge?: string;
-  hint?: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <div className="space-y-2">
-      <div className="flex items-center justify-between gap-3">
-        <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
-          {label}
-        </label>
-        {badge ? (
-          <span className="rounded-full border border-line bg-[#fafaf9] px-2 py-0.5 text-xs font-semibold text-zinc-500">
-            {badge}
-          </span>
-        ) : null}
-      </div>
-      {children}
-      {hint ? <p className="text-xs leading-5 text-zinc-500">{hint}</p> : null}
-    </div>
   );
 }
 
@@ -337,9 +291,3 @@ function SettingsSection({
 function SettingsRow({ children }: { children: React.ReactNode }) {
   return <div className="px-4 py-3">{children}</div>;
 }
-
-const inputClassName =
-  "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
-
-const textareaClassName =
-  "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";

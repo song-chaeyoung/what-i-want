@@ -6,6 +6,7 @@ const root = process.cwd();
 const globalsCssPath = join(root, "app/globals.css");
 const adminLayoutPath = join(root, "app/admin/layout.tsx");
 const adminShellNavPath = join(root, "app/admin/admin-shell-nav.tsx");
+const adminUiPath = join(root, "app/admin/admin-ui.tsx");
 const adminPagePath = join(root, "app/admin/page.tsx");
 const adminWishesPagePath = join(root, "app/admin/wishes/page.tsx");
 const adminMessagesPagePath = join(root, "app/admin/messages/page.tsx");
@@ -19,6 +20,39 @@ const adminPagePaths = [
 ];
 
 describe("admin calm theme contract", () => {
+  test("centralizes repeated admin UI primitives", () => {
+    const adminUiSource = readFileSync(adminUiPath, "utf8");
+    const adminPageSource = readFileSync(adminPagePath, "utf8");
+    const adminWishesSource = readFileSync(adminWishesPagePath, "utf8");
+    const adminMessagesSource = readFileSync(adminMessagesPagePath, "utf8");
+    const adminSettingsSource = readFileSync(adminSettingsPagePath, "utf8");
+
+    expect(adminUiSource).toContain("export function AdminNotice");
+    expect(adminUiSource).toContain("export function AdminPageHeader");
+    expect(adminUiSource).toContain("export function AdminMetric");
+    expect(adminUiSource).toContain("export function AdminField");
+    expect(adminUiSource).toContain("export const adminInputClassName");
+    expect(adminUiSource).toContain("export const adminTextareaClassName");
+
+    expect(adminPageSource).toContain('from "./admin-ui"');
+    for (const source of [adminWishesSource, adminMessagesSource, adminSettingsSource]) {
+      expect(source).toContain('from "../admin-ui"');
+    }
+
+    expect(adminPageSource).toContain("<AdminMetric");
+    expect(adminWishesSource).toContain("<AdminPageHeader");
+    expect(adminWishesSource).toContain("<AdminMetric");
+    expect(adminWishesSource).toContain("<AdminField");
+    expect(adminMessagesSource).toContain("<AdminPageHeader");
+    expect(adminMessagesSource).toContain("<AdminMetric");
+    expect(adminSettingsSource).toContain("<AdminPageHeader");
+    expect(adminSettingsSource).toContain("<AdminField");
+    expect(adminWishesSource).not.toContain("function Field");
+    expect(adminSettingsSource).not.toContain("function Field");
+    expect(adminWishesSource).not.toContain("const inputClassName");
+    expect(adminSettingsSource).not.toContain("const inputClassName");
+  });
+
   test("exposes admin calm Tailwind theme tokens from global CSS", () => {
     const source = readFileSync(globalsCssPath, "utf8");
 
@@ -108,8 +142,12 @@ describe("admin calm theme contract", () => {
 
   test("preserves admin wishes form and public link contracts", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
+    const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain('href={`/b/${result.wishlist.slug}`}');
+    expect(source).toContain(
+      '<AdminPageHeader slug={result.wishlist.slug} title="선물 관리" />',
+    );
+    expect(adminUiSource).toContain('href={`/b/${slug}`}');
     expect(source).toContain('action="/api/admin/wishes"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="title"');
@@ -158,7 +196,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("const totalFundedAmount = result.items.reduce(");
     expect(source).toContain("const statusCounts: Record<WishStatus, number>");
     expect(source).toContain("rounded-md border border-line bg-[#fbfbfa]");
-    expect(source).toContain("<OverviewMetric");
+    expect(source).toContain("<AdminMetric");
     expect(source).toContain('label="총 선물"');
     expect(source).toContain('label="모인 금액"');
     expect(source).toContain("flex overflow-x-auto rounded-md border border-line bg-white p-1");
@@ -219,8 +257,12 @@ describe("admin calm theme contract", () => {
 
   test("preserves admin settings form and public link contracts", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
+    const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain('href={`/b/${settings.wishlist.slug}`}');
+    expect(source).toContain(
+      '<AdminPageHeader slug={settings.wishlist.slug} title="설정" />',
+    );
+    expect(adminUiSource).toContain('href={`/b/${slug}`}');
     expect(source).toContain('action="/api/admin/settings"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="displayName"');
@@ -237,9 +279,10 @@ describe("admin calm theme contract", () => {
 
   test("adds settings section boundaries and field requirement hints", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
+    const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain("badge?: string;");
-    expect(source).toContain("hint?: string;");
+    expect(adminUiSource).toContain("badge?: string;");
+    expect(adminUiSource).toContain("hint?: string;");
     expect(source).toContain('badge="필수"');
     expect(source).toContain('badge="선택"');
     expect(source).toContain('hint="');
@@ -262,7 +305,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain("rounded-md border border-line bg-[#fbfbfa]");
     expect(source).toContain("grid gap-3 sm:grid-cols-3");
-    expect(source).toContain("<MetricItem");
+    expect(source).toContain("<AdminMetric");
     expect(source).toContain('label="선물"');
     expect(source).toContain('label="메시지"');
     expect(source).toContain('label="모인 금액"');

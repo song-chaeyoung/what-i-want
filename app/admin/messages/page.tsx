@@ -3,6 +3,7 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
+import { AdminMetric, AdminNotice, AdminPageHeader } from "../admin-ui";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -18,37 +19,21 @@ export default async function AdminMessagesPage() {
   if (!result.ok) {
     return (
       <section>
-        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
-          {errorMessages[result.error]}
-        </div>
+        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
       </section>
     );
   }
 
   return (
     <section className="space-y-4">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <p className="text-sm font-semibold text-teal">
-            /b/{result.wishlist.slug}
-          </p>
-          <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
-            메시지함
-          </h2>
-        </div>
-        <Link
-          href={`/b/${result.wishlist.slug}`}
-          className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-        >
-          공개 페이지 보기
-        </Link>
-      </div>
+      <AdminPageHeader slug={result.wishlist.slug} title="메시지함" />
 
       <div className="rounded-md border border-line bg-[#fbfbfa] px-3.5 py-3">
-        <p className="text-xs font-semibold text-zinc-500">받은 메시지</p>
-        <p className="mt-1 text-xl font-extrabold text-ink">
-          {result.messages.length}개
-        </p>
+        <AdminMetric
+          label="받은 메시지"
+          value={`${result.messages.length}개`}
+          variant="inline"
+        />
       </div>
 
       {result.messages.length > 0 ? (

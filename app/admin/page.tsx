@@ -6,6 +6,7 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
+import { AdminMetric, AdminNotice } from "./admin-ui";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -21,9 +22,7 @@ export default async function AdminPage() {
   if (!wishesResult.ok) {
     return (
       <section>
-        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
-          {errorMessages[wishesResult.error]}
-        </div>
+        <AdminNotice>{errorMessages[wishesResult.error]}</AdminNotice>
       </section>
     );
   }
@@ -31,9 +30,7 @@ export default async function AdminPage() {
   if (!messagesResult.ok) {
     return (
       <section>
-        <div className="rounded-md border border-orange/40 bg-[#fff7ed] p-5 text-sm font-medium text-[#9a3412]">
-          {errorMessages[messagesResult.error]}
-        </div>
+        <AdminNotice>{errorMessages[messagesResult.error]}</AdminNotice>
       </section>
     );
   }
@@ -67,17 +64,17 @@ export default async function AdminPage() {
         </div>
 
         <div className="mt-4 grid gap-3 sm:grid-cols-3">
-          <MetricItem
+          <AdminMetric
             label="선물"
             value={`${wishesResult.items.length}개`}
             detail="등록된 공개 항목"
           />
-          <MetricItem
+          <AdminMetric
             label="메시지"
             value={`${messagesResult.messages.length}개`}
             detail="도착한 마음"
           />
-          <MetricItem
+          <AdminMetric
             label="모인 금액"
             value={formatCurrency(totalFundedAmount)}
             detail="전체 선물 기준"
@@ -125,24 +122,6 @@ export default async function AdminPage() {
         </DashboardQueue>
       </div>
     </section>
-  );
-}
-
-function MetricItem({
-  label,
-  value,
-  detail,
-}: {
-  label: string;
-  value: string;
-  detail: string;
-}) {
-  return (
-    <div className="rounded-md border border-line bg-white px-3.5 py-3">
-      <p className="text-xs font-semibold text-zinc-500">{label}</p>
-      <p className="mt-1 text-xl font-extrabold text-ink">{value}</p>
-      <p className="mt-1 text-xs leading-5 text-zinc-500">{detail}</p>
-    </div>
   );
 }
 
