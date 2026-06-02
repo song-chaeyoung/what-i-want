@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { auth } from "@/auth";
 import { BRAND_NAME, HOME_COPY } from "@/src/lib/design/copy";
+import { getOnboardingState } from "@/src/lib/onboarding/repository";
 
 const previewWishes = [
   {
@@ -50,7 +52,25 @@ const homeSignals = [
   },
 ] as const;
 
-export default function Home() {
+async function getHomeAccountCta(): Promise<{ label: string; href: string }> {
+  const session = await auth();
+
+  if (!session?.user?.id) {
+    return { label: HOME_COPY.cta, href: "/login" };
+  }
+
+  const state = await getOnboardingState(session.user.id);
+
+  if (!state.isComplete) {
+    return { label: "위시리스트 만들기 계속하기", href: "/onboarding" };
+  }
+
+  return { label: "내 위시리스트 관리하기", href: "/admin" };
+}
+
+export default async function Home() {
+  const homeAccountCta = await getHomeAccountCta();
+
   return (
     <main className="pixel-dot-bg min-h-dvh text-[#171717]">
       <section className="mx-auto grid min-h-[calc(100dvh-3rem)] w-full max-w-6xl gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:py-12">
@@ -68,10 +88,12 @@ export default function Home() {
           </div>
           <div className="flex flex-wrap gap-3">
             <Link
-              href="/login"
+              href={homeAccountCta.href}
               className="inline-flex min-h-12 max-w-full items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-5 py-3 text-center text-sm font-black text-white transition-colors hover:bg-[#0f766e] sm:px-6"
             >
-              <span className="whitespace-normal break-keep">{HOME_COPY.cta}</span>
+              <span className="whitespace-normal break-keep">
+                {homeAccountCta.label}
+              </span>
             </Link>
             <a
               href="#preview"
@@ -131,10 +153,12 @@ export default function Home() {
               <GiftProgress progress="58%" color="#0f766e" />
             </div>
             <Link
-              href="/login"
+              href={homeAccountCta.href}
               className="inline-flex min-h-11 max-w-full items-center justify-center rounded-md border-2 border-[#171717] bg-[#f97316] px-5 py-2 text-center text-sm font-black text-white transition-colors hover:bg-[#4c1d95]"
             >
-              <span className="whitespace-normal break-keep">내 위시리스트 만들기</span>
+              <span className="whitespace-normal break-keep">
+                {homeAccountCta.label}
+              </span>
             </Link>
           </div>
         </div>

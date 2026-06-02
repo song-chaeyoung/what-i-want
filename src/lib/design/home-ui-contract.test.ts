@@ -34,4 +34,25 @@ describe("home UI contract", () => {
     expect(source).toContain("truncate");
     expect(source).toContain("whitespace-normal");
   });
+
+  test("uses authenticated home CTA copy and destinations", () => {
+    const source = readFileSync(homePagePath, "utf8");
+
+    expect(source).toContain('import { auth } from "@/auth";');
+    expect(source).toContain(
+      'import { getOnboardingState } from "@/src/lib/onboarding/repository";',
+    );
+    expect(source).toContain("export default async function Home()");
+    expect(source).toContain("const homeAccountCta = await getHomeAccountCta();");
+    expect(source).toContain("const session = await auth();");
+    expect(source).toContain('href={homeAccountCta.href}');
+    expect(source).toContain("{homeAccountCta.label}");
+    expect(source).toContain('label: HOME_COPY.cta, href: "/login"');
+    expect(source).toContain(
+      'label: "위시리스트 만들기 계속하기", href: "/onboarding"',
+    );
+    expect(source).toContain(
+      'label: "내 위시리스트 관리하기", href: "/admin"',
+    );
+  });
 });
