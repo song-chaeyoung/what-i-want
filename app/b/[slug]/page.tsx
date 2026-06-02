@@ -73,7 +73,7 @@ export default async function PublicWishlistPage({
         </div>
       </header>
 
-      <section className="mx-auto w-full max-w-6xl space-y-4 px-5 py-6 sm:px-8 lg:py-8">
+      <section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">
         {result.items.length > 0 ? (
           result.items.map((item, index) => (
             <PublicWishCard key={item.id} index={index} item={item} />
@@ -88,8 +88,6 @@ export default async function PublicWishlistPage({
             </p>
           </div>
         )}
-
-        <AccountGuidance account={result.account} />
 
         {query.sent ? (
           <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
@@ -106,6 +104,8 @@ export default async function PublicWishlistPage({
         {result.items.length > 0 ? (
           <ParticipationForm slug={result.wishlist.slug} items={result.items} />
         ) : null}
+
+        <AccountGuidance account={result.account} />
       </section>
     </main>
   );
@@ -121,34 +121,44 @@ function AccountGuidance({
   }
 
   const accountBody = (
-    <div className="mt-3 grid gap-2 text-sm font-black">
-      <p>
+    <div className="mt-4 grid gap-3 text-sm font-black">
+      <p className="text-[var(--pub-bank-ink)]">
         {account.bankName} {account.accountHolder}
       </p>
       <input
         type="text"
         readOnly
         value={account.accountNumber}
-        className="pub-field h-10 w-full px-3 text-sm font-black outline-none"
+        aria-label="계좌번호"
+        className="pub-field h-11 w-full px-3 text-sm font-black outline-none"
       />
     </div>
   );
 
   if (account.visibility === "reveal_on_click") {
     return (
-      <details className="pub-card pub-bank mt-5 p-4">
-        <summary className="cursor-pointer text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
-          계좌 안내
+      <details className="soft-bank-card pub-card pub-bank mt-6 p-5">
+        <summary className="cursor-pointer text-lg font-black tracking-normal text-[var(--pub-bank-ink)]">
+          마음을 보낸 뒤 계좌 확인하기
         </summary>
+        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-bank-ink)]">
+          준비된 안내를 열어 편하게 입금 정보를 확인하실 수 있어요.
+        </p>
         {accountBody}
       </details>
     );
   }
 
   return (
-    <section className="pub-card pub-bank mt-5 p-4">
-      <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
-        {account.visibility === "copy_only" ? "계좌 복사" : "계좌 안내"}
+    <section className="soft-bank-card pub-card pub-bank mt-6 p-5">
+      <p className="pub-label text-xs">after sending</p>
+      <p className="mt-2 text-lg font-black tracking-normal text-[var(--pub-bank-ink)]">
+        {account.visibility === "copy_only"
+          ? "계좌를 복사해 마음을 이어주세요"
+          : "마음을 보낼 계좌 안내"}
+      </p>
+      <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-bank-ink)]">
+        선물 마음이 정해지면 아래 정보로 부드럽게 마무리해 주세요.
       </p>
       {accountBody}
     </section>
@@ -166,10 +176,11 @@ function ParticipationForm({
     <form
       action={`/api/public/wishlists/${slug}/participation`}
       method="post"
-      className="pub-card mt-6 space-y-4 p-4"
+      className="send-heart-section pub-card mt-6 space-y-5 p-5 sm:p-6"
     >
       <div>
-        <p className="text-xl font-black tracking-normal text-[var(--pub-headline-color)]">
+        <p className="pub-pill pub-pill-alt">gift note</p>
+        <p className="mt-3 text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
           {PUBLIC_WISHLIST_COPY.participationTitle}
         </p>
         <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
@@ -241,7 +252,7 @@ function ParticipationForm({
 
       <button
         type="submit"
-        className="pub-btn pub-btn-accent pub-btn-block h-11 text-sm"
+        className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm"
       >
         {PUBLIC_WISHLIST_COPY.participationSubmitCta}
       </button>
@@ -260,10 +271,10 @@ function PublicWishCard({
   const imageUrl = getHttpUrl(item.imageUrl);
 
   return (
-    <article className="pub-card overflow-hidden">
-      <div className="grid gap-0 md:grid-cols-[220px_1fr]">
+    <article className="gift-card-shell pub-card overflow-hidden">
+      <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
         <div
-          className="pub-fallback grid aspect-[4/3] min-h-44 place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center md:aspect-auto md:border-r-2 md:border-b-0"
+          className="gift-image-stage pub-fallback grid aspect-[4/3] min-h-56 place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0"
           style={
             imageUrl
               ? { backgroundImage: `url(${JSON.stringify(imageUrl)})` }
@@ -273,54 +284,55 @@ function PublicWishCard({
           {!imageUrl ? <PixelGift /> : null}
         </div>
 
-        <div className="p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <div className="flex flex-wrap items-center gap-2">
-                <p className="pub-pill">NO. {index + 1}</p>
-                <p className="pub-label text-xs">
-                  {item.isComplete
-                    ? PUBLIC_WISHLIST_COPY.completeLabel
-                    : getWishStatusLabel(item.status)}
-                </p>
-              </div>
-              <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)]">
-                {item.title}
-              </h2>
+        <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_220px]">
+          <div className="min-w-0">
+            <div className="flex flex-wrap items-center gap-2">
+              <p className="pub-pill">NO. {index + 1}</p>
+              <p className="pub-label text-xs">
+                {item.isComplete
+                  ? PUBLIC_WISHLIST_COPY.completeLabel
+                  : getWishStatusLabel(item.status)}
+              </p>
             </div>
+            <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl">
+              {item.title}
+            </h2>
+
+            {item.description ? (
+              <p className="mt-4 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+                {item.description}
+              </p>
+            ) : null}
+          </div>
+
+          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--pub-ink)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
+            <p className="pub-label text-xs">gift progress</p>
+            <div>
+              <p className="text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+                {formatCurrency(item.fundedAmount)}
+              </p>
+              <p className="mt-1 text-xs font-black text-[var(--pub-sub)]">
+                {item.targetAmount
+                  ? `${formatCurrency(item.targetAmount)} 중`
+                  : PUBLIC_WISHLIST_COPY.noTargetAmount}
+              </p>
+            </div>
+            <div className="pub-progress mt-2">
+              <i style={{ width: `${item.progress}%` }} />
+            </div>
+            <p className="text-xs font-black text-[var(--pub-sub)]">
+              {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
+            </p>
             {productUrl ? (
               <a
                 href={productUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="pub-btn pub-btn-primary h-10 px-4 text-sm"
+                className="pub-btn pub-btn-primary mt-2 h-11 px-4 text-sm"
               >
-                {PUBLIC_WISHLIST_COPY.productLinkCta}
+                선물 링크 보기
               </a>
             ) : null}
-          </div>
-
-          {item.description ? (
-            <p className="mt-4 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
-              {item.description}
-            </p>
-          ) : null}
-
-          <div className="mt-5">
-            <div className="flex items-center justify-between gap-3 text-sm font-black">
-              <span>{formatCurrency(item.fundedAmount)}</span>
-              <span>
-                {item.targetAmount
-                  ? formatCurrency(item.targetAmount)
-                  : PUBLIC_WISHLIST_COPY.noTargetAmount}
-              </span>
-            </div>
-            <div className="pub-progress mt-2">
-              <i style={{ width: `${item.progress}%` }} />
-            </div>
-            <p className="mt-2 text-xs font-black text-[var(--pub-sub)]">
-              {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
-            </p>
           </div>
         </div>
       </div>

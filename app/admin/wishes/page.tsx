@@ -11,6 +11,7 @@ type AdminWishesPageProps = {
     created?: string;
     updated?: string;
     deleted?: string;
+    status?: string;
   }>;
 };
 
@@ -27,6 +28,20 @@ const errorMessages: Record<string, string> = {
 
 const statusOptions: WishStatus[] = ["open", "paused", "fulfilled", "hidden"];
 
+const statusBadgeClassNames: Record<WishStatus, string> = {
+  open: "border-[#bbf7d0] bg-[#ecfdf5] text-[#047857]",
+  paused: "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]",
+  fulfilled: "border-[#dbeafe] bg-[#eff6ff] text-[#1d4ed8]",
+  hidden: "border-zinc-200 bg-[#f4f4f5] text-zinc-600",
+};
+
+const statusDotClassNames: Record<WishStatus, string> = {
+  open: "bg-[#10b981]",
+  paused: "bg-[#f97316]",
+  fulfilled: "bg-[#3b82f6]",
+  hidden: "bg-zinc-400",
+};
+
 export default async function AdminWishesPage({
   searchParams,
 }: AdminWishesPageProps) {
@@ -38,6 +53,7 @@ export default async function AdminWishesPage({
 
   const errorMessage = params.error ? errorMessages[params.error] : null;
   const successMessage = getSuccessMessage(params);
+  const selectedStatus = getSelectedStatus(params.status);
 
   if (!result.ok) {
     return (
@@ -48,6 +64,14 @@ export default async function AdminWishesPage({
       </section>
     );
   }
+
+  const visibleItems = selectedStatus
+    ? result.items.filter((item) => item.status === selectedStatus)
+    : result.items;
+  const emptyStateMessage = selectedStatus
+    ? `${getWishStatusLabel(selectedStatus)} 상태의 선물이 없습니다.`
+    : "등록된 선물이 없습니다.";
+  const emptyStateCta = selectedStatus ? "전체 선물 보기" : "설정 확인하기";
 
   return (
     <section className="space-y-6">
@@ -66,6 +90,32 @@ export default async function AdminWishesPage({
         >
           공개 페이지 보기
         </Link>
+      </div>
+
+      <div className="flex flex-wrap gap-2 rounded-md border border-line bg-white p-3 shadow-pub">
+        <Link
+          href="/admin/wishes"
+          className={`inline-flex h-8 items-center rounded-md border px-3 text-sm font-semibold transition-colors ${
+            selectedStatus
+              ? "border-line bg-white text-zinc-600 hover:bg-zinc-100"
+              : "border-ink bg-ink text-white"
+          }`}
+        >
+          전체
+        </Link>
+        {statusOptions.map((status) => (
+          <Link
+            key={status}
+            href={`/admin/wishes?status=${status}`}
+            className={`inline-flex h-8 items-center rounded-md border px-3 text-sm font-semibold transition-colors ${
+              selectedStatus === status
+                ? "border-ink bg-ink text-white"
+                : "border-line bg-white text-zinc-600 hover:bg-zinc-100"
+            }`}
+          >
+            {getWishStatusLabel(status)}
+          </Link>
+        ))}
       </div>
 
       {errorMessage ? (
@@ -146,16 +196,20 @@ export default async function AdminWishesPage({
         </section>
 
         <section className="space-y-4">
-          {result.items.length > 0 ? (
-            result.items.map((item) => <WishItemEditor key={item.id} item={item} />)
+          {visibleItems.length > 0 ? (
+            visibleItems.map((item) => <WishItemEditor key={item.id} item={item} />)
           ) : (
             <div className="rounded-md border border-line bg-white p-6 shadow-pub">
-              <p className="text-sm font-semibold text-ink">
-                등록된 선물이 없습니다.
-              </p>
+              <p className="text-sm font-semibold text-ink">{emptyStateMessage}</p>
               <p className="mt-2 text-sm leading-6 text-zinc-600">
-                왼쪽 입력 영역에서 첫 번째 선물을 추가해주세요.
+                왼쪽 입력 영역에서 새 선물을 추가하거나 필터를 바꿔 목록을 확인해주세요.
               </p>
+              <Link
+                href={selectedStatus ? "/admin/wishes" : "/admin/settings"}
+                className="mt-5 inline-flex h-10 items-center rounded-md border border-ink bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
+              >
+                {emptyStateCta}
+              </Link>
             </div>
           )}
         </section>
@@ -174,7 +228,13 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
     <article className="rounded-md border border-line bg-white p-5 shadow-pub">
       <div className="flex flex-col gap-3 border-b border-line pb-4 sm:flex-row sm:items-start sm:justify-between">
         <div>
-          <p className="text-xs font-semibold text-teal">
+          <p
+            className={`inline-flex h-7 items-center gap-2 rounded-full border px-3 text-xs font-bold ${statusBadgeClassNames[item.status]}`}
+          >
+            <span
+              aria-hidden="true"
+              className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[item.status]}`}
+            />
             {getWishStatusLabel(item.status)}
           </p>
           <h3 className="mt-1 text-lg font-extrabold tracking-normal text-ink">
@@ -290,6 +350,10 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
       </form>
     </article>
   );
+}
+
+function getSelectedStatus(value: string | undefined): WishStatus | null {
+  return statusOptions.find((status) => status === value) ?? null;
 }
 
 function Field({

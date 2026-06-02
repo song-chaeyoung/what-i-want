@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import { PUBLIC_THEME_IDS } from "@/src/lib/wishlist/theme";
 
 const root = process.cwd();
@@ -48,7 +49,7 @@ describe("public theme contract", () => {
       'className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12"',
     );
     expect(pageSource).toContain(
-      '<section className="mx-auto w-full max-w-6xl space-y-4 px-5 py-6 sm:px-8 lg:py-8">',
+      '<section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">',
     );
     expect(pageSource).toContain('className="pub-stat p-4"');
     expect(pageSource).not.toContain("pub-card pub-card-hero pub-header");
@@ -74,6 +75,21 @@ describe("public theme contract", () => {
     expect(source).toContain('name="body"');
     expect(source).not.toContain("preventDefault()");
     expect(source).not.toContain("window.open");
+  });
+
+  test("keeps the public page focused on gift-card participation UI", () => {
+    const source = readFileSync(publicPagePath, "utf8");
+
+    expect(source).toContain("gift-card-shell");
+    expect(source).toContain("gift-image-stage");
+    expect(source).toContain("gift-progress-panel");
+    expect(source).toContain("send-heart-section");
+    expect(source).toContain("soft-bank-card");
+    expect(PUBLIC_WISHLIST_COPY.participationTitle).toBe("마음 보내기");
+    expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
+    expect(source).toContain("선물 링크 보기");
+    expect(source).not.toContain("filter");
+    expect(source).not.toContain("statusFilter");
   });
 
   test("uses public theme primitives on the public not-found page", () => {

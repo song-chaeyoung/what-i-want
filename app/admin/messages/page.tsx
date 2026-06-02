@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
@@ -49,6 +50,20 @@ export default async function AdminMessagesPage() {
             <p className="mt-2 text-sm leading-6 text-zinc-600">
               공개 페이지에서 친구가 마음을 보내면 여기에 표시됩니다.
             </p>
+            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
+              <Link
+                href={`/b/${result.wishlist.slug}`}
+                className="inline-flex h-10 items-center justify-center rounded-md border border-ink bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
+              >
+                공개 페이지 보기
+              </Link>
+              <Link
+                href="/admin/wishes"
+                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+              >
+                선물 관리하기
+              </Link>
+            </div>
           </div>
         )}
       </div>
@@ -77,9 +92,11 @@ function MessageCard({ message }: { message: AdminMessageRecord }) {
           </p>
         </div>
       </div>
-      <p className="mt-4 whitespace-pre-wrap text-sm leading-6 text-zinc-700">
-        {message.body}
-      </p>
+      <div className="mt-4 rounded-md border border-[#f3d7c7] bg-[#fffaf7] px-4 py-3">
+        <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-700">
+          {message.body}
+        </p>
+      </div>
     </article>
   );
 }

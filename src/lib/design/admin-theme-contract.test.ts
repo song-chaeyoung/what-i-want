@@ -82,6 +82,35 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('name="status"');
   });
 
+  test("filters admin wishes by valid status search params without public theme classes", () => {
+    const source = readFileSync(adminWishesPagePath, "utf8");
+
+    expect(source).toContain("status?: string;");
+    expect(source).toContain("const selectedStatus = getSelectedStatus(params.status);");
+    expect(source).toContain("const visibleItems = selectedStatus");
+    expect(source).toContain("result.items.filter((item) => item.status === selectedStatus)");
+    expect(source).toContain('href="/admin/wishes"');
+    expect(source).toContain('href={`/admin/wishes?status=${status}`}');
+    expect(source).toContain("getWishStatusLabel(status)");
+    expect(source).toContain("function getSelectedStatus");
+    expect(source).not.toContain("pub-page");
+    expect(source).not.toContain("pub-card");
+    expect(source).not.toContain("pub-btn");
+    expect(source).not.toContain("data-theme");
+  });
+
+  test("adds calm admin wish status hierarchy and a next-action empty state", () => {
+    const source = readFileSync(adminWishesPagePath, "utf8");
+
+    expect(source).toContain("const statusBadgeClassNames");
+    expect(source).toContain("const statusDotClassNames");
+    expect(source).toContain("bg-[#ecfdf5] text-[#047857]");
+    expect(source).toContain("bg-[#fff7ed] text-[#9a3412]");
+    expect(source).toContain("bg-[#f4f4f5] text-zinc-600");
+    expect(source).toContain("emptyStateMessage");
+    expect(source).toContain("emptyStateCta");
+  });
+
   test("preserves admin messages list rendering contract", () => {
     const source = readFileSync(adminMessagesPagePath, "utf8");
 
@@ -90,6 +119,16 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("<MessageCard key={message.id} message={message} />");
     expect(source).toContain("formatCurrency(message.amount)");
     expect(source).toContain("formatDate(message.createdAt)");
+  });
+
+  test("adds soft message card tone and empty-state CTAs", () => {
+    const source = readFileSync(adminMessagesPagePath, "utf8");
+
+    expect(source).toContain('import Link from "next/link";');
+    expect(source).toContain("bg-[#fffaf7]");
+    expect(source).toContain("border-[#f3d7c7]");
+    expect(source).toContain('href={`/b/${result.wishlist.slug}`}');
+    expect(source).toContain('href="/admin/wishes"');
   });
 
   test("preserves admin settings form and public link contracts", () => {
@@ -108,5 +147,27 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('name="accountHolder"');
     expect(source).toContain('name="accountNumber"');
     expect(source).toContain('name="accountVisibility"');
+  });
+
+  test("adds settings section boundaries and field requirement hints", () => {
+    const source = readFileSync(adminSettingsPagePath, "utf8");
+
+    expect(source).toContain("badge?: string;");
+    expect(source).toContain("hint?: string;");
+    expect(source).toContain('badge="필수"');
+    expect(source).toContain('badge="선택"');
+    expect(source).toContain('hint="');
+    expect(source).toContain("border-b border-line");
+  });
+
+  test("uses real admin dashboard summary services", () => {
+    const source = readFileSync(adminPagePath, "utf8");
+
+    expect(source).toContain("requireUser");
+    expect(source).toContain("listWishes");
+    expect(source).toContain("listAdminMessages");
+    expect(source).toContain("totalFundedAmount");
+    expect(source).not.toContain('<SummaryCard label="선물" value="0" />');
+    expect(source).not.toContain('<SummaryCard label="메시지" value="0" />');
   });
 });

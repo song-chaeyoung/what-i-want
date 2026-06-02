@@ -103,9 +103,19 @@ export default async function AdminSettingsPage({
         className="grid gap-6 lg:grid-cols-[1fr_1fr]"
       >
         <section className="rounded-md border border-line bg-white p-5 shadow-pub">
-          <h3 className="text-lg font-bold tracking-normal">프로필</h3>
+          <div className="border-b border-line pb-4">
+            <h3 className="text-lg font-bold tracking-normal">프로필</h3>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">
+              공개 페이지에 보이는 기본 소개를 정리합니다.
+            </p>
+          </div>
           <div className="mt-5 space-y-4">
-            <Field label="이름" htmlFor="displayName">
+            <Field
+              label="이름"
+              htmlFor="displayName"
+              badge="필수"
+              hint="80자 이내로 표시됩니다."
+            >
               <input
                 id="displayName"
                 name="displayName"
@@ -117,7 +127,7 @@ export default async function AdminSettingsPage({
               />
             </Field>
 
-            <Field label="생일" htmlFor="birthday">
+            <Field label="생일" htmlFor="birthday" badge="선택" hint="공개 페이지 안내에 사용됩니다.">
               <input
                 id="birthday"
                 name="birthday"
@@ -127,7 +137,7 @@ export default async function AdminSettingsPage({
               />
             </Field>
 
-            <Field label="소개" htmlFor="description">
+            <Field label="소개" htmlFor="description" badge="선택" hint="짧게 비워두어도 됩니다.">
               <textarea
                 id="description"
                 name="description"
@@ -140,9 +150,19 @@ export default async function AdminSettingsPage({
         </section>
 
         <section className="rounded-md border border-line bg-white p-5 shadow-pub">
-          <h3 className="text-lg font-bold tracking-normal">공개 페이지</h3>
+          <div className="border-b border-line pb-4">
+            <h3 className="text-lg font-bold tracking-normal">공개 페이지</h3>
+            <p className="mt-2 text-sm leading-6 text-zinc-600">
+              방문자가 보는 주소, 제목, 테마를 관리합니다.
+            </p>
+          </div>
           <div className="mt-5 space-y-4">
-            <Field label="공개 주소" htmlFor="wishlistSlug">
+            <Field
+              label="공개 주소"
+              htmlFor="wishlistSlug"
+              badge="필수"
+              hint="영문 소문자, 숫자, 하이픈만 사용할 수 있습니다."
+            >
               <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
                 <span className="inline-flex items-center border-r border-line px-3 text-sm font-semibold text-zinc-600">
                   /b/
@@ -160,7 +180,7 @@ export default async function AdminSettingsPage({
               </div>
             </Field>
 
-            <Field label="제목" htmlFor="wishlistTitle">
+            <Field label="제목" htmlFor="wishlistTitle" badge="필수" hint="120자 이내로 입력해주세요.">
               <input
                 id="wishlistTitle"
                 name="wishlistTitle"
@@ -172,7 +192,7 @@ export default async function AdminSettingsPage({
               />
             </Field>
 
-            <Field label="테마" htmlFor="themeId">
+            <Field label="테마" htmlFor="themeId" badge="필수" hint="공개 페이지에만 적용됩니다.">
               <select
                 id="themeId"
                 name="themeId"
@@ -191,14 +211,14 @@ export default async function AdminSettingsPage({
 
         <section className="rounded-md border border-line bg-white p-5 shadow-pub lg:col-span-2">
           <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
-            <div>
+            <div className="border-b border-line pb-4 lg:border-b-0 lg:border-r lg:pr-5">
               <h3 className="text-lg font-bold tracking-normal">계좌 안내</h3>
               <p className="mt-2 text-sm leading-6 text-zinc-600">
                 계좌번호는 저장 전에 암호화됩니다.
               </p>
             </div>
             <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="은행" htmlFor="bankName">
+              <Field label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
                 <input
                   id="bankName"
                   name="bankName"
@@ -209,7 +229,7 @@ export default async function AdminSettingsPage({
                 />
               </Field>
 
-              <Field label="예금주" htmlFor="accountHolder">
+              <Field label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
                 <input
                   id="accountHolder"
                   name="accountHolder"
@@ -220,7 +240,12 @@ export default async function AdminSettingsPage({
                 />
               </Field>
 
-              <Field label="계좌번호" htmlFor="accountNumber">
+              <Field
+                label="계좌번호"
+                htmlFor="accountNumber"
+                badge="선택"
+                hint="기존 계좌는 변경할 때만 다시 입력합니다."
+              >
                 <input
                   id="accountNumber"
                   name="accountNumber"
@@ -233,7 +258,7 @@ export default async function AdminSettingsPage({
                 />
               </Field>
 
-              <Field label="공개 방식" htmlFor="accountVisibility">
+              <Field label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
                 <select
                   id="accountVisibility"
                   name="accountVisibility"
@@ -267,18 +292,30 @@ export default async function AdminSettingsPage({
 function Field({
   label,
   htmlFor,
+  badge,
+  hint,
   children,
 }: {
   label: string;
   htmlFor: string;
+  badge?: string;
+  hint?: string;
   children: React.ReactNode;
 }) {
   return (
     <div className="space-y-2">
-      <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
-        {label}
-      </label>
+      <div className="flex items-center justify-between gap-3">
+        <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
+          {label}
+        </label>
+        {badge ? (
+          <span className="rounded-full border border-line bg-[#fafaf9] px-2 py-0.5 text-xs font-semibold text-zinc-500">
+            {badge}
+          </span>
+        ) : null}
+      </div>
       {children}
+      {hint ? <p className="text-xs leading-5 text-zinc-500">{hint}</p> : null}
     </div>
   );
 }
