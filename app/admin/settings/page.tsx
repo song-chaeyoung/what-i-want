@@ -69,17 +69,19 @@ export default async function AdminSettingsPage({
   const { settings } = result;
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+    <section className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-teal">
             /b/{settings.wishlist.slug}
           </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-normal">설정</h2>
+          <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
+            설정
+          </h2>
         </div>
         <Link
           href={`/b/${settings.wishlist.slug}`}
-          className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+          className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
         >
           공개 페이지 보기
         </Link>
@@ -97,19 +99,12 @@ export default async function AdminSettingsPage({
         </p>
       ) : null}
 
-      <form
-        action="/api/admin/settings"
-        method="post"
-        className="grid gap-6 lg:grid-cols-[1fr_1fr]"
-      >
-        <section className="rounded-md border border-line bg-white p-5 shadow-pub">
-          <div className="border-b border-line pb-4">
-            <h3 className="text-lg font-bold tracking-normal">프로필</h3>
-            <p className="mt-2 text-sm leading-6 text-zinc-600">
-              공개 페이지에 보이는 기본 소개를 정리합니다.
-            </p>
-          </div>
-          <div className="mt-5 space-y-4">
+      <form action="/api/admin/settings" method="post" className="space-y-4">
+        <SettingsSection
+          title="프로필"
+          description="공개 페이지에 보이는 기본 소개를 정리합니다."
+        >
+          <SettingsRow>
             <Field
               label="이름"
               htmlFor="displayName"
@@ -126,7 +121,8 @@ export default async function AdminSettingsPage({
                 className={inputClassName}
               />
             </Field>
-
+          </SettingsRow>
+          <SettingsRow>
             <Field label="생일" htmlFor="birthday" badge="선택" hint="공개 페이지 안내에 사용됩니다.">
               <input
                 id="birthday"
@@ -136,27 +132,25 @@ export default async function AdminSettingsPage({
                 className={inputClassName}
               />
             </Field>
-
+          </SettingsRow>
+          <SettingsRow>
             <Field label="소개" htmlFor="description" badge="선택" hint="짧게 비워두어도 됩니다.">
               <textarea
                 id="description"
                 name="description"
-                rows={4}
+                rows={3}
                 defaultValue={settings.profile.description ?? ""}
                 className={textareaClassName}
               />
             </Field>
-          </div>
-        </section>
+          </SettingsRow>
+        </SettingsSection>
 
-        <section className="rounded-md border border-line bg-white p-5 shadow-pub">
-          <div className="border-b border-line pb-4">
-            <h3 className="text-lg font-bold tracking-normal">공개 페이지</h3>
-            <p className="mt-2 text-sm leading-6 text-zinc-600">
-              방문자가 보는 주소, 제목, 테마를 관리합니다.
-            </p>
-          </div>
-          <div className="mt-5 space-y-4">
+        <SettingsSection
+          title="공개 페이지"
+          description="방문자가 보는 주소, 제목, 테마를 관리합니다."
+        >
+          <SettingsRow>
             <Field
               label="공개 주소"
               htmlFor="wishlistSlug"
@@ -179,7 +173,8 @@ export default async function AdminSettingsPage({
                 />
               </div>
             </Field>
-
+          </SettingsRow>
+          <SettingsRow>
             <Field label="제목" htmlFor="wishlistTitle" badge="필수" hint="120자 이내로 입력해주세요.">
               <input
                 id="wishlistTitle"
@@ -191,7 +186,8 @@ export default async function AdminSettingsPage({
                 className={inputClassName}
               />
             </Field>
-
+          </SettingsRow>
+          <SettingsRow>
             <Field label="테마" htmlFor="themeId" badge="필수" hint="공개 페이지에만 적용됩니다.">
               <select
                 id="themeId"
@@ -206,77 +202,75 @@ export default async function AdminSettingsPage({
                 ))}
               </select>
             </Field>
-          </div>
-        </section>
+          </SettingsRow>
+        </SettingsSection>
 
-        <section className="rounded-md border border-line bg-white p-5 shadow-pub lg:col-span-2">
-          <div className="grid gap-5 lg:grid-cols-[1fr_1fr]">
-            <div className="border-b border-line pb-4 lg:border-b-0 lg:border-r lg:pr-5">
-              <h3 className="text-lg font-bold tracking-normal">계좌 안내</h3>
-              <p className="mt-2 text-sm leading-6 text-zinc-600">
-                계좌번호는 저장 전에 암호화됩니다.
-              </p>
-            </div>
-            <div className="grid gap-4 sm:grid-cols-2">
-              <Field label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
-                <input
-                  id="bankName"
-                  name="bankName"
-                  type="text"
-                  maxLength={80}
-                  defaultValue={settings.bankAccount?.bankName ?? ""}
-                  className={inputClassName}
-                />
-              </Field>
-
-              <Field label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
-                <input
-                  id="accountHolder"
-                  name="accountHolder"
-                  type="text"
-                  maxLength={80}
-                  defaultValue={settings.bankAccount?.accountHolder ?? ""}
-                  className={inputClassName}
-                />
-              </Field>
-
-              <Field
-                label="계좌번호"
-                htmlFor="accountNumber"
-                badge="선택"
-                hint="기존 계좌는 변경할 때만 다시 입력합니다."
+        <SettingsSection
+          title="계좌 안내"
+          description="계좌번호는 저장 전에 암호화됩니다."
+        >
+          <SettingsRow>
+            <Field label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+              <input
+                id="bankName"
+                name="bankName"
+                type="text"
+                maxLength={80}
+                defaultValue={settings.bankAccount?.bankName ?? ""}
+                className={inputClassName}
+              />
+            </Field>
+          </SettingsRow>
+          <SettingsRow>
+            <Field label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+              <input
+                id="accountHolder"
+                name="accountHolder"
+                type="text"
+                maxLength={80}
+                defaultValue={settings.bankAccount?.accountHolder ?? ""}
+                className={inputClassName}
+              />
+            </Field>
+          </SettingsRow>
+          <SettingsRow>
+            <Field
+              label="계좌번호"
+              htmlFor="accountNumber"
+              badge="선택"
+              hint="기존 계좌는 변경할 때만 다시 입력합니다."
+            >
+              <input
+                id="accountNumber"
+                name="accountNumber"
+                type="text"
+                inputMode="numeric"
+                placeholder={
+                  settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
+                }
+                className={inputClassName}
+              />
+            </Field>
+          </SettingsRow>
+          <SettingsRow>
+            <Field label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
+              <select
+                id="accountVisibility"
+                name="accountVisibility"
+                defaultValue={settings.bankAccount?.visibility ?? "hidden"}
+                className={inputClassName}
               >
-                <input
-                  id="accountNumber"
-                  name="accountNumber"
-                  type="text"
-                  inputMode="numeric"
-                  placeholder={
-                    settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
-                  }
-                  className={inputClassName}
-                />
-              </Field>
+                {ACCOUNT_VISIBILITIES.map((visibility) => (
+                  <option key={visibility} value={visibility}>
+                    {accountVisibilityLabels[visibility]}
+                  </option>
+                ))}
+              </select>
+            </Field>
+          </SettingsRow>
+        </SettingsSection>
 
-              <Field label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
-                <select
-                  id="accountVisibility"
-                  name="accountVisibility"
-                  defaultValue={settings.bankAccount?.visibility ?? "hidden"}
-                  className={inputClassName}
-                >
-                  {ACCOUNT_VISIBILITIES.map((visibility) => (
-                    <option key={visibility} value={visibility}>
-                      {accountVisibilityLabels[visibility]}
-                    </option>
-                  ))}
-                </select>
-              </Field>
-            </div>
-          </div>
-        </section>
-
-        <div className="lg:col-span-2">
+        <div>
           <button
             type="submit"
             className="h-11 rounded-md border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-black"
@@ -318,6 +312,30 @@ function Field({
       {hint ? <p className="text-xs leading-5 text-zinc-500">{hint}</p> : null}
     </div>
   );
+}
+
+function SettingsSection({
+  title,
+  description,
+  children,
+}: {
+  title: string;
+  description: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section className="rounded-md border border-line bg-white">
+      <div className="border-b border-line px-4 py-3">
+        <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
+        <p className="mt-1 text-sm leading-6 text-zinc-600">{description}</p>
+      </div>
+      <div className="divide-y divide-line">{children}</div>
+    </section>
+  );
+}
+
+function SettingsRow({ children }: { children: React.ReactNode }) {
+  return <div className="px-4 py-3">{children}</div>;
 }
 
 const inputClassName =

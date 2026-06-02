@@ -26,76 +26,84 @@ export default async function AdminMessagesPage() {
   }
 
   return (
-    <section className="space-y-6">
-      <div className="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
+    <section className="space-y-4">
+      <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <p className="text-sm font-semibold text-teal">
             /b/{result.wishlist.slug}
           </p>
-          <h2 className="mt-2 text-2xl font-bold tracking-normal">메시지함</h2>
+          <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
+            메시지함
+          </h2>
         </div>
-        <p className="text-sm font-semibold text-zinc-600">
+        <Link
+          href={`/b/${result.wishlist.slug}`}
+          className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+        >
+          공개 페이지 보기
+        </Link>
+      </div>
+
+      <div className="rounded-md border border-line bg-[#fbfbfa] px-3.5 py-3">
+        <p className="text-xs font-semibold text-zinc-500">받은 메시지</p>
+        <p className="mt-1 text-xl font-extrabold text-ink">
           {result.messages.length}개
         </p>
       </div>
 
-      <div className="space-y-4">
-        {result.messages.length > 0 ? (
-          result.messages.map((message) => (
-            <MessageCard key={message.id} message={message} />
-          ))
-        ) : (
-          <div className="rounded-md border border-line bg-white p-6 shadow-pub">
-            <p className="text-sm font-semibold">아직 메시지가 없습니다.</p>
-            <p className="mt-2 text-sm leading-6 text-zinc-600">
-              공개 페이지에서 친구가 마음을 보내면 여기에 표시됩니다.
-            </p>
-            <div className="mt-5 flex flex-col gap-2 sm:flex-row">
-              <Link
-                href={`/b/${result.wishlist.slug}`}
-                className="inline-flex h-10 items-center justify-center rounded-md border border-ink bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
-              >
-                공개 페이지 보기
-              </Link>
-              <Link
-                href="/admin/wishes"
-                className="inline-flex h-10 items-center justify-center rounded-md border border-line bg-white px-4 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-              >
-                선물 관리하기
-              </Link>
-            </div>
+      {result.messages.length > 0 ? (
+        <div className="divide-y divide-line rounded-md border border-line bg-white">
+          {result.messages.map((message) => (
+            <MessageRow key={message.id} message={message} />
+          ))}
+        </div>
+      ) : (
+        <div className="rounded-md border border-line bg-white p-4">
+          <p className="text-sm font-semibold">아직 메시지가 없습니다.</p>
+          <p className="mt-2 text-sm leading-6 text-zinc-600">
+            공개 페이지에서 친구가 마음을 보내면 여기에 표시됩니다.
+          </p>
+          <div className="mt-4 flex flex-col gap-2 sm:flex-row">
+            <Link
+              href={`/b/${result.wishlist.slug}`}
+              className="inline-flex h-9 items-center justify-center rounded-md border border-ink bg-ink px-3 text-sm font-semibold text-white transition-colors hover:bg-black"
+            >
+              공개 페이지 보기
+            </Link>
+            <Link
+              href="/admin/wishes"
+              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
+            >
+              선물 관리하기
+            </Link>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </section>
   );
 }
 
-function MessageCard({ message }: { message: AdminMessageRecord }) {
+function MessageRow({ message }: { message: AdminMessageRecord }) {
   return (
-    <article className="items-start rounded-md border border-line bg-white p-5 shadow-pub">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
-        <div>
-          <p className="text-xs font-semibold text-teal">
+    <article className="grid gap-3 px-3.5 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
+      <div className="min-w-0">
+        <div className="flex min-w-0 flex-wrap items-center gap-2">
+          <span className="rounded-full border border-[#f3d7c7] bg-[#fffaf7] px-2 py-0.5 text-xs font-semibold text-[#9a3412]">
             {message.wishTitle ?? "선물 없음"}
-          </p>
-          <h3 className="mt-1 text-lg font-extrabold tracking-normal text-ink">
-            {message.senderName ?? "익명"}
-          </h3>
-        </div>
-        <div className="text-left sm:text-right">
-          <p className="text-sm font-bold text-ink">
-            {message.amount ? formatCurrency(message.amount) : "금액 없음"}
-          </p>
-          <p className="mt-1 text-xs font-semibold text-zinc-500">
+          </span>
+          <span className="text-xs font-semibold text-zinc-500">
             {formatDate(message.createdAt)}
-          </p>
+          </span>
         </div>
-      </div>
-      <div className="mt-4 rounded-md border border-[#f3d7c7] bg-[#fffaf7] px-4 py-3">
-        <p className="whitespace-pre-wrap text-sm leading-6 text-zinc-700">
+        <h3 className="mt-2 text-sm font-bold tracking-normal text-ink">
+          {message.senderName ?? "익명"}
+        </h3>
+        <p className="mt-1 line-clamp-2 whitespace-pre-wrap text-sm leading-6 text-zinc-600">
           {message.body}
         </p>
+      </div>
+      <div className="text-sm font-bold text-ink sm:text-right">
+        {message.amount ? formatCurrency(message.amount) : "금액 없음"}
       </div>
     </article>
   );

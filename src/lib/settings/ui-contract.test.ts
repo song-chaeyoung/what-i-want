@@ -8,6 +8,7 @@ const adminSettingsRoutePath = join(
   "app/api/admin/settings/route.ts",
 );
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
+const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
 const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
 
 describe("admin settings UI contract", () => {
@@ -23,13 +24,15 @@ describe("admin settings UI contract", () => {
   test("renders settings page fields and admin navigation", () => {
     const pageSource = readFileSync(adminSettingsPagePath, "utf8");
     const layoutSource = readFileSync(adminLayoutPath, "utf8");
+    const navSource = readFileSync(adminShellNavPath, "utf8");
 
     expect(pageSource).toContain("getSettings");
     expect(pageSource).toContain('name="displayName"');
     expect(pageSource).toContain('name="wishlistSlug"');
     expect(pageSource).toContain('name="bankName"');
     expect(pageSource).toContain('name="accountVisibility"');
-    expect(layoutSource).toContain('href="/admin/settings"');
+    expect(layoutSource).toContain("<AdminShellNav");
+    expect(navSource).toContain('href: "/admin/settings"');
   });
 
   test("renders public account guidance on public wishlist pages", () => {

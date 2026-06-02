@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
 const adminMessagesPagePath = join(process.cwd(), "app/admin/messages/page.tsx");
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
+const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
 
 describe("public participation UI contract", () => {
   test("renders a public participation form on the public wishlist page", () => {
@@ -22,10 +23,12 @@ describe("public participation UI contract", () => {
   test("adds an admin messages page and navigation link", () => {
     const pageSource = readFileSync(adminMessagesPagePath, "utf8");
     const layoutSource = readFileSync(adminLayoutPath, "utf8");
+    const navSource = readFileSync(adminShellNavPath, "utf8");
 
     expect(pageSource).toContain("listAdminMessages");
     expect(pageSource).toContain("DrizzleAdminMessagesRepository");
     expect(pageSource).toContain("메시지함");
-    expect(layoutSource).toContain('href="/admin/messages"');
+    expect(layoutSource).toContain("<AdminShellNav");
+    expect(navSource).toContain('href: "/admin/messages"');
   });
 });
