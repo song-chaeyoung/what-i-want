@@ -6,7 +6,12 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
-import { AdminMetric, AdminNotice } from "./admin-ui";
+import {
+  AdminMetric,
+  AdminNotice,
+  AdminOverviewCard,
+  AdminPageHeader,
+} from "./admin-ui";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -44,26 +49,19 @@ export default async function AdminPage() {
 
   return (
     <section className="space-y-4">
-      <div className="rounded-md border border-line bg-[#fbfbfa] p-4 sm:p-5">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-          <div>
-            <p className="text-xs font-bold uppercase text-teal">Overview</p>
-            <h2 className="mt-1 text-lg font-extrabold tracking-normal text-ink">
-              공개 위시리스트
-            </h2>
-            <p className="mt-1.5 max-w-xl text-sm leading-6 text-zinc-600">
-              선물 등록, 메시지 확인, 모인 금액을 한 화면에서 빠르게 점검합니다.
-            </p>
-          </div>
-          <Link
-            href="/admin/wishes"
-            className="inline-flex h-9 self-start items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black"
-          >
-            선물 관리하기
-          </Link>
-        </div>
-
-        <div className="mt-4 grid gap-3 sm:grid-cols-3">
+      <AdminOverviewCard
+        header={
+          <AdminPageHeader
+            eyebrow="Overview"
+            title="공개 위시리스트"
+            description="선물 등록, 메시지 확인, 모인 금액을 한 화면에서 빠르게 점검합니다."
+            actionHref="/admin/wishes"
+            actionLabel="선물 관리하기"
+            actionVariant="primary"
+          />
+        }
+      >
+        <div className="grid gap-3 sm:grid-cols-3">
           <AdminMetric
             label="선물"
             value={`${wishesResult.items.length}개`}
@@ -80,7 +78,7 @@ export default async function AdminPage() {
             detail="전체 선물 기준"
           />
         </div>
-      </div>
+      </AdminOverviewCard>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DashboardQueue

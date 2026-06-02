@@ -97,7 +97,13 @@ export default async function AdminWishesPage({
   return (
     <section className="space-y-4">
       <AdminOverviewCard
-        header={<AdminPageHeader slug={result.wishlist.slug} title="선물 관리" />}
+        header={
+          <AdminPageHeader
+            slug={result.wishlist.slug}
+            title="선물 관리"
+            description="등록된 선물과 모인 금액을 빠르게 확인하고 관리합니다."
+          />
+        }
       >
         <div className="grid gap-3 sm:grid-cols-2">
           <AdminMetric

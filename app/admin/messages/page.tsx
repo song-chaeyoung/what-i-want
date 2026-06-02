@@ -32,7 +32,13 @@ export default async function AdminMessagesPage() {
   return (
     <section className="space-y-4">
       <AdminOverviewCard
-        header={<AdminPageHeader slug={result.wishlist.slug} title="메시지함" />}
+        header={
+          <AdminPageHeader
+            slug={result.wishlist.slug}
+            title="메시지함"
+            description="공개 페이지에서 도착한 마음을 한곳에서 확인합니다."
+          />
+        }
       >
         <AdminMetric
           label="받은 메시지"

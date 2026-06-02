@@ -33,7 +33,9 @@ export function AdminOverviewCard({
         <div className="space-y-3">
           {header}
           {description ? (
-            <p className="max-w-xl text-sm leading-6 text-zinc-600">{description}</p>
+            <p className="max-w-xl text-sm leading-6 text-zinc-600">
+              {description}
+            </p>
           ) : null}
         </div>
         {children}
@@ -43,26 +45,48 @@ export function AdminOverviewCard({
 }
 
 export function AdminPageHeader({
+  actionHref,
+  actionLabel = "공개 페이지 보기",
+  actionVariant = "secondary",
+  description,
+  eyebrow,
   slug,
   title,
 }: {
-  slug: string;
+  actionHref?: string;
+  actionLabel?: string;
+  actionVariant?: "primary" | "secondary";
+  description?: string;
+  eyebrow?: string;
+  slug?: string;
   title: string;
 }) {
+  const href = actionHref ?? (slug ? `/b/${slug}` : null);
+  const actionClassName =
+    actionVariant === "primary"
+      ? "inline-flex h-9 self-start items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black"
+      : "inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100";
+
   return (
-    <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
       <div>
-        <p className="text-sm font-semibold text-teal">/b/{slug}</p>
-        <h2 className="mt-1 text-xl font-extrabold tracking-normal text-ink">
+        {eyebrow ? (
+          <p className="text-xs font-bold uppercase text-teal">{eyebrow}</p>
+        ) : null}
+        <h2 className="mt-1 text-lg font-extrabold tracking-normal text-ink">
           {title}
         </h2>
+        {description ? (
+          <p className="mt-1.5 max-w-xl text-sm leading-6 text-zinc-600">
+            {description}
+          </p>
+        ) : null}
       </div>
-      <Link
-        href={`/b/${slug}`}
-        className="inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-      >
-        공개 페이지 보기
-      </Link>
+      {href ? (
+        <Link href={href} className={actionClassName}>
+          {actionLabel}
+        </Link>
+      ) : null}
     </div>
   );
 }
@@ -91,7 +115,9 @@ export function AdminMetric({
     <div className="rounded-md border border-line bg-white px-3.5 py-3">
       <p className="text-xs font-semibold text-zinc-500">{label}</p>
       <p className="mt-1 text-xl font-extrabold text-ink">{value}</p>
-      {detail ? <p className="mt-1 text-xs leading-5 text-zinc-500">{detail}</p> : null}
+      {detail ? (
+        <p className="mt-1 text-xs leading-5 text-zinc-500">{detail}</p>
+      ) : null}
     </div>
   );
 }
@@ -112,7 +138,10 @@ export function AdminField({
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between gap-3">
-        <label htmlFor={htmlFor} className="text-sm font-semibold text-zinc-700">
+        <label
+          htmlFor={htmlFor}
+          className="text-sm font-semibold text-zinc-700"
+        >
           {label}
         </label>
         {badge ? (
