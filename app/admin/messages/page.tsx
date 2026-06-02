@@ -35,7 +35,6 @@ export default async function AdminMessagesPage() {
       <AdminOverviewCard
         header={
           <AdminPageHeader
-            slug={result.wishlist.slug}
             title="메시지함"
             description="공개 페이지에서 도착한 마음을 한곳에서 확인합니다."
           />

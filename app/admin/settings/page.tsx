@@ -78,7 +78,6 @@ export default async function AdminSettingsPage({
       <AdminOverviewCard
         header={
           <AdminPageHeader
-            slug={settings.wishlist.slug}
             title="설정"
             description="공개 페이지와 계좌 안내를 관리합니다."
           />

@@ -77,6 +77,7 @@ describe("admin calm theme contract", () => {
   test("uses the exported AdminShell calm surface pattern in admin layout", () => {
     const source = readFileSync(adminLayoutPath, "utf8");
 
+    expect(source).toContain('import Link from "next/link";');
     expect(source).toContain('className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800"');
     expect(source).toContain("border-r border-line bg-[#fbfbfa]");
     expect(source).toContain("sticky top-0 z-10 flex min-h-12");
@@ -86,6 +87,9 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("px-4 py-2");
     expect(source).toContain("rounded-md border border-line bg-[#fafaf9]");
     expect(source).toContain("<AdminShellNav />");
+    expect(source).toContain("state.wishlistSlug ? (");
+    expect(source).toContain('href={`/b/${state.wishlistSlug}`}');
+    expect(source).toContain("공개 페이지 보기");
     expect(source).not.toContain("bg-[#f7f5f0]");
   });
 
@@ -151,10 +155,11 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain("slug={result.wishlist.slug}");
     expect(source).toContain('title="선물 관리"');
     expect(source).toContain('description="등록된 선물과 모인 금액을 빠르게 확인하고 관리합니다."');
-    expect(adminUiSource).toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
+    expect(source).not.toContain("slug={result.wishlist.slug}");
+    expect(adminUiSource).not.toContain("slug?: string;");
+    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
     expect(source).toContain('action="/api/admin/wishes"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="title"');
@@ -269,10 +274,11 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain("slug={settings.wishlist.slug}");
     expect(source).toContain('title="설정"');
     expect(source).toContain('description="공개 페이지와 계좌 안내를 관리합니다."');
-    expect(adminUiSource).toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
+    expect(source).not.toContain("slug={settings.wishlist.slug}");
+    expect(adminUiSource).not.toContain("slug?: string;");
+    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
     expect(source).toContain('action="/api/admin/settings"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="displayName"');

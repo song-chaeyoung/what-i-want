@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminShellNav } from "./admin-shell-nav";
 import { requireUser } from "@/src/lib/auth/require-user";
@@ -38,8 +39,8 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex min-h-12 items-center border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
-          <div className="min-w-0">
+        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+          <div className="min-w-0 flex-1">
             <div className="truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px]">
               위시리스트 관리
             </div>
@@ -47,6 +48,14 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
               {user.email}
             </div>
           </div>
+          {state.wishlistSlug ? (
+            <Link
+              href={`/b/${state.wishlistSlug}`}
+              className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-line bg-[#fbfbfa] px-3 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100 sm:h-9 sm:text-sm"
+            >
+              공개 페이지 보기
+            </Link>
+          ) : null}
         </header>
 
         <AdminShellNav />

@@ -100,7 +100,6 @@ export default async function AdminWishesPage({
       <AdminOverviewCard
         header={
           <AdminPageHeader
-            slug={result.wishlist.slug}
             title="선물 관리"
             description="등록된 선물과 모인 금액을 빠르게 확인하고 관리합니다."
           />

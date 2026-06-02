@@ -43,7 +43,6 @@ export function AdminPageHeader({
   actionVariant = "secondary",
   description,
   eyebrow,
-  slug,
   title,
 }: {
   actionHref?: string;
@@ -51,10 +50,8 @@ export function AdminPageHeader({
   actionVariant?: "primary" | "secondary";
   description?: string;
   eyebrow?: string;
-  slug?: string;
   title: string;
 }) {
-  const href = actionHref ?? (slug ? `/b/${slug}` : null);
   const actionClassName =
     actionVariant === "primary"
       ? "inline-flex h-9 self-start items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black"
@@ -75,8 +72,8 @@ export function AdminPageHeader({
           </p>
         ) : null}
       </div>
-      {href ? (
-        <Link href={href} className={actionClassName}>
+      {actionHref ? (
+        <Link href={actionHref} className={actionClassName}>
           {actionLabel}
         </Link>
       ) : null}
