@@ -1,8 +1,23 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { auth } from "@/auth";
 import { BRAND_NAME } from "@/src/lib/design/copy";
+import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { signInWithGoogle, signInWithKakao } from "./actions";
 
-export default function LoginPage() {
+export default async function LoginPage() {
+  const session = await auth();
+
+  if (session?.user?.id) {
+    const state = await getOnboardingState(session.user.id);
+
+    if (!state.isComplete) {
+      redirect("/onboarding");
+    }
+
+    redirect("/admin");
+  }
+
   return (
     <main className="min-h-dvh bg-[#f7f5f0] px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-md flex-col justify-center">
