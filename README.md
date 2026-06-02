@@ -1,54 +1,76 @@
 # 뭐갖고싶어
 
-받고 싶은 선물을 링크 하나로 공유하는 Next.js 기반 위시리스트 서비스입니다.
+생일에 받고 싶은 선물을 링크 하나로 모아 친구들에게 공유하는 생일 위시리스트 서비스입니다.
 
-## 구조
+생일자는 선물 목록과 계좌 안내, 공개 페이지 테마를 관리할 수 있고, 친구들은 로그인 없이 공개 링크에 들어와 선물을 확인한 뒤 마음과 축하 메시지를 남길 수 있습니다.
 
-이 저장소는 단일 Next.js repo입니다. 구조는 참고 프로젝트
-`song-chaeyoung/birthday-wishlist`처럼 `app/api/**`와 `src/lib/**`를 중심으로 둡니다.
+## 서비스 소개
 
-- `app`: App Router 페이지와 화면 라우트
-- `app/api`: Route Handler 기반 API 진입점
-- `src/lib`: 도메인 규칙, DB 접근, 인증 helper, 온보딩 로직
-- `src/lib/db/schema`: Drizzle schema
-- `src/lib/db/migrations`: Drizzle migration 출력
+`뭐갖고싶어`는 "생일 선물 뭐 받고 싶어?"라는 질문을 조금 더 편하게 주고받기 위한 서비스입니다.
 
-## 환경 설정
+받고 싶은 선물을 직접 정리하고, 공개 위시리스트 링크를 친구들에게 공유합니다. 친구는 선물 후보, 목표 금액, 모인 마음, 상품 링크, 계좌 안내를 한 화면에서 확인하고 비공개 메시지를 남길 수 있습니다.
 
-```powershell
-corepack pnpm install
-Copy-Item .env.example .env.local
-```
+실제 결제나 자동 정산을 처리하는 서비스가 아니라, 선물 선택과 마음 전달을 가볍게 돕는 공유형 위시리스트입니다.
 
-`.env.local`에는 다음 값이 필요합니다.
+## 사용 흐름
 
-- `DATABASE_URL` 앱 런타임 DB URL. Neon 배포 환경에서는 pooled connection URL을 사용합니다.
-- `DATABASE_DIRECT_URL` Drizzle schema push와 migration용 direct DB URL. 없으면 `DATABASE_URL`을 사용합니다.
-- `AUTH_SECRET`
-- `ACCOUNT_ENCRYPTION_SECRET` 계좌번호 암호화 키. 없으면 `AUTH_SECRET`을 사용합니다.
-- `AUTH_GOOGLE_ID`
-- `AUTH_GOOGLE_SECRET`
-- `AUTH_KAKAO_ID`
-- `AUTH_KAKAO_SECRET`
+### 생일자
 
-## 개발 명령
+1. Google 또는 Kakao 계정으로 로그인합니다.
+2. 표시 이름, 생일, 소개를 입력해 기본 위시리스트를 만듭니다.
+3. 받고 싶은 선물의 이름, 목표 금액, 상품 링크, 이미지 링크, 메모를 등록합니다.
+4. 공개 주소, 위시리스트 제목, 공개 페이지 테마, 계좌 안내 방식을 설정합니다.
+5. `/b/[slug]` 형태의 공개 링크를 친구들에게 공유합니다.
+6. 어드민에서 도착한 메시지와 모인 금액을 확인합니다.
 
-```powershell
-corepack pnpm dev
-corepack pnpm db:generate
-corepack pnpm typecheck
-corepack pnpm test
-corepack pnpm lint
-corepack pnpm build
-```
+### 친구
 
-## 데이터베이스
+1. 생일자가 공유한 공개 링크에 들어갑니다.
+2. 선물 목록, 진행률, 상품 링크, 계좌 안내를 확인합니다.
+3. 선물을 고르고 보낼 마음, 이름, 메시지를 남깁니다.
+4. 남긴 메시지는 공개 페이지에 보이지 않고 생일자 어드민에만 표시됩니다.
 
-Drizzle schema는 `src/lib/db/schema/index.ts`에서 export합니다. migration 출력은 `src/lib/db/migrations`에 생성됩니다.
+## 주요 기능
 
-Neon을 사용할 때는 앱 런타임의 `DATABASE_URL`에는 pooled connection URL을, `corepack pnpm db:push` 같은 schema 작업용 `DATABASE_DIRECT_URL`에는 direct connection URL을 설정합니다. 실제 연결 문자열은 `.env.local`과 배포 환경 변수에만 저장합니다.
+- 생일 위시리스트 랜딩 페이지
+- Google/Kakao 소셜 로그인
+- 신규 사용자 온보딩
+- 선물 등록, 수정, 삭제, 상태 관리
+- 목표 금액과 모인 금액 표시
+- 공개 위시리스트 페이지
+- 공개 페이지 테마 선택
+- 계좌 안내 등록과 공개 방식 설정
+- 친구의 비공개 메시지 작성
+- 생일자 메시지함
+- 어드민 대시보드
 
-```powershell
-corepack pnpm db:generate
-corepack pnpm db:push
-```
+## 공개 페이지
+
+공개 위시리스트는 `/b/[slug]` 주소로 열립니다.
+
+공개 페이지에는 생일자의 위시리스트 제목, 선물 카드, 모인 마음, 상품 링크, 메시지 작성 폼, 계좌 안내가 표시됩니다. 공개 페이지 테마는 생일자가 고를 수 있으며, 현재는 픽셀 Y2K, 모노 흑백, 소프트 파스텔 계열을 지원합니다.
+
+친구 방문자는 공개 페이지를 보기 위해 로그인할 필요가 없습니다.
+
+## 어드민
+
+생일자는 로그인 후 어드민에서 자신의 위시리스트를 관리합니다.
+
+- `/admin`: 전체 현황, 최근 선물, 최근 메시지
+- `/admin/wishes`: 선물 목록, 등록, 수정, 삭제, 상태 필터
+- `/admin/messages`: 공개 페이지에서 도착한 메시지 확인
+- `/admin/settings`: 프로필, 공개 주소, 테마, 계좌 안내 설정
+
+## 공개와 비공개 원칙
+
+- 친구 방문자는 로그인하지 않아도 공개 위시리스트를 볼 수 있습니다.
+- 비공개 메시지는 공개 페이지에 노출되지 않고 생일자만 확인합니다.
+- 계좌 안내는 생일자가 선택한 공개 방식에 따라 표시됩니다.
+- 계좌번호는 저장 전에 암호화하는 것을 전제로 합니다.
+- 실제 결제, 자동 정산, 배송지 관리, 알림 기능은 현재 범위에 포함하지 않습니다.
+
+## 제품 방향
+
+`뭐갖고싶어`는 친구 사이에서 부담 없이 공유할 수 있는 생일 위시리스트를 목표로 합니다.
+
+관리 화면은 단순하고 빠르게, 친구들이 보는 공개 페이지는 생일 카드처럼 가볍고 개성 있게 유지합니다.
