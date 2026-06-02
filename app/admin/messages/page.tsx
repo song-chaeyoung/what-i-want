@@ -3,7 +3,12 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
-import { AdminMetric, AdminNotice, AdminPageHeader } from "../admin-ui";
+import {
+  AdminMetric,
+  AdminNotice,
+  AdminOverviewCard,
+  AdminPageHeader,
+} from "../admin-ui";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -26,15 +31,14 @@ export default async function AdminMessagesPage() {
 
   return (
     <section className="space-y-4">
-      <AdminPageHeader slug={result.wishlist.slug} title="메시지함" />
-
-      <div className="rounded-md border border-line bg-[#fbfbfa] px-3.5 py-3">
+      <AdminOverviewCard
+        header={<AdminPageHeader slug={result.wishlist.slug} title="메시지함" />}
+      >
         <AdminMetric
           label="받은 메시지"
           value={`${result.messages.length}개`}
-          variant="inline"
         />
-      </div>
+      </AdminOverviewCard>
 
       {result.messages.length > 0 ? (
         <div className="divide-y divide-line rounded-md border border-line bg-white">

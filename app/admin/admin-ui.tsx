@@ -18,6 +18,30 @@ export function AdminNotice({
   return <p className={className}>{children}</p>;
 }
 
+export function AdminOverviewCard({
+  header,
+  children,
+  description,
+}: {
+  header: ReactNode;
+  children?: ReactNode;
+  description?: string;
+}) {
+  return (
+    <div className="rounded-md border border-line bg-[#fbfbfa] p-4 sm:p-5">
+      <div className="space-y-4">
+        <div className="space-y-3">
+          {header}
+          {description ? (
+            <p className="max-w-xl text-sm leading-6 text-zinc-600">{description}</p>
+          ) : null}
+        </div>
+        {children}
+      </div>
+    </div>
+  );
+}
+
 export function AdminPageHeader({
   slug,
   title,

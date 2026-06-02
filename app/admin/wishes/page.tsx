@@ -8,6 +8,7 @@ import {
   AdminField,
   AdminMetric,
   AdminNotice,
+  AdminOverviewCard,
   AdminPageHeader,
   adminInputClassName,
   adminTextareaClassName,
@@ -95,22 +96,20 @@ export default async function AdminWishesPage({
 
   return (
     <section className="space-y-4">
-      <div className="rounded-md border border-line bg-[#fbfbfa] p-4">
-        <AdminPageHeader slug={result.wishlist.slug} title="선물 관리" />
-
-        <div className="mt-4 grid grid-cols-2 gap-4 border-t border-line pt-3">
+      <AdminOverviewCard
+        header={<AdminPageHeader slug={result.wishlist.slug} title="선물 관리" />}
+      >
+        <div className="grid gap-3 sm:grid-cols-2">
           <AdminMetric
             label="총 선물"
             value={`${result.items.length}개`}
-            variant="inline"
           />
           <AdminMetric
             label="모인 금액"
             value={formatCurrency(totalFundedAmount)}
-            variant="inline"
           />
         </div>
-      </div>
+      </AdminOverviewCard>
 
       <nav
         aria-label="선물 상태 필터"

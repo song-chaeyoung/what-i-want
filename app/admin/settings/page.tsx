@@ -6,6 +6,7 @@ import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
   AdminField,
   AdminNotice,
+  AdminOverviewCard,
   AdminPageHeader,
   adminInputClassName,
   adminTextareaClassName,
@@ -74,7 +75,10 @@ export default async function AdminSettingsPage({
 
   return (
     <section className="space-y-4">
-      <AdminPageHeader slug={settings.wishlist.slug} title="설정" />
+      <AdminOverviewCard
+        header={<AdminPageHeader slug={settings.wishlist.slug} title="설정" />}
+        description="공개 페이지와 계좌 안내를 관리합니다."
+      />
 
       {params.saved ? (
         <AdminNotice tone="success">설정이 저장되었습니다.</AdminNotice>
