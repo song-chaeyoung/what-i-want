@@ -74,3 +74,12 @@
 `뭐갖고싶어`는 친구 사이에서 부담 없이 공유할 수 있는 생일 위시리스트를 목표로 합니다.
 
 관리 화면은 단순하고 빠르게, 친구들이 보는 공개 페이지는 생일 카드처럼 가볍고 개성 있게 유지합니다.
+
+## 운영 설정
+
+데이터베이스는 Neon Postgres를 기본 운영 호스팅으로 가정합니다.
+
+- `DATABASE_URL`: 앱 런타임에서 사용하는 Postgres 연결 문자열입니다. 배포 환경에서는 Neon pooled URL을 사용합니다.
+- `DATABASE_DIRECT_URL`: Drizzle schema push와 migration에서 사용하는 direct Postgres 연결 문자열입니다.
+
+새 Neon 데이터베이스가 비어 있다면 환경 변수를 설정한 뒤 `pnpm db:push`로 현재 schema를 반영합니다. 이 작업은 기존 데이터 이전을 대신하지 않으므로, 다른 DB에서 옮겨오는 데이터가 있다면 별도 export/import 계획이 필요합니다.
