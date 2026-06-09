@@ -27,7 +27,6 @@ describe("admin calm theme contract", () => {
     const adminMessagesSource = readFileSync(adminMessagesPagePath, "utf8");
     const adminSettingsSource = readFileSync(adminSettingsPagePath, "utf8");
 
-    expect(adminUiSource).toContain("export function AdminNotice");
     expect(adminUiSource).toContain("export function AdminOverviewCard");
     expect(adminUiSource).toContain("export function AdminPageHeader");
     expect(adminUiSource).toContain("export function AdminMetric");

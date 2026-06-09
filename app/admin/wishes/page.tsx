@@ -4,10 +4,10 @@ import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
 import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
+import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminField,
   AdminMetric,
-  AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
   adminInputClassName,
@@ -17,10 +17,6 @@ import {
 
 type AdminWishesPageProps = {
   searchParams: Promise<{
-    error?: string;
-    created?: string;
-    updated?: string;
-    deleted?: string;
     status?: string;
   }>;
 };
@@ -61,14 +57,15 @@ export default async function AdminWishesPage({
     listWishes(user.id, new DrizzleWishRepository()),
   ]);
 
-  const errorMessage = params.error ? errorMessages[params.error] : null;
-  const successMessage = getSuccessMessage(params);
   const selectedStatus = getSelectedStatus(params.status);
 
   if (!result.ok) {
     return (
       <section>
-        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
+        <AdminToastMessage
+          id={`admin-wishes-${result.error}`}
+          message={errorMessages[result.error]}
+        />
       </section>
     );
   }
@@ -151,14 +148,6 @@ export default async function AdminWishesPage({
           </Link>
         ))}
       </nav>
-
-      {errorMessage ? (
-        <AdminNotice>{errorMessage}</AdminNotice>
-      ) : null}
-
-      {successMessage ? (
-        <AdminNotice tone="success">{successMessage}</AdminNotice>
-      ) : null}
 
       <details
         id="create-wish"
@@ -423,22 +412,5 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
 
 function getSelectedStatus(value: string | undefined): WishStatus | null {
   return statusOptions.find((status) => status === value) ?? null;
-}
-
-function getSuccessMessage(params: {
-  created?: string;
-  updated?: string;
-  deleted?: string;
-}): string | null {
-  if (params.created) {
-    return "선물이 추가되었습니다.";
-  }
-  if (params.updated) {
-    return "선물이 저장되었습니다.";
-  }
-  if (params.deleted) {
-    return "선물이 삭제되었습니다.";
-  }
-  return null;
 }
 

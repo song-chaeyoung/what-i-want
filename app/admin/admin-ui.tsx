@@ -1,23 +1,6 @@
 import type { ReactNode } from "react";
 import Link from "next/link";
 
-type AdminNoticeTone = "error" | "success";
-
-export function AdminNotice({
-  children,
-  tone = "error",
-}: {
-  children: ReactNode;
-  tone?: AdminNoticeTone;
-}) {
-  const className =
-    tone === "success"
-      ? "rounded-md border border-teal/30 bg-[#ecfdf5] px-4 py-3 text-sm font-medium text-teal"
-      : "rounded-md border border-orange/40 bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]";
-
-  return <p className={className}>{children}</p>;
-}
-
 export function AdminOverviewCard({
   header,
   children,

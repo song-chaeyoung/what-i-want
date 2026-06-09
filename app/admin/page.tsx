@@ -6,9 +6,9 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
+import { AdminToastMessage } from "./admin-toast-message";
 import {
   AdminMetric,
-  AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
   formatCurrency,
@@ -28,7 +28,10 @@ export default async function AdminPage() {
   if (!wishesResult.ok) {
     return (
       <section>
-        <AdminNotice>{errorMessages[wishesResult.error]}</AdminNotice>
+        <AdminToastMessage
+          id={`admin-dashboard-wishes-${wishesResult.error}`}
+          message={errorMessages[wishesResult.error]}
+        />
       </section>
     );
   }
@@ -36,7 +39,10 @@ export default async function AdminPage() {
   if (!messagesResult.ok) {
     return (
       <section>
-        <AdminNotice>{errorMessages[messagesResult.error]}</AdminNotice>
+        <AdminToastMessage
+          id={`admin-dashboard-messages-${messagesResult.error}`}
+          message={errorMessages[messagesResult.error]}
+        />
       </section>
     );
   }

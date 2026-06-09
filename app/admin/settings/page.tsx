@@ -3,21 +3,14 @@ import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { ACCOUNT_VISIBILITIES, type AccountVisibility } from "@/src/lib/settings/types";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
+import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminField,
-  AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
   adminInputClassName,
   adminTextareaClassName,
 } from "../admin-ui";
-
-type AdminSettingsPageProps = {
-  searchParams: Promise<{
-    error?: string;
-    saved?: string;
-  }>;
-};
 
 const errorMessages: Record<SettingsError, string> = {
   settings_not_found: "먼저 온보딩을 완료해주세요.",
@@ -50,23 +43,17 @@ const accountVisibilityLabels: Record<AccountVisibility, string> = {
   always_visible: "항상 표시",
 };
 
-export default async function AdminSettingsPage({
-  searchParams,
-}: AdminSettingsPageProps) {
+export default async function AdminSettingsPage() {
   const user = await requireUser();
-  const [params, result] = await Promise.all([
-    searchParams,
-    getSettings(user.id, new DrizzleSettingsRepository()),
-  ]);
-
-  const errorMessage = params.error
-    ? errorMessages[params.error as SettingsError] ?? errorMessages.settings_not_found
-    : null;
+  const result = await getSettings(user.id, new DrizzleSettingsRepository());
 
   if (!result.ok) {
     return (
       <section>
-        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
+        <AdminToastMessage
+          id={`admin-settings-${result.error}`}
+          message={errorMessages[result.error]}
+        />
       </section>
     );
   }
@@ -83,14 +70,6 @@ export default async function AdminSettingsPage({
           />
         }
       />
-
-      {params.saved ? (
-        <AdminNotice tone="success">설정이 저장되었습니다.</AdminNotice>
-      ) : null}
-
-      {errorMessage ? (
-        <AdminNotice>{errorMessage}</AdminNotice>
-      ) : null}
 
       <form action="/api/admin/settings" method="post" className="space-y-4">
         <SettingsSection

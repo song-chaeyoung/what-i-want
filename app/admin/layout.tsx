@@ -1,6 +1,8 @@
+import { Suspense } from "react";
 import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminToastEvents } from "./admin-toast-events";
 import { AdminShellNav } from "./admin-shell-nav";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { BRAND_NAME } from "@/src/lib/design/copy";
@@ -59,6 +61,10 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         </header>
 
         <AdminShellNav />
+
+        <Suspense fallback={null}>
+          <AdminToastEvents />
+        </Suspense>
 
         <div className="w-full px-4 py-4 sm:px-7 sm:py-6">{children}</div>
       </main>

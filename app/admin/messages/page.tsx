@@ -3,9 +3,9 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
+import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminMetric,
-  AdminNotice,
   AdminOverviewCard,
   AdminPageHeader,
   formatCurrency,
@@ -25,7 +25,10 @@ export default async function AdminMessagesPage() {
   if (!result.ok) {
     return (
       <section>
-        <AdminNotice>{errorMessages[result.error]}</AdminNotice>
+        <AdminToastMessage
+          id={`admin-messages-${result.error}`}
+          message={errorMessages[result.error]}
+        />
       </section>
     );
   }
