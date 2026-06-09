@@ -12,7 +12,8 @@ describe("home UI contract", () => {
     expect(source).toContain("PreviewWish");
     expect(source).toContain("SampleGiftImage");
     expect(source).toContain("GiftProgress");
-    expect(source).toContain("HOME_COPY.previewSlug");
+    expect(source).not.toContain("HOME_COPY.previewSlug");
+    expect(source).not.toContain("/b/{HOME_COPY.previewSlug}");
     expect(source).not.toContain('className="pixel-board bg-[#fffdf7] p-5"');
   });
 

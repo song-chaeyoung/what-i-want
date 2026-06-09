@@ -47,7 +47,6 @@ export default async function PublicWishlistPage({
         <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <p className="pub-pill">birthday wishlist</p>
-            <p className="pub-label text-sm">/b/{result.wishlist.slug}</p>
           </div>
           <h1 className="pub-headline mt-5 sm:text-5xl">
             {result.wishlist.title}

@@ -52,6 +52,7 @@ describe("public theme contract", () => {
       '<section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">',
     );
     expect(pageSource).toContain('className="pub-stat p-4"');
+    expect(pageSource).not.toContain("/b/{result.wishlist.slug}");
     expect(pageSource).not.toContain("pub-card pub-card-hero pub-header");
     expect(pageSource).not.toContain("lg:grid-cols-[0.9fr_1.1fr]");
   });

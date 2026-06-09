@@ -24,7 +24,7 @@ const previewWishes = [
 
 const homeSteps = [
   { number: "01", title: "만들기", label: "선물 담기" },
-  { number: "02", title: "공유하기", label: `/b/${HOME_COPY.previewSlug}` },
+  { number: "02", title: "공유하기", label: null },
   { number: "03", title: "마음 받기", label: "메시지 도착" },
 ] as const;
 
@@ -115,9 +115,11 @@ export default async function Home() {
                 <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
                   {step.title}
                 </h2>
-                <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
-                  {step.label}
-                </p>
+                {step.label ? (
+                  <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
+                    {step.label}
+                  </p>
+                ) : null}
               </div>
             ))}
           </div>
@@ -129,9 +131,6 @@ export default async function Home() {
         >
           <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#171717] pb-4">
             <div className="min-w-0">
-              <p className="truncate text-xs font-black text-[#0f766e]">
-                /b/{HOME_COPY.previewSlug}
-              </p>
               <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95] sm:text-3xl">
                 민지님의 공개 위시리스트
               </h2>
