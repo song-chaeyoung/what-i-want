@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 커밋 단계는 이번 요청 범위에서 제외했습니다.
+
 **Goal:** Add `/admin/settings` so owners can edit profile, public link settings, and bank account visibility, then show safe account guidance on `/b/[slug]`.
 
 **Architecture:** Keep HTTP entrypoints in `app/api/**` and domain rules in `src/lib/**`. Store bank account numbers encrypted through an app-level crypto helper. Public wishlist reads only visibility-safe account data from the public repository.
@@ -30,7 +32,7 @@
 - Create: `src/lib/settings/types.ts`
 - Create: `src/lib/settings/service.test.ts`
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 Cover:
 - loads profile, wishlist, and account settings by owner id.
@@ -38,7 +40,7 @@ Cover:
 - rejects empty display name, invalid slug, duplicate slug, invalid birthday, invalid visibility, incomplete account fields.
 - allows clearing account number while keeping an existing encrypted account.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `corepack pnpm test src/lib/settings/service.test.ts`
 Expected: FAIL because `src/lib/settings/service.ts` does not exist.
@@ -49,7 +51,7 @@ Expected: FAIL because `src/lib/settings/service.ts` does not exist.
 - Create: `src/lib/settings/account-crypto.test.ts`
 - Create: `src/lib/settings/account-crypto.ts`
 
-- [ ] **Step 1: Write failing tests**
+- [x] **Step 1: Write failing tests**
 
 Cover:
 - encrypted value does not contain the source account number.
@@ -57,7 +59,7 @@ Cover:
 - empty or missing secret returns an explicit error.
 - malformed ciphertext returns `null`.
 
-- [ ] **Step 2: Run RED**
+- [x] **Step 2: Run RED**
 
 Run: `corepack pnpm test src/lib/settings/account-crypto.test.ts`
 Expected: FAIL because `encryptAccountNumber` is not implemented.
@@ -69,11 +71,11 @@ Expected: FAIL because `encryptAccountNumber` is not implemented.
 - Modify: `src/lib/settings/service.ts`
 - Modify: `src/lib/settings/account-crypto.ts`
 
-- [ ] **Step 1: Implement minimal domain logic**
+- [x] **Step 1: Implement minimal domain logic**
 
 Use `parseWishlistSlug`, `isPublicThemeId`, and `PUBLIC_THEME_IDS`. Default account visibility is `hidden`. Require all bank fields when creating a new account. When updating an existing account, an empty account number means "keep current encrypted number."
 
-- [ ] **Step 2: Run GREEN**
+- [x] **Step 2: Run GREEN**
 
 Run: `corepack pnpm test src/lib/settings/service.test.ts src/lib/settings/account-crypto.test.ts`
 Expected: PASS.
@@ -84,15 +86,15 @@ Expected: PASS.
 - Create: `src/lib/settings/repository.ts`
 - Create: `app/api/admin/settings/route.ts`
 
-- [ ] **Step 1: Add owner-scoped repository**
+- [x] **Step 1: Add owner-scoped repository**
 
 Read from `profiles`, `wishlists`, and `bank_accounts` by `userId` / `ownerId`. Update profile and wishlist in a transaction. Update an existing bank account if present, otherwise insert one.
 
-- [ ] **Step 2: Add authenticated route handler**
+- [x] **Step 2: Add authenticated route handler**
 
 Use `auth()` inside the route handler. Parse both form and JSON requests. Redirect forms to `/admin/settings?saved=1` or `/admin/settings?error=<code>`, and return JSON for API callers.
 
-- [ ] **Step 3: Run targeted tests**
+- [x] **Step 3: Run targeted tests**
 
 Run: `corepack pnpm test src/lib/settings/service.test.ts src/lib/settings/account-crypto.test.ts`
 Expected: PASS.
@@ -103,11 +105,11 @@ Expected: PASS.
 - Create: `app/admin/settings/page.tsx`
 - Modify: `app/admin/layout.tsx`
 
-- [ ] **Step 1: Render server component page**
+- [x] **Step 1: Render server component page**
 
 Use `requireUser()` and `getSettings()` with `DrizzleSettingsRepository`. Render profile fields, wishlist slug/title/theme fields, and bank account fields with visibility options.
 
-- [ ] **Step 2: Link settings in admin nav**
+- [x] **Step 2: Link settings in admin nav**
 
 Add `/admin/settings` to the existing admin layout nav.
 
@@ -119,11 +121,11 @@ Add `/admin/settings` to the existing admin layout nav.
 - Modify: `src/lib/public-wishlist/service.ts`
 - Modify: `app/b/[slug]/page.tsx`
 
-- [ ] **Step 1: Extend public wishlist result**
+- [x] **Step 1: Extend public wishlist result**
 
 Public repository loads the owner's account. Service decrypts only when visibility is `always_visible`, `reveal_on_click`, or `copy_only`; `hidden` returns `null`.
 
-- [ ] **Step 2: Render account guidance**
+- [x] **Step 2: Render account guidance**
 
 Show bank name, holder, and account number for `always_visible`; use `<details>` for `reveal_on_click`; use a copy-only style text for `copy_only`; render nothing for `hidden`.
 
@@ -132,7 +134,7 @@ Show bank name, holder, and account number for `always_visible`; use `<details>`
 **Files:**
 - All changed files
 
-- [ ] **Step 1: Run verification**
+- [x] **Step 1: Run verification**
 
 Run:
 - `corepack pnpm test`
@@ -141,7 +143,7 @@ Run:
 - dummy-env `corepack pnpm build`
 - `git diff --check`
 
-- [ ] **Step 2: Commit**
+- [ ] **Step 2: Commit** (2026-06-09 요청 범위에서 제외)
 
 Run:
 - `git add docs src app`

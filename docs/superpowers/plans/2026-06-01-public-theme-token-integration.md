@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 최신 검증 결과는 `docs/tasks/2026-06-09-global-project-task-check.md`를 기준으로 봅니다.
+
 **Goal:** Apply the downloaded public wishlist design tokens to `/b/[slug]` without changing admin UI, database contracts, or public participation API behavior.
 
 **Architecture:** Keep the existing server-rendered public page and form POST flow. Add a scoped global CSS token file for `.pub-*` classes, import it from `app/globals.css`, then replace public page hard-coded pixel classes with semantic token classes driven by `result.wishlist.themeId`.
@@ -19,7 +21,7 @@
 - Read: `app/b/[slug]/not-found.tsx`
 - Read: `src/lib/wishlist/theme.ts`
 
-- [ ] **Step 1: Write failing contract tests**
+- [x] **Step 1: Write failing contract tests**
 
 Create `src/lib/design/public-theme-contract.test.ts` with these assertions:
 
@@ -84,7 +86,7 @@ describe("public wishlist theme token integration", () => {
 });
 ```
 
-- [ ] **Step 2: Verify the new tests fail before implementation**
+- [x] **Step 2: Verify the new tests fail before implementation**
 
 Run: `corepack pnpm test src/lib/design/public-theme-contract.test.ts`
 
@@ -99,7 +101,7 @@ Expected: FAIL because `app/public-themes.css` does not exist and `/b/[slug]` st
 - Modify: `app/globals.css`
 - Test: `src/lib/design/public-theme-contract.test.ts`
 
-- [ ] **Step 1: Add token stylesheet**
+- [x] **Step 1: Add token stylesheet**
 
 Create `app/public-themes.css` by adapting the downloaded `themes.css` tokens. Keep the `.pub-*` contract, include `pixel_y2k`, `mono_bw`, and `soft_pastel`, and do not add CDN font imports. Use the existing local font variable for pixel text:
 
@@ -119,7 +121,7 @@ For non-pixel themes use:
 --pub-btn-font: var(--font-sans, Arial, Helvetica, sans-serif);
 ```
 
-- [ ] **Step 2: Import the stylesheet**
+- [x] **Step 2: Import the stylesheet**
 
 Modify `app/globals.css` immediately after `@import "tailwindcss";`:
 
@@ -128,7 +130,7 @@ Modify `app/globals.css` immediately after `@import "tailwindcss";`:
 @import "./public-themes.css";
 ```
 
-- [ ] **Step 3: Verify stylesheet contract**
+- [x] **Step 3: Verify stylesheet contract**
 
 Run: `corepack pnpm test src/lib/design/public-theme-contract.test.ts`
 
@@ -143,7 +145,7 @@ Expected: still FAIL on page binding assertions until Task 3 is complete.
 - Modify: `app/b/[slug]/not-found.tsx`
 - Test: `src/lib/design/public-theme-contract.test.ts`
 
-- [ ] **Step 1: Bind the public page root to theme id**
+- [x] **Step 1: Bind the public page root to theme id**
 
 Change the main element in `app/b/[slug]/page.tsx` from the current fixed pixel background to:
 
@@ -151,7 +153,7 @@ Change the main element in `app/b/[slug]/page.tsx` from the current fixed pixel 
 <main className="pub-page min-h-dvh" data-theme={result.wishlist.themeId}>
 ```
 
-- [ ] **Step 2: Replace public visual surfaces with token classes**
+- [x] **Step 2: Replace public visual surfaces with token classes**
 
 Update only public visual classes in `app/b/[slug]/page.tsx`. Keep existing data loading, form action, field names, and `Link`/`a` behavior. Use these semantic mappings:
 
@@ -164,11 +166,11 @@ input/textarea/select -> pub-field
 gift fallback -> pub-fallback
 ```
 
-- [ ] **Step 3: Theme the not-found screen**
+- [x] **Step 3: Theme the not-found screen**
 
 Change `app/b/[slug]/not-found.tsx` to use `pub-page`, `pub-card`, `pub-pill`, and `pub-btn` instead of the fixed pixel classes. Use the default `pixel_y2k` fallback by omitting `data-theme`.
 
-- [ ] **Step 4: Verify contract test passes**
+- [x] **Step 4: Verify contract test passes**
 
 Run: `corepack pnpm test src/lib/design/public-theme-contract.test.ts`
 
@@ -181,25 +183,25 @@ Expected: PASS.
 **Files:**
 - Read changed files only.
 
-- [ ] **Step 1: Run design and theme tests**
+- [x] **Step 1: Run design and theme tests**
 
 Run: `corepack pnpm test src/lib/design/font-contract.test.ts src/lib/design/public-theme-contract.test.ts src/lib/wishlist/theme.test.ts`
 
 Expected: PASS.
 
-- [ ] **Step 2: Run typecheck**
+- [x] **Step 2: Run typecheck**
 
 Run: `corepack pnpm typecheck`
 
 Expected: PASS.
 
-- [ ] **Step 3: Run build**
+- [x] **Step 3: Run build**
 
 Run: `corepack pnpm build`
 
 Expected: PASS, or report the exact build failure if environment variables/database access block the build.
 
-- [ ] **Step 4: Review diff**
+- [x] **Step 4: Review diff**
 
 Run: `git diff -- app/globals.css app/public-themes.css app/b/[slug]/page.tsx app/b/[slug]/not-found.tsx src/lib/design/public-theme-contract.test.ts`
 

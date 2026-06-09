@@ -54,6 +54,19 @@
 - [x] Public Pixel / Admin Calm 비주얼 방향 반영
   - 근거: `app/public-themes.css`, `app/admin/admin-ui.tsx`, `src/lib/design/public-theme-contract.test.ts`, `src/lib/design/admin-theme-contract.test.ts`
 
+## 디자인/UX 참고 요약
+
+Lazyweb 로컬 산출물은 원격에 올릴 대상이 아니라 참고 결론만 이 문서에 반영합니다.
+
+- 공개 페이지는 친구에게 보내는 감성 카드처럼 보여야 하며, 선물 카드와 기여 폼을 같은 문맥에서 빠르게 이해할 수 있어야 합니다.
+  - 근거: `.lazyweb/quick-references/overall-ui-2026-06-02/report.html`
+- 관리자 화면은 공개 페이지 테마와 분리된 운영 UI로 유지합니다. 카드 장식보다 앱 shell, 지표, 조밀한 목록, 짧은 폼을 우선합니다.
+  - 근거: `.lazyweb/quick-references/admin-ui-rebuild-2026-06-02/report.html`
+- 선물 관리 화면은 긴 추가 폼을 먼저 보여주기보다 상태 탭과 리스트를 먼저 보여주고, 선물 추가는 접힘 영역이나 별도 패널로 낮춥니다.
+  - 근거: `.lazyweb/quick-references/admin-wishes-mobile-2026-06-02/report.html`
+- Lazyweb MCP 도구는 해당 리포트 작성 세션에서 직접 노출되지 않았고, 로컬 저장 리포트와 공개 레퍼런스를 근거로 삼았습니다.
+  - 근거: `.lazyweb/quick-references/overall-ui-2026-06-02/report.html`
+
 ## 남은 작업
 
 ### P0: README와 Neon 환경 변수 문서 계약 맞추기
@@ -82,9 +95,10 @@
 
 ### P2: 계획 문서 상태 정리
 
-- [ ] `docs/superpowers/plans/*`의 체크박스를 실제 구현 상태와 맞춥니다.
-- [ ] 완료된 계획, 남은 계획, 더 이상 유효하지 않은 계획을 구분합니다.
-- 근거: public participation, admin settings, public theme 계획 문서의 체크박스는 미완료 상태지만 실제 구현 파일과 테스트가 존재합니다.
+- [x] `docs/superpowers/plans/*`의 체크박스를 실제 구현 상태와 맞췄습니다.
+- [x] 완료된 계획, 남은 계획, 더 이상 유효하지 않은 계획을 구분했습니다.
+- 근거: public participation, admin settings, public theme 계획 문서에 2026-06-09 상태 업데이트를 추가했고, 현재 구현 파일과 테스트 존재 여부를 기준으로 완료 항목을 정리했습니다.
+- 완료 내용: `docs/superpowers/plans/2026-05-15-public-participation-plan.md`, `docs/superpowers/plans/2026-05-15-admin-settings-bank-account-plan.md`, `docs/superpowers/plans/2026-06-01-public-theme-token-integration.md`의 상태를 갱신했습니다. 커밋 단계는 이번 요청 범위에서 제외했습니다.
 - 관련 파일: `docs/superpowers/plans/2026-05-15-public-participation-plan.md`, `docs/superpowers/plans/2026-05-15-admin-settings-bank-account-plan.md`, `docs/superpowers/plans/2026-06-01-public-theme-token-integration.md`
 
 ### P2: 핵심 E2E 또는 실환경 흐름 검증
