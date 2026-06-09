@@ -7,8 +7,21 @@ import { cn } from "@/lib/utils";
 const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.AUTH_URL || "http://localhost:3000"),
   title: "뭐갖고싶어",
   description: "받고 싶은 선물을 링크 하나로 모아 공유하세요.",
+  openGraph: {
+    title: "뭐갖고싶어",
+    description: "받고 싶은 선물을 링크 하나로 모아 공유하세요.",
+    siteName: "뭐갖고싶어",
+    locale: "ko_KR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "뭐갖고싶어",
+    description: "받고 싶은 선물을 링크 하나로 모아 공유하세요.",
+  },
 };
 
 export default function RootLayout({

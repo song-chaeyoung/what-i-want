@@ -65,11 +65,12 @@
 
 ### P1: 개인별/기본 OG 이미지 구현
 
-- [ ] `/b/[slug]/opengraph-image`를 추가해 개인별 공개 위시리스트 OG 이미지를 생성합니다.
-- [ ] 기본 서비스 OG 이미지 또는 metadata의 `openGraph`/`twitter` 필드를 보강합니다.
+- [x] `/b/[slug]/opengraph-image`를 추가해 개인별 공개 위시리스트 OG 이미지를 생성합니다.
+- [x] 기본 서비스 OG 이미지와 metadata의 `openGraph`/`twitter` 필드를 보강했습니다.
 - 근거: 서비스 설계는 개인별 OG 이미지와 기본 서비스 OG 이미지를 포함 범위로 둡니다.
-- 현재 확인: `rg --files app | rg 'opengraph-image'` 결과가 없고, `app/layout.tsx` metadata는 `title`과 `description`만 정의합니다.
-- 관련 파일 후보: `app/b/[slug]/opengraph-image.tsx`, `app/opengraph-image.tsx`, `app/layout.tsx`, `src/lib/public-wishlist/service.ts`
+- 완료 내용: `app/opengraph-image.tsx`, `app/b/[slug]/opengraph-image.tsx`, `app/layout.tsx` metadata를 추가했습니다.
+- 검증: `src/lib/design/og-image-contract.test.ts`, `corepack pnpm test`, `corepack pnpm typecheck`, `corepack pnpm lint`, `corepack pnpm build`
+- 관련 파일: `app/b/[slug]/opengraph-image.tsx`, `app/opengraph-image.tsx`, `app/layout.tsx`, `src/lib/design/og-image-contract.test.ts`
 
 ### P1: 공개 메시지 abuse 방지와 rate limit
 
@@ -116,7 +117,7 @@
 
 - [x] `corepack pnpm test`
   - 결과: 통과
-  - 범위: 21개 테스트 파일 통과, 113개 테스트 통과
+  - 범위: 22개 테스트 파일 통과, 116개 테스트 통과
 
 - [x] `corepack pnpm typecheck`
   - 결과: 통과
@@ -127,6 +128,7 @@
 - [x] `corepack pnpm build`
   - 결과: 통과
   - 빌드 라우트 확인: `/`, `/admin`, `/admin/messages`, `/admin/settings`, `/admin/wishes`, `/api/admin/settings`, `/api/admin/wishes`, `/api/admin/wishes/[id]`, `/api/auth/[...nextauth]`, `/api/onboarding`, `/api/public/wishlists/[slug]/participation`, `/auth/after-login`, `/b/[slug]`, `/login`, `/onboarding`
+  - OG 라우트 확인: `/opengraph-image`, `/b/-/opengraph-image`
 
 ## 전역 점검 루틴
 
