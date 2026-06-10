@@ -256,7 +256,7 @@ function PublicWishCard({
     <article className="gift-card-shell pub-card overflow-hidden">
       <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
         <div
-          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
+          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--pub-divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
             imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
           }`}
           style={
@@ -265,7 +265,7 @@ function PublicWishCard({
               : undefined
           }
         >
-          {!imageUrl ? <PixelGift /> : null}
+          {!imageUrl ? <GiftFallback /> : null}
         </div>
 
         <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_220px]">
@@ -289,7 +289,7 @@ function PublicWishCard({
             ) : null}
           </div>
 
-          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--pub-ink)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
+          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--pub-divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
             <p className="pub-label text-xs">gift progress</p>
             <div>
               <p className="text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
@@ -322,7 +322,7 @@ function PublicWishCard({
       </div>
 
       {canFund ? (
-        <details className="send-heart-section border-t-2 border-[var(--pub-ink)]">
+        <details className="send-heart-section border-t-2 border-[var(--pub-divider-color)]">
           <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--pub-accent)] [&::-webkit-details-marker]:hidden">
             {PUBLIC_WISHLIST_COPY.fundCta}
           </summary>
@@ -331,7 +331,7 @@ function PublicWishCard({
               demo ? undefined : `/api/public/wishlists/${slug}/participation`
             }
             method="post"
-            className="space-y-4 border-t-2 border-[var(--pub-ink)] p-5"
+            className="space-y-4 border-t-2 border-[var(--pub-divider-color)] p-5"
           >
             <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
               {PUBLIC_WISHLIST_COPY.participationTitle}
@@ -390,16 +390,37 @@ function PublicWishCard({
   );
 }
 
-function PixelGift() {
+function GiftFallback() {
   return (
-    <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827] lg:h-28 lg:w-28">
-      <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
-      <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
-      <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-[10px] font-black text-[#4c1d95] lg:text-sm">
-        GIFT
+    <>
+      <div className="gm gm-pixel">
+        <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827] lg:h-28 lg:w-28">
+          <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
+          <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
+          <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-[10px] font-black text-[#4c1d95] lg:text-sm">
+            GIFT
+          </div>
+          <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />
+        </div>
       </div>
-      <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />
-    </div>
+      <div className="gm gm-line">
+        <div className="grid h-16 w-16 grid-cols-4 grid-rows-4 border-[1.5px] border-[#111] bg-white lg:h-28 lg:w-28">
+          <div className="col-span-4 border-b-[1.5px] border-[#111]" />
+          <div className="col-span-1 row-span-3 border-r-[1.5px] border-[#111]" />
+          <div className="col-span-2 row-span-3 grid place-items-center text-[10px] font-black tracking-[1.6px] text-[#111] lg:text-sm">
+            GIFT
+          </div>
+          <div className="col-span-1 row-span-3 border-l-[1.5px] border-[#111]" />
+        </div>
+      </div>
+      <div className="gm gm-soft">
+        <div className="grid h-16 w-16 place-items-center rounded-3xl bg-[#ffe1ec] lg:h-28 lg:w-28">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/70 text-[10px] font-black text-[#bd6595] lg:h-16 lg:w-16 lg:text-sm">
+            GIFT
+          </span>
+        </div>
+      </div>
+    </>
   );
 }
 

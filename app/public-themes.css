@@ -28,6 +28,7 @@
     --pub-point: #f97316;
     --pub-on-point: #fff;
     --pub-border: 2px solid #171717;
+    --pub-divider-color: #171717;
     --pub-shadow: 6px 6px 0 #111827;
     --pub-shadow-lg: 8px 8px 0 #111827;
     --pub-shadow-sm: 3px 3px 0 #111827;
@@ -79,7 +80,7 @@
     --pub-headline-on-header: #fff;
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 900;
-    --pub-headline-size: 34px;
+    --pub-headline-size: 30px;
     --pub-headline-lh: 1.18;
     --pub-headline-ls: -1px;
     --pub-header-sub: rgba(255, 255, 255, 0.6);
@@ -93,6 +94,7 @@
     --pub-point: #111;
     --pub-on-point: #fff;
     --pub-border: 1.5px solid #111;
+    --pub-divider-color: #111;
     --pub-shadow: none;
     --pub-shadow-lg: none;
     --pub-shadow-sm: none;
@@ -144,7 +146,7 @@
     --pub-headline-on-header: #bd6595;
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 800;
-    --pub-headline-size: 32px;
+    --pub-headline-size: 30px;
     --pub-headline-lh: 1.3;
     --pub-headline-ls: -0.4px;
     --pub-header-sub: #7fb8ab;
@@ -158,6 +160,7 @@
     --pub-point: #f79f97;
     --pub-on-point: #fff;
     --pub-border: none;
+    --pub-divider-color: #f0dfe9;
     --pub-shadow: 0 10px 28px rgba(150, 120, 160, 0.16);
     --pub-shadow-lg: 0 14px 32px rgba(150, 120, 160, 0.18);
     --pub-shadow-sm: 0 6px 16px rgba(150, 120, 160, 0.2);
