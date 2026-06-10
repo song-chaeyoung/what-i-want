@@ -6,9 +6,8 @@ import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminField,
-  AdminOverviewCard,
-  AdminPageHeader,
   adminInputClassName,
+  adminPrimaryButtonClassName,
   adminTextareaClassName,
 } from "../admin-ui";
 
@@ -62,15 +61,6 @@ export default async function AdminSettingsPage() {
 
   return (
     <section className="space-y-4">
-      <AdminOverviewCard
-        header={
-          <AdminPageHeader
-            title="설정"
-            description="공개 페이지와 계좌 안내를 관리합니다."
-          />
-        }
-      />
-
       <form action="/api/admin/settings" method="post" className="space-y-4">
         <SettingsSection
           title="프로필"
@@ -80,7 +70,7 @@ export default async function AdminSettingsPage() {
             <AdminField
               label="이름"
               htmlFor="displayName"
-              badge="필수"
+              required
               hint="80자 이내로 표시됩니다."
             >
               <input
@@ -95,7 +85,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="생일" htmlFor="birthday" badge="선택" hint="공개 페이지 안내에 사용됩니다.">
+            <AdminField label="생일" htmlFor="birthday" hint="공개 페이지 안내에 사용됩니다.">
               <input
                 id="birthday"
                 name="birthday"
@@ -106,7 +96,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="소개" htmlFor="description" badge="선택" hint="짧게 비워두어도 됩니다.">
+            <AdminField label="소개" htmlFor="description" hint="짧게 비워두어도 됩니다.">
               <textarea
                 id="description"
                 name="description"
@@ -126,7 +116,7 @@ export default async function AdminSettingsPage() {
             <AdminField
               label="공개 주소"
               htmlFor="wishlistSlug"
-              badge="필수"
+              required
               hint="영문 소문자, 숫자, 하이픈만 사용할 수 있습니다."
             >
               <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
@@ -147,7 +137,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="제목" htmlFor="wishlistTitle" badge="필수" hint="120자 이내로 입력해주세요.">
+            <AdminField label="제목" htmlFor="wishlistTitle" required hint="120자 이내로 입력해주세요.">
               <input
                 id="wishlistTitle"
                 name="wishlistTitle"
@@ -160,7 +150,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="테마" htmlFor="themeId" badge="필수" hint="공개 페이지에만 적용됩니다.">
+            <AdminField label="테마" htmlFor="themeId" required hint="공개 페이지에만 적용됩니다.">
               <select
                 id="themeId"
                 name="themeId"
@@ -182,7 +172,7 @@ export default async function AdminSettingsPage() {
           description="계좌번호는 저장 전에 암호화됩니다."
         >
           <SettingsRow>
-            <AdminField label="은행" htmlFor="bankName" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+            <AdminField label="은행" htmlFor="bankName" hint="계좌를 공개할 때 필요합니다.">
               <input
                 id="bankName"
                 name="bankName"
@@ -194,7 +184,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="예금주" htmlFor="accountHolder" badge="선택" hint="계좌를 공개할 때 필요합니다.">
+            <AdminField label="예금주" htmlFor="accountHolder" hint="계좌를 공개할 때 필요합니다.">
               <input
                 id="accountHolder"
                 name="accountHolder"
@@ -209,7 +199,6 @@ export default async function AdminSettingsPage() {
             <AdminField
               label="계좌번호"
               htmlFor="accountNumber"
-              badge="선택"
               hint="기존 계좌는 변경할 때만 다시 입력합니다."
             >
               <input
@@ -225,7 +214,7 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="공개 방식" htmlFor="accountVisibility" badge="필수" hint="방문자에게 보이는 방식을 정합니다.">
+            <AdminField label="공개 방식" htmlFor="accountVisibility" required hint="방문자에게 보이는 방식을 정합니다.">
               <select
                 id="accountVisibility"
                 name="accountVisibility"
@@ -242,11 +231,8 @@ export default async function AdminSettingsPage() {
           </SettingsRow>
         </SettingsSection>
 
-        <div>
-          <button
-            type="submit"
-            className="h-11 rounded-md border border-ink bg-ink px-5 text-sm font-semibold text-white transition-colors hover:bg-black"
-          >
+        <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-[#fafaf9]/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
+          <button type="submit" className={adminPrimaryButtonClassName}>
             저장하기
           </button>
         </div>

@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminToastEvents } from "./admin-toast-events";
-import { AdminShellNav } from "./admin-shell-nav";
+import { AdminPageTitle, AdminShellNav } from "./admin-shell-nav";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { BRAND_NAME } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -32,7 +32,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
 
         <AdminShellNav variant="desktop" />
 
-        <div className="mt-6 rounded-md border border-line bg-[#fafaf9] p-3">
+        <div className="mt-6 border-t border-line px-1.5 pt-4">
           <div className="text-[11px] font-semibold text-zinc-500">계정</div>
           <p className="mt-1.5 break-all text-xs font-medium text-zinc-600">
             {user.email}
@@ -44,10 +44,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
           <div className="min-w-0 flex-1">
             <div className="truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px]">
-              위시리스트 관리
-            </div>
-            <div className="mt-0.5 hidden max-w-none truncate text-[12.5px] text-zinc-400 sm:block">
-              {user.email}
+              <AdminPageTitle />
             </div>
           </div>
           {state.wishlistSlug ? (

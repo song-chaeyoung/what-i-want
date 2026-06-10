@@ -5,15 +5,24 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 const adminNavItems = [
-  { href: "/admin", label: "대시보드", eng: "Dashboard", icon: LayoutDashboard },
-  { href: "/admin/wishes", label: "선물 관리", eng: "Gifts", icon: Gift },
-  { href: "/admin/messages", label: "메시지함", eng: "Messages", icon: Inbox },
-  { href: "/admin/settings", label: "설정", eng: "Settings", icon: Settings },
+  { href: "/admin", label: "대시보드", icon: LayoutDashboard },
+  { href: "/admin/wishes", label: "선물 관리", icon: Gift },
+  { href: "/admin/messages", label: "메시지함", icon: Inbox },
+  { href: "/admin/settings", label: "설정", icon: Settings },
 ];
 
 type AdminShellNavProps = {
   variant?: "mobile" | "desktop";
 };
+
+export function AdminPageTitle() {
+  const pathname = usePathname();
+  const activeItem = adminNavItems.find((item) =>
+    isActivePath(pathname, item.href),
+  );
+
+  return <>{activeItem?.label ?? "위시리스트 관리"}</>;
+}
 
 export function AdminShellNav({ variant = "mobile" }: AdminShellNavProps) {
   const pathname = usePathname();
@@ -31,21 +40,14 @@ export function AdminShellNav({ variant = "mobile" }: AdminShellNavProps) {
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={[
-                "flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left transition-colors",
+                "flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-[13.5px] font-semibold transition-colors",
                 isActive
                   ? "bg-white text-ink shadow-sm ring-1 ring-line"
                   : "text-zinc-600 hover:bg-white/70 hover:text-ink",
               ].join(" ")}
             >
               <Icon aria-hidden="true" className="size-4 shrink-0" />
-              <span className="min-w-0">
-                <span className="block text-[13.5px] font-semibold">
-                  {item.label}
-                </span>
-                <span className="mt-0.5 block text-[9px] font-bold uppercase text-zinc-400">
-                  {item.eng}
-                </span>
-              </span>
+              {item.label}
             </Link>
           );
         })}

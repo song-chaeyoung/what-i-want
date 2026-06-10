@@ -9,10 +9,11 @@ import type { WishItemRecord } from "@/src/lib/wishes/types";
 import { AdminToastMessage } from "./admin-toast-message";
 import {
   AdminMetric,
-  AdminOverviewCard,
-  AdminPageHeader,
+  AdminMetricGroup,
+  adminSecondaryButtonClassName,
   formatCurrency,
 } from "./admin-ui";
+import { CopyPublicLinkButton } from "./copy-public-link-button";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -56,36 +57,41 @@ export default async function AdminPage() {
 
   return (
     <section className="space-y-4">
-      <AdminOverviewCard
-        header={
-          <AdminPageHeader
-            eyebrow="Overview"
-            title="공개 위시리스트"
-            description="선물 등록, 메시지 확인, 모인 금액을 한 화면에서 빠르게 점검합니다."
-            actionHref="/admin/wishes"
-            actionLabel="선물 관리하기"
-            actionVariant="primary"
-          />
-        }
-      >
-        <div className="grid gap-3 sm:grid-cols-3">
-          <AdminMetric
-            label="선물"
-            value={`${wishesResult.items.length}개`}
-            detail="등록된 공개 항목"
-          />
-          <AdminMetric
-            label="메시지"
-            value={`${messagesResult.messages.length}개`}
-            detail="도착한 마음"
-          />
-          <AdminMetric
-            label="모인 금액"
-            value={formatCurrency(totalFundedAmount)}
-            detail="전체 선물 기준"
-          />
+      <AdminMetricGroup>
+        <AdminMetric
+          label="선물"
+          value={`${wishesResult.items.length}개`}
+          detail="등록된 공개 항목"
+        />
+        <AdminMetric
+          label="메시지"
+          value={`${messagesResult.messages.length}개`}
+          detail="도착한 마음"
+        />
+        <AdminMetric
+          label="모인 금액"
+          value={formatCurrency(totalFundedAmount)}
+          detail="전체 선물 기준"
+        />
+      </AdminMetricGroup>
+
+      <div className="flex flex-col gap-2 rounded-md border border-line bg-white px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
+        <div className="min-w-0">
+          <p className="text-xs font-semibold text-zinc-500">내 공개 주소</p>
+          <p className="mt-1 truncate text-sm font-semibold text-ink">
+            /b/{wishesResult.wishlist.slug}
+          </p>
         </div>
-      </AdminOverviewCard>
+        <div className="flex shrink-0 gap-2">
+          <CopyPublicLinkButton slug={wishesResult.wishlist.slug} />
+          <Link
+            href={`/b/${wishesResult.wishlist.slug}`}
+            className={adminSecondaryButtonClassName}
+          >
+            열어 보기
+          </Link>
+        </div>
+      </div>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DashboardQueue

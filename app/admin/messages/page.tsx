@@ -6,8 +6,9 @@ import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminMetric,
-  AdminOverviewCard,
-  AdminPageHeader,
+  AdminMetricGroup,
+  adminPrimaryButtonClassName,
+  adminSecondaryButtonClassName,
   formatCurrency,
 } from "../admin-ui";
 
@@ -35,19 +36,9 @@ export default async function AdminMessagesPage() {
 
   return (
     <section className="space-y-4">
-      <AdminOverviewCard
-        header={
-          <AdminPageHeader
-            title="메시지함"
-            description="공개 페이지에서 도착한 마음을 한곳에서 확인합니다."
-          />
-        }
-      >
-        <AdminMetric
-          label="받은 메시지"
-          value={`${result.messages.length}개`}
-        />
-      </AdminOverviewCard>
+      <AdminMetricGroup>
+        <AdminMetric label="받은 메시지" value={`${result.messages.length}개`} />
+      </AdminMetricGroup>
 
       {result.messages.length > 0 ? (
         <div className="divide-y divide-line rounded-md border border-line bg-white">
@@ -64,14 +55,11 @@ export default async function AdminMessagesPage() {
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Link
               href={`/b/${result.wishlist.slug}`}
-              className="inline-flex h-9 items-center justify-center rounded-md border border-ink bg-ink px-3 text-sm font-semibold text-white transition-colors hover:bg-black"
+              className={adminPrimaryButtonClassName}
             >
               공개 페이지 보기
             </Link>
-            <Link
-              href="/admin/wishes"
-              className="inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100"
-            >
+            <Link href="/admin/wishes" className={adminSecondaryButtonClassName}>
               선물 관리하기
             </Link>
           </div>
@@ -86,7 +74,7 @@ function MessageRow({ message }: { message: AdminMessageRecord }) {
     <article className="grid gap-3 px-3.5 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="rounded-full border border-[#f3d7c7] bg-[#fffaf7] px-2 py-0.5 text-xs font-semibold text-[#9a3412]">
+          <span className="rounded-full bg-[#fff7ed] px-2 py-0.5 text-xs font-semibold text-[#9a3412]">
             {message.wishTitle ?? "선물 없음"}
           </span>
           <span className="text-xs font-semibold text-zinc-500">

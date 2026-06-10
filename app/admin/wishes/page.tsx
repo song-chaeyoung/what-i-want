@@ -1,3 +1,4 @@
+import { Plus } from "lucide-react";
 import Link from "next/link";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
@@ -8,9 +9,10 @@ import { AdminToastMessage } from "../admin-toast-message";
 import {
   AdminField,
   AdminMetric,
-  AdminOverviewCard,
-  AdminPageHeader,
+  AdminMetricGroup,
   adminInputClassName,
+  adminPrimaryButtonClassName,
+  adminSecondaryButtonClassName,
   adminTextareaClassName,
   formatCurrency,
 } from "../admin-ui";
@@ -35,10 +37,10 @@ const errorMessages: Record<string, string> = {
 const statusOptions: WishStatus[] = ["open", "paused", "fulfilled", "hidden"];
 
 const statusBadgeClassNames: Record<WishStatus, string> = {
-  open: "border-[#bbf7d0] bg-[#ecfdf5] text-[#047857]",
-  paused: "border-[#fed7aa] bg-[#fff7ed] text-[#9a3412]",
-  fulfilled: "border-[#dbeafe] bg-[#eff6ff] text-[#1d4ed8]",
-  hidden: "border-zinc-200 bg-[#f4f4f5] text-zinc-600",
+  open: "bg-[#ecfdf5] text-[#047857]",
+  paused: "bg-[#fff7ed] text-[#9a3412]",
+  fulfilled: "bg-[#eff6ff] text-[#1d4ed8]",
+  hidden: "bg-[#f4f4f5] text-zinc-600",
 };
 
 const statusDotClassNames: Record<WishStatus, string> = {
@@ -94,70 +96,58 @@ export default async function AdminWishesPage({
 
   return (
     <section className="space-y-4">
-      <AdminOverviewCard
-        header={
-          <AdminPageHeader
-            title="선물 관리"
-            description="등록된 선물과 모인 금액을 빠르게 확인하고 관리합니다."
-          />
-        }
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          <AdminMetric
-            label="총 선물"
-            value={`${result.items.length}개`}
-          />
-          <AdminMetric
-            label="모인 금액"
-            value={formatCurrency(totalFundedAmount)}
-          />
-        </div>
-      </AdminOverviewCard>
+      <AdminMetricGroup>
+        <AdminMetric label="총 선물" value={`${result.items.length}개`} />
+        <AdminMetric label="모인 금액" value={formatCurrency(totalFundedAmount)} />
+      </AdminMetricGroup>
 
-      <nav
-        aria-label="선물 상태 필터"
-        className="flex overflow-x-auto rounded-md border border-line bg-white p-1"
-      >
-        <Link
-          href="/admin/wishes"
-          className={`flex h-9 flex-none items-center gap-2 rounded-[7px] px-3 text-sm font-semibold transition-colors ${
-            selectedStatus
-              ? "text-zinc-600 hover:bg-[#fafaf9]"
-              : "bg-[#f4f4f3] text-ink"
-          }`}
-        >
-          전체
-          <span className="rounded bg-white/80 px-1.5 text-xs text-zinc-500">
-            {result.items.length}
-          </span>
-        </Link>
-        {statusOptions.map((status) => (
+      <nav aria-label="선물 상태 필터" className="border-b border-line">
+        <div className="flex gap-4 overflow-x-auto">
           <Link
-            key={status}
-            href={`/admin/wishes?status=${status}`}
-            className={`flex h-9 flex-none items-center gap-2 rounded-[7px] px-3 text-sm font-semibold transition-colors ${
-              selectedStatus === status
-                ? "bg-[#f4f4f3] text-ink"
-                : "text-zinc-600 hover:bg-[#fafaf9]"
+            href="/admin/wishes"
+            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+              selectedStatus
+                ? "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"
+                : "border-ink text-ink"
             }`}
           >
-            {getWishStatusLabel(status)}
-            <span className="rounded bg-white/80 px-1.5 text-xs text-zinc-500">
-              {statusCounts[status]}
+            전체
+            <span className="text-xs font-medium text-zinc-400">
+              {result.items.length}
             </span>
           </Link>
-        ))}
+          {statusOptions.map((status) => (
+            <Link
+              key={status}
+              href={`/admin/wishes?status=${status}`}
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+                selectedStatus === status
+                  ? "border-ink text-ink"
+                  : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"
+              }`}
+            >
+              {getWishStatusLabel(status)}
+              <span className="text-xs font-medium text-zinc-400">
+                {statusCounts[status]}
+              </span>
+            </Link>
+          ))}
+        </div>
       </nav>
 
       <details
         id="create-wish"
         open={result.items.length === 0 && !selectedStatus}
-        className="rounded-md border border-line bg-white"
+        className="group rounded-md border border-line bg-white"
       >
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
-          <span>선물 추가</span>
-          <span className="rounded-md border border-line bg-[#fbfbfa] px-2 py-1 text-xs text-zinc-600">
-            입력
+          <span className="flex items-center gap-1.5">
+            <Plus aria-hidden="true" className="size-4" />
+            선물 추가
+          </span>
+          <span className="text-xs font-semibold text-zinc-500">
+            <span className="group-open:hidden">펼치기</span>
+            <span className="hidden group-open:inline">접기</span>
           </span>
         </summary>
         <form
@@ -220,10 +210,7 @@ export default async function AdminWishesPage({
           </div>
 
           <div className="md:col-span-2">
-            <button
-              type="submit"
-              className="h-10 rounded-md border border-teal bg-teal px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0f766e]"
-            >
+            <button type="submit" className={adminPrimaryButtonClassName}>
               추가하기
             </button>
           </div>
@@ -243,7 +230,7 @@ export default async function AdminWishesPage({
             </p>
             <Link
               href={emptyStateHref}
-              className="mt-4 inline-flex h-9 items-center rounded-md border border-teal bg-white px-3 text-sm font-semibold text-teal transition-colors hover:bg-[#ecfdf5]"
+              className={`${adminSecondaryButtonClassName} mt-4`}
             >
               {emptyStateCta}
             </Link>
@@ -261,7 +248,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
       : 0;
 
   return (
-    <details className="rounded-md border border-line bg-white">
+    <details className="group rounded-md border border-line bg-white">
       <summary className="flex cursor-pointer list-none items-start gap-3 p-3 transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
         <WishThumbnail item={item} />
         <div className="min-w-0 flex-1">
@@ -270,7 +257,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               {item.title}
             </h3>
             <span
-              className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full border px-2 text-xs font-bold ${statusBadgeClassNames[item.status]}`}
+              className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[item.status]}`}
             >
               <span
                 aria-hidden="true"
@@ -287,8 +274,9 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
             <div className="h-full rounded-full bg-teal" style={{ width: `${progress}%` }} />
           </div>
         </div>
-        <span className="shrink-0 rounded-md border border-line bg-[#fbfbfa] px-2 py-1 text-xs font-semibold text-zinc-600">
-          수정
+        <span className="shrink-0 py-1 text-xs font-semibold text-teal">
+          <span className="group-open:hidden">수정</span>
+          <span className="hidden group-open:inline">닫기</span>
         </span>
       </summary>
 
@@ -371,10 +359,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           </div>
 
           <div className="md:col-span-2">
-            <button
-              type="submit"
-              className="h-10 rounded-md border border-teal bg-teal px-4 text-sm font-semibold text-white transition-colors hover:bg-[#0f766e]"
-            >
+            <button type="submit" className={adminPrimaryButtonClassName}>
               저장
             </button>
           </div>
@@ -398,7 +383,7 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
   return (
     <div
       aria-hidden="true"
-      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md border border-line bg-[#f4f4f3] bg-cover bg-center text-[11px] font-bold text-teal"
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#f4f4f3] bg-cover bg-center text-[11px] font-bold text-teal"
       style={
         item.imageUrl
           ? { backgroundImage: `url(${JSON.stringify(item.imageUrl)})` }

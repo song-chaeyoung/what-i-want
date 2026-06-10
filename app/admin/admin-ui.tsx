@@ -1,65 +1,15 @@
 import type { ReactNode } from "react";
-import Link from "next/link";
 
-export function AdminOverviewCard({
-  header,
-  children,
-}: {
-  header: ReactNode;
-  children?: ReactNode;
-}) {
+export const adminPrimaryButtonClassName =
+  "inline-flex h-9 items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black";
+
+export const adminSecondaryButtonClassName =
+  "inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100";
+
+export function AdminMetricGroup({ children }: { children: ReactNode }) {
   return (
-    <div className="rounded-md border border-line bg-[#fbfbfa] p-4 sm:p-5">
-      <div className="space-y-4">
-        <div className="space-y-3">
-          {header}
-        </div>
-        {children}
-      </div>
-    </div>
-  );
-}
-
-export function AdminPageHeader({
-  actionHref,
-  actionLabel = "공개 페이지 보기",
-  actionVariant = "secondary",
-  description,
-  eyebrow,
-  title,
-}: {
-  actionHref?: string;
-  actionLabel?: string;
-  actionVariant?: "primary" | "secondary";
-  description?: string;
-  eyebrow?: string;
-  title: string;
-}) {
-  const actionClassName =
-    actionVariant === "primary"
-      ? "inline-flex h-9 self-start items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black"
-      : "inline-flex h-9 self-start items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100";
-
-  return (
-    <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-      <div>
-        {eyebrow ? (
-          <p className="text-xs font-bold uppercase text-teal">{eyebrow}</p>
-        ) : null}
-        <h2 className="mt-1 text-lg font-extrabold tracking-normal text-ink">
-          {title}
-        </h2>
-        {description ? (
-          <p className="mt-1.5 max-w-xl text-sm leading-6 text-zinc-600">
-            {description}
-          </p>
-        ) : null}
-      </div>
-      {actionHref ? (
-        <Link href={actionHref} className={actionClassName}>
-          {actionLabel}
-        </Link>
-      ) : null}
+    <div className="grid divide-y divide-line overflow-hidden rounded-md border border-line bg-white sm:auto-cols-fr sm:grid-flow-col sm:divide-x sm:divide-y-0">
+      {children}
     </div>
   );
 }
@@ -68,26 +18,15 @@ export function AdminMetric({
   label,
   value,
   detail,
-  variant = "card",
 }: {
   label: string;
   value: string;
   detail?: string;
-  variant?: "card" | "inline";
 }) {
-  if (variant === "inline") {
-    return (
-      <div className="min-w-0">
-        <p className="text-xs font-semibold text-zinc-500">{label}</p>
-        <p className="mt-1 truncate text-lg font-extrabold text-ink">{value}</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="rounded-md border border-line bg-white px-3.5 py-3">
+    <div className="min-w-0 px-3.5 py-3">
       <p className="text-xs font-semibold text-zinc-500">{label}</p>
-      <p className="mt-1 text-xl font-extrabold text-ink">{value}</p>
+      <p className="mt-1 truncate text-xl font-extrabold text-ink">{value}</p>
       {detail ? (
         <p className="mt-1 text-xs leading-5 text-zinc-500">{detail}</p>
       ) : null}
@@ -98,31 +37,29 @@ export function AdminMetric({
 export function AdminField({
   label,
   htmlFor,
-  badge,
+  required = false,
   hint,
   children,
 }: {
   label: string;
   htmlFor: string;
-  badge?: string;
+  required?: boolean;
   hint?: string;
   children: ReactNode;
 }) {
   return (
     <div className="space-y-2">
-      <div className="flex items-center justify-between gap-3">
-        <label
-          htmlFor={htmlFor}
-          className="text-sm font-semibold text-zinc-700"
-        >
-          {label}
-        </label>
-        {badge ? (
-          <span className="rounded-full border border-line bg-[#fafaf9] px-2 py-0.5 text-xs font-semibold text-zinc-500">
-            {badge}
+      <label
+        htmlFor={htmlFor}
+        className="inline-flex items-center gap-1 text-sm font-semibold text-zinc-700"
+      >
+        {label}
+        {required ? (
+          <span aria-label="필수" className="text-rose-500">
+            *
           </span>
         ) : null}
-      </div>
+      </label>
       {children}
       {hint ? <p className="text-xs leading-5 text-zinc-500">{hint}</p> : null}
     </div>
