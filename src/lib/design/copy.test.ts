@@ -13,6 +13,7 @@ describe("visual system copy", () => {
       headline: "뭐갖고싶어",
       eyebrow: "생일 위시리스트",
       description: "받고 싶은 선물을 링크 하나로 모아 친구들에게 공유해요.",
+      subDescription: "친구는 로그인 없이 축하 메시지와 마음을 보낼 수 있어요.",
       cta: "내 위시리스트 만들기",
       previewSlug: "birthday-wish",
     });

@@ -28,12 +28,12 @@ describe("Mona pixel font integration", () => {
 
   test("applies the pixel font to public brand surfaces", () => {
     const homePage = readFileSync(join(root, "app/page.tsx"), "utf8");
-    const publicPage = readFileSync(
-      join(root, "app/b/[slug]/page.tsx"),
+    const publicView = readFileSync(
+      join(root, "components/public-wishlist-view.tsx"),
       "utf8",
     );
 
     expect(homePage).toContain("font-pixel");
-    expect(publicPage).toContain("font-pixel");
+    expect(publicView).toContain("font-pixel");
   });
 });

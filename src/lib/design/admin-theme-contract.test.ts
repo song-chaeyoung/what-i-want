@@ -27,12 +27,13 @@ describe("admin calm theme contract", () => {
     const adminMessagesSource = readFileSync(adminMessagesPagePath, "utf8");
     const adminSettingsSource = readFileSync(adminSettingsPagePath, "utf8");
 
-    expect(adminUiSource).toContain("export function AdminOverviewCard");
-    expect(adminUiSource).toContain("export function AdminPageHeader");
+    expect(adminUiSource).toContain("export function AdminMetricGroup");
     expect(adminUiSource).toContain("export function AdminMetric");
     expect(adminUiSource).toContain("export function AdminField");
     expect(adminUiSource).toContain("export const adminInputClassName");
     expect(adminUiSource).toContain("export const adminTextareaClassName");
+    expect(adminUiSource).toContain("export const adminPrimaryButtonClassName");
+    expect(adminUiSource).toContain("export const adminSecondaryButtonClassName");
     expect(adminUiSource).not.toContain("/b/{slug}");
 
     expect(adminPageSource).toContain('from "./admin-ui"');
@@ -40,18 +41,13 @@ describe("admin calm theme contract", () => {
       expect(source).toContain('from "../admin-ui"');
     }
 
-    expect(adminPageSource).toContain("<AdminOverviewCard");
-    expect(adminPageSource).toContain("<AdminPageHeader");
+    expect(adminPageSource).toContain("<AdminMetricGroup");
     expect(adminPageSource).toContain("<AdminMetric");
-    expect(adminWishesSource).toContain("<AdminOverviewCard");
-    expect(adminWishesSource).toContain("<AdminPageHeader");
+    expect(adminWishesSource).toContain("<AdminMetricGroup");
     expect(adminWishesSource).toContain("<AdminMetric");
     expect(adminWishesSource).toContain("<AdminField");
-    expect(adminMessagesSource).toContain("<AdminOverviewCard");
-    expect(adminMessagesSource).toContain("<AdminPageHeader");
+    expect(adminMessagesSource).toContain("<AdminMetricGroup");
     expect(adminMessagesSource).toContain("<AdminMetric");
-    expect(adminSettingsSource).toContain("<AdminOverviewCard");
-    expect(adminSettingsSource).toContain("<AdminPageHeader");
     expect(adminSettingsSource).toContain("<AdminField");
     expect(adminWishesSource).not.toContain("function Field");
     expect(adminSettingsSource).not.toContain("function Field");
@@ -84,7 +80,8 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("backdrop-blur");
     expect(source).toContain("shadow-[0_1px_0_rgba(24,24,27,0.02)]");
     expect(source).toContain("px-4 py-2");
-    expect(source).toContain("rounded-md border border-line bg-[#fafaf9]");
+    expect(source).toContain("border-t border-line px-1.5 pt-4");
+    expect(source).toContain("<AdminPageTitle />");
     expect(source).toContain("<AdminShellNav />");
     expect(source).toContain("state.wishlistSlug ? (");
     expect(source).toContain('href={`/b/${state.wishlistSlug}`}');
@@ -154,8 +151,6 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain('title="선물 관리"');
-    expect(source).toContain('description="등록된 선물과 모인 금액을 빠르게 확인하고 관리합니다."');
     expect(source).not.toContain("slug={result.wishlist.slug}");
     expect(adminUiSource).not.toContain("slug?: string;");
     expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
@@ -201,19 +196,22 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("emptyStateCta");
   });
 
-  test("compresses admin wishes into an overview band and segmented status toolbar", () => {
+  test("compresses admin wishes into a metric band and underline status tabs", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
     expect(source).toContain("const totalFundedAmount = result.items.reduce(");
     expect(source).toContain("const statusCounts: Record<WishStatus, number>");
-    expect(source).toContain("<AdminOverviewCard");
-    expect(adminUiSource).toContain("rounded-md border border-line bg-[#fbfbfa] p-4 sm:p-5");
-    expect(source).toContain("grid gap-3 sm:grid-cols-2");
+    expect(source).toContain("<AdminMetricGroup");
+    expect(adminUiSource).toContain(
+      "divide-y divide-line overflow-hidden rounded-md border border-line bg-white",
+    );
     expect(source).toContain("<AdminMetric");
     expect(source).toContain('label="총 선물"');
     expect(source).toContain('label="모인 금액"');
-    expect(source).toContain("flex overflow-x-auto rounded-md border border-line bg-white p-1");
+    expect(source).toContain('aria-label="선물 상태 필터"');
+    expect(source).toContain("border-b-2");
+    expect(source).toContain("border-ink text-ink");
     expect(source).toContain("statusCounts[status]");
     expect(source).not.toContain("shadow-pub");
   });
@@ -237,7 +235,7 @@ describe("admin calm theme contract", () => {
   test("renders admin wishes as list rows with thumbnails and collapsed edits", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
 
-    expect(source).toContain('<details className="rounded-md border border-line bg-white">');
+    expect(source).toContain('<details className="group rounded-md border border-line bg-white">');
     expect(source).toContain('className="flex cursor-pointer list-none items-start gap-3 p-3');
     expect(source).toContain("<WishThumbnail item={item} />");
     expect(source).toContain("function WishThumbnail");
@@ -263,8 +261,7 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminMessagesPagePath, "utf8");
 
     expect(source).toContain('import Link from "next/link";');
-    expect(source).toContain("bg-[#fffaf7]");
-    expect(source).toContain("border-[#f3d7c7]");
+    expect(source).toContain("bg-[#fff7ed]");
     expect(source).toContain('href={`/b/${result.wishlist.slug}`}');
     expect(source).toContain('href="/admin/wishes"');
   });
@@ -273,8 +270,6 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain('title="설정"');
-    expect(source).toContain('description="공개 페이지와 계좌 안내를 관리합니다."');
     expect(source).not.toContain("slug={settings.wishlist.slug}");
     expect(adminUiSource).not.toContain("slug?: string;");
     expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
@@ -296,10 +291,10 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(adminUiSource).toContain("badge?: string;");
+    expect(adminUiSource).toContain("required?: boolean;");
     expect(adminUiSource).toContain("hint?: string;");
-    expect(source).toContain('badge="필수"');
-    expect(source).toContain('badge="선택"');
+    expect(source).toContain("required");
+    expect(source).not.toContain('badge="');
     expect(source).toContain('hint="');
     expect(source).toContain("border-b border-line");
   });
@@ -315,24 +310,16 @@ describe("admin calm theme contract", () => {
     expect(source).not.toContain('<SummaryCard label="메시지" value="0" />');
   });
 
-  test("compresses admin dashboard into an overview band and metric grid", () => {
+  test("compresses admin dashboard into a metric band with a public link block", () => {
     const source = readFileSync(adminPagePath, "utf8");
-    const adminUiSource = readFileSync(adminUiPath, "utf8");
 
-    expect(source).toContain("<AdminOverviewCard");
-    expect(source).toContain("<AdminPageHeader");
-    expect(adminUiSource).toContain("eyebrow?: string;");
-    expect(adminUiSource).toContain("description?: string;");
-    expect(adminUiSource).toContain("actionHref?: string;");
-    expect(adminUiSource).toContain("actionLabel?: string;");
-    expect(adminUiSource).toContain("actionVariant?:");
-    expect(adminUiSource).toContain("rounded-md border border-line bg-[#fbfbfa]");
-    expect(source).toContain("grid gap-3 sm:grid-cols-3");
+    expect(source).toContain("<AdminMetricGroup");
     expect(source).toContain("<AdminMetric");
     expect(source).toContain('label="선물"');
     expect(source).toContain('label="메시지"');
     expect(source).toContain('label="모인 금액"');
-    expect(source).toContain('actionHref="/admin/wishes"');
+    expect(source).toContain("내 공개 주소");
+    expect(source).toContain("<CopyPublicLinkButton");
     expect(source).not.toContain("function SummaryCard");
     expect(source).not.toContain("shadow-pub");
     expect(source).not.toContain("pub-page");
@@ -357,12 +344,12 @@ describe("admin calm theme contract", () => {
   test("renders admin messages as inbox rows without large public card shadows", () => {
     const source = readFileSync(adminMessagesPagePath, "utf8");
 
-    expect(source).toContain("<AdminOverviewCard");
+    expect(source).toContain("<AdminMetricGroup");
     expect(source).toContain('label="받은 메시지"');
     expect(source).toContain('className="divide-y divide-line rounded-md border border-line bg-white"');
     expect(source).toContain("function MessageRow");
     expect(source).toContain("<MessageRow key={message.id} message={message} />");
-    expect(source).toContain("rounded-full border border-[#f3d7c7] bg-[#fffaf7]");
+    expect(source).toContain("rounded-full bg-[#fff7ed]");
     expect(source).not.toContain("function MessageCard");
     expect(source).not.toContain("shadow-pub");
   });
@@ -370,8 +357,6 @@ describe("admin calm theme contract", () => {
   test("renders admin settings as row sections rather than large card columns", () => {
     const source = readFileSync(adminSettingsPagePath, "utf8");
 
-    expect(source).toContain("<AdminOverviewCard");
-    expect(source).toContain('description="공개 페이지와 계좌 안내를 관리합니다."');
     expect(source).toContain("<SettingsSection");
     expect(source).toContain("<SettingsRow");
     expect(source).toContain('title="프로필"');

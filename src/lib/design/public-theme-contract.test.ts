@@ -8,6 +8,8 @@ const root = process.cwd();
 const globalsCssPath = join(root, "app/globals.css");
 const publicThemesCssPath = join(root, "app/public-themes.css");
 const publicPagePath = join(root, "app/b/[slug]/page.tsx");
+const publicViewPath = join(root, "components/public-wishlist-view.tsx");
+const samplePagePath = join(root, "app/sample/page.tsx");
 const publicNotFoundPath = join(root, "app/b/[slug]/not-found.tsx");
 
 describe("public theme contract", () => {
@@ -34,27 +36,28 @@ describe("public theme contract", () => {
   });
 
   test("binds the selected public theme to the public wishlist page", () => {
-    const source = readFileSync(publicPagePath, "utf8");
+    const pageSource = readFileSync(publicPagePath, "utf8");
+    const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(source).toContain('className="pub-page min-h-dvh"');
-    expect(source).toContain("data-theme={result.wishlist.themeId}");
-    expect(source).not.toContain('className="pixel-dot-bg min-h-dvh text-[#171717]"');
+    expect(pageSource).toContain("wishlist={result.wishlist}");
+    expect(viewSource).toContain('className="pub-page min-h-dvh"');
+    expect(viewSource).toContain("data-theme={wishlist.themeId}");
+    expect(viewSource).not.toContain('className="pixel-dot-bg min-h-dvh text-[#171717]"');
   });
 
   test("renders the public wishlist header as a full-width themed section", () => {
-    const pageSource = readFileSync(publicPagePath, "utf8");
+    const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(pageSource).toContain('<header className="pub-header">');
-    expect(pageSource).toContain(
+    expect(viewSource).toContain('<header className="pub-header">');
+    expect(viewSource).toContain(
       'className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12"',
     );
-    expect(pageSource).toContain(
+    expect(viewSource).toContain(
       '<section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">',
     );
-    expect(pageSource).toContain('className="pub-stat p-4"');
-    expect(pageSource).not.toContain("/b/{result.wishlist.slug}");
-    expect(pageSource).not.toContain("pub-card pub-card-hero pub-header");
-    expect(pageSource).not.toContain("lg:grid-cols-[0.9fr_1.1fr]");
+    expect(viewSource).toContain('className="pub-stat p-4"');
+    expect(viewSource).not.toContain("pub-card pub-card-hero pub-header");
+    expect(viewSource).not.toContain("lg:grid-cols-[0.9fr_1.1fr]");
   });
 
   test("keeps public card headline color on the surface ink token", () => {
@@ -66,7 +69,7 @@ describe("public theme contract", () => {
   });
 
   test("keeps public participation as a server POST form", () => {
-    const source = readFileSync(publicPagePath, "utf8");
+    const source = readFileSync(publicViewPath, "utf8");
 
     expect(source).toContain('method="post"');
     expect(source).toContain("/api/public/wishlists");
@@ -79,7 +82,7 @@ describe("public theme contract", () => {
   });
 
   test("keeps the public page focused on gift-card participation UI", () => {
-    const source = readFileSync(publicPagePath, "utf8");
+    const source = readFileSync(publicViewPath, "utf8");
 
     expect(source).toContain("gift-card-shell");
     expect(source).toContain("gift-image-stage");
@@ -89,8 +92,15 @@ describe("public theme contract", () => {
     expect(PUBLIC_WISHLIST_COPY.participationTitle).toBe("마음 보내기");
     expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
     expect(source).toContain("선물 링크 보기");
-    expect(source).not.toContain("filter");
     expect(source).not.toContain("statusFilter");
+  });
+
+  test("reuses the public wishlist view for the sample page in demo mode", () => {
+    const source = readFileSync(samplePagePath, "utf8");
+
+    expect(source).toContain("PublicWishlistView");
+    expect(source).toContain("demo");
+    expect(source).not.toContain("Drizzle");
   });
 
   test("uses public theme primitives on the public not-found page", () => {

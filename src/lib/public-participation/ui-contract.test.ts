@@ -3,21 +3,23 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
+const publicViewPath = join(process.cwd(), "components/public-wishlist-view.tsx");
 const adminMessagesPagePath = join(process.cwd(), "app/admin/messages/page.tsx");
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
 
 describe("public participation UI contract", () => {
   test("renders a public participation form on the public wishlist page", () => {
-    const source = readFileSync(publicPagePath, "utf8");
+    const pageSource = readFileSync(publicPagePath, "utf8");
+    const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(source).toContain("searchParams");
-    expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
-    expect(source).toContain("participation");
-    expect(source).toContain('name="wishItemId"');
-    expect(source).toContain('name="amount"');
-    expect(source).toContain('name="senderName"');
-    expect(source).toContain('name="body"');
+    expect(pageSource).toContain("searchParams");
+    expect(viewSource).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
+    expect(viewSource).toContain("participation");
+    expect(viewSource).toContain('name="wishItemId"');
+    expect(viewSource).toContain('name="amount"');
+    expect(viewSource).toContain('name="senderName"');
+    expect(viewSource).toContain('name="body"');
   });
 
   test("adds an admin messages page and navigation link", () => {
@@ -27,7 +29,7 @@ describe("public participation UI contract", () => {
 
     expect(pageSource).toContain("listAdminMessages");
     expect(pageSource).toContain("DrizzleAdminMessagesRepository");
-    expect(pageSource).toContain("메시지함");
+    expect(navSource).toContain("메시지함");
     expect(layoutSource).toContain("<AdminShellNav");
     expect(navSource).toContain('href: "/admin/messages"');
   });

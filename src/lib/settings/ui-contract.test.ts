@@ -10,6 +10,10 @@ const adminSettingsRoutePath = join(
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
 const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
+const publicViewPath = join(
+  process.cwd(),
+  "components/public-wishlist-view.tsx",
+);
 
 describe("admin settings UI contract", () => {
   test("adds an authenticated admin settings route handler", () => {
@@ -36,9 +40,10 @@ describe("admin settings UI contract", () => {
   });
 
   test("renders public account guidance on public wishlist pages", () => {
-    const source = readFileSync(publicPagePath, "utf8");
+    const pageSource = readFileSync(publicPagePath, "utf8");
+    const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(source).toContain("AccountGuidance");
-    expect(source).toContain("result.account");
+    expect(viewSource).toContain("AccountGuidance");
+    expect(pageSource).toContain("account={result.account}");
   });
 });

@@ -8,10 +8,11 @@ describe("home UI contract", () => {
   test("keeps the home page centered on a public wishlist preview", () => {
     const source = readFileSync(homePagePath, "utf8");
 
-    expect(source).toContain('id="preview"');
     expect(source).toContain("PreviewWish");
     expect(source).toContain("SampleGiftImage");
     expect(source).toContain("GiftProgress");
+    expect(source).toContain('text="SAMPLE"');
+    expect(source).toContain('href="/sample"');
     expect(source).not.toContain("HOME_COPY.previewSlug");
     expect(source).not.toContain("/b/{HOME_COPY.previewSlug}");
     expect(source).not.toContain('className="pixel-board bg-[#fffdf7] p-5"');
@@ -26,14 +27,13 @@ describe("home UI contract", () => {
     expect(source).toContain("마음 받기");
   });
 
-  test("summarizes lower explanation cards with labels stickers and progress", () => {
+  test("drops decorative fake progress signals from the home page", () => {
     const source = readFileSync(homePagePath, "utf8");
 
-    expect(source).toContain("homeSignals.map");
-    expect(source).toContain("SignalSticker");
-    expect(source).toContain("GiftProgress");
-    expect(source).toContain("truncate");
-    expect(source).toContain("whitespace-normal");
+    expect(source).not.toContain("homeSignals");
+    expect(source).not.toContain("오늘 모인 마음");
+    expect(source).not.toContain('text="LIVE"');
+    expect(source).toContain("HOME_COPY.subDescription");
   });
 
   test("uses authenticated home CTA copy and destinations", () => {
