@@ -1,5 +1,7 @@
+import Image from "next/image";
 import { redirect } from "next/navigation";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { BRAND_NAME } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
 
@@ -30,12 +32,20 @@ export default async function OnboardingPage({
   const errorMessage = error ? errorMessages[error] : null;
 
   return (
-    <main className="min-h-dvh bg-[#fafaf9] px-5 py-12 text-ink">
+    <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
-        <section className="rounded-md border border-line bg-white p-6 shadow-pub">
+        <div className="mb-6 flex flex-col items-center gap-3 self-center">
+          <Image src="/logo.png" alt="" width={72} height={72} priority />
+          <span className="font-pixel text-3xl tracking-normal text-[#4c1d95]">
+            {BRAND_NAME}
+          </span>
+        </div>
+        <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-[6px_6px_0_#111827]">
           <div className="space-y-2">
-            <p className="text-sm font-semibold text-teal">온보딩</p>
-            <h1 className="text-3xl font-semibold tracking-normal text-ink">
+            <p className="font-pixel text-sm tracking-normal text-[#0f766e]">
+              온보딩
+            </p>
+            <h1 className="font-pixel break-keep text-3xl tracking-normal text-[#4c1d95]">
               기본 위시리스트 만들기
             </h1>
             <p className="text-sm leading-6 text-zinc-600">
@@ -44,7 +54,7 @@ export default async function OnboardingPage({
           </div>
 
           {errorMessage ? (
-            <p className="mt-5 rounded-md border border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-medium text-[#9a3412]">
+            <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
               {errorMessage}
             </p>
           ) : null}
@@ -80,7 +90,7 @@ export default async function OnboardingPage({
 
             <button
               type="submit"
-              className="h-12 w-full rounded-md border border-ink bg-ink px-4 text-sm font-semibold text-white transition-colors hover:bg-black"
+              className="h-12 w-full rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
             >
               위시리스트 만들기
             </button>

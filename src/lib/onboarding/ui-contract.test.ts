@@ -25,20 +25,17 @@ describe("onboarding UI contract", () => {
     expect(source).not.toContain('type="date"');
   });
 
-  test("uses calm onboarding page styles instead of the pixel card", () => {
+  test("uses the pixel brand shell with calm form fields", () => {
     const source = readFileSync(pagePath, "utf8");
 
-    expect(source).toContain('className="min-h-dvh bg-[#fafaf9]');
-    expect(source).toContain("rounded-md border border-line bg-white");
-    expect(source).toContain("shadow-pub");
-    expect(source).toContain("text-ink");
+    expect(source).toContain('className="pixel-dot-bg min-h-dvh');
+    expect(source).toContain('src="/logo.png"');
+    expect(source).toContain("font-pixel");
+    expect(source).toContain("border-2 border-[#171717] bg-[#fffdf7]");
+    expect(source).toContain("shadow-[6px_6px_0_#111827]");
     expect(source).toContain("text-zinc-600");
-    expect(source).toContain("border border-ink bg-ink");
-    expect(source).toContain("hover:bg-black");
     expect(source).toContain("focus:border-zinc-400");
     expect(source).toContain("placeholder:text-zinc-400");
-    expect(source).not.toContain("shadow-[6px_6px_0_#111827]");
-    expect(source).not.toContain("border-[#171717]");
     expect(source).not.toContain("bg-[#f7f5f0]");
   });
 
