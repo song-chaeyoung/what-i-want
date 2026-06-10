@@ -50,24 +50,21 @@ export const profiles = pgTable("profiles", {
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });
 
-export const wishlists = pgTable(
-  "wishlists",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    ownerId: uuid("owner_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    slug: varchar("slug", { length: 32 }).notNull().unique(),
-    title: varchar("title", { length: 120 }).notNull(),
-    themeId: publicThemeEnum("theme_id").default("pixel_y2k").notNull(),
-    visibility: wishlistVisibilityEnum("visibility")
-      .default("public")
-      .notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
-  },
-  (wishlist) => [index("wishlists_owner_id_idx").on(wishlist.ownerId)],
-);
+export const wishlists = pgTable("wishlists", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  ownerId: uuid("owner_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  slug: varchar("slug", { length: 32 }).notNull().unique(),
+  title: varchar("title", { length: 120 }).notNull(),
+  themeId: publicThemeEnum("theme_id").default("pixel_y2k").notNull(),
+  visibility: wishlistVisibilityEnum("visibility")
+    .default("public")
+    .notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
 
 export const wishItems = pgTable(
   "wish_items",
@@ -90,22 +87,19 @@ export const wishItems = pgTable(
   (wishItem) => [index("wish_items_wishlist_id_idx").on(wishItem.wishlistId)],
 );
 
-export const bankAccounts = pgTable(
-  "bank_accounts",
-  {
-    id: uuid("id").defaultRandom().primaryKey(),
-    userId: uuid("user_id")
-      .notNull()
-      .references(() => users.id, { onDelete: "cascade" }),
-    bankName: varchar("bank_name", { length: 80 }).notNull(),
-    accountHolder: varchar("account_holder", { length: 80 }).notNull(),
-    accountNumberEncrypted: text("account_number_encrypted").notNull(),
-    visibility: accountVisibilityEnum("visibility").default("hidden").notNull(),
-    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
-    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
-  },
-  (account) => [index("bank_accounts_user_id_idx").on(account.userId)],
-);
+export const bankAccounts = pgTable("bank_accounts", {
+  id: uuid("id").defaultRandom().primaryKey(),
+  userId: uuid("user_id")
+    .notNull()
+    .unique()
+    .references(() => users.id, { onDelete: "cascade" }),
+  bankName: varchar("bank_name", { length: 80 }).notNull(),
+  accountHolder: varchar("account_holder", { length: 80 }).notNull(),
+  accountNumberEncrypted: text("account_number_encrypted").notNull(),
+  visibility: accountVisibilityEnum("visibility").default("hidden").notNull(),
+  createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+});
 
 export const messages = pgTable(
   "messages",

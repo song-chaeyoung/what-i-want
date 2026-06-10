@@ -15,6 +15,13 @@
       "when": 1778745640551,
       "tag": "0001_naive_grandmaster",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781054344931,
+      "tag": "0002_unknown_sue_storm",
+      "breakpoints": true
     }
   ]
 }
