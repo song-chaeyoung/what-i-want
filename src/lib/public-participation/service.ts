@@ -6,6 +6,7 @@ import type {
 
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SENDER_NAME_LENGTH = 80;
+const MAX_AMOUNT = 100_000_000;
 
 export type PublicParticipationError =
   | "wishlist_not_found"
@@ -77,9 +78,7 @@ export async function submitPublicParticipation(
   return { ok: true };
 }
 
-function normalizeMessageBody(
-  value: string | null,
-):
+function normalizeMessageBody(value: string | null):
   | {
       value: string;
       error?: never;
@@ -111,9 +110,7 @@ function normalizeSenderName(value: string | null): string | null {
   return senderName.slice(0, MAX_SENDER_NAME_LENGTH);
 }
 
-function normalizeAmount(
-  value: string | number | null,
-):
+function normalizeAmount(value: string | number | null):
   | {
       value: number;
       error?: never;
@@ -128,7 +125,7 @@ function normalizeAmount(
 
   const amount = typeof value === "number" ? value : Number(value.trim());
 
-  if (!Number.isInteger(amount) || amount <= 0) {
+  if (!Number.isInteger(amount) || amount <= 0 || amount > MAX_AMOUNT) {
     return { error: "invalid_amount" };
   }
 

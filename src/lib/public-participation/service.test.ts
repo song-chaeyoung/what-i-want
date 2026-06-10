@@ -150,6 +150,42 @@ describe("public participation service", () => {
     }
   });
 
+  test("rejects amounts above the maximum and accepts the boundary value", async () => {
+    for (const amount of [100_000_001, "100000001"]) {
+      const repository = new FakePublicParticipationRepository();
+
+      await expect(
+        submitPublicParticipation(
+          {
+            slug: "birthday",
+            wishItemId: "wish-1",
+            senderName: "Ari",
+            body: "Happy birthday",
+            amount,
+          },
+          repository,
+        ),
+      ).resolves.toEqual({ ok: false, error: "invalid_amount" });
+      expect(repository.created).toEqual([]);
+    }
+
+    const repository = new FakePublicParticipationRepository();
+
+    await expect(
+      submitPublicParticipation(
+        {
+          slug: "birthday",
+          wishItemId: "wish-1",
+          senderName: "Ari",
+          body: "Happy birthday",
+          amount: 100_000_000,
+        },
+        repository,
+      ),
+    ).resolves.toEqual({ ok: true });
+    expect(repository.created[0]?.funding.amount).toBe(100_000_000);
+  });
+
   test("returns wish_not_found when the wish is not in the public wishlist or is hidden", async () => {
     const outsideWishlistRepository = new FakePublicParticipationRepository();
     outsideWishlistRepository.items = [
