@@ -1,6 +1,6 @@
 import { requireUser } from "@/src/lib/auth/require-user";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
-import { ACCOUNT_VISIBILITIES, type AccountVisibility } from "@/src/lib/settings/types";
+import type { AccountVisibility } from "@/src/lib/settings/types";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import { AdminToastMessage } from "../admin-toast-message";
@@ -35,12 +35,18 @@ const themeLabels: Record<PublicThemeId, string> = {
   soft_pastel: "소프트 파스텔",
 };
 
-const accountVisibilityLabels: Record<AccountVisibility, string> = {
-  hidden: "숨김",
-  reveal_on_click: "눌러서 보기",
-  copy_only: "복사용",
-  always_visible: "항상 표시",
-};
+const accountVisibilityOptions: { value: AccountVisibility; label: string }[] = [
+  { value: "hidden", label: "숨김" },
+  { value: "copy_only", label: "복사 버튼만 표시" },
+];
+
+function toAccountVisibilityOption(
+  visibility: AccountVisibility | undefined,
+): AccountVisibility {
+  return visibility === undefined || visibility === "hidden"
+    ? "hidden"
+    : "copy_only";
+}
 
 export default async function AdminSettingsPage() {
   const user = await requireUser();
@@ -214,16 +220,18 @@ export default async function AdminSettingsPage() {
             </AdminField>
           </SettingsRow>
           <SettingsRow>
-            <AdminField label="공개 방식" htmlFor="accountVisibility" required hint="방문자에게 보이는 방식을 정합니다.">
+            <AdminField label="공개 방식" htmlFor="accountVisibility" required hint="계좌번호는 화면에 표시되지 않고 복사 버튼으로만 전달됩니다.">
               <select
                 id="accountVisibility"
                 name="accountVisibility"
-                defaultValue={settings.bankAccount?.visibility ?? "hidden"}
+                defaultValue={toAccountVisibilityOption(
+                  settings.bankAccount?.visibility,
+                )}
                 className={adminInputClassName}
               >
-                {ACCOUNT_VISIBILITIES.map((visibility) => (
-                  <option key={visibility} value={visibility}>
-                    {accountVisibilityLabels[visibility]}
+                {accountVisibilityOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
                   </option>
                 ))}
               </select>

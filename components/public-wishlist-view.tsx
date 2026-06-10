@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
 import type {
   PublicBankAccountView,
@@ -52,10 +53,6 @@ export function PublicWishlistView({
               value={formatCurrency(totalFundedAmount)}
             />
           </dl>
-
-          <Link href="/login" className="pub-btn mt-6 h-11 px-5 text-sm">
-            {PUBLIC_WISHLIST_COPY.createMineCta}
-          </Link>
         </div>
       </header>
 
@@ -92,6 +89,13 @@ export function PublicWishlistView({
         ) : null}
 
         <AccountGuidance account={account} />
+
+        <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
+          <p className="pub-label text-xs">make your own</p>
+          <Link href="/login" className="pub-btn h-12 px-6 text-sm">
+            {PUBLIC_WISHLIST_COPY.createMineCta}
+          </Link>
+        </div>
       </section>
     </main>
   );
@@ -106,47 +110,24 @@ function AccountGuidance({
     return null;
   }
 
-  const accountBody = (
-    <div className="mt-4 grid gap-3 text-sm font-black">
-      <p className="text-[var(--pub-bank-ink)]">
-        {account.bankName} {account.accountHolder}
-      </p>
-      <input
-        type="text"
-        readOnly
-        value={account.accountNumber}
-        aria-label="계좌번호"
-        className="pub-field h-11 w-full px-3 text-sm font-black outline-none"
-      />
-    </div>
-  );
-
-  if (account.visibility === "reveal_on_click") {
-    return (
-      <details className="soft-bank-card pub-card pub-bank mt-6 p-5">
-        <summary className="cursor-pointer text-lg font-black tracking-normal text-[var(--pub-bank-ink)]">
-          마음을 보낸 뒤 계좌 확인하기
-        </summary>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-bank-ink)]">
-          준비된 안내를 열어 편하게 입금 정보를 확인하실 수 있어요.
-        </p>
-        {accountBody}
-      </details>
-    );
-  }
-
   return (
     <section className="soft-bank-card pub-card pub-bank mt-6 p-5">
       <p className="pub-label text-xs">after sending</p>
       <p className="mt-2 text-lg font-black tracking-normal text-[var(--pub-bank-ink)]">
-        {account.visibility === "copy_only"
-          ? "계좌를 복사해 마음을 이어주세요"
-          : "마음을 보낼 계좌 안내"}
+        마음을 보낼 계좌 안내
       </p>
       <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-bank-ink)]">
-        선물 마음이 정해지면 아래 정보로 부드럽게 마무리해 주세요.
+        계좌번호는 화면에 표시되지 않고 복사 버튼으로만 전달돼요.
       </p>
-      {accountBody}
+      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+        <p className="text-sm font-black text-[var(--pub-bank-ink)]">
+          {account.bankName} {account.accountHolder}
+        </p>
+        <CopyAccountNumberButton
+          bankName={account.bankName}
+          accountNumber={account.accountNumber}
+        />
+      </div>
     </section>
   );
 }
@@ -277,7 +258,9 @@ function PublicWishCard({
     <article className="gift-card-shell pub-card overflow-hidden">
       <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
         <div
-          className="gift-image-stage pub-fallback grid aspect-[4/3] min-h-56 place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0"
+          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--pub-ink)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
+            imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
+          }`}
           style={
             imageUrl
               ? { backgroundImage: `url(${JSON.stringify(imageUrl)})` }
@@ -345,10 +328,10 @@ function PublicWishCard({
 
 function PixelGift() {
   return (
-    <div className="font-pixel grid h-28 w-28 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827]">
+    <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827] lg:h-28 lg:w-28">
       <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
       <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
-      <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-sm font-black text-[#4c1d95]">
+      <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-[10px] font-black text-[#4c1d95] lg:text-sm">
         GIFT
       </div>
       <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />

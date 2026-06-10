@@ -10,8 +10,7 @@ export const HOME_COPY = {
 } as const;
 
 export const PUBLIC_WISHLIST_COPY = {
-  description:
-    "친구가 받고 싶은 선물을 모아둔 공개 위시리스트예요. 마음에 드는 선물을 확인하고 상품 링크로 바로 이동할 수 있어요.",
+  description: "받고 싶은 선물을 모아둔 위시리스트예요.",
   summaryWishLabel: "선물",
   summaryFundedLabel: "모인 마음",
   emptyTitle: "아직 공개된 선물이 없어요",

@@ -4,6 +4,7 @@ import type {
   PublicWishItemView,
   PublicWishlistRecord,
 } from "@/src/lib/public-wishlist/types";
+import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 
 export const metadata: Metadata = {
   title: "샘플 위시리스트 | 뭐갖고싶어",
@@ -54,13 +55,31 @@ const sampleItems: PublicWishItemView[] = [
   },
 ];
 
-export default function SampleWishlistPage() {
+type SampleWishlistPageProps = {
+  searchParams: Promise<{
+    theme?: string;
+  }>;
+};
+
+export default async function SampleWishlistPage({
+  searchParams,
+}: SampleWishlistPageProps) {
+  const { theme } = await searchParams;
+  const themeId = getThemeId(theme);
+
   return (
     <PublicWishlistView
-      wishlist={sampleWishlist}
+      wishlist={{ ...sampleWishlist, themeId }}
       items={sampleItems}
       account={null}
       demo
     />
+  );
+}
+
+function getThemeId(value: string | undefined): PublicThemeId {
+  return (
+    PUBLIC_THEME_IDS.find((themeId) => themeId === value) ??
+    sampleWishlist.themeId
   );
 }

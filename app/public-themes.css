@@ -1,7 +1,7 @@
 @layer base {
   .pub-page,
   .pub-page[data-theme="pixel_y2k"] {
-    --pub-bg: #ffe4e6;
+    --pub-bg: #fff7ed;
     --pub-bg-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --pub-dot-size: 18px;
     --pub-header-bg: #fef3c7;
@@ -381,6 +381,11 @@
     border: var(--pub-border);
     border-radius: var(--pub-radius);
     box-shadow: var(--pub-shadow);
+  }
+
+  .pub-page[data-theme="mono_bw"] .pub-header .pub-pill {
+    border: 1.5px solid rgba(255, 255, 255, 0.6);
+    color: #fff;
   }
 
   .pub-page[data-theme="mono_bw"] .pub-stat {
