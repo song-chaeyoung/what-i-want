@@ -12,7 +12,7 @@ type PublicWishlistViewProps = {
   wishlist: PublicWishlistRecord;
   items: PublicWishItemView[];
   account: PublicBankAccountView | null;
-  sent?: boolean;
+  sent?: string | null;
   errorMessage?: string | null;
   demo?: boolean;
 };
@@ -21,7 +21,7 @@ export function PublicWishlistView({
   wishlist,
   items,
   account,
-  sent = false,
+  sent = null,
   errorMessage = null,
   demo = false,
 }: PublicWishlistViewProps) {
@@ -29,6 +29,9 @@ export function PublicWishlistView({
     (sum, item) => sum + item.fundedAmount,
     0,
   );
+  const sentKind = sent === "message" ? "message" : sent ? "funding" : null;
+  const showAccountModal = sentKind === "funding" && account !== null;
+  const pagePath = demo ? "/sample" : `/b/${wishlist.slug}`;
 
   return (
     <main className="pub-page min-h-dvh" data-theme={wishlist.themeId}>
@@ -57,9 +60,35 @@ export function PublicWishlistView({
       </header>
 
       <section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">
+        {sentKind === "message" ? (
+          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
+            {PUBLIC_WISHLIST_COPY.messageSuccess}
+          </p>
+        ) : null}
+
+        {sentKind === "funding" && !showAccountModal ? (
+          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
+            {PUBLIC_WISHLIST_COPY.participationSuccess}
+          </p>
+        ) : null}
+
+        {errorMessage ? (
+          <p className="border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+            {errorMessage}
+          </p>
+        ) : null}
+
+        <MessageOnlyForm slug={wishlist.slug} demo={demo} />
+
         {items.length > 0 ? (
           items.map((item, index) => (
-            <PublicWishCard key={item.id} index={index} item={item} />
+            <PublicWishCard
+              key={item.id}
+              index={index}
+              item={item}
+              slug={wishlist.slug}
+              demo={demo}
+            />
           ))
         ) : (
           <div className="pub-card p-6">
@@ -72,24 +101,6 @@ export function PublicWishlistView({
           </div>
         )}
 
-        {sent ? (
-          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
-            {PUBLIC_WISHLIST_COPY.participationSuccess}
-          </p>
-        ) : null}
-
-        {errorMessage ? (
-          <p className="border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
-            {errorMessage}
-          </p>
-        ) : null}
-
-        {items.length > 0 ? (
-          <ParticipationForm slug={wishlist.slug} items={items} demo={demo} />
-        ) : null}
-
-        <AccountGuidance account={account} />
-
         <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
           <p className="pub-label text-xs">make your own</p>
           <Link href="/login" className="pub-btn h-12 px-6 text-sm">
@@ -97,162 +108,149 @@ export function PublicWishlistView({
           </Link>
         </div>
       </section>
+
+      {showAccountModal && account ? (
+        <AccountRevealModal account={account} closeHref={pagePath} />
+      ) : null}
     </main>
   );
 }
 
-function AccountGuidance({
+function AccountRevealModal({
   account,
+  closeHref,
 }: {
-  account: PublicBankAccountView | null;
+  account: PublicBankAccountView;
+  closeHref: string;
 }) {
-  if (!account) {
-    return null;
-  }
-
   return (
-    <section className="soft-bank-card pub-card pub-bank mt-6 p-5">
-      <p className="pub-label text-xs">after sending</p>
-      <p className="mt-2 text-lg font-black tracking-normal text-[var(--pub-bank-ink)]">
-        마음을 보낼 계좌 안내
-      </p>
-      <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-bank-ink)]">
-        계좌번호는 화면에 표시되지 않고 복사 버튼으로만 전달돼요.
-      </p>
-      <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-        <p className="text-sm font-black text-[var(--pub-bank-ink)]">
-          {account.bankName} {account.accountHolder}
+    <div
+      role="dialog"
+      aria-modal="true"
+      aria-label={PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
+      className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-5"
+    >
+      <section className="pub-card w-full max-w-sm p-6">
+        <p className="pub-pill pub-pill-alt">thank you</p>
+        <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+          {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
+        </h2>
+        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+          {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
         </p>
-        <CopyAccountNumberButton
-          bankName={account.bankName}
-          accountNumber={account.accountNumber}
-        />
-      </div>
-    </section>
+        <div className="soft-bank-card pub-bank mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--pub-radius)] p-4">
+          <div>
+            <p className="pub-label text-xs">예금주</p>
+            <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
+              {account.accountHolder}
+            </p>
+          </div>
+          <CopyAccountNumberButton
+            bankName={account.bankName}
+            accountNumber={account.accountNumber}
+          />
+        </div>
+        <Link href={closeHref} className="pub-btn pub-btn-block mt-5 h-11 text-sm">
+          {PUBLIC_WISHLIST_COPY.accountModalClose}
+        </Link>
+      </section>
+    </div>
   );
 }
 
-function ParticipationForm({
-  slug,
-  items,
-  demo,
-}: {
-  slug: string;
-  items: PublicWishItemView[];
-  demo: boolean;
-}) {
+function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
   return (
-    <form
-      action={demo ? undefined : `/api/public/wishlists/${slug}/participation`}
-      method="post"
-      className="send-heart-section pub-card mt-6 space-y-5 p-5 sm:p-6"
-    >
-      <div>
-        <p className="pub-pill pub-pill-alt">gift note</p>
-        <p className="mt-3 text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
-          {PUBLIC_WISHLIST_COPY.participationTitle}
-        </p>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
-          {PUBLIC_WISHLIST_COPY.participationDescription}
-        </p>
-      </div>
-
-      <PublicField
-        label={PUBLIC_WISHLIST_COPY.participationWishLabel}
-        htmlFor="participation-wish"
+    <details className="send-heart-section pub-card">
+      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
+        <span className="pub-pill pub-pill-alt">gift note</span>
+        <span className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
+          {PUBLIC_WISHLIST_COPY.messageFormTitle}
+        </span>
+        <span className="w-full text-sm font-semibold text-[var(--pub-sub)] sm:w-auto">
+          {PUBLIC_WISHLIST_COPY.messageFormNote}
+        </span>
+      </summary>
+      <form
+        action={demo ? undefined : `/api/public/wishlists/${slug}/participation`}
+        method="post"
+        className="space-y-4 px-5 pb-5"
       >
-        <select
-          id="participation-wish"
-          name="wishItemId"
-          required
-          className={publicInputClassName}
+        <PublicField
+          label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
+          htmlFor="message-sender"
         >
-          {items.map((item) => (
-            <option key={item.id} value={item.id}>
-              {item.title}
-            </option>
-          ))}
-        </select>
-      </PublicField>
+          <input
+            id="message-sender"
+            name="senderName"
+            type="text"
+            maxLength={80}
+            placeholder="이름"
+            className={publicInputClassName}
+          />
+        </PublicField>
 
-      <PublicField
-        label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
-        htmlFor="participation-amount"
-      >
-        <input
-          id="participation-amount"
-          name="amount"
-          type="number"
-          min={1}
-          step={1}
-          required
-          placeholder="10000"
-          className={publicInputClassName}
-        />
-      </PublicField>
+        <PublicField
+          label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
+          htmlFor="message-body"
+        >
+          <textarea
+            id="message-body"
+            name="body"
+            rows={4}
+            maxLength={500}
+            required
+            className={publicTextareaClassName}
+          />
+        </PublicField>
 
-      <PublicField
-        label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
-        htmlFor="participation-sender"
-      >
-        <input
-          id="participation-sender"
-          name="senderName"
-          type="text"
-          maxLength={80}
-          placeholder="이름"
-          className={publicInputClassName}
-        />
-      </PublicField>
+        <ParticipationSubmit demo={demo} />
+      </form>
+    </details>
+  );
+}
 
-      <PublicField
-        label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
-        htmlFor="participation-body"
-      >
-        <textarea
-          id="participation-body"
-          name="body"
-          rows={4}
-          maxLength={500}
-          required
-          className={publicTextareaClassName}
-        />
-      </PublicField>
-
-      {demo ? (
-        <div className="space-y-2">
-          <button
-            type="button"
-            disabled
-            className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm opacity-60"
-          >
-            {PUBLIC_WISHLIST_COPY.participationSubmitCta}
-          </button>
-          <p className="text-xs font-semibold text-[var(--pub-sub)]">
-            샘플 페이지에서는 마음을 보낼 수 없어요.
-          </p>
-        </div>
-      ) : (
+function ParticipationSubmit({ demo }: { demo: boolean }) {
+  if (demo) {
+    return (
+      <div className="space-y-2">
         <button
-          type="submit"
-          className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm"
+          type="button"
+          disabled
+          className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm opacity-60"
         >
           {PUBLIC_WISHLIST_COPY.participationSubmitCta}
         </button>
-      )}
-    </form>
+        <p className="text-xs font-semibold text-[var(--pub-sub)]">
+          샘플 페이지에서는 마음을 보낼 수 없어요.
+        </p>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      type="submit"
+      className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm"
+    >
+      {PUBLIC_WISHLIST_COPY.participationSubmitCta}
+    </button>
   );
 }
 
 function PublicWishCard({
   index,
   item,
+  slug,
+  demo,
 }: {
   index: number;
   item: PublicWishItemView;
+  slug: string;
+  demo: boolean;
 }) {
   const productUrl = getHttpUrl(item.productUrl);
   const imageUrl = getHttpUrl(item.imageUrl);
+  const canFund = item.status === "open" && !item.isComplete;
 
   return (
     <article className="gift-card-shell pub-card overflow-hidden">
@@ -322,6 +320,72 @@ function PublicWishCard({
           </div>
         </div>
       </div>
+
+      {canFund ? (
+        <details className="send-heart-section border-t-2 border-[var(--pub-ink)]">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--pub-accent)] [&::-webkit-details-marker]:hidden">
+            {PUBLIC_WISHLIST_COPY.fundCta}
+          </summary>
+          <form
+            action={
+              demo ? undefined : `/api/public/wishlists/${slug}/participation`
+            }
+            method="post"
+            className="space-y-4 border-t-2 border-[var(--pub-ink)] p-5"
+          >
+            <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
+              {PUBLIC_WISHLIST_COPY.participationTitle}
+            </p>
+            <input type="hidden" name="wishItemId" value={item.id} />
+
+            <PublicField
+              label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
+              htmlFor={`participation-amount-${item.id}`}
+            >
+              <input
+                id={`participation-amount-${item.id}`}
+                name="amount"
+                type="number"
+                min={1}
+                step={1}
+                required
+                placeholder="10000"
+                className={publicInputClassName}
+              />
+            </PublicField>
+
+            <PublicField
+              label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
+              htmlFor={`participation-sender-${item.id}`}
+            >
+              <input
+                id={`participation-sender-${item.id}`}
+                name="senderName"
+                type="text"
+                maxLength={80}
+                placeholder="이름"
+                className={publicInputClassName}
+              />
+            </PublicField>
+
+            <PublicField
+              label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
+              htmlFor={`participation-body-${item.id}`}
+            >
+              <textarea
+                id={`participation-body-${item.id}`}
+                name="body"
+                rows={3}
+                maxLength={500}
+                required
+                className={publicTextareaClassName}
+              />
+            </PublicField>
+
+            <ParticipationSubmit demo={demo} />
+          </form>
+        </details>
+      ) : null}
     </article>
   );
 }

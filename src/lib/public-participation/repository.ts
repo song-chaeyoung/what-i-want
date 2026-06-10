@@ -59,6 +59,18 @@ export class DrizzlePublicParticipationRepository
   async createPublicParticipation(
     record: CreatePublicParticipationRecord,
   ): Promise<void> {
+    const funding = record.funding;
+
+    if (!funding) {
+      await this.database.insert(messages).values({
+        wishlistId: record.message.wishlistId,
+        wishItemId: record.message.wishItemId,
+        senderName: record.message.senderName,
+        body: record.message.body,
+      });
+      return;
+    }
+
     await this.database.transaction(async (tx) => {
       const [message] = await tx
         .insert(messages)
@@ -71,21 +83,21 @@ export class DrizzlePublicParticipationRepository
         .returning({ id: messages.id });
 
       await tx.insert(fundingLogs).values({
-        wishItemId: record.funding.wishItemId,
+        wishItemId: funding.wishItemId,
         messageId: message.id,
-        amount: record.funding.amount,
+        amount: funding.amount,
       });
 
       const [updatedWishItem] = await tx
         .update(wishItems)
         .set({
-          fundedAmount: sql`${wishItems.fundedAmount} + ${record.funding.amount}`,
+          fundedAmount: sql`${wishItems.fundedAmount} + ${funding.amount}`,
           updatedAt: new Date(),
         })
         .where(
           and(
-            eq(wishItems.id, record.funding.wishItemId),
-            eq(wishItems.wishlistId, record.funding.wishlistId),
+            eq(wishItems.id, funding.wishItemId),
+            eq(wishItems.wishlistId, funding.wishlistId),
           ),
         )
         .returning({ id: wishItems.id });

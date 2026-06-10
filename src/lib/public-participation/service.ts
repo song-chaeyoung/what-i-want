@@ -15,9 +15,12 @@ export type PublicParticipationError =
   | "message_too_long"
   | "invalid_amount";
 
+export type PublicParticipationKind = "funding" | "message";
+
 export type PublicParticipationResult =
   | {
       ok: true;
+      kind: PublicParticipationKind;
     }
   | {
       ok: false;
@@ -40,6 +43,30 @@ export async function submitPublicParticipation(
     return { ok: false, error: body.error };
   }
 
+  const wishItemId = input.wishItemId.trim();
+
+  if (!wishItemId) {
+    const wishlist = await repository.findPublicWishlistBySlug(
+      parsedSlug.value,
+    );
+
+    if (!wishlist) {
+      return { ok: false, error: "wishlist_not_found" };
+    }
+
+    await repository.createPublicParticipation({
+      message: {
+        wishlistId: wishlist.id,
+        wishItemId: null,
+        senderName: normalizeSenderName(input.senderName),
+        body: body.value,
+      },
+      funding: null,
+    });
+
+    return { ok: true, kind: "message" };
+  }
+
   const amount = normalizeAmount(input.amount);
 
   if (amount.error) {
@@ -54,7 +81,7 @@ export async function submitPublicParticipation(
 
   const wishItem = await repository.findVisibleWishItem(
     wishlist.id,
-    input.wishItemId,
+    wishItemId,
   );
 
   if (!wishItem) {
@@ -75,7 +102,7 @@ export async function submitPublicParticipation(
     },
   });
 
-  return { ok: true };
+  return { ok: true, kind: "funding" };
 }
 
 function normalizeMessageBody(value: string | null):

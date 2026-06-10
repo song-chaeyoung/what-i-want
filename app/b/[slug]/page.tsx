@@ -33,7 +33,7 @@ export default async function PublicWishlistPage({
       wishlist={result.wishlist}
       items={result.items}
       account={result.account}
-      sent={Boolean(query.sent)}
+      sent={query.sent ?? null}
       errorMessage={query.error ? getParticipationErrorMessage(query.error) : null}
     />
   );

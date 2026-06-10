@@ -39,11 +39,13 @@ describe("admin settings UI contract", () => {
     expect(navSource).toContain('href: "/admin/settings"');
   });
 
-  test("renders public account guidance on public wishlist pages", () => {
+  test("reveals account guidance only after a funding submission", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
     const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(viewSource).toContain("AccountGuidance");
+    expect(viewSource).toContain("AccountRevealModal");
+    expect(viewSource).toContain("CopyAccountNumberButton");
+    expect(viewSource).not.toContain("account.accountNumber}\n        aria-label");
     expect(pageSource).toContain("account={result.account}");
   });
 });

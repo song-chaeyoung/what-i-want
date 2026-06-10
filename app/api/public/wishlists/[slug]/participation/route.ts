@@ -38,8 +38,8 @@ export async function POST(
   }
 
   return jsonRequest
-    ? NextResponse.json({ ok: true }, { status: 201 })
-    : redirectToPublicPage(requestUrl, slug, "sent", "1");
+    ? NextResponse.json({ ok: true, kind: result.kind }, { status: 201 })
+    : redirectToPublicPage(requestUrl, slug, "sent", result.kind);
 }
 
 async function readParticipationInput(request: Request): Promise<{

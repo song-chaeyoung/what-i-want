@@ -182,8 +182,8 @@ describe("public participation service", () => {
         },
         repository,
       ),
-    ).resolves.toEqual({ ok: true });
-    expect(repository.created[0]?.funding.amount).toBe(100_000_000);
+    ).resolves.toEqual({ ok: true, kind: "funding" });
+    expect(repository.created[0]?.funding?.amount).toBe(100_000_000);
   });
 
   test("returns wish_not_found when the wish is not in the public wishlist or is hidden", async () => {
@@ -240,7 +240,7 @@ describe("public participation service", () => {
       repository,
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, kind: "funding" });
     expect(repository.requestedSlugs).toEqual(["birthday"]);
     expect(repository.requestedWishItems).toEqual([
       { wishlistId: "wishlist-1", wishItemId: "wish-1" },
@@ -276,8 +276,92 @@ describe("public participation service", () => {
       repository,
     );
 
-    expect(result).toEqual({ ok: true });
+    expect(result).toEqual({ ok: true, kind: "funding" });
     expect(repository.created[0]?.message.senderName).toBeNull();
+  });
+
+  test("stores a message-only record when no wish item is selected", async () => {
+    const repository = new FakePublicParticipationRepository();
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        wishItemId: "  ",
+        senderName: "Ari",
+        body: "Happy birthday",
+        amount: null,
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: true, kind: "message" });
+    expect(repository.requestedWishItems).toEqual([]);
+    expect(repository.created).toEqual([
+      {
+        message: {
+          wishlistId: "wishlist-1",
+          wishItemId: null,
+          senderName: "Ari",
+          body: "Happy birthday",
+        },
+        funding: null,
+      },
+    ]);
+  });
+
+  test("ignores the amount for message-only submissions", async () => {
+    const repository = new FakePublicParticipationRepository();
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        wishItemId: "",
+        senderName: null,
+        body: "Happy birthday",
+        amount: "not-a-number",
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: true, kind: "message" });
+    expect(repository.created[0]?.funding).toBeNull();
+  });
+
+  test("requires a message body for message-only submissions", async () => {
+    const repository = new FakePublicParticipationRepository();
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        wishItemId: "",
+        senderName: "Ari",
+        body: "   ",
+        amount: null,
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: false, error: "message_required" });
+    expect(repository.created).toEqual([]);
+  });
+
+  test("returns wishlist_not_found for message-only submissions to unknown slugs", async () => {
+    const repository = new FakePublicParticipationRepository();
+    repository.wishlist = null;
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        wishItemId: "",
+        senderName: null,
+        body: "Happy birthday",
+        amount: null,
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: false, error: "wishlist_not_found" });
+    expect(repository.created).toEqual([]);
   });
 });
 

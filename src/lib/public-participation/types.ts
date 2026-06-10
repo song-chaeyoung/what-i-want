@@ -21,7 +21,7 @@ export type PublicParticipationInput = {
 
 export type PublicParticipationMessageRecord = {
   wishlistId: string;
-  wishItemId: string;
+  wishItemId: string | null;
   senderName: string | null;
   body: string;
 };
@@ -34,7 +34,7 @@ export type PublicParticipationFundingRecord = {
 
 export type CreatePublicParticipationRecord = {
   message: PublicParticipationMessageRecord;
-  funding: PublicParticipationFundingRecord;
+  funding: PublicParticipationFundingRecord | null;
 };
 
 export type PublicParticipationRepository = {
