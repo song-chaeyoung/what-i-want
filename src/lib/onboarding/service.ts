@@ -67,7 +67,11 @@ export async function completeOnboarding(
     wishlistVisibility: "public",
   };
 
-  await repository.completeOnboarding(record);
+  const persisted = await repository.completeOnboarding(record);
+
+  if (!persisted.ok) {
+    return { ok: false, error: persisted.error };
+  }
 
   return {
     ok: true,

@@ -18,8 +18,19 @@ export type OnboardingState = {
   wishlistSlug: string | null;
 };
 
+export type CompleteOnboardingPersistResult =
+  | {
+      ok: true;
+    }
+  | {
+      ok: false;
+      error: "duplicate_slug" | "already_completed";
+    };
+
 export interface OnboardingRepository {
   hasCompletedOnboarding(userId: string): Promise<boolean>;
   isWishlistSlugAvailable(slug: string): Promise<boolean>;
-  completeOnboarding(record: CompleteOnboardingRecord): Promise<void>;
+  completeOnboarding(
+    record: CompleteOnboardingRecord,
+  ): Promise<CompleteOnboardingPersistResult>;
 }

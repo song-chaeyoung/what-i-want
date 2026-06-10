@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import { completeOnboarding } from "./service";
 import type {
+  CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
   OnboardingRepository,
 } from "./types";
@@ -10,6 +11,7 @@ class FakeOnboardingRepository implements OnboardingRepository {
   slugAvailability: boolean[] = [true];
   requestedSlugs: string[] = [];
   records: CompleteOnboardingRecord[] = [];
+  persistResult: CompleteOnboardingPersistResult = { ok: true };
 
   async hasCompletedOnboarding(): Promise<boolean> {
     return this.completed;
@@ -20,8 +22,11 @@ class FakeOnboardingRepository implements OnboardingRepository {
     return this.slugAvailability.shift() ?? true;
   }
 
-  async completeOnboarding(record: CompleteOnboardingRecord): Promise<void> {
+  async completeOnboarding(
+    record: CompleteOnboardingRecord,
+  ): Promise<CompleteOnboardingPersistResult> {
     this.records.push(record);
+    return this.persistResult;
   }
 }
 
@@ -113,6 +118,26 @@ describe("completeOnboarding", () => {
     expect(result).toEqual({ ok: false, error: "duplicate_slug" });
     expect(repository.requestedSlugs).toHaveLength(5);
     expect(repository.records).toEqual([]);
+  });
+
+  test("propagates persistence conflicts from concurrent submissions", async () => {
+    const repository = new FakeOnboardingRepository();
+    repository.persistResult = { ok: false, error: "already_completed" };
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: "민지",
+        birthday: null,
+        description: null,
+      },
+      repository,
+      {
+        createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
+      },
+    );
+
+    expect(result).toEqual({ ok: false, error: "already_completed" });
   });
 
   test("allows birthday to be null", async () => {

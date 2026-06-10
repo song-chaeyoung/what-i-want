@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type {
+  CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
   OnboardingRepository,
   OnboardingState,
@@ -30,41 +31,79 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
     return !wishlist;
   }
 
-  async completeOnboarding(record: CompleteOnboardingRecord): Promise<void> {
+  async completeOnboarding(
+    record: CompleteOnboardingRecord,
+  ): Promise<CompleteOnboardingPersistResult> {
     const now = new Date();
 
-    await this.database.transaction(async (tx) => {
-      await tx
-        .insert(profiles)
-        .values({
-          userId: record.userId,
-          displayName: record.displayName,
-          birthday: record.birthday,
-          description: record.description,
-          onboardingCompletedAt: now,
-          updatedAt: now,
-        })
-        .onConflictDoUpdate({
-          target: profiles.userId,
-          set: {
+    try {
+      await this.database.transaction(async (tx) => {
+        await tx
+          .insert(profiles)
+          .values({
+            userId: record.userId,
             displayName: record.displayName,
             birthday: record.birthday,
             description: record.description,
             onboardingCompletedAt: now,
             updatedAt: now,
-          },
-        });
+          })
+          .onConflictDoUpdate({
+            target: profiles.userId,
+            set: {
+              displayName: record.displayName,
+              birthday: record.birthday,
+              description: record.description,
+              onboardingCompletedAt: now,
+              updatedAt: now,
+            },
+          });
 
-      await tx.insert(wishlists).values({
-        ownerId: record.userId,
-        slug: record.wishlistSlug,
-        title: record.wishlistTitle,
-        themeId: record.wishlistThemeId,
-        visibility: record.wishlistVisibility,
-        updatedAt: now,
+        await tx.insert(wishlists).values({
+          ownerId: record.userId,
+          slug: record.wishlistSlug,
+          title: record.wishlistTitle,
+          themeId: record.wishlistThemeId,
+          visibility: record.wishlistVisibility,
+          updatedAt: now,
+        });
       });
-    });
+    } catch (error) {
+      const constraint = findUniqueViolationConstraint(error);
+
+      if (constraint === null) {
+        throw error;
+      }
+
+      return {
+        ok: false,
+        error: constraint.includes("slug") ? "duplicate_slug" : "already_completed",
+      };
+    }
+
+    return { ok: true };
   }
+}
+
+// Concurrent onboarding submissions can both pass the availability checks;
+// the unique constraints on wishlists.slug and wishlists.owner_id are the
+// final arbiter, so translate their violations into domain errors.
+function findUniqueViolationConstraint(error: unknown): string | null {
+  let current: unknown = error;
+
+  while (current instanceof Error) {
+    const candidate = current as { code?: unknown; constraint_name?: unknown };
+
+    if (candidate.code === "23505") {
+      return typeof candidate.constraint_name === "string"
+        ? candidate.constraint_name
+        : "";
+    }
+
+    current = current.cause;
+  }
+
+  return null;
 }
 
 export async function getOnboardingState(
