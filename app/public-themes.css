@@ -197,6 +197,46 @@
     --pub-msg-title: #bd6595;
     --pub-msg-sub: #c77ba0;
   }
+
+  /* 토스트는 .pub-page 바깥(루트 Toaster)에 렌더링되므로 body:has()로 테마 변수를 전달 */
+  body:has(.pub-page[data-theme="pixel_y2k"]) {
+    --toast-bg: #fffdf7;
+    --toast-ink: #171717;
+    --toast-border: 2px solid #171717;
+    --toast-radius: 4px;
+    --toast-shadow: 4px 4px 0 #111827;
+    --toast-success: #0f766e;
+    --toast-success-bg: #ccfbf1;
+    --toast-error: #9d174d;
+    --toast-error-bg: #ffe4e6;
+    --toast-warning: #f97316;
+    --toast-warning-bg: #fef3c7;
+    --toast-info: #4c1d95;
+  }
+
+  body:has(.pub-page[data-theme="mono_bw"]) {
+    --toast-bg: #fff;
+    --toast-ink: #111;
+    --toast-border: 1.5px solid #111;
+    --toast-radius: 0;
+    --toast-shadow: none;
+    --toast-success: #111;
+    --toast-error: #111;
+    --toast-warning: #111;
+    --toast-info: #111;
+  }
+
+  body:has(.pub-page[data-theme="soft_pastel"]) {
+    --toast-bg: #fffafc;
+    --toast-ink: #5b5566;
+    --toast-border: 1.5px solid #f0dfe9;
+    --toast-radius: 22px;
+    --toast-shadow: 0 6px 16px rgba(150, 120, 160, 0.2);
+    --toast-success: #3f7a6e;
+    --toast-success-bg: #ffe1ec;
+    --toast-error: #bd6595;
+    --toast-error-bg: #fdeef5;
+  }
 }
 
 @layer components {

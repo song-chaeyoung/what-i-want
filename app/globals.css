@@ -149,6 +149,60 @@ body {
   box-shadow: 3px 3px 0 #111827;
 }
 
+/* sonner 토스트 기본(어드민) 스타일 — 공개 테마는 public-themes.css에서 --toast-* 변수로 오버라이드 */
+[data-sonner-toast].cn-toast {
+  background: var(--toast-bg, #fff);
+  color: var(--toast-ink, var(--foreground));
+  border: var(--toast-border, 1px solid var(--brand-line));
+  border-radius: var(--toast-radius, 1rem);
+  box-shadow: var(--toast-shadow, 0 4px 12px rgba(0, 0, 0, 0.08));
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-size: 14px;
+}
+
+[data-sonner-toast].cn-toast [data-icon] {
+  color: var(--toast-accent, currentColor);
+}
+
+[data-sonner-toast].cn-toast[data-type="success"] {
+  --toast-accent: var(--toast-success, var(--brand-teal));
+  background: var(--toast-success-bg, var(--toast-bg, #fff));
+}
+
+[data-sonner-toast].cn-toast[data-type="error"] {
+  --toast-accent: var(--toast-error, var(--destructive));
+  background: var(--toast-error-bg, var(--toast-bg, #fff));
+}
+
+[data-sonner-toast].cn-toast[data-type="warning"] {
+  --toast-accent: var(--toast-warning, var(--brand-orange));
+  background: var(--toast-warning-bg, var(--toast-bg, #fff));
+}
+
+[data-sonner-toast].cn-toast[data-type="info"] {
+  --toast-accent: var(--toast-info, var(--brand-purple));
+}
+
+[data-sonner-toast].cn-toast[data-type="loading"] {
+  --toast-accent: var(--toast-loading, var(--muted-foreground));
+}
+
+/* 모바일에서 sonner가 토스트를 풀너비로 강제하는 것을 글자 너비 + 가운데 정렬로 교체.
+   sonner 기본값은 토스터에 left+width를 함께 걸어 컨테이너가 16px 우측으로 밀리므로 뷰포트에 재고정 */
+@media (max-width: 600px) {
+  [data-sonner-toaster].toaster {
+    left: 0;
+    right: 0;
+    width: 100%;
+  }
+
+  [data-sonner-toaster] [data-sonner-toast].cn-toast {
+    width: fit-content;
+    max-width: calc(100% - var(--mobile-offset-left) * 2);
+    margin-inline: auto;
+  }
+}
+
 .dark {
   --background: oklch(0.145 0 0);
   --foreground: oklch(0.985 0 0);
