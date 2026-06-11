@@ -30,8 +30,17 @@ describe("public participation persistence contract", () => {
     const source = readFileSync(routePath, "utf8");
 
     expect(source).toContain("export async function POST");
+    expect(source).toContain("checkPublicParticipationRateLimit");
     expect(source).toContain("submitPublicParticipation");
     expect(source).toContain("DrizzlePublicParticipationRepository");
+    expect(source).toContain('{ error: "rate_limited" }');
+    expect(source).toContain('"Retry-After"');
     expect(source).toContain("/wishlist/${slug}");
+    expect(source).toContain('"error", "rate_limited"');
+    expect(
+      source.indexOf("const rateLimit = checkPublicParticipationRateLimit"),
+    ).toBeLessThan(
+      source.indexOf("readParticipationInput(request)"),
+    );
   });
 });

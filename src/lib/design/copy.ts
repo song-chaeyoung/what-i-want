@@ -36,6 +36,7 @@ export const PUBLIC_WISHLIST_COPY = {
     message_required: "메시지를 입력해주세요.",
     message_too_long: "메시지는 500자 이하여야 합니다.",
     invalid_amount: "금액은 1원 이상으로 입력해주세요.",
+    rate_limited: "요청이 많아요. 잠시 후 다시 시도해주세요.",
   },
   noTargetAmount: "목표 금액 없음",
   progressSuffix: "달성",

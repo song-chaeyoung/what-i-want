@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { DrizzlePublicParticipationRepository } from "@/src/lib/public-participation/repository";
 import {
+  checkPublicParticipationRateLimit,
+  readPublicParticipationRateLimitVisitor,
+} from "@/src/lib/public-participation/rate-limit";
+import {
   submitPublicParticipation,
   type PublicParticipationError,
 } from "@/src/lib/public-participation/service";
@@ -18,6 +22,25 @@ export async function POST(
   const { slug } = await context.params;
   const requestUrl = new URL(request.url);
   const jsonRequest = isJsonRequest(request);
+  const rateLimit = checkPublicParticipationRateLimit({
+    slug,
+    ...readPublicParticipationRateLimitVisitor(request),
+  });
+
+  if (!rateLimit.allowed) {
+    return jsonRequest
+      ? NextResponse.json(
+          { error: "rate_limited" },
+          {
+            status: 429,
+            headers: {
+              "Retry-After": String(rateLimit.retryAfter),
+            },
+          },
+        )
+      : redirectToPublicPage(requestUrl, slug, "error", "rate_limited");
+  }
+
   const input = await readParticipationInput(request);
 
   const result = await submitPublicParticipation(
