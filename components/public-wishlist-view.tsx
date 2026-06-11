@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
+import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
 import type {
   PublicBankAccountView,
@@ -228,12 +229,9 @@ function ParticipationSubmit({ demo }: { demo: boolean }) {
   }
 
   return (
-    <button
-      type="submit"
-      className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm"
-    >
-      {PUBLIC_WISHLIST_COPY.participationSubmitCta}
-    </button>
+    <PublicParticipationSubmitButton
+      label={PUBLIC_WISHLIST_COPY.participationSubmitCta}
+    />
   );
 }
 

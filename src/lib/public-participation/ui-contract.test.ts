@@ -4,6 +4,10 @@ import { describe, expect, test } from "vitest";
 
 const publicPagePath = join(process.cwd(), "app/wishlist/[slug]/page.tsx");
 const publicViewPath = join(process.cwd(), "components/public-wishlist-view.tsx");
+const publicSubmitButtonPath = join(
+  process.cwd(),
+  "components/public-participation-submit-button.tsx",
+);
 const adminMessagesPagePath = join(process.cwd(), "app/admin/messages/page.tsx");
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
@@ -20,6 +24,17 @@ describe("public participation UI contract", () => {
     expect(viewSource).toContain('name="amount"');
     expect(viewSource).toContain('name="senderName"');
     expect(viewSource).toContain('name="body"');
+  });
+
+  test("disables public participation submit buttons while a form is pending", () => {
+    const viewSource = readFileSync(publicViewPath, "utf8");
+    const buttonSource = readFileSync(publicSubmitButtonPath, "utf8");
+
+    expect(viewSource).toContain("PublicParticipationSubmitButton");
+    expect(buttonSource).toContain('"use client";');
+    expect(buttonSource).toContain('import { useFormStatus } from "react-dom";');
+    expect(buttonSource).toContain("const { pending } = useFormStatus();");
+    expect(buttonSource).toContain("disabled={pending}");
   });
 
   test("adds an admin messages page and navigation link", () => {
