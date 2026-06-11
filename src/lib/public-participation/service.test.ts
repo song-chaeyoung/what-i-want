@@ -57,6 +57,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "NO SPACE",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: "Ari",
         body: "Happy birthday",
@@ -78,6 +79,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "  BIRTHDAY  ",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: null,
         body: "Happy birthday",
@@ -98,6 +100,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: "Ari",
         body: "   ",
@@ -116,6 +119,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: "Ari",
         body: ` ${"a".repeat(501)} `,
@@ -138,6 +142,7 @@ describe("public participation service", () => {
         submitPublicParticipation(
           {
             slug: "birthday",
+            clientRequestId: null,
             wishItemId: "wish-1",
             senderName: "Ari",
             body: "Happy birthday",
@@ -158,6 +163,7 @@ describe("public participation service", () => {
         submitPublicParticipation(
           {
             slug: "birthday",
+            clientRequestId: null,
             wishItemId: "wish-1",
             senderName: "Ari",
             body: "Happy birthday",
@@ -175,6 +181,7 @@ describe("public participation service", () => {
       submitPublicParticipation(
         {
           slug: "birthday",
+          clientRequestId: null,
           wishItemId: "wish-1",
           senderName: "Ari",
           body: "Happy birthday",
@@ -196,6 +203,7 @@ describe("public participation service", () => {
       submitPublicParticipation(
         {
           slug: "birthday",
+          clientRequestId: null,
           wishItemId: "wish-1",
           senderName: "Ari",
           body: "Happy birthday",
@@ -215,6 +223,7 @@ describe("public participation service", () => {
       submitPublicParticipation(
         {
           slug: "birthday",
+          clientRequestId: null,
           wishItemId: "wish-1",
           senderName: "Ari",
           body: "Happy birthday",
@@ -232,6 +241,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "  BIRTHDAY  ",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: ` ${"Sender Name".repeat(10)} `,
         body: "  Happy birthday  ",
@@ -252,6 +262,7 @@ describe("public participation service", () => {
           wishItemId: "wish-1",
           senderName: "Sender Name".repeat(10).slice(0, 80),
           body: "Happy birthday",
+          clientRequestId: null,
         },
         funding: {
           wishlistId: "wishlist-1",
@@ -268,6 +279,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "wish-1",
         senderName: "   ",
         body: "Happy birthday",
@@ -286,6 +298,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "  ",
         senderName: "Ari",
         body: "Happy birthday",
@@ -303,6 +316,7 @@ describe("public participation service", () => {
           wishItemId: null,
           senderName: "Ari",
           body: "Happy birthday",
+          clientRequestId: null,
         },
         funding: null,
       },
@@ -315,6 +329,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "",
         senderName: null,
         body: "Happy birthday",
@@ -333,6 +348,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "",
         senderName: "Ari",
         body: "   ",
@@ -345,6 +361,46 @@ describe("public participation service", () => {
     expect(repository.created).toEqual([]);
   });
 
+  test("passes a trimmed, length-capped client request id to the repository", async () => {
+    const repository = new FakePublicParticipationRepository();
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        clientRequestId: `  ${"a".repeat(70)}  `,
+        wishItemId: "",
+        senderName: "Ari",
+        body: "Happy birthday",
+        amount: null,
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: true, kind: "message" });
+    expect(repository.created[0]?.message.clientRequestId).toBe(
+      "a".repeat(64),
+    );
+  });
+
+  test("stores a null client request id when the trimmed value is empty", async () => {
+    const repository = new FakePublicParticipationRepository();
+
+    const result = await submitPublicParticipation(
+      {
+        slug: "birthday",
+        clientRequestId: "   ",
+        wishItemId: "",
+        senderName: "Ari",
+        body: "Happy birthday",
+        amount: null,
+      },
+      repository,
+    );
+
+    expect(result).toEqual({ ok: true, kind: "message" });
+    expect(repository.created[0]?.message.clientRequestId).toBeNull();
+  });
+
   test("returns wishlist_not_found for message-only submissions to unknown slugs", async () => {
     const repository = new FakePublicParticipationRepository();
     repository.wishlist = null;
@@ -352,6 +408,7 @@ describe("public participation service", () => {
     const result = await submitPublicParticipation(
       {
         slug: "birthday",
+        clientRequestId: null,
         wishItemId: "",
         senderName: null,
         body: "Happy birthday",

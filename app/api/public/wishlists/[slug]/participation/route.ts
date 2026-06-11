@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { readPublicParticipationFormInput } from "@/src/lib/public-participation/form-input";
 import { DrizzlePublicParticipationRepository } from "@/src/lib/public-participation/repository";
 import {
   checkPublicParticipationRateLimit,
@@ -24,7 +25,7 @@ export async function POST(
   const jsonRequest = isJsonRequest(request);
   const rateLimit = checkPublicParticipationRateLimit({
     slug,
-    ...readPublicParticipationRateLimitVisitor(request),
+    ...readPublicParticipationRateLimitVisitor(request.headers),
   });
 
   if (!rateLimit.allowed) {
@@ -70,6 +71,7 @@ async function readParticipationInput(request: Request): Promise<{
   senderName: string | null;
   body: string | null;
   amount: string | number | null;
+  clientRequestId: string | null;
 }> {
   if (isJsonRequest(request)) {
     const body = (await request.json()) as Record<string, unknown>;
@@ -78,16 +80,12 @@ async function readParticipationInput(request: Request): Promise<{
       senderName: getBodyString(body, "senderName"),
       body: getBodyString(body, "body"),
       amount: getBodyStringOrNumber(body, "amount"),
+      clientRequestId: getBodyString(body, "clientRequestId"),
     };
   }
 
   const formData = await request.formData();
-  return {
-    wishItemId: getFormString(formData, "wishItemId") ?? "",
-    senderName: getFormString(formData, "senderName"),
-    body: getFormString(formData, "body"),
-    amount: getFormString(formData, "amount"),
-  };
+  return readPublicParticipationFormInput(formData);
 }
 
 function isJsonRequest(request: Request): boolean {
@@ -109,11 +107,6 @@ function getBodyStringOrNumber(
 ): string | number | null {
   const value = body[key];
   return typeof value === "string" || typeof value === "number" ? value : null;
-}
-
-function getFormString(formData: FormData, key: string): string | null {
-  const value = formData.get(key);
-  return typeof value === "string" ? value : null;
 }
 
 function getErrorStatus(error: PublicParticipationError): number {

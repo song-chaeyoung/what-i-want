@@ -62,12 +62,16 @@ export class DrizzlePublicParticipationRepository
     const funding = record.funding;
 
     if (!funding) {
-      await this.database.insert(messages).values({
-        wishlistId: record.message.wishlistId,
-        wishItemId: record.message.wishItemId,
-        senderName: record.message.senderName,
-        body: record.message.body,
-      });
+      await this.database
+        .insert(messages)
+        .values({
+          wishlistId: record.message.wishlistId,
+          wishItemId: record.message.wishItemId,
+          senderName: record.message.senderName,
+          body: record.message.body,
+          clientRequestId: record.message.clientRequestId,
+        })
+        .onConflictDoNothing({ target: messages.clientRequestId });
       return;
     }
 
@@ -79,8 +83,16 @@ export class DrizzlePublicParticipationRepository
           wishItemId: record.message.wishItemId,
           senderName: record.message.senderName,
           body: record.message.body,
+          clientRequestId: record.message.clientRequestId,
         })
+        .onConflictDoNothing({ target: messages.clientRequestId })
         .returning({ id: messages.id });
+
+      // Duplicate client request id: the participation is already recorded,
+      // so skip the funding insert and amount update.
+      if (!message) {
+        return;
+      }
 
       await tx.insert(fundingLogs).values({
         wishItemId: funding.wishItemId,

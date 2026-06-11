@@ -70,11 +70,10 @@ describe("public theme contract", () => {
     );
   });
 
-  test("keeps public participation as a server POST form", () => {
+  test("keeps public participation as a server-submitted form", () => {
     const source = readFileSync(publicViewPath, "utf8");
 
-    expect(source).toContain('method="post"');
-    expect(source).toContain("/api/public/wishlists");
+    expect(source).toContain("submitParticipationAction.bind(null, slug)");
     expect(source).toContain('name="wishItemId"');
     expect(source).toContain('name="amount"');
     expect(source).toContain('name="senderName"');

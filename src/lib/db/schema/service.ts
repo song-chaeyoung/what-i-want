@@ -8,6 +8,7 @@ import {
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
   varchar,
 } from "drizzle-orm/pg-core";
@@ -114,9 +115,13 @@ export const messages = pgTable(
     senderName: varchar("sender_name", { length: 80 }),
     body: text("body").notNull(),
     isHidden: boolean("is_hidden").default(false).notNull(),
+    clientRequestId: varchar("client_request_id", { length: 64 }),
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   },
-  (message) => [index("messages_wishlist_id_idx").on(message.wishlistId)],
+  (message) => [
+    index("messages_wishlist_id_idx").on(message.wishlistId),
+    uniqueIndex("messages_client_request_id_idx").on(message.clientRequestId),
+  ],
 );
 
 export const fundingLogs = pgTable(

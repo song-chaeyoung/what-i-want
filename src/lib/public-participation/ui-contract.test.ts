@@ -8,6 +8,10 @@ const publicSubmitButtonPath = join(
   process.cwd(),
   "components/public-participation-submit-button.tsx",
 );
+const participationActionsPath = join(
+  process.cwd(),
+  "app/wishlist/[slug]/actions.ts",
+);
 const adminMessagesPagePath = join(process.cwd(), "app/admin/messages/page.tsx");
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
@@ -35,6 +39,23 @@ describe("public participation UI contract", () => {
     expect(buttonSource).toContain('import { useFormStatus } from "react-dom";');
     expect(buttonSource).toContain("const { pending } = useFormStatus();");
     expect(buttonSource).toContain("disabled={pending}");
+  });
+
+  test("submits participation forms through a server action", () => {
+    const viewSource = readFileSync(publicViewPath, "utf8");
+    const actionsSource = readFileSync(participationActionsPath, "utf8");
+
+    expect(actionsSource).toContain('"use server";');
+    expect(actionsSource).toContain("checkPublicParticipationRateLimit");
+    expect(actionsSource).toContain("submitPublicParticipation");
+    expect(viewSource).toContain("submitParticipationAction.bind(null, slug)");
+  });
+
+  test("includes an idempotency token in participation forms", () => {
+    const viewSource = readFileSync(publicViewPath, "utf8");
+
+    expect(viewSource).toContain('name="clientRequestId"');
+    expect(viewSource).toContain("crypto.randomUUID()");
   });
 
   test("adds an admin messages page and navigation link", () => {

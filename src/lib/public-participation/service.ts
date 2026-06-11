@@ -7,6 +7,7 @@ import type {
 const MAX_MESSAGE_LENGTH = 500;
 const MAX_SENDER_NAME_LENGTH = 80;
 const MAX_AMOUNT = 100_000_000;
+const MAX_CLIENT_REQUEST_ID_LENGTH = 64;
 
 export type PublicParticipationError =
   | "wishlist_not_found"
@@ -43,6 +44,7 @@ export async function submitPublicParticipation(
     return { ok: false, error: body.error };
   }
 
+  const clientRequestId = normalizeClientRequestId(input.clientRequestId);
   const wishItemId = input.wishItemId.trim();
 
   if (!wishItemId) {
@@ -60,6 +62,7 @@ export async function submitPublicParticipation(
         wishItemId: null,
         senderName: normalizeSenderName(input.senderName),
         body: body.value,
+        clientRequestId,
       },
       funding: null,
     });
@@ -94,6 +97,7 @@ export async function submitPublicParticipation(
       wishItemId: wishItem.id,
       senderName: normalizeSenderName(input.senderName),
       body: body.value,
+      clientRequestId,
     },
     funding: {
       wishlistId: wishlist.id,
@@ -125,6 +129,16 @@ function normalizeMessageBody(value: string | null):
   }
 
   return { value: body };
+}
+
+function normalizeClientRequestId(value: string | null): string | null {
+  const clientRequestId = value?.trim() ?? "";
+
+  if (!clientRequestId) {
+    return null;
+  }
+
+  return clientRequestId.slice(0, MAX_CLIENT_REQUEST_ID_LENGTH);
 }
 
 function normalizeSenderName(value: string | null): string | null {

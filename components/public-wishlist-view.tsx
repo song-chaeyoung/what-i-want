@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { submitParticipationAction } from "@/app/wishlist/[slug]/actions";
 import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
@@ -172,10 +173,10 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
         </span>
       </summary>
       <form
-        action={demo ? undefined : `/api/public/wishlists/${slug}/participation`}
-        method="post"
+        action={demo ? undefined : submitParticipationAction.bind(null, slug)}
         className="space-y-4 px-5 pb-5"
       >
+        <input type="hidden" name="clientRequestId" value={crypto.randomUUID()} />
         <PublicField
           label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
           htmlFor="message-sender"
@@ -326,15 +327,19 @@ function PublicWishCard({
           </summary>
           <form
             action={
-              demo ? undefined : `/api/public/wishlists/${slug}/participation`
+              demo ? undefined : submitParticipationAction.bind(null, slug)
             }
-            method="post"
             className="space-y-4 border-t-2 border-[var(--pub-divider-color)] p-5"
           >
             <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
               {PUBLIC_WISHLIST_COPY.participationTitle}
             </p>
             <input type="hidden" name="wishItemId" value={item.id} />
+            <input
+              type="hidden"
+              name="clientRequestId"
+              value={crypto.randomUUID()}
+            />
 
             <PublicField
               label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
