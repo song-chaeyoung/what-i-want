@@ -1,6 +1,5 @@
 import { requireUser } from "@/src/lib/auth/require-user";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
-import type { AccountVisibility } from "@/src/lib/settings/types";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import { AdminToastMessage } from "../admin-toast-message";
@@ -21,7 +20,6 @@ const errorMessages: Record<SettingsError, string> = {
   duplicate_slug: "이미 사용 중인 공개 주소입니다.",
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
   invalid_theme: "지원하지 않는 공개 테마입니다.",
-  invalid_account_visibility: "지원하지 않는 계좌 공개 방식입니다.",
   bank_name_required: "은행 이름을 입력해주세요.",
   account_holder_required: "예금주를 입력해주세요.",
   account_number_required: "계좌번호를 입력해주세요.",
@@ -34,19 +32,6 @@ const themeLabels: Record<PublicThemeId, string> = {
   mono_bw: "모노 흑백",
   soft_pastel: "소프트 파스텔",
 };
-
-const accountVisibilityOptions: { value: AccountVisibility; label: string }[] = [
-  { value: "hidden", label: "숨김" },
-  { value: "copy_only", label: "복사 버튼만 표시" },
-];
-
-function toAccountVisibilityOption(
-  visibility: AccountVisibility | undefined,
-): AccountVisibility {
-  return visibility === undefined || visibility === "hidden"
-    ? "hidden"
-    : "copy_only";
-}
 
 export default async function AdminSettingsPage() {
   const user = await requireUser();
@@ -174,6 +159,7 @@ export default async function AdminSettingsPage() {
         </SettingsSection>
 
         <SettingsSection
+          id="account-settings"
           title="계좌 안내"
           description="계좌번호는 저장 전에 암호화됩니다."
         >
@@ -219,24 +205,6 @@ export default async function AdminSettingsPage() {
               />
             </AdminField>
           </SettingsRow>
-          <SettingsRow>
-            <AdminField label="공개 방식" htmlFor="accountVisibility" required hint="계좌번호는 화면에 표시되지 않고 복사 버튼으로만 전달됩니다.">
-              <select
-                id="accountVisibility"
-                name="accountVisibility"
-                defaultValue={toAccountVisibilityOption(
-                  settings.bankAccount?.visibility,
-                )}
-                className={adminInputClassName}
-              >
-                {accountVisibilityOptions.map((option) => (
-                  <option key={option.value} value={option.value}>
-                    {option.label}
-                  </option>
-                ))}
-              </select>
-            </AdminField>
-          </SettingsRow>
         </SettingsSection>
 
         <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-[#fafaf9]/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
@@ -250,16 +218,18 @@ export default async function AdminSettingsPage() {
 }
 
 function SettingsSection({
+  id,
   title,
   description,
   children,
 }: {
+  id?: string;
   title: string;
   description: string;
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-md border border-line bg-white">
+    <section id={id} className="rounded-md border border-line bg-white">
       <div className="border-b border-line px-4 py-3">
         <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
         <p className="mt-1 text-sm leading-6 text-zinc-600">{description}</p>

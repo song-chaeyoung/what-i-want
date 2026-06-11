@@ -1,5 +1,7 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
+import { getSettings } from "@/src/lib/settings/service";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { createWish, listWishes } from "@/src/lib/wishes/service";
 
@@ -37,12 +39,13 @@ export async function POST(request: Request): Promise<Response> {
   }
 
   const input = await readWishInput(request);
+  const wishRepository = new DrizzleWishRepository();
   const result = await createWish(
     {
       ownerId: session.user.id,
       ...input,
     },
-    new DrizzleWishRepository(),
+    wishRepository,
   );
 
   if (!result.ok) {
@@ -56,7 +59,9 @@ export async function POST(request: Request): Promise<Response> {
 
   return jsonRequest
     ? NextResponse.json({ item: result.item }, { status: 201 })
-    : NextResponse.redirect(new URL("/admin/wishes?created=1", requestUrl));
+    : NextResponse.redirect(
+        await getCreateWishRedirectUrl(requestUrl, session.user.id),
+      );
 }
 
 async function readWishInput(request: Request): Promise<{
@@ -120,4 +125,23 @@ function redirectWithSearchParam(
   const url = new URL("/admin/wishes", requestUrl);
   url.searchParams.set("error", error);
   return NextResponse.redirect(url);
+}
+
+async function getCreateWishRedirectUrl(
+  requestUrl: URL,
+  ownerId: string,
+): Promise<URL> {
+  const url = new URL("/admin/wishes", requestUrl);
+  url.searchParams.set("created", "1");
+
+  const settingsResult = await getSettings(
+    ownerId,
+    new DrizzleSettingsRepository(),
+  );
+
+  if (!settingsResult.ok || !settingsResult.settings.bankAccount) {
+    url.searchParams.set("missingAccount", "1");
+  }
+
+  return url;
 }

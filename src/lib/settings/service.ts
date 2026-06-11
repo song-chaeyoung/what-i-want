@@ -8,8 +8,6 @@ import {
   getAccountEncryptionSecret,
 } from "./account-crypto";
 import {
-  ACCOUNT_VISIBILITIES,
-  type AccountVisibility,
   type SettingsBankAccountRecord,
   type SettingsRecord,
   type SettingsRepository,
@@ -32,7 +30,7 @@ export type UpdateSettingsInput = {
   bankName: string | null;
   accountHolder: string | null;
   accountNumber: string | null;
-  accountVisibility: string | null;
+  accountVisibility?: string | null;
 };
 
 export type SettingsError =
@@ -45,7 +43,6 @@ export type SettingsError =
   | "duplicate_slug"
   | "invalid_birthday"
   | "invalid_theme"
-  | "invalid_account_visibility"
   | "bank_name_required"
   | "account_holder_required"
   | "account_number_required"
@@ -211,12 +208,6 @@ function normalizeBankAccount(
       ok: false;
       error: SettingsError;
     } {
-  const visibility = normalizeAccountVisibility(input.accountVisibility);
-
-  if (!visibility) {
-    return { ok: false, error: "invalid_account_visibility" };
-  }
-
   const bankName = normalizeOptionalText(input.bankName);
   const accountHolder = normalizeOptionalText(input.accountHolder);
   const accountNumber = normalizeOptionalText(input.accountNumber);
@@ -224,7 +215,6 @@ function normalizeBankAccount(
     Boolean(bankName) ||
     Boolean(accountHolder) ||
     Boolean(accountNumber) ||
-    visibility !== "hidden" ||
     Boolean(current);
 
   if (!hasAnyAccountInput) {
@@ -266,15 +256,9 @@ function normalizeBankAccount(
       bankName,
       accountHolder,
       accountNumberEncrypted: encryptedAccountNumber.value,
-      visibility,
+      visibility: "copy_only",
     },
   };
-}
-
-function normalizeAccountVisibility(value: string | null): AccountVisibility | null {
-  return (
-    ACCOUNT_VISIBILITIES.find((visibility) => visibility === value) ?? null
-  );
 }
 
 function normalizeTheme(value: string | null):

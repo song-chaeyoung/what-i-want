@@ -36,16 +36,38 @@ describe("admin toast contract", () => {
     const source = readFileSync(adminToastEventsPath, "utf8");
 
     expect(source).toMatch(/^"use client";/);
-    expect(source).toContain('import { toast } from "sonner";');
+    expect(source).toContain('import { toast, type ExternalToast } from "sonner";');
     expect(source).toContain('import { usePathname, useRouter, useSearchParams } from "next/navigation";');
     expect(source).toContain('saved: { type: "success", message: "설정을 저장했어요." }');
     expect(source).toContain('created: { type: "success", message: "선물을 추가했어요." }');
+    expect(source).toContain("missingAccount: {");
+    expect(source).toContain('type: "warning"');
+    expect(source).toContain(
+      'message: "계좌번호가 등록되어 있지 않아요. 설정에서 계좌번호를 추가해 주세요."',
+    );
+    expect(source).toContain(
+      'action: { label: "계좌 등록", href: "/admin/settings#account-settings" }',
+    );
     expect(source).toContain('updated: { type: "success", message: "선물을 수정했어요." }');
     expect(source).toContain('deleted: { type: "success", message: "선물을 삭제했어요." }');
     expect(source).toContain('error: { type: "error", message: "요청을 처리하지 못했어요." }');
-    expect(source).toContain("toast[toastConfig.type](toastConfig.message);");
+    expect(source).toContain("toastConfigList.forEach((toastConfig) => {");
+    expect(source).toContain("toast[toastConfig.type](");
+    expect(source).toContain("getAdminToastOptions(toastConfig, router)");
+    expect(source).toContain("onClick: () => router.push(toastConfig.action.href)");
+    expect(source).toContain("toastParamNames.forEach((paramName) => {");
     expect(source).toContain("nextParams.delete(paramName);");
     expect(source).toContain("router.replace(nextUrl, { scroll: false });");
+  });
+
+  test("adds a missing account alert query after creating a wish without an account", () => {
+    const source = readFileSync(join(root, "app/api/admin/wishes/route.ts"), "utf8");
+
+    expect(source).toContain("getSettings");
+    expect(source).toContain("DrizzleSettingsRepository");
+    expect(source).toContain("getCreateWishRedirectUrl");
+    expect(source).toContain('url.searchParams.set("created", "1");');
+    expect(source).toContain('url.searchParams.set("missingAccount", "1");');
   });
 
   test("does not duplicate redirect query feedback as inline admin notices", () => {

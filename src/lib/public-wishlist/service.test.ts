@@ -125,9 +125,21 @@ describe("public wishlist service", () => {
     });
   });
 
-  test("hides bank account guidance when account visibility is hidden", async () => {
+  test("treats a stored bank account as copy-only public guidance", async () => {
     const repository = new FakePublicWishlistRepository();
-    repository.account = makeBankAccount({ visibility: "hidden" });
+    const encrypted = encryptAccountNumber(
+      "3333-12-1234567",
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    if (!encrypted.ok) {
+      throw new Error("expected encryption fixture to be created");
+    }
+
+    repository.account = makeBankAccount({
+      accountNumberEncrypted: encrypted.value,
+      visibility: "hidden",
+    });
 
     const result = await getPublicWishlist(
       "birthday",
@@ -137,7 +149,10 @@ describe("public wishlist service", () => {
 
     expect(result).toMatchObject({
       ok: true,
-      account: null,
+      account: {
+        accountNumber: "3333-12-1234567",
+        visibility: "copy_only",
+      },
     });
   });
 
@@ -169,7 +184,7 @@ describe("public wishlist service", () => {
         bankName: "카카오뱅크",
         accountHolder: "차차",
         accountNumber: "3333-12-1234567",
-        visibility: "reveal_on_click",
+        visibility: "copy_only",
       },
     });
   });

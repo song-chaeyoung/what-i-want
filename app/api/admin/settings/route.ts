@@ -74,7 +74,6 @@ async function readSettingsInput(
       bankName: getBodyString(body, "bankName"),
       accountHolder: getBodyString(body, "accountHolder"),
       accountNumber: getBodyString(body, "accountNumber"),
-      accountVisibility: getBodyString(body, "accountVisibility"),
     };
   }
 
@@ -90,7 +89,6 @@ async function readSettingsInput(
     bankName: getFormString(formData, "bankName"),
     accountHolder: getFormString(formData, "accountHolder"),
     accountNumber: getFormString(formData, "accountNumber"),
-    accountVisibility: getFormString(formData, "accountVisibility"),
   };
 }
 

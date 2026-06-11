@@ -47,7 +47,9 @@ export function PublicWishlistToastEvents({
 
     if (toastConfig) {
       toast[toastConfig.type](toastConfig.message);
-      setAccountModalOpen(toastConfig.openAccountModal === true);
+      queueMicrotask(() => {
+        setAccountModalOpen(toastConfig.openAccountModal === true);
+      });
     }
 
     const nextParams = new URLSearchParams(searchParams.toString());

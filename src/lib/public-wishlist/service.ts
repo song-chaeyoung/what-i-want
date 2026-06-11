@@ -71,7 +71,7 @@ function toPublicBankAccountView(
   account: PublicBankAccountRecord | null,
   encryptionSecret: string | undefined,
 ): PublicBankAccountView | null {
-  if (!account || account.visibility === "hidden") {
+  if (!account) {
     return null;
   }
 
@@ -88,7 +88,7 @@ function toPublicBankAccountView(
     bankName: account.bankName,
     accountHolder: account.accountHolder,
     accountNumber,
-    visibility: account.visibility,
+    visibility: "copy_only",
   };
 }
 

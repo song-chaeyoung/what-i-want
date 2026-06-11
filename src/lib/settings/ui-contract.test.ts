@@ -10,10 +10,6 @@ const adminSettingsRoutePath = join(
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
 const publicPagePath = join(process.cwd(), "app/wishlist/[slug]/page.tsx");
-const publicViewPath = join(
-  process.cwd(),
-  "components/public-wishlist-view.tsx",
-);
 const publicToastEventsPath = join(
   process.cwd(),
   "components/public-wishlist-toast-events.tsx",
@@ -38,7 +34,13 @@ describe("admin settings UI contract", () => {
     expect(pageSource).toContain('name="displayName"');
     expect(pageSource).toContain('name="wishlistSlug"');
     expect(pageSource).toContain('name="bankName"');
-    expect(pageSource).toContain('name="accountVisibility"');
+    expect(pageSource).toContain('id="account-settings"');
+    expect(pageSource).not.toContain('name="accountVisibility"');
+    expect(pageSource).not.toContain("accountVisibilityOptions");
+    expect(pageSource).not.toContain("toAccountVisibilityOption");
+    expect(readFileSync(adminSettingsRoutePath, "utf8")).not.toContain(
+      '"accountVisibility"',
+    );
     expect(layoutSource).toContain("<AdminShellNav");
     expect(navSource).toContain('href: "/admin/settings"');
   });

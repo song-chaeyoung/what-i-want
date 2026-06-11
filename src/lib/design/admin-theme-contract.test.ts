@@ -284,7 +284,8 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('name="bankName"');
     expect(source).toContain('name="accountHolder"');
     expect(source).toContain('name="accountNumber"');
-    expect(source).toContain('name="accountVisibility"');
+    expect(source).not.toContain('name="accountVisibility"');
+    expect(source).not.toContain("accountVisibilityOptions");
   });
 
   test("adds settings section boundaries and field requirement hints", () => {

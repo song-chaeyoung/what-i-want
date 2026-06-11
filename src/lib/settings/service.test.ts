@@ -86,7 +86,7 @@ describe("admin settings service", () => {
         bankName: "  카카오뱅크  ",
         accountHolder: "  차차  ",
         accountNumber: "  3333-12-1234567  ",
-        accountVisibility: "reveal_on_click",
+        accountVisibility: null,
       }),
       repository,
       "test-secret-test-secret-test-secret-test-secret",
@@ -108,7 +108,7 @@ describe("admin settings service", () => {
         bankAccount: {
           bankName: "카카오뱅크",
           accountHolder: "차차",
-          visibility: "reveal_on_click",
+          visibility: "copy_only",
         },
       },
     });
@@ -133,7 +133,7 @@ describe("admin settings service", () => {
         accountNumber: "",
         bankName: "국민은행",
         accountHolder: "차차",
-        accountVisibility: "copy_only",
+        accountVisibility: null,
       }),
       repository,
       "test-secret-test-secret-test-secret-test-secret",
@@ -197,7 +197,7 @@ describe("admin settings service", () => {
         bankName: "카카오뱅크",
         accountHolder: "차차",
         accountNumber: "",
-        accountVisibility: "always_visible",
+        accountVisibility: null,
       }),
       repository,
       "test-secret-test-secret-test-secret-test-secret",
@@ -222,7 +222,7 @@ function makeInput(
     bankName: "",
     accountHolder: "",
     accountNumber: "",
-    accountVisibility: "hidden",
+    accountVisibility: null,
     ...overrides,
   };
 }
