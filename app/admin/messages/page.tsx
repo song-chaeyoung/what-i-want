@@ -54,7 +54,7 @@ export default async function AdminMessagesPage() {
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
             <Link
-              href={`/b/${result.wishlist.slug}`}
+              href={`/wishlist/${result.wishlist.slug}`}
               className={adminPrimaryButtonClassName}
             >
               공개 페이지 보기

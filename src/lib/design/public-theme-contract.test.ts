@@ -7,10 +7,11 @@ import { PUBLIC_THEME_IDS } from "@/src/lib/wishlist/theme";
 const root = process.cwd();
 const globalsCssPath = join(root, "app/globals.css");
 const publicThemesCssPath = join(root, "app/public-themes.css");
-const publicPagePath = join(root, "app/b/[slug]/page.tsx");
+const publicPagePath = join(root, "app/wishlist/[slug]/page.tsx");
 const publicViewPath = join(root, "components/public-wishlist-view.tsx");
 const samplePagePath = join(root, "app/sample/page.tsx");
-const publicNotFoundPath = join(root, "app/b/[slug]/not-found.tsx");
+const publicNotFoundPath = join(root, "app/wishlist/[slug]/not-found.tsx");
+const legacyPublicPagePath = join(root, "app/b/[slug]/page.tsx");
 
 describe("public theme contract", () => {
   test("imports the public theme stylesheet from global CSS", () => {
@@ -39,6 +40,7 @@ describe("public theme contract", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
     const viewSource = readFileSync(publicViewPath, "utf8");
 
+    expect(existsSync(legacyPublicPagePath)).toBe(false);
     expect(pageSource).toContain("wishlist={result.wishlist}");
     expect(viewSource).toContain('className="pub-page min-h-dvh"');
     expect(viewSource).toContain("data-theme={wishlist.themeId}");

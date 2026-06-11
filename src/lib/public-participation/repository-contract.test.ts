@@ -32,6 +32,6 @@ describe("public participation persistence contract", () => {
     expect(source).toContain("export async function POST");
     expect(source).toContain("submitPublicParticipation");
     expect(source).toContain("DrizzlePublicParticipationRepository");
-    expect(source).toContain("/b/${slug}");
+    expect(source).toContain("/wishlist/${slug}");
   });
 });

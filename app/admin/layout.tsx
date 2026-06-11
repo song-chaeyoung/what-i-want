@@ -49,7 +49,7 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
           </div>
           {state.wishlistSlug ? (
             <Link
-              href={`/b/${state.wishlistSlug}`}
+              href={`/wishlist/${state.wishlistSlug}`}
               className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-line bg-[#fbfbfa] px-3 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100 sm:h-9 sm:text-sm"
             >
               공개 페이지 보기

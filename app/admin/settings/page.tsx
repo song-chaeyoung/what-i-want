@@ -127,7 +127,7 @@ export default async function AdminSettingsPage() {
             >
               <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
                 <span className="inline-flex items-center border-r border-line px-3 text-sm font-semibold text-zinc-600">
-                  /b/
+                  /wishlist/
                 </span>
                 <input
                   id="wishlistSlug"

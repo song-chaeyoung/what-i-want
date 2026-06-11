@@ -195,7 +195,7 @@ UI는 DB 클라이언트를 직접 알지 않습니다. Application Service는 S
 ### 6.5 친구 방문자 흐름
 
 ```text
-1. /b/[slug] 접속
+1. /wishlist/[slug] 접속
 2. 공개 위시리스트 조회
 3. 선물과 계좌 안내 확인
 4. 닉네임과 메시지 입력
@@ -501,7 +501,7 @@ URL:
 URL:
 
 ```text
-/b/[slug]
+/wishlist/[slug]
 ```
 
 기능:
@@ -520,7 +520,7 @@ URL:
 URL:
 
 ```text
-/b/[slug]/opengraph-image
+/wishlist/[slug]/opengraph-image
 ```
 
 표시 요소:
@@ -750,8 +750,8 @@ og_template
 테마 적용 범위:
 
 ```text
-/b/[slug] 공개 위시리스트
-/b/[slug]/opengraph-image 개인별 OG 이미지
+/wishlist/[slug] 공개 위시리스트
+/wishlist/[slug]/opengraph-image 개인별 OG 이미지
 공유용 미리보기 카드
 ```
 
@@ -850,7 +850,7 @@ CTA:
 
 ### 14.4 공개 경험
 
-- `/b/[slug]` 공개 페이지
+- `/wishlist/[slug]` 공개 페이지
 - 공개 페이지 테마 적용
 - 계좌 공개 방식
 - 메시지 작성

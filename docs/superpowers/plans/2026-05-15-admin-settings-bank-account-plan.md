@@ -4,7 +4,7 @@
 
 > **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 커밋 단계는 이번 요청 범위에서 제외했습니다.
 
-**Goal:** Add `/admin/settings` so owners can edit profile, public link settings, and bank account visibility, then show safe account guidance on `/b/[slug]`.
+**Goal:** Add `/admin/settings` so owners can edit profile, public link settings, and bank account visibility, then show safe account guidance on `/wishlist/[slug]`.
 
 **Architecture:** Keep HTTP entrypoints in `app/api/**` and domain rules in `src/lib/**`. Store bank account numbers encrypted through an app-level crypto helper. Public wishlist reads only visibility-safe account data from the public repository.
 
@@ -24,7 +24,7 @@
 - Create: `app/admin/settings/page.tsx` for the settings UI.
 - Modify: `app/admin/layout.tsx` to link settings.
 - Modify: `src/lib/public-wishlist/types.ts`, `service.ts`, and `repository.ts` to include public account guidance.
-- Modify: `app/b/[slug]/page.tsx` to render account guidance when visibility permits.
+- Modify: `app/wishlist/[slug]/page.tsx` to render account guidance when visibility permits.
 
 ### Task 1: Settings Domain Tests
 
@@ -119,7 +119,7 @@ Add `/admin/settings` to the existing admin layout nav.
 - Modify: `src/lib/public-wishlist/types.ts`
 - Modify: `src/lib/public-wishlist/repository.ts`
 - Modify: `src/lib/public-wishlist/service.ts`
-- Modify: `app/b/[slug]/page.tsx`
+- Modify: `app/wishlist/[slug]/page.tsx`
 
 - [x] **Step 1: Extend public wishlist result**
 

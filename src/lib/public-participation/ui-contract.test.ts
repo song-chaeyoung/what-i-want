@@ -2,7 +2,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
-const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
+const publicPagePath = join(process.cwd(), "app/wishlist/[slug]/page.tsx");
 const publicViewPath = join(process.cwd(), "components/public-wishlist-view.tsx");
 const adminMessagesPagePath = join(process.cwd(), "app/admin/messages/page.tsx");
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");

@@ -55,7 +55,7 @@ Implement a transaction that inserts `messages`, inserts `funding_logs`, and inc
 
 - [x] **Step 2: Add Route Handler**
 
-Accept JSON and HTML form submissions. JSON returns status codes, form submissions redirect back to `/b/[slug]?sent=1` or `/b/[slug]?error=<code>`.
+Accept JSON and HTML form submissions. JSON returns status codes, form submissions redirect back to `/wishlist/[slug]?sent=1` or `/wishlist/[slug]?error=<code>`.
 
 - [x] **Step 3: Verify route compiles**
 
@@ -65,7 +65,7 @@ Expected: PASS.
 ### Task 3: Public Page Form
 
 **Files:**
-- Modify: `app/b/[slug]/page.tsx`
+- Modify: `app/wishlist/[slug]/page.tsx`
 - Modify: `src/lib/design/copy.ts`
 - Modify: `src/lib/design/copy.test.ts`
 

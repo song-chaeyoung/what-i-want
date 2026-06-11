@@ -105,7 +105,7 @@ function redirectToPublicPage(
   key: string,
   value: string,
 ): Response {
-  const url = new URL(`/b/${slug}`, requestUrl);
+  const url = new URL(`/wishlist/${slug}`, requestUrl);
   url.searchParams.set(key, value);
   return NextResponse.redirect(url);
 }

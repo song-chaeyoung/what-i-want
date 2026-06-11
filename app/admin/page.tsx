@@ -79,13 +79,13 @@ export default async function AdminPage() {
         <div className="min-w-0">
           <p className="text-xs font-semibold text-zinc-500">내 공개 주소</p>
           <p className="mt-1 truncate text-sm font-semibold text-ink">
-            /b/{wishesResult.wishlist.slug}
+            /wishlist/{wishesResult.wishlist.slug}
           </p>
         </div>
         <div className="flex shrink-0 gap-2">
           <CopyPublicLinkButton slug={wishesResult.wishlist.slug} />
           <Link
-            href={`/b/${wishesResult.wishlist.slug}`}
+            href={`/wishlist/${wishesResult.wishlist.slug}`}
             className={adminSecondaryButtonClassName}
           >
             열어 보기
@@ -119,7 +119,7 @@ export default async function AdminPage() {
           actionLabel="메시지함"
           emptyTitle="아직 메시지가 없습니다."
           emptyDescription="공개 페이지에서 마음이 도착하면 이곳에서 빠르게 확인합니다."
-          emptyActionHref={`/b/${wishesResult.wishlist.slug}`}
+          emptyActionHref={`/wishlist/${wishesResult.wishlist.slug}`}
           emptyActionLabel="공개 페이지 보기"
         >
           {recentMessages.map((message) => (

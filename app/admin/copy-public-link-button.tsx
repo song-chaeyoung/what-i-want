@@ -9,7 +9,9 @@ export function CopyPublicLinkButton({ slug }: { slug: string }) {
 
   async function handleCopy() {
     try {
-      await navigator.clipboard.writeText(`${window.location.origin}/b/${slug}`);
+      await navigator.clipboard.writeText(
+        `${window.location.origin}/wishlist/${slug}`,
+      );
       setCopied(true);
       toast.success("공개 페이지 링크를 복사했어요.");
       setTimeout(() => setCopied(false), 2000);

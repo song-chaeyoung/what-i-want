@@ -28,9 +28,11 @@ describe("Open Graph image contract", () => {
   });
 
   test("adds a generated public wishlist Open Graph image for shared slugs", () => {
-    const filePath = join(root, "app/b/[slug]/opengraph-image.tsx");
+    const filePath = join(root, "app/wishlist/[slug]/opengraph-image.tsx");
+    const legacyFilePath = join(root, "app/b/[slug]/opengraph-image.tsx");
 
     expect(existsSync(filePath)).toBe(true);
+    expect(existsSync(legacyFilePath)).toBe(false);
 
     const source = readFileSync(filePath, "utf8");
 

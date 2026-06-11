@@ -9,7 +9,7 @@ const adminSettingsRoutePath = join(
 );
 const adminLayoutPath = join(process.cwd(), "app/admin/layout.tsx");
 const adminShellNavPath = join(process.cwd(), "app/admin/admin-shell-nav.tsx");
-const publicPagePath = join(process.cwd(), "app/b/[slug]/page.tsx");
+const publicPagePath = join(process.cwd(), "app/wishlist/[slug]/page.tsx");
 const publicViewPath = join(
   process.cwd(),
   "components/public-wishlist-view.tsx",

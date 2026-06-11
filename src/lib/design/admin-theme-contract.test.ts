@@ -84,7 +84,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("<AdminPageTitle />");
     expect(source).toContain("<AdminShellNav />");
     expect(source).toContain("state.wishlistSlug ? (");
-    expect(source).toContain('href={`/b/${state.wishlistSlug}`}');
+    expect(source).toContain('href={`/wishlist/${state.wishlistSlug}`}');
     expect(source).toContain("공개 페이지 보기");
     expect(source).not.toContain("bg-[#f7f5f0]");
   });
@@ -153,7 +153,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).not.toContain("slug={result.wishlist.slug}");
     expect(adminUiSource).not.toContain("slug?: string;");
-    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
+    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/wishlist/${slug}` : null);");
     expect(source).toContain('action="/api/admin/wishes"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="title"');
@@ -262,7 +262,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain('import Link from "next/link";');
     expect(source).toContain("bg-[#fff7ed]");
-    expect(source).toContain('href={`/b/${result.wishlist.slug}`}');
+    expect(source).toContain('href={`/wishlist/${result.wishlist.slug}`}');
     expect(source).toContain('href="/admin/wishes"');
   });
 
@@ -272,7 +272,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).not.toContain("slug={settings.wishlist.slug}");
     expect(adminUiSource).not.toContain("slug?: string;");
-    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/b/${slug}` : null);");
+    expect(adminUiSource).not.toContain("const href = actionHref ?? (slug ? `/wishlist/${slug}` : null);");
     expect(source).toContain('action="/api/admin/settings"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="displayName"');

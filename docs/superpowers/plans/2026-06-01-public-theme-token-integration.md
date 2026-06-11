@@ -4,7 +4,7 @@
 
 > **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 최신 검증 결과는 `docs/tasks/2026-06-09-global-project-task-check.md`를 기준으로 봅니다.
 
-**Goal:** Apply the downloaded public wishlist design tokens to `/b/[slug]` without changing admin UI, database contracts, or public participation API behavior.
+**Goal:** Apply the downloaded public wishlist design tokens to `/wishlist/[slug]` without changing admin UI, database contracts, or public participation API behavior.
 
 **Architecture:** Keep the existing server-rendered public page and form POST flow. Add a scoped global CSS token file for `.pub-*` classes, import it from `app/globals.css`, then replace public page hard-coded pixel classes with semantic token classes driven by `result.wishlist.themeId`.
 
@@ -17,8 +17,8 @@
 **Files:**
 - Create: `src/lib/design/public-theme-contract.test.ts`
 - Read: `app/globals.css`
-- Read: `app/b/[slug]/page.tsx`
-- Read: `app/b/[slug]/not-found.tsx`
+- Read: `app/wishlist/[slug]/page.tsx`
+- Read: `app/wishlist/[slug]/not-found.tsx`
 - Read: `src/lib/wishlist/theme.ts`
 
 - [x] **Step 1: Write failing contract tests**
@@ -56,7 +56,7 @@ describe("public wishlist theme token integration", () => {
   });
 
   test("binds the public wishlist route to the persisted theme id", () => {
-    const page = readFileSync(join(root, "app/b/[slug]/page.tsx"), "utf8");
+    const page = readFileSync(join(root, "app/wishlist/[slug]/page.tsx"), "utf8");
 
     expect(page).toContain('className="pub-page min-h-dvh"');
     expect(page).toContain("data-theme={result.wishlist.themeId}");
@@ -64,7 +64,7 @@ describe("public wishlist theme token integration", () => {
   });
 
   test("keeps public participation as a server form post", () => {
-    const page = readFileSync(join(root, "app/b/[slug]/page.tsx"), "utf8");
+    const page = readFileSync(join(root, "app/wishlist/[slug]/page.tsx"), "utf8");
 
     expect(page).toContain('method="post"');
     expect(page).toContain("api/public/wishlists");
@@ -77,7 +77,7 @@ describe("public wishlist theme token integration", () => {
   });
 
   test("uses public theme classes for the not-found screen", () => {
-    const notFound = readFileSync(join(root, "app/b/[slug]/not-found.tsx"), "utf8");
+    const notFound = readFileSync(join(root, "app/wishlist/[slug]/not-found.tsx"), "utf8");
 
     expect(notFound).toContain("pub-page");
     expect(notFound).toContain("pub-card");
@@ -90,7 +90,7 @@ describe("public wishlist theme token integration", () => {
 
 Run: `corepack pnpm test src/lib/design/public-theme-contract.test.ts`
 
-Expected: FAIL because `app/public-themes.css` does not exist and `/b/[slug]` still uses `pixel-dot-bg`.
+Expected: FAIL because `app/public-themes.css` does not exist and `/wishlist/[slug]` still uses `pixel-dot-bg`.
 
 ---
 
@@ -141,13 +141,13 @@ Expected: still FAIL on page binding assertions until Task 3 is complete.
 ### Task 3: Public Page Theme Binding
 
 **Files:**
-- Modify: `app/b/[slug]/page.tsx`
-- Modify: `app/b/[slug]/not-found.tsx`
+- Modify: `app/wishlist/[slug]/page.tsx`
+- Modify: `app/wishlist/[slug]/not-found.tsx`
 - Test: `src/lib/design/public-theme-contract.test.ts`
 
 - [x] **Step 1: Bind the public page root to theme id**
 
-Change the main element in `app/b/[slug]/page.tsx` from the current fixed pixel background to:
+Change the main element in `app/wishlist/[slug]/page.tsx` from the current fixed pixel background to:
 
 ```tsx
 <main className="pub-page min-h-dvh" data-theme={result.wishlist.themeId}>
@@ -155,7 +155,7 @@ Change the main element in `app/b/[slug]/page.tsx` from the current fixed pixel 
 
 - [x] **Step 2: Replace public visual surfaces with token classes**
 
-Update only public visual classes in `app/b/[slug]/page.tsx`. Keep existing data loading, form action, field names, and `Link`/`a` behavior. Use these semantic mappings:
+Update only public visual classes in `app/wishlist/[slug]/page.tsx`. Keep existing data loading, form action, field names, and `Link`/`a` behavior. Use these semantic mappings:
 
 ```text
 pixel-board / pixel-card -> pub-card
@@ -168,7 +168,7 @@ gift fallback -> pub-fallback
 
 - [x] **Step 3: Theme the not-found screen**
 
-Change `app/b/[slug]/not-found.tsx` to use `pub-page`, `pub-card`, `pub-pill`, and `pub-btn` instead of the fixed pixel classes. Use the default `pixel_y2k` fallback by omitting `data-theme`.
+Change `app/wishlist/[slug]/not-found.tsx` to use `pub-page`, `pub-card`, `pub-pill`, and `pub-btn` instead of the fixed pixel classes. Use the default `pixel_y2k` fallback by omitting `data-theme`.
 
 - [x] **Step 4: Verify contract test passes**
 
@@ -203,6 +203,6 @@ Expected: PASS, or report the exact build failure if environment variables/datab
 
 - [x] **Step 4: Review diff**
 
-Run: `git diff -- app/globals.css app/public-themes.css app/b/[slug]/page.tsx app/b/[slug]/not-found.tsx src/lib/design/public-theme-contract.test.ts`
+Run: `git diff -- app/globals.css app/public-themes.css app/wishlist/[slug]/page.tsx app/wishlist/[slug]/not-found.tsx src/lib/design/public-theme-contract.test.ts`
 
 Expected: Diff is limited to public theme CSS, public wishlist UI class changes, not-found UI class changes, and the contract test.

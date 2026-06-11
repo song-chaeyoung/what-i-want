@@ -31,7 +31,7 @@ export function PublicWishlistView({
   );
   const sentKind = sent === "message" ? "message" : sent ? "funding" : null;
   const showAccountModal = sentKind === "funding" && account !== null;
-  const pagePath = demo ? "/sample" : `/b/${wishlist.slug}`;
+  const pagePath = demo ? "/sample" : `/wishlist/${wishlist.slug}`;
 
   return (
     <main className="pub-page min-h-dvh" data-theme={wishlist.themeId}>
