@@ -1,6 +1,5 @@
 import Link from "next/link";
 import { submitParticipationAction } from "@/app/wishlist/[slug]/actions";
-import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
 import type {
@@ -14,26 +13,20 @@ type PublicWishlistViewProps = {
   wishlist: PublicWishlistRecord;
   items: PublicWishItemView[];
   account: PublicBankAccountView | null;
-  sent?: string | null;
-  errorMessage?: string | null;
   demo?: boolean;
+  children?: React.ReactNode;
 };
 
 export function PublicWishlistView({
   wishlist,
   items,
-  account,
-  sent = null,
-  errorMessage = null,
   demo = false,
+  children,
 }: PublicWishlistViewProps) {
   const totalFundedAmount = items.reduce(
     (sum, item) => sum + item.fundedAmount,
     0,
   );
-  const sentKind = sent === "message" ? "message" : sent ? "funding" : null;
-  const showAccountModal = sentKind === "funding" && account !== null;
-  const pagePath = demo ? "/sample" : `/wishlist/${wishlist.slug}`;
 
   return (
     <main className="pub-page min-h-dvh" data-theme={wishlist.themeId}>
@@ -62,24 +55,6 @@ export function PublicWishlistView({
       </header>
 
       <section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">
-        {sentKind === "message" ? (
-          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
-            {PUBLIC_WISHLIST_COPY.messageSuccess}
-          </p>
-        ) : null}
-
-        {sentKind === "funding" && !showAccountModal ? (
-          <p className="border-2 border-[#0f766e] bg-[#ccfbf1] px-4 py-3 text-sm font-black text-[#0f766e]">
-            {PUBLIC_WISHLIST_COPY.participationSuccess}
-          </p>
-        ) : null}
-
-        {errorMessage ? (
-          <p className="border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
-            {errorMessage}
-          </p>
-        ) : null}
-
         <MessageOnlyForm slug={wishlist.slug} demo={demo} />
 
         {items.length > 0 ? (
@@ -111,52 +86,8 @@ export function PublicWishlistView({
         </div>
       </section>
 
-      {showAccountModal && account ? (
-        <AccountRevealModal account={account} closeHref={pagePath} />
-      ) : null}
+      {children}
     </main>
-  );
-}
-
-function AccountRevealModal({
-  account,
-  closeHref,
-}: {
-  account: PublicBankAccountView;
-  closeHref: string;
-}) {
-  return (
-    <div
-      role="dialog"
-      aria-modal="true"
-      aria-label={PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
-      className="fixed inset-0 z-50 grid place-items-center bg-black/50 p-5"
-    >
-      <section className="pub-card w-full max-w-sm p-6">
-        <p className="pub-pill pub-pill-alt">thank you</p>
-        <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
-          {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
-        </h2>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
-          {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
-        </p>
-        <div className="soft-bank-card pub-bank mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--pub-radius)] p-4">
-          <div>
-            <p className="pub-label text-xs">예금주</p>
-            <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
-              {account.accountHolder}
-            </p>
-          </div>
-          <CopyAccountNumberButton
-            bankName={account.bankName}
-            accountNumber={account.accountNumber}
-          />
-        </div>
-        <Link href={closeHref} className="pub-btn pub-btn-block mt-5 h-11 text-sm">
-          {PUBLIC_WISHLIST_COPY.accountModalClose}
-        </Link>
-      </section>
-    </div>
   );
 }
 

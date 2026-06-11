@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -7,6 +7,10 @@ const publicViewPath = join(process.cwd(), "components/public-wishlist-view.tsx"
 const publicSubmitButtonPath = join(
   process.cwd(),
   "components/public-participation-submit-button.tsx",
+);
+const publicToastEventsPath = join(
+  process.cwd(),
+  "components/public-wishlist-toast-events.tsx",
 );
 const participationActionsPath = join(
   process.cwd(),
@@ -21,7 +25,7 @@ describe("public participation UI contract", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
     const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(pageSource).toContain("searchParams");
+    expect(pageSource).toContain("PublicWishlistToastEvents");
     expect(viewSource).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
     expect(viewSource).toContain("participation");
     expect(viewSource).toContain('name="wishItemId"');
@@ -49,6 +53,47 @@ describe("public participation UI contract", () => {
     expect(actionsSource).toContain("checkPublicParticipationRateLimit");
     expect(actionsSource).toContain("submitPublicParticipation");
     expect(viewSource).toContain("submitParticipationAction.bind(null, slug)");
+  });
+
+  test("turns public participation query feedback into toasts and cleans the URL", () => {
+    const pageSource = readFileSync(publicPagePath, "utf8");
+
+    expect(existsSync(publicToastEventsPath)).toBe(true);
+
+    const toastSource = readFileSync(publicToastEventsPath, "utf8");
+
+    expect(pageSource).toContain('import { Suspense } from "react";');
+    expect(pageSource).toContain(
+      'import { PublicWishlistToastEvents } from "@/components/public-wishlist-toast-events";',
+    );
+    expect(pageSource).toContain("<Suspense fallback={null}>");
+    expect(pageSource).toContain(
+      "<PublicWishlistToastEvents account={result.account} />",
+    );
+    expect(pageSource).not.toContain("sent={query.sent");
+    expect(pageSource).not.toContain("errorMessage={query.error");
+
+    expect(toastSource).toMatch(/^"use client";/);
+    expect(toastSource).toContain(
+      'import { usePathname, useRouter, useSearchParams } from "next/navigation";',
+    );
+    expect(toastSource).toContain('import { toast } from "sonner";');
+    expect(toastSource).toContain('sent === "funding"');
+    expect(toastSource).toContain("PUBLIC_WISHLIST_COPY.participationSuccess");
+    expect(toastSource).toContain("PUBLIC_WISHLIST_COPY.messageSuccess");
+    expect(toastSource).toContain("getParticipationErrorMessage");
+    expect(toastSource).toContain('nextParams.delete("sent");');
+    expect(toastSource).toContain('nextParams.delete("error");');
+    expect(toastSource).toContain("router.replace(nextUrl, { scroll: false });");
+  });
+
+  test("does not render public participation feedback as inline notices", () => {
+    const viewSource = readFileSync(publicViewPath, "utf8");
+
+    expect(viewSource).not.toContain("sentKind");
+    expect(viewSource).not.toContain("participationSuccess");
+    expect(viewSource).not.toContain("messageSuccess");
+    expect(viewSource).not.toContain("errorMessage");
   });
 
   test("includes an idempotency token in participation forms", () => {

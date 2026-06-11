@@ -9,6 +9,10 @@ const globalsCssPath = join(root, "app/globals.css");
 const publicThemesCssPath = join(root, "app/public-themes.css");
 const publicPagePath = join(root, "app/wishlist/[slug]/page.tsx");
 const publicViewPath = join(root, "components/public-wishlist-view.tsx");
+const publicToastEventsPath = join(
+  root,
+  "components/public-wishlist-toast-events.tsx",
+);
 const samplePagePath = join(root, "app/sample/page.tsx");
 const publicNotFoundPath = join(root, "app/wishlist/[slug]/not-found.tsx");
 const legacyPublicPagePath = join(root, "app/b/[slug]/page.tsx");
@@ -84,12 +88,13 @@ describe("public theme contract", () => {
 
   test("keeps the public page focused on gift-card participation UI", () => {
     const source = readFileSync(publicViewPath, "utf8");
+    const toastSource = readFileSync(publicToastEventsPath, "utf8");
 
     expect(source).toContain("gift-card-shell");
     expect(source).toContain("gift-image-stage");
     expect(source).toContain("gift-progress-panel");
     expect(source).toContain("send-heart-section");
-    expect(source).toContain("soft-bank-card");
+    expect(`${source}\n${toastSource}`).toContain("soft-bank-card");
     expect(PUBLIC_WISHLIST_COPY.participationTitle).toBe("마음 보내기");
     expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
     expect(source).toContain("선물 링크 보기");

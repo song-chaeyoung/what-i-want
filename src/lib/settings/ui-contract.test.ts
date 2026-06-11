@@ -14,6 +14,10 @@ const publicViewPath = join(
   process.cwd(),
   "components/public-wishlist-view.tsx",
 );
+const publicToastEventsPath = join(
+  process.cwd(),
+  "components/public-wishlist-toast-events.tsx",
+);
 
 describe("admin settings UI contract", () => {
   test("adds an authenticated admin settings route handler", () => {
@@ -41,11 +45,15 @@ describe("admin settings UI contract", () => {
 
   test("reveals account guidance only after a funding submission", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
-    const viewSource = readFileSync(publicViewPath, "utf8");
+    const toastSource = readFileSync(publicToastEventsPath, "utf8");
 
-    expect(viewSource).toContain("AccountRevealModal");
-    expect(viewSource).toContain("CopyAccountNumberButton");
-    expect(viewSource).not.toContain("account.accountNumber}\n        aria-label");
+    expect(toastSource).toContain("AccountRevealModal");
+    expect(toastSource).toContain("CopyAccountNumberButton");
+    expect(toastSource).toContain('sent === "funding"');
+    expect(toastSource).not.toContain("account.accountNumber}\n        aria-label");
     expect(pageSource).toContain("account={result.account}");
+    expect(pageSource).toContain(
+      "<PublicWishlistToastEvents account={result.account} />",
+    );
   });
 });
