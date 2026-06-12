@@ -1,8 +1,6 @@
-import Image from "next/image";
-import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
-import { BRAND_NAME } from "@/src/lib/design/copy";
+import { TextLogo } from "@/components/text-logo";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { signInWithGoogle, signInWithKakao } from "./actions";
 
@@ -22,15 +20,7 @@ export default async function LoginPage() {
   return (
     <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-md flex-col justify-center">
-        <Link
-          href="/"
-          className="mb-6 flex flex-col items-center gap-3 self-center"
-        >
-          <Image src="/logo.png" alt="" width={72} height={72} priority />
-          <span className="font-pixel text-3xl tracking-normal text-[#4c1d95]">
-            {BRAND_NAME}
-          </span>
-        </Link>
+        <TextLogo href="/" className="mb-6 self-center" />
         <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-[6px_6px_0_#111827]">
           <div className="space-y-2">
             <h1 className="font-pixel text-3xl tracking-normal text-[#4c1d95]">

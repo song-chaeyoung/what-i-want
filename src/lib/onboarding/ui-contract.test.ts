@@ -5,6 +5,7 @@ import { describe, expect, test } from "vitest";
 const root = process.cwd();
 const pagePath = join(root, "app/onboarding/page.tsx");
 const birthdayPickerPath = join(root, "app/onboarding/birthday-picker.tsx");
+const textLogoPath = join(root, "components/text-logo.tsx");
 
 describe("onboarding UI contract", () => {
   test("renders the client birthday picker inside the existing server form", () => {
@@ -27,9 +28,12 @@ describe("onboarding UI contract", () => {
 
   test("uses the pixel brand shell with calm form fields", () => {
     const source = readFileSync(pagePath, "utf8");
+    const textLogoSource = readFileSync(textLogoPath, "utf8");
 
     expect(source).toContain('className="pixel-dot-bg min-h-dvh');
-    expect(source).toContain('src="/logo.png"');
+    expect(source).toContain('import { TextLogo } from "@/components/text-logo";');
+    expect(source).toContain("<TextLogo");
+    expect(textLogoSource).toContain('src="/logo.png"');
     expect(source).toContain("font-pixel");
     expect(source).toContain("border-2 border-[#171717] bg-[#fffdf7]");
     expect(source).toContain("shadow-[6px_6px_0_#111827]");
