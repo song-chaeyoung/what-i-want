@@ -6,62 +6,75 @@ import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { createWish, listWishes } from "@/src/lib/wishes/service";
 
 export async function GET(): Promise<Response> {
-  const session = await auth();
+  try {
+    const session = await auth();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
+    const result = await listWishes(
+      session.user.id,
+      new DrizzleWishRepository(),
+    );
+
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 404 });
+    }
+
+    return NextResponse.json({
+      wishlist: result.wishlist,
+      items: result.items,
+    });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "unexpected" }, { status: 500 });
   }
-
-  const result = await listWishes(
-    session.user.id,
-    new DrizzleWishRepository(),
-  );
-
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 404 });
-  }
-
-  return NextResponse.json({
-    wishlist: result.wishlist,
-    items: result.items,
-  });
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const session = await auth();
   const requestUrl = new URL(request.url);
   const jsonRequest = isJsonRequest(request);
 
-  if (!session?.user?.id) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return jsonRequest
+        ? NextResponse.json({ error: "unauthorized" }, { status: 401 })
+        : NextResponse.redirect(new URL("/login", requestUrl));
+    }
+
+    const input = await readWishInput(request);
+    const wishRepository = new DrizzleWishRepository();
+    const result = await createWish(
+      {
+        ownerId: session.user.id,
+        ...input,
+      },
+      wishRepository,
+    );
+
+    if (!result.ok) {
+      return jsonRequest
+        ? NextResponse.json(
+            { error: result.error },
+            { status: result.error === "wishlist_not_found" ? 404 : 400 },
+          )
+        : redirectWithSearchParam(requestUrl, result.error);
+    }
+
     return jsonRequest
-      ? NextResponse.json({ error: "unauthorized" }, { status: 401 })
-      : NextResponse.redirect(new URL("/login", requestUrl));
-  }
-
-  const input = await readWishInput(request);
-  const wishRepository = new DrizzleWishRepository();
-  const result = await createWish(
-    {
-      ownerId: session.user.id,
-      ...input,
-    },
-    wishRepository,
-  );
-
-  if (!result.ok) {
+      ? NextResponse.json({ item: result.item }, { status: 201 })
+      : NextResponse.redirect(
+          await getCreateWishRedirectUrl(requestUrl, session.user.id),
+        );
+  } catch (error) {
+    console.error(error);
     return jsonRequest
-      ? NextResponse.json(
-          { error: result.error },
-          { status: result.error === "wishlist_not_found" ? 404 : 400 },
-        )
-      : redirectWithSearchParam(requestUrl, result.error);
+      ? NextResponse.json({ error: "unexpected" }, { status: 500 })
+      : redirectWithSearchParam(requestUrl, "unexpected");
   }
-
-  return jsonRequest
-    ? NextResponse.json({ item: result.item }, { status: 201 })
-    : NextResponse.redirect(
-        await getCreateWishRedirectUrl(requestUrl, session.user.id),
-      );
 }
 
 async function readWishInput(request: Request): Promise<{

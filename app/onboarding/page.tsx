@@ -15,6 +15,7 @@ const errorMessages: Record<string, string> = {
   invalid_birthday: "생일은 YYYY-MM-DD 형식의 실제 날짜로 선택해주세요.",
   duplicate_slug: "공개 주소를 만드는 중 문제가 발생했습니다. 다시 시도해주세요.",
   already_completed: "이미 온보딩이 완료되었습니다.",
+  unexpected: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.",
 };
 
 export default async function OnboardingPage({

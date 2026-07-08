@@ -13,45 +13,62 @@ export async function PATCH(
   request: Request,
   context: WishRouteContext,
 ): Promise<Response> {
-  return updateWishFromRequest(request, context, "json");
+  try {
+    return await updateWishFromRequest(request, context, "json");
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "unexpected" }, { status: 500 });
+  }
 }
 
 export async function DELETE(
   request: Request,
   context: WishRouteContext,
 ): Promise<Response> {
-  const session = await auth();
+  try {
+    const session = await auth();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
+    const { id } = await context.params;
+    const result = await deleteWish(
+      session.user.id,
+      id,
+      new DrizzleWishRepository(),
+    );
+
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 404 });
+    }
+
+    return NextResponse.json({ ok: true });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "unexpected" }, { status: 500 });
   }
-
-  const { id } = await context.params;
-  const result = await deleteWish(
-    session.user.id,
-    id,
-    new DrizzleWishRepository(),
-  );
-
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 404 });
-  }
-
-  return NextResponse.json({ ok: true });
 }
 
 export async function POST(
   request: Request,
   context: WishRouteContext,
 ): Promise<Response> {
-  const formData = await request.formData();
-  const method = getFormString(formData, "_method")?.toLowerCase();
+  const requestUrl = new URL(request.url);
 
-  if (method === "delete") {
-    return deleteWishFromForm(request, context);
+  try {
+    const formData = await request.formData();
+    const method = getFormString(formData, "_method")?.toLowerCase();
+
+    if (method === "delete") {
+      return await deleteWishFromForm(request, context);
+    }
+
+    return await updateWishFromForm(request, context, formData);
+  } catch (error) {
+    console.error(error);
+    return redirectWithSearchParam(requestUrl, "unexpected");
   }
-
-  return updateWishFromForm(request, context, formData);
 }
 
 async function updateWishFromRequest(

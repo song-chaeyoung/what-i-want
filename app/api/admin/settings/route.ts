@@ -8,53 +8,66 @@ import {
 } from "@/src/lib/settings/service";
 
 export async function GET(): Promise<Response> {
-  const session = await auth();
+  try {
+    const session = await auth();
 
-  if (!session?.user?.id) {
-    return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    if (!session?.user?.id) {
+      return NextResponse.json({ error: "unauthorized" }, { status: 401 });
+    }
+
+    const result = await getSettings(
+      session.user.id,
+      new DrizzleSettingsRepository(),
+    );
+
+    if (!result.ok) {
+      return NextResponse.json({ error: result.error }, { status: 404 });
+    }
+
+    return NextResponse.json({ settings: result.settings });
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error: "unexpected" }, { status: 500 });
   }
-
-  const result = await getSettings(
-    session.user.id,
-    new DrizzleSettingsRepository(),
-  );
-
-  if (!result.ok) {
-    return NextResponse.json({ error: result.error }, { status: 404 });
-  }
-
-  return NextResponse.json({ settings: result.settings });
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const session = await auth();
   const requestUrl = new URL(request.url);
   const jsonRequest = isJsonRequest(request);
 
-  if (!session?.user?.id) {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      return jsonRequest
+        ? NextResponse.json({ error: "unauthorized" }, { status: 401 })
+        : NextResponse.redirect(new URL("/login", requestUrl));
+    }
+
+    const input = await readSettingsInput(request, session.user.id);
+    const result = await updateSettings(
+      input,
+      new DrizzleSettingsRepository(),
+    );
+
+    if (!result.ok) {
+      return jsonRequest
+        ? NextResponse.json(
+            { error: result.error },
+            { status: result.error === "settings_not_found" ? 404 : 400 },
+          )
+        : redirectWithError(requestUrl, result.error);
+    }
+
     return jsonRequest
-      ? NextResponse.json({ error: "unauthorized" }, { status: 401 })
-      : NextResponse.redirect(new URL("/login", requestUrl));
-  }
-
-  const input = await readSettingsInput(request, session.user.id);
-  const result = await updateSettings(
-    input,
-    new DrizzleSettingsRepository(),
-  );
-
-  if (!result.ok) {
+      ? NextResponse.json({ settings: result.settings })
+      : NextResponse.redirect(new URL("/admin/settings?saved=1", requestUrl));
+  } catch (error) {
+    console.error(error);
     return jsonRequest
-      ? NextResponse.json(
-          { error: result.error },
-          { status: result.error === "settings_not_found" ? 404 : 400 },
-        )
-      : redirectWithError(requestUrl, result.error);
+      ? NextResponse.json({ error: "unexpected" }, { status: 500 })
+      : redirectWithError(requestUrl, "unexpected");
   }
-
-  return jsonRequest
-    ? NextResponse.json({ settings: result.settings })
-    : NextResponse.redirect(new URL("/admin/settings?saved=1", requestUrl));
 }
 
 async function readSettingsInput(

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminToastEvents } from "./admin-toast-events";
 import { AdminPageTitle, AdminShellNav } from "./admin-shell-nav";
+import AdminLoading from "./loading";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { BRAND_NAME } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -12,7 +13,15 @@ type AdminLayoutProps = {
   children: ReactNode;
 };
 
-export default async function AdminLayout({ children }: AdminLayoutProps) {
+export default function AdminLayout({ children }: AdminLayoutProps) {
+  return (
+    <Suspense fallback={<AdminShellSkeleton />}>
+      <AdminShell>{children}</AdminShell>
+    </Suspense>
+  );
+}
+
+async function AdminShell({ children }: AdminLayoutProps) {
   const user = await requireUser();
   const state = await getOnboardingState(user.id);
 
@@ -64,6 +73,44 @@ export default async function AdminLayout({ children }: AdminLayoutProps) {
         </Suspense>
 
         <div className="w-full px-4 py-4 sm:px-7 sm:py-6">{children}</div>
+      </main>
+    </div>
+  );
+}
+
+function AdminShellSkeleton() {
+  return (
+    <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
+      <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
+        <div className="px-1.5 pb-5">
+          <p className="text-[11px] font-bold uppercase text-teal">{BRAND_NAME}</p>
+          <h1 className="mt-1 text-[15px] font-extrabold text-ink">
+            위시리스트 관리
+          </h1>
+        </div>
+
+        <AdminShellNav variant="desktop" />
+
+        <div className="mt-6 border-t border-line px-1.5 pt-4">
+          <div className="text-[11px] font-semibold text-zinc-500">계정</div>
+          <div className="mt-1.5 h-3 w-32 animate-pulse rounded bg-zinc-200" />
+        </div>
+      </aside>
+
+      <main className="flex min-w-0 flex-1 flex-col">
+        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+          <div className="min-w-0 flex-1">
+            <div className="truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px]">
+              <AdminPageTitle />
+            </div>
+          </div>
+        </header>
+
+        <AdminShellNav />
+
+        <div className="w-full px-4 py-4 sm:px-7 sm:py-6">
+          <AdminLoading />
+        </div>
       </main>
     </div>
   );

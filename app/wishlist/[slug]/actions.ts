@@ -24,13 +24,19 @@ export async function submitParticipationAction(
     redirect(`/wishlist/${slug}?error=rate_limited`);
   }
 
-  const result = await submitPublicParticipation(
-    {
-      slug,
-      ...readPublicParticipationFormInput(formData),
-    },
-    new DrizzlePublicParticipationRepository(),
-  );
+  let result: Awaited<ReturnType<typeof submitPublicParticipation>>;
+  try {
+    result = await submitPublicParticipation(
+      {
+        slug,
+        ...readPublicParticipationFormInput(formData),
+      },
+      new DrizzlePublicParticipationRepository(),
+    );
+  } catch (error) {
+    console.error(error);
+    redirect(`/wishlist/${slug}?error=unexpected`);
+  }
 
   if (!result.ok) {
     redirect(`/wishlist/${slug}?error=${result.error}`);

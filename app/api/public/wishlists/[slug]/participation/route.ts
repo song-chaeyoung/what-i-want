@@ -23,47 +23,62 @@ export async function POST(
   const { slug } = await context.params;
   const requestUrl = new URL(request.url);
   const jsonRequest = isJsonRequest(request);
-  const rateLimit = checkPublicParticipationRateLimit({
-    slug,
-    ...readPublicParticipationRateLimitVisitor(request.headers),
-  });
 
-  if (!rateLimit.allowed) {
-    return jsonRequest
-      ? NextResponse.json(
-          { error: "rate_limited" },
-          {
-            status: 429,
-            headers: {
-              "Retry-After": String(rateLimit.retryAfter),
-            },
-          },
-        )
-      : redirectToPublicPage(requestUrl, slug, "error", "rate_limited");
-  }
-
-  const input = await readParticipationInput(request);
-
-  const result = await submitPublicParticipation(
-    {
+  try {
+    const rateLimit = checkPublicParticipationRateLimit({
       slug,
-      ...input,
-    },
-    new DrizzlePublicParticipationRepository(),
-  );
+      ...readPublicParticipationRateLimitVisitor(request.headers),
+    });
 
-  if (!result.ok) {
+    if (!rateLimit.allowed) {
+      return jsonRequest
+        ? NextResponse.json(
+            { error: "rate_limited" },
+            {
+              status: 429,
+              headers: {
+                "Retry-After": String(rateLimit.retryAfter),
+              },
+            },
+          )
+        : redirectToPublicPage(requestUrl, slug, "error", "rate_limited");
+    }
+
+    let input: Awaited<ReturnType<typeof readParticipationInput>>;
+    try {
+      input = await readParticipationInput(request);
+    } catch {
+      return jsonRequest
+        ? NextResponse.json({ error: "invalid_request" }, { status: 400 })
+        : redirectToPublicPage(requestUrl, slug, "error", "unexpected");
+    }
+
+    const result = await submitPublicParticipation(
+      {
+        slug,
+        ...input,
+      },
+      new DrizzlePublicParticipationRepository(),
+    );
+
+    if (!result.ok) {
+      return jsonRequest
+        ? NextResponse.json(
+            { error: result.error },
+            { status: getErrorStatus(result.error) },
+          )
+        : redirectToPublicPage(requestUrl, slug, "error", result.error);
+    }
+
     return jsonRequest
-      ? NextResponse.json(
-          { error: result.error },
-          { status: getErrorStatus(result.error) },
-        )
-      : redirectToPublicPage(requestUrl, slug, "error", result.error);
+      ? NextResponse.json({ ok: true, kind: result.kind }, { status: 201 })
+      : redirectToPublicPage(requestUrl, slug, "sent", result.kind);
+  } catch (error) {
+    console.error(error);
+    return jsonRequest
+      ? NextResponse.json({ error: "unexpected" }, { status: 500 })
+      : redirectToPublicPage(requestUrl, slug, "error", "unexpected");
   }
-
-  return jsonRequest
-    ? NextResponse.json({ ok: true, kind: result.kind }, { status: 201 })
-    : redirectToPublicPage(requestUrl, slug, "sent", result.kind);
 }
 
 async function readParticipationInput(request: Request): Promise<{
