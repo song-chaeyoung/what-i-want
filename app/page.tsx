@@ -81,9 +81,28 @@ export default async function Home() {
               <span className="whitespace-normal break-keep">샘플 보기</span>
             </Link>
           </div>
+
+          <div className="grid grid-cols-3 gap-2">
+            {homeSteps.map((step) => (
+              <div
+                key={step.number}
+                className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-[3px_3px_0_#111827]"
+              >
+                <p className="font-pixel text-[10px] leading-none text-[#0f766e]">
+                  {step.number}
+                </p>
+                <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
+                  {step.title}
+                </h2>
+                <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
+                  {step.label}
+                </p>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-[6px_6px_0_#111827] sm:p-5 lg:row-span-2">
+        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-[6px_6px_0_#111827] sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#171717] pb-4">
             <div className="min-w-0">
               <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95] sm:text-3xl">
@@ -98,25 +117,6 @@ export default async function Home() {
               <PreviewWish key={wish.title} {...wish} />
             ))}
           </div>
-        </div>
-
-        <div className="grid grid-cols-3 gap-2">
-          {homeSteps.map((step) => (
-            <div
-              key={step.number}
-              className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-[3px_3px_0_#111827]"
-            >
-              <p className="font-pixel text-[10px] leading-none text-[#0f766e]">
-                {step.number}
-              </p>
-              <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
-                {step.title}
-              </h2>
-              <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
-                {step.label}
-              </p>
-            </div>
-          ))}
         </div>
       </section>
     </main>

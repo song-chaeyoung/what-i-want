@@ -44,7 +44,10 @@ export const PUBLIC_WISHLIST_COPY = {
   notFoundTitle: "위시리스트를 찾을 수 없어요",
   notFoundDescription:
     "주소가 잘못되었거나 아직 공개되지 않은 위시리스트입니다.",
+  errorTitle: "잠시 문제가 생겼어요",
+  errorDescription: "일시적인 오류예요. 잠시 후 다시 시도해주세요.",
   homeCta: "처음으로",
+  retryCta: "다시 시도",
 } as const;
 
 export function formatWishCount(count: number): string {
