@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 
@@ -8,7 +9,7 @@ export type AuthenticatedUser = {
   image: string | null | undefined;
 };
 
-export async function requireUser(): Promise<AuthenticatedUser> {
+export const requireUser = cache(async (): Promise<AuthenticatedUser> => {
   const session = await auth();
 
   if (!session?.user?.id) {
@@ -21,4 +22,4 @@ export async function requireUser(): Promise<AuthenticatedUser> {
     email: session.user.email,
     image: session.user.image,
   };
-}
+});
