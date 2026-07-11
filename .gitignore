@@ -25,6 +25,7 @@
 *.pem
 .superpowers/
 .lazyweb/
+.claude/
 
 # debug
 npm-debug.log*
