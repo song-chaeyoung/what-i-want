@@ -62,7 +62,7 @@ describe("public participation UI contract", () => {
 
     const toastSource = readFileSync(publicToastEventsPath, "utf8");
 
-    expect(pageSource).toContain('import { Suspense } from "react";');
+    expect(pageSource).toContain('import { cache, Suspense } from "react";');
     expect(pageSource).toContain(
       'import { PublicWishlistToastEvents } from "@/components/public-wishlist-toast-events";',
     );
