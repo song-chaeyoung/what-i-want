@@ -11,10 +11,14 @@ export const size = {
 
 export const contentType = "image/png";
 
-const OG_FONT_FAMILY = "Noto Sans CJK KR";
+const OG_FONT_FAMILY = "MonaS12";
+const OG_FALLBACK_FONT_FAMILY = "Noto Sans CJK KR";
 
 export default async function Image() {
-  const fontData = await readOgFont();
+  const [brandFont, fallbackFont] = await Promise.all([
+    readFontFile("app/fonts/MonaS12-Bold.ttf"),
+    readFontFile("app/fonts/NotoSansCJKkr-Bold.otf"),
+  ]);
 
   return new ImageResponse(
     (
@@ -29,32 +33,10 @@ export default async function Image() {
           fontFamily: OG_FONT_FAMILY,
         }}
       >
-        <div
-          style={{
-            position: "absolute",
-            right: 54,
-            top: 48,
-            width: 180,
-            height: 180,
-            border: "4px solid #171717",
-            background: "#ccfbf1",
-            transform: "rotate(3deg)",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            right: 128,
-            bottom: 54,
-            width: 140,
-            height: 140,
-            border: "4px solid #171717",
-            background: "#fef3c7",
-            transform: "rotate(-6deg)",
-          }}
-        />
         <section
           style={{
+            position: "relative",
+            overflow: "hidden",
             width: "100%",
             height: "100%",
             display: "flex",
@@ -63,33 +45,69 @@ export default async function Image() {
             border: "5px solid #171717",
             background: "#fffdf7",
             boxShadow: "14px 14px 0 #111827",
-            padding: 52,
+            padding: 56,
           }}
         >
+          <div
+            style={{
+              position: "absolute",
+              right: -36,
+              top: -36,
+              width: 150,
+              height: 150,
+              border: "4px solid #171717",
+              background: "#ccfbf1",
+              transform: "rotate(12deg)",
+            }}
+          />
+          <div
+            style={{
+              position: "absolute",
+              right: 150,
+              bottom: -44,
+              width: 116,
+              height: 116,
+              border: "4px solid #171717",
+              background: "#fef3c7",
+              transform: "rotate(-8deg)",
+            }}
+          />
+
           <div style={{ display: "flex", flexDirection: "column", gap: 22 }}>
             <div
               style={{
                 display: "flex",
+                alignSelf: "flex-start",
+                border: "3px solid #171717",
+                background: "#ccfbf1",
+                boxShadow: "6px 6px 0 #111827",
+                padding: "10px 16px",
                 color: "#0f766e",
-                fontSize: 34,
-                lineHeight: 1.2,
+                fontSize: 30,
+                lineHeight: 1,
                 fontWeight: 800,
               }}
             >
               생일 축하해. 뭐 갖고 싶어?
             </div>
-            <div
-              style={{
-                display: "flex",
-                maxWidth: 780,
-                color: "#4c1d95",
-                fontSize: 76,
-                lineHeight: 1.08,
-                fontWeight: 900,
-                letterSpacing: 0,
-              }}
-            >
-              받고 싶은 선물을 링크 하나로 모아 공유해요.
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {["받고 싶은 선물을", "링크 하나로 모아", "공유해요."].map(
+                (line) => (
+                  <div
+                    key={line}
+                    style={{
+                      display: "flex",
+                      color: "#4c1d95",
+                      fontSize: 70,
+                      lineHeight: 1.14,
+                      fontWeight: 900,
+                      whiteSpace: "nowrap",
+                    }}
+                  >
+                    {line}
+                  </div>
+                ),
+              )}
             </div>
           </div>
 
@@ -112,7 +130,13 @@ export default async function Image() {
       fonts: [
         {
           name: OG_FONT_FAMILY,
-          data: fontData,
+          data: brandFont,
+          style: "normal",
+          weight: 700,
+        },
+        {
+          name: OG_FALLBACK_FONT_FAMILY,
+          data: fallbackFont,
           style: "normal",
           weight: 700,
         },
@@ -121,10 +145,8 @@ export default async function Image() {
   );
 }
 
-async function readOgFont(): Promise<ArrayBuffer> {
-  const font = await readFile(
-    join(process.cwd(), "app/fonts/NotoSansCJKkr-Bold.otf"),
-  );
+async function readFontFile(relativePath: string): Promise<ArrayBuffer> {
+  const font = await readFile(join(process.cwd(), relativePath));
 
   return font.buffer.slice(
     font.byteOffset,
