@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { revalidatePublicWishlistByOwner } from "@/src/lib/public-wishlist/cache";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { deleteWish, updateWish } from "@/src/lib/wishes/service";
 
@@ -42,6 +43,8 @@ export async function DELETE(
     if (!result.ok) {
       return NextResponse.json({ error: result.error }, { status: 404 });
     }
+
+    await revalidatePublicWishlistByOwner(session.user.id);
 
     return NextResponse.json({ ok: true });
   } catch (error) {
@@ -106,6 +109,8 @@ async function updateWishFromRequest(
       : redirectWithSearchParam(requestUrl, result.error);
   }
 
+  await revalidatePublicWishlistByOwner(session.user.id);
+
   return responseMode === "json"
     ? NextResponse.json({ item: result.item })
     : NextResponse.redirect(new URL("/admin/wishes?updated=1", requestUrl));
@@ -142,6 +147,8 @@ async function updateWishFromForm(
     return redirectWithSearchParam(requestUrl, result.error);
   }
 
+  await revalidatePublicWishlistByOwner(session.user.id);
+
   return NextResponse.redirect(new URL("/admin/wishes?updated=1", requestUrl));
 }
 
@@ -166,6 +173,8 @@ async function deleteWishFromForm(
   if (!result.ok) {
     return redirectWithSearchParam(requestUrl, result.error);
   }
+
+  await revalidatePublicWishlistByOwner(session.user.id);
 
   return NextResponse.redirect(new URL("/admin/wishes?deleted=1", requestUrl));
 }

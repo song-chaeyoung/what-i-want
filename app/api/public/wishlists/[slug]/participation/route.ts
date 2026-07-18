@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { revalidatePublicWishlist } from "@/src/lib/public-wishlist/cache";
 import { readPublicParticipationFormInput } from "@/src/lib/public-participation/form-input";
 import { DrizzlePublicParticipationRepository } from "@/src/lib/public-participation/repository";
 import {
@@ -69,6 +70,8 @@ export async function POST(
           )
         : redirectToPublicPage(requestUrl, slug, "error", result.error);
     }
+
+    revalidatePublicWishlist(slug);
 
     return jsonRequest
       ? NextResponse.json({ ok: true, kind: result.kind }, { status: 201 })

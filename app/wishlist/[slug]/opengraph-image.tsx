@@ -1,8 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
-import { DrizzlePublicWishlistRepository } from "@/src/lib/public-wishlist/repository";
-import { getPublicWishlist } from "@/src/lib/public-wishlist/service";
+import { getCachedPublicWishlist } from "@/src/lib/public-wishlist/cache";
 
 export const alt = "공개 생일 위시리스트";
 
@@ -22,10 +21,7 @@ type OpenGraphImageProps = {
 export default async function Image({ params }: OpenGraphImageProps) {
   const { slug } = await params;
   const fontData = await readOgFont();
-  const result = await getPublicWishlist(
-    slug,
-    new DrizzlePublicWishlistRepository(),
-  );
+  const result = await getCachedPublicWishlist(slug);
 
   if (!result.ok) {
     return renderWishlistImage({

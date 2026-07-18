@@ -37,8 +37,7 @@ describe("Open Graph image contract", () => {
     const source = readFileSync(filePath, "utf8");
 
     expect(source).toContain('import { ImageResponse } from "next/og";');
-    expect(source).toContain("getPublicWishlist");
-    expect(source).toContain("DrizzlePublicWishlistRepository");
+    expect(source).toContain("getCachedPublicWishlist");
     expect(source).toContain("params: Promise<{ slug: string }>");
     expect(source).toContain("const { slug } = await params");
     expect(source).toContain("result.ok");

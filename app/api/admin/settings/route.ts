@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { auth } from "@/auth";
+import { revalidatePublicWishlistByOwner } from "@/src/lib/public-wishlist/cache";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import {
   getSettings,
@@ -58,6 +59,8 @@ export async function POST(request: Request): Promise<Response> {
           )
         : redirectWithError(requestUrl, result.error);
     }
+
+    await revalidatePublicWishlistByOwner(session.user.id);
 
     return jsonRequest
       ? NextResponse.json({ settings: result.settings })

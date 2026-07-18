@@ -1,21 +1,16 @@
-import { cache, Suspense } from "react";
+import { Suspense } from "react";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { PublicWishlistView } from "@/components/public-wishlist-view";
 import { PublicWishlistToastEvents } from "@/components/public-wishlist-toast-events";
 import { BRAND_NAME, PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
-import { DrizzlePublicWishlistRepository } from "@/src/lib/public-wishlist/repository";
-import { getPublicWishlist } from "@/src/lib/public-wishlist/service";
+import { getCachedPublicWishlist } from "@/src/lib/public-wishlist/cache";
 
 type PublicWishlistPageProps = {
   params: Promise<{
     slug: string;
   }>;
 };
-
-const getCachedPublicWishlist = cache((slug: string) =>
-  getPublicWishlist(slug, new DrizzlePublicWishlistRepository()),
-);
 
 export async function generateMetadata({
   params,
