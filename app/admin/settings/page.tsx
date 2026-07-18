@@ -1,3 +1,4 @@
+import { signOutAction } from "@/app/login/actions";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
@@ -7,6 +8,7 @@ import {
   AdminField,
   adminInputClassName,
   adminPrimaryButtonClassName,
+  adminSecondaryButtonClassName,
   adminTextareaClassName,
 } from "../admin-ui";
 
@@ -213,6 +215,19 @@ export default async function AdminSettingsPage() {
           </button>
         </div>
       </form>
+
+      <SettingsSection
+        title="계정"
+        description="현재 기기에서 로그아웃합니다."
+      >
+        <SettingsRow>
+          <form action={signOutAction}>
+            <button type="submit" className={adminSecondaryButtonClassName}>
+              로그아웃
+            </button>
+          </form>
+        </SettingsRow>
+      </SettingsSection>
     </section>
   );
 }
