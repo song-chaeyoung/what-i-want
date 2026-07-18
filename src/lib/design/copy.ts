@@ -9,6 +9,12 @@ export const HOME_COPY = {
   previewSlug: "birthday-wish",
 } as const;
 
+export const FOOTER_COPY = {
+  contactLabel: "문의하기",
+  supportLabel: "후원하기",
+  contactUrl: "https://forms.gle/WYpBboXs3WphC7ai6",
+} as const;
+
 export const PUBLIC_WISHLIST_COPY = {
   description: "받고 싶은 선물을 모아둔 위시리스트예요.",
   summaryWishLabel: "선물",

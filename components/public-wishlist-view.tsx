@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { submitParticipationAction } from "@/app/wishlist/[slug]/actions";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
+import { SiteFooter } from "@/components/site-footer";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
 import type {
   PublicBankAccountView,
@@ -87,6 +88,7 @@ export function PublicWishlistView({
       </section>
 
       {children}
+      <SiteFooter variant={demo ? "full" : "minimal"} />
     </main>
   );
 }

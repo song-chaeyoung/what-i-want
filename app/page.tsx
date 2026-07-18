@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/auth";
 import { HOME_COPY } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -119,6 +120,7 @@ export default async function Home() {
           </div>
         </div>
       </section>
+      <SiteFooter variant="full" />
     </main>
   );
 }
