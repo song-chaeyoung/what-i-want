@@ -38,7 +38,7 @@ describe("visual system copy", () => {
       "금액은 1원 이상으로 입력해주세요.",
     );
     expect(PUBLIC_WISHLIST_COPY.participationErrors.rate_limited).toBe(
-      "요청이 많아요. 잠시 후 다시 시도해주세요.",
+      "지금 이용자가 많아요. 잠시 후 다시 시도해주세요.",
     );
   });
 

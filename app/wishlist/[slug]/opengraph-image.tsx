@@ -168,7 +168,7 @@ function renderWishlistImage({
                 fontWeight: 900,
               }}
             >
-              갖고 싶은 것들
+              받고 싶은 선물
             </div>
             {topItems.map((item, index) => (
               <div
