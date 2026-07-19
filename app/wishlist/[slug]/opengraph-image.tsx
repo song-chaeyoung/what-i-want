@@ -13,6 +13,7 @@ export const size = {
 export const contentType = "image/png";
 
 const OG_FONT_FAMILY = "Noto Sans CJK KR";
+const OG_TITLE_FONT_FAMILY = "MonaS12";
 
 type OpenGraphImageProps = {
   params: Promise<{ slug: string }>;
@@ -20,7 +21,10 @@ type OpenGraphImageProps = {
 
 export default async function Image({ params }: OpenGraphImageProps) {
   const { slug } = await params;
-  const fontData = await readOgFont();
+  const [titleFont, bodyFont] = await Promise.all([
+    readFontFile("app/fonts/MonaS12-Bold.ttf"),
+    readFontFile("app/fonts/NotoSansCJKkr-Bold.otf"),
+  ]);
   const result = await getCachedPublicWishlist(slug);
 
   if (!result.ok) {
@@ -29,7 +33,8 @@ export default async function Image({ params }: OpenGraphImageProps) {
       itemCount: 0,
       totalFundedAmount: 0,
       topItems: ["공개 링크를 다시 확인해주세요"],
-      fontData,
+      titleFont,
+      bodyFont,
     });
   }
 
@@ -47,7 +52,8 @@ export default async function Image({ params }: OpenGraphImageProps) {
       visibleItems.length > 0
         ? visibleItems.map((item) => item.title)
         : ["아직 공개된 선물이 없어요"],
-    fontData,
+    titleFont,
+    bodyFont,
   });
 }
 
@@ -56,13 +62,15 @@ function renderWishlistImage({
   itemCount,
   totalFundedAmount,
   topItems,
-  fontData,
+  titleFont,
+  bodyFont,
 }: {
   title: string;
   itemCount: number;
   totalFundedAmount: number;
   topItems: string[];
-  fontData: ArrayBuffer;
+  titleFont: ArrayBuffer;
+  bodyFont: ArrayBuffer;
 }) {
   return new ImageResponse(
     (
@@ -117,6 +125,8 @@ function renderWishlistImage({
                   lineHeight: 1.15,
                   fontWeight: 900,
                   letterSpacing: 0,
+                  wordBreak: "keep-all",
+                  fontFamily: OG_TITLE_FONT_FAMILY,
                 }}
               >
                 {title}
@@ -158,7 +168,7 @@ function renderWishlistImage({
                 fontWeight: 900,
               }}
             >
-              갖고 싶은 것들
+              받고 싶은 선물
             </div>
             {topItems.map((item, index) => (
               <div
@@ -192,6 +202,7 @@ function renderWishlistImage({
                     fontSize: 25,
                     lineHeight: 1.28,
                     fontWeight: 800,
+                    wordBreak: "keep-all",
                   }}
                 >
                   {item}
@@ -206,8 +217,14 @@ function renderWishlistImage({
       ...size,
       fonts: [
         {
+          name: OG_TITLE_FONT_FAMILY,
+          data: titleFont,
+          style: "normal",
+          weight: 700,
+        },
+        {
           name: OG_FONT_FAMILY,
-          data: fontData,
+          data: bodyFont,
           style: "normal",
           weight: 700,
         },
@@ -216,10 +233,8 @@ function renderWishlistImage({
   );
 }
 
-async function readOgFont(): Promise<ArrayBuffer> {
-  const font = await readFile(
-    join(process.cwd(), "app/fonts/NotoSansCJKkr-Bold.otf"),
-  );
+async function readFontFile(relativePath: string): Promise<ArrayBuffer> {
+  const font = await readFile(join(process.cwd(), relativePath));
 
   return font.buffer.slice(
     font.byteOffset,
