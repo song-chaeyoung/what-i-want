@@ -32,14 +32,24 @@ export function AdminShellNav({
 }: AdminShellNavProps) {
   const pathname = usePathname();
   // 메시지함에 들어가는 순간 서버가 읽음 처리하므로, 레이아웃이 다시 렌더링되기
-  // 전까지는 클라이언트에서 뱃지를 지워 최신 상태를 유지한다.
-  const [messagesVisited, setMessagesVisited] = useState(false);
+  // 전까지는 클라이언트에서 뱃지를 지워 최신 상태를 유지한다. 확인한 시점의
+  // 카운트를 기억해두고, 이후 서버가 더 큰 값을 내려주면(=새 메시지 도착)
+  // 뱃지를 다시 띄운다.
+  const [acknowledgedCount, setAcknowledgedCount] = useState<number | null>(
+    null,
+  );
 
-  if (!messagesVisited && isActivePath(pathname, "/admin/messages")) {
-    setMessagesVisited(true);
+  if (
+    acknowledgedCount !== unreadMessageCount &&
+    isActivePath(pathname, "/admin/messages")
+  ) {
+    setAcknowledgedCount(unreadMessageCount);
   }
 
-  const visibleUnreadCount = messagesVisited ? 0 : unreadMessageCount;
+  const visibleUnreadCount =
+    acknowledgedCount !== null && unreadMessageCount <= acknowledgedCount
+      ? 0
+      : unreadMessageCount;
 
   if (variant === "desktop") {
     return (
