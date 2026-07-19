@@ -1,8 +1,10 @@
 import Link from "next/link";
 import { submitParticipationAction } from "@/app/wishlist/[slug]/actions";
+import { PublicAccountSection } from "@/components/public-account-section";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { SiteFooter } from "@/components/site-footer";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
+import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
 import type {
   PublicBankAccountView,
   PublicWishItemView,
@@ -21,6 +23,7 @@ type PublicWishlistViewProps = {
 export function PublicWishlistView({
   wishlist,
   items,
+  account,
   demo = false,
   children,
 }: PublicWishlistViewProps) {
@@ -28,18 +31,28 @@ export function PublicWishlistView({
     (sum, item) => sum + item.fundedAmount,
     0,
   );
+  const birthdayBadge = wishlist.ownerBirthday
+    ? formatBirthdayBadge(wishlist.ownerBirthday)
+    : null;
+  const description =
+    wishlist.ownerDescription?.trim() || PUBLIC_WISHLIST_COPY.description;
 
   return (
     <main className="pub-page min-h-dvh" data-theme={wishlist.themeId}>
       <header className="pub-header">
         <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
-            <p className="pub-pill">birthday wishlist</p>
+            <div className="flex flex-wrap items-center gap-3">
+              <p className="pub-pill">birthday wishlist</p>
+              {birthdayBadge ? (
+                <p className="pub-pill pub-pill-alt">{birthdayBadge}</p>
+              ) : null}
+            </div>
             {demo ? <p className="pub-pill pub-pill-alt">SAMPLE</p> : null}
           </div>
           <h1 className="pub-headline mt-5 sm:text-5xl">{wishlist.title}</h1>
           <p className="mt-5 text-base font-semibold leading-7 text-[var(--pub-header-sub)]">
-            {PUBLIC_WISHLIST_COPY.description}
+            {description}
           </p>
 
           <dl className="mt-6 grid grid-cols-2 gap-3">
@@ -56,6 +69,8 @@ export function PublicWishlistView({
       </header>
 
       <section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">
+        {account ? <PublicAccountSection account={account} /> : null}
+
         <MessageOnlyForm slug={wishlist.slug} demo={demo} />
 
         {items.length > 0 ? (

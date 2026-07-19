@@ -14,6 +14,8 @@ const adminToastParams = {
   },
   updated: { type: "success", message: "선물을 수정했어요." },
   deleted: { type: "success", message: "선물을 삭제했어요." },
+  messageHidden: { type: "success", message: "참여 기록을 숨겼어요." },
+  messageRestored: { type: "success", message: "참여 기록을 복구했어요." },
   error: { type: "error", message: "요청을 처리하지 못했어요." },
 } as const;
 

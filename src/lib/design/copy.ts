@@ -33,6 +33,8 @@ export const PUBLIC_WISHLIST_COPY = {
   fundingSuccessTitle: "마음이 전해졌어요",
   fundingSuccessDescription: "아래 계좌로 보내주시면 전달이 완료돼요.",
   accountModalClose: "닫기",
+  accountSectionTitle: "계좌 안내",
+  accountSectionNote: "마음은 이 계좌로 전할 수 있어요.",
   messageFormTitle: "축하 메시지 남기기",
   messageFormNote: "결제 없이 메시지만 전할 수 있어요.",
   messageSuccess: "축하 메시지가 전해졌어요.",

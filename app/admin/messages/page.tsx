@@ -4,6 +4,7 @@ import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/reposit
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { AdminToastMessage } from "../admin-toast-message";
+import { HideMessageForm } from "./hide-message-form";
 import {
   AdminMetric,
   AdminMetricGroup,
@@ -16,11 +17,22 @@ const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
 };
 
-export default async function AdminMessagesPage() {
+type AdminMessagesPageProps = {
+  searchParams: Promise<{
+    filter?: string;
+  }>;
+};
+
+export default async function AdminMessagesPage({
+  searchParams,
+}: AdminMessagesPageProps) {
   const user = await requireUser();
+  const params = await searchParams;
+  const hiddenView = params.filter === "hidden";
   const result = await listAdminMessages(
     user.id,
     new DrizzleAdminMessagesRepository(),
+    { hidden: hiddenView },
   );
 
   if (!result.ok) {
@@ -37,14 +49,39 @@ export default async function AdminMessagesPage() {
   return (
     <section className="space-y-4">
       <AdminMetricGroup>
-        <AdminMetric label="받은 메시지" value={`${result.messages.length}개`} />
+        <AdminMetric
+          label={hiddenView ? "숨긴 메시지" : "받은 메시지"}
+          value={`${result.messages.length}개`}
+        />
       </AdminMetricGroup>
+
+      <nav aria-label="메시지 필터" className="border-b border-line">
+        <div className="flex gap-4 overflow-x-auto">
+          <MessageFilterTab
+            href="/admin/messages"
+            label="받은 메시지"
+            active={!hiddenView}
+          />
+          <MessageFilterTab
+            href="/admin/messages?filter=hidden"
+            label="숨긴 메시지"
+            active={hiddenView}
+          />
+        </div>
+      </nav>
 
       {result.messages.length > 0 ? (
         <div className="divide-y divide-line rounded-md border border-line bg-white">
           {result.messages.map((message) => (
-            <MessageRow key={message.id} message={message} />
+            <MessageRow key={message.id} message={message} hidden={hiddenView} />
           ))}
+        </div>
+      ) : hiddenView ? (
+        <div className="rounded-md border border-line bg-white p-4">
+          <p className="text-sm font-semibold">숨긴 메시지가 없습니다.</p>
+          <p className="mt-2 text-sm leading-6 text-zinc-600">
+            받은 메시지에서 숨긴 참여 기록이 여기에 표시됩니다.
+          </p>
         </div>
       ) : (
         <div className="rounded-md border border-line bg-white p-4">
@@ -69,7 +106,36 @@ export default async function AdminMessagesPage() {
   );
 }
 
-function MessageRow({ message }: { message: AdminMessageRecord }) {
+function MessageFilterTab({
+  href,
+  label,
+  active,
+}: {
+  href: string;
+  label: string;
+  active: boolean;
+}) {
+  return (
+    <Link
+      href={href}
+      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+        active
+          ? "border-ink text-ink"
+          : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"
+      }`}
+    >
+      {label}
+    </Link>
+  );
+}
+
+function MessageRow({
+  message,
+  hidden,
+}: {
+  message: AdminMessageRecord;
+  hidden: boolean;
+}) {
   return (
     <article className="grid gap-3 px-3.5 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
       <div className="min-w-0">
@@ -88,8 +154,26 @@ function MessageRow({ message }: { message: AdminMessageRecord }) {
           {message.body}
         </p>
       </div>
-      <div className="text-sm font-bold text-ink sm:text-right">
-        {message.amount ? formatCurrency(message.amount) : "금액 없음"}
+      <div className="flex items-center gap-3 sm:flex-col sm:items-end">
+        <p className="text-sm font-bold text-ink sm:text-right">
+          {message.amount ? formatCurrency(message.amount) : "금액 없음"}
+        </p>
+        {hidden ? (
+          <form action={`/api/admin/messages/${message.id}`} method="post">
+            <input type="hidden" name="intent" value="unhide" />
+            <button
+              type="submit"
+              className="h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
+            >
+              숨김 해제
+            </button>
+          </form>
+        ) : (
+          <HideMessageForm
+            messageId={message.id}
+            hasAmount={message.amount !== null}
+          />
+        )}
       </div>
     </article>
   );

@@ -252,7 +252,9 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain("listAdminMessages");
     expect(source).toContain("result.messages.map");
-    expect(source).toContain("<MessageRow key={message.id} message={message} />");
+    expect(source).toContain(
+      "<MessageRow key={message.id} message={message} hidden={hiddenView} />",
+    );
     expect(source).toContain("formatCurrency(message.amount)");
     expect(source).toContain("formatDate(message.createdAt)");
   });
@@ -349,7 +351,9 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('label="받은 메시지"');
     expect(source).toContain('className="divide-y divide-line rounded-md border border-line bg-white"');
     expect(source).toContain("function MessageRow");
-    expect(source).toContain("<MessageRow key={message.id} message={message} />");
+    expect(source).toContain(
+      "<MessageRow key={message.id} message={message} hidden={hiddenView} />",
+    );
     expect(source).toContain("rounded-full bg-[#fff7ed]");
     expect(source).not.toContain("function MessageCard");
     expect(source).not.toContain("shadow-pub");

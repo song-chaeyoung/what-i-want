@@ -52,6 +52,7 @@ describe("public participation UI contract", () => {
     expect(actionsSource).toContain('"use server";');
     expect(actionsSource).toContain("checkPublicParticipationRateLimit");
     expect(actionsSource).toContain("submitPublicParticipation");
+    expect(actionsSource).toContain("revalidatePublicWishlist(slug);");
     expect(viewSource).toContain("submitParticipationAction.bind(null, slug)");
   });
 

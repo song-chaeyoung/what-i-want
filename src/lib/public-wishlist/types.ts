@@ -7,6 +7,8 @@ export type PublicWishlistRecord = {
   slug: string;
   title: string;
   themeId: PublicThemeId;
+  ownerBirthday: string | null;
+  ownerDescription: string | null;
 };
 
 export type PublicWishItemRecord = {

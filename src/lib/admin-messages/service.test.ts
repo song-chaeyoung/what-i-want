@@ -1,5 +1,9 @@
 import { describe, expect, test } from "vitest";
-import { listAdminMessages } from "./service";
+import {
+  hideAdminMessage,
+  listAdminMessages,
+  unhideAdminMessage,
+} from "./service";
 import type {
   AdminMessageRecord,
   AdminMessagesRepository,
@@ -15,6 +19,9 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
   messages: AdminMessageRecord[] = [];
   requestedOwnerIds: string[] = [];
   requestedWishlistIds: string[] = [];
+  requestedListOptions: Array<{ hidden?: boolean }> = [];
+  hideRequests: Array<{ wishlistId: string; messageId: string }> = [];
+  unhideRequests: Array<{ wishlistId: string; messageId: string }> = [];
 
   async findWishlistByOwnerId(
     ownerId: string,
@@ -23,9 +30,26 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
     return this.wishlist;
   }
 
-  async listMessages(wishlistId: string): Promise<AdminMessageRecord[]> {
+  async listMessages(
+    wishlistId: string,
+    options: { hidden?: boolean } = {},
+  ): Promise<AdminMessageRecord[]> {
     this.requestedWishlistIds.push(wishlistId);
+    this.requestedListOptions.push(options);
     return this.messages;
+  }
+
+  async hideMessage(wishlistId: string, messageId: string): Promise<boolean> {
+    this.hideRequests.push({ wishlistId, messageId });
+    return this.messages.some((message) => message.id === messageId);
+  }
+
+  async unhideMessage(
+    wishlistId: string,
+    messageId: string,
+  ): Promise<boolean> {
+    this.unhideRequests.push({ wishlistId, messageId });
+    return this.messages.some((message) => message.id === messageId);
   }
 }
 
@@ -56,6 +80,66 @@ describe("admin messages service", () => {
 
     expect(result).toEqual({ ok: false, error: "wishlist_not_found" });
     expect(repository.requestedWishlistIds).toEqual([]);
+  });
+
+  test("hides a message that belongs to the owner wishlist", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.messages = [makeMessage({ id: "message-1" })];
+
+    const result = await hideAdminMessage("user-1", "message-1", repository);
+
+    expect(result).toEqual({ ok: true });
+    expect(repository.hideRequests).toEqual([
+      { wishlistId: "wishlist-1", messageId: "message-1" },
+    ]);
+  });
+
+  test("returns message_not_found when the message is missing or already hidden", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.messages = [];
+
+    const result = await hideAdminMessage("user-1", "message-9", repository);
+
+    expect(result).toEqual({ ok: false, error: "message_not_found" });
+  });
+
+  test("returns wishlist_not_found without hiding when onboarding is incomplete", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.wishlist = null;
+
+    const result = await hideAdminMessage("user-1", "message-1", repository);
+
+    expect(result).toEqual({ ok: false, error: "wishlist_not_found" });
+    expect(repository.hideRequests).toEqual([]);
+  });
+
+  test("lists hidden messages when the hidden filter is requested", async () => {
+    const repository = new FakeAdminMessagesRepository();
+
+    await listAdminMessages("user-1", repository, { hidden: true });
+
+    expect(repository.requestedListOptions).toEqual([{ hidden: true }]);
+  });
+
+  test("restores a hidden message that belongs to the owner wishlist", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.messages = [makeMessage({ id: "message-1" })];
+
+    const result = await unhideAdminMessage("user-1", "message-1", repository);
+
+    expect(result).toEqual({ ok: true });
+    expect(repository.unhideRequests).toEqual([
+      { wishlistId: "wishlist-1", messageId: "message-1" },
+    ]);
+  });
+
+  test("returns message_not_found when restoring a missing message", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.messages = [];
+
+    const result = await unhideAdminMessage("user-1", "message-9", repository);
+
+    expect(result).toEqual({ ok: false, error: "message_not_found" });
   });
 });
 

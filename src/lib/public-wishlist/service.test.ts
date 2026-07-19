@@ -14,6 +14,8 @@ class FakePublicWishlistRepository implements PublicWishlistRepository {
     slug: "birthday",
     title: "Birthday wishlist",
     themeId: "pixel_y2k",
+    ownerBirthday: "1999-07-24",
+    ownerDescription: "생일을 함께 축하해주세요.",
   };
   items: PublicWishItemRecord[] = [];
   account: PublicBankAccountRecord | null = null;
@@ -125,7 +127,7 @@ describe("public wishlist service", () => {
     });
   });
 
-  test("treats a stored bank account as copy-only public guidance", async () => {
+  test("omits hidden bank accounts from the public result", async () => {
     const repository = new FakePublicWishlistRepository();
     const encrypted = encryptAccountNumber(
       "3333-12-1234567",
@@ -149,45 +151,45 @@ describe("public wishlist service", () => {
 
     expect(result).toMatchObject({
       ok: true,
-      account: {
-        accountNumber: "3333-12-1234567",
-        visibility: "copy_only",
-      },
+      account: null,
     });
   });
 
-  test("decrypts visible bank account guidance for public visitors", async () => {
-    const repository = new FakePublicWishlistRepository();
-    const encrypted = encryptAccountNumber(
-      "3333-12-1234567",
-      "test-secret-test-secret-test-secret-test-secret",
-    );
+  test.each(["always_visible", "reveal_on_click", "copy_only"] as const)(
+    "decrypts %s bank account guidance with its stored visibility",
+    async (visibility) => {
+      const repository = new FakePublicWishlistRepository();
+      const encrypted = encryptAccountNumber(
+        "3333-12-1234567",
+        "test-secret-test-secret-test-secret-test-secret",
+      );
 
-    if (!encrypted.ok) {
-      throw new Error("expected encryption fixture to be created");
-    }
+      if (!encrypted.ok) {
+        throw new Error("expected encryption fixture to be created");
+      }
 
-    repository.account = makeBankAccount({
-      accountNumberEncrypted: encrypted.value,
-      visibility: "reveal_on_click",
-    });
+      repository.account = makeBankAccount({
+        accountNumberEncrypted: encrypted.value,
+        visibility,
+      });
 
-    const result = await getPublicWishlist(
-      "birthday",
-      repository,
-      "test-secret-test-secret-test-secret-test-secret",
-    );
+      const result = await getPublicWishlist(
+        "birthday",
+        repository,
+        "test-secret-test-secret-test-secret-test-secret",
+      );
 
-    expect(result).toMatchObject({
-      ok: true,
-      account: {
-        bankName: "카카오뱅크",
-        accountHolder: "차차",
-        accountNumber: "3333-12-1234567",
-        visibility: "copy_only",
-      },
-    });
-  });
+      expect(result).toMatchObject({
+        ok: true,
+        account: {
+          bankName: "카카오뱅크",
+          accountHolder: "차차",
+          accountNumber: "3333-12-1234567",
+          visibility,
+        },
+      });
+    },
+  );
 });
 
 function makeWishItem(

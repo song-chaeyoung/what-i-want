@@ -42,6 +42,13 @@ describe("visual system copy", () => {
     );
   });
 
+  test("defines public account guidance copy", () => {
+    expect(PUBLIC_WISHLIST_COPY.accountSectionTitle).toBe("계좌 안내");
+    expect(PUBLIC_WISHLIST_COPY.accountSectionNote).toBe(
+      "마음은 이 계좌로 전할 수 있어요.",
+    );
+  });
+
   test("formats wish counts in Korean", () => {
     expect(formatWishCount(0)).toBe("0개");
     expect(formatWishCount(3)).toBe("3개");

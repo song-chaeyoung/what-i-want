@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PublicWishlistView } from "@/components/public-wishlist-view";
 import type {
+  PublicBankAccountView,
   PublicWishItemView,
   PublicWishlistRecord,
 } from "@/src/lib/public-wishlist/types";
@@ -18,6 +19,8 @@ const sampleWishlist: PublicWishlistRecord = {
   slug: "sample",
   title: "민지님의 위시리스트",
   themeId: "pixel_y2k",
+  ownerBirthday: "2000-05-15",
+  ownerDescription: "올해도 함께 축하해줘서 고마워요. 편하게 골라주세요!",
 };
 
 const sampleItems: PublicWishItemView[] = [
@@ -55,6 +58,13 @@ const sampleItems: PublicWishItemView[] = [
   },
 ];
 
+const sampleAccount: PublicBankAccountView = {
+  bankName: "민지은행",
+  accountHolder: "김민지",
+  accountNumber: "0000-00-0000000",
+  visibility: "always_visible",
+};
+
 type SampleWishlistPageProps = {
   searchParams: Promise<{
     theme?: string;
@@ -71,7 +81,7 @@ export default async function SampleWishlistPage({
     <PublicWishlistView
       wishlist={{ ...sampleWishlist, themeId }}
       items={sampleItems}
-      account={null}
+      account={sampleAccount}
       demo
     />
   );
