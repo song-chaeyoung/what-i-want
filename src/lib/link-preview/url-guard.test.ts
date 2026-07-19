@@ -33,4 +33,10 @@ describe("parseFetchableUrl", () => {
     expect(parseFetchableUrl("http://[fd00::1]")).toBeNull();
     expect(parseFetchableUrl("http://[fe80::1]")).toBeNull();
   });
+
+  test("rejects IPv4-mapped IPv6 hosts", () => {
+    expect(parseFetchableUrl("http://[::ffff:127.0.0.1]")).toBeNull();
+    expect(parseFetchableUrl("http://[::ffff:10.0.0.1]")).toBeNull();
+    expect(parseFetchableUrl("http://[::ffff:169.254.169.254]")).toBeNull();
+  });
 });

@@ -1,5 +1,8 @@
 // 상품 링크 미리보기는 서버가 대신 URL을 열어보므로,
 // 내부망을 향한 요청(SSRF)을 막기 위해 호스트를 검사한다.
+// 주의: 이 가드는 호스트 "문자열"만 검사하므로, 공개 도메인이 내부 IP로
+// resolve되는 DNS 리바인딩(예: 127.0.0.1.nip.io)은 막지 못한다. 완전한
+// 방어는 호스트명을 직접 resolve해 IP를 검사·고정(pin)하는 방식이 필요하다.
 export function parseFetchableUrl(value: string): URL | null {
   let url: URL;
 
@@ -66,11 +69,15 @@ function isPrivateIpv6(hostname: string): boolean {
     return false;
   }
 
+  // IPv4-매핑 IPv6(예: ::ffff:127.0.0.1)는 그대로 내부 IPv4로 연결되므로
+  // 어떤 대상이든 차단한다. Node의 URL이 ::ffff:7f00:1 형태로 정규화해도
+  // 프리픽스는 유지되어 이 검사에 걸린다.
   return (
     hostname === "::" ||
     hostname === "::1" ||
     hostname.startsWith("fc") ||
     hostname.startsWith("fd") ||
-    hostname.startsWith("fe80")
+    hostname.startsWith("fe80") ||
+    hostname.startsWith("::ffff:")
   );
 }

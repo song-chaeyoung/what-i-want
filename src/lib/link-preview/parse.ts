@@ -114,11 +114,11 @@ function pickPrice(metaContents: Map<string, string>): number | null {
 
 function decodeHtmlEntities(value: string): string {
   return value
-    .replace(/&#x([0-9a-fA-F]+);/g, (_, hex: string) =>
-      String.fromCodePoint(Number.parseInt(hex, 16)),
+    .replace(/&#x([0-9a-fA-F]+);/g, (match, hex: string) =>
+      fromCodePointSafe(match, Number.parseInt(hex, 16)),
     )
-    .replace(/&#(\d+);/g, (_, code: string) =>
-      String.fromCodePoint(Number.parseInt(code, 10)),
+    .replace(/&#(\d+);/g, (match, code: string) =>
+      fromCodePointSafe(match, Number.parseInt(code, 10)),
     )
     .replace(/&quot;/g, '"')
     .replace(/&#39;|&apos;/g, "'")
@@ -126,4 +126,14 @@ function decodeHtmlEntities(value: string): string {
     .replace(/&gt;/g, ">")
     .replace(/&nbsp;/g, " ")
     .replace(/&amp;/g, "&");
+}
+
+// 유효한 유니코드 코드 포인트 범위를 벗어나면 String.fromCodePoint가 RangeError를
+// 던지므로, 그런 잘못된 엔티티는 디코딩하지 않고 원문을 그대로 둔다.
+function fromCodePointSafe(original: string, codePoint: number): string {
+  if (!Number.isInteger(codePoint) || codePoint < 0 || codePoint > 0x10ffff) {
+    return original;
+  }
+
+  return String.fromCodePoint(codePoint);
 }

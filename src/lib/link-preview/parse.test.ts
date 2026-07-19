@@ -73,4 +73,10 @@ describe("parseLinkPreview", () => {
       price: null,
     });
   });
+
+  test("keeps out-of-range numeric entities instead of throwing", () => {
+    const html = `<meta property="og:title" content="&#xFFFFFF; &#1114112; &amp;" />`;
+
+    expect(parseLinkPreview(html, baseUrl).title).toBe("&#xFFFFFF; &#1114112; &");
+  });
 });

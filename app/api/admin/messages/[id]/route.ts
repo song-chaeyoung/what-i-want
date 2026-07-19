@@ -28,7 +28,15 @@ export async function POST(
 
     const { id } = await context.params;
     const formData = await request.formData();
-    const unhide = formData.get("intent") === "unhide";
+    const intent = formData.get("intent");
+
+    if (intent !== "hide" && intent !== "unhide") {
+      return NextResponse.redirect(
+        new URL("/admin/messages?error=1", requestUrl),
+      );
+    }
+
+    const unhide = intent === "unhide";
 
     const repository = new DrizzleAdminMessagesRepository();
     const result = unhide

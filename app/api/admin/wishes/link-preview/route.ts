@@ -34,7 +34,7 @@ export async function GET(request: Request): Promise<Response> {
       return NextResponse.json({ error: "not_html" }, { status: 415 });
     }
 
-    const html = (await response.text()).slice(0, MAX_HTML_LENGTH);
+    const html = await readCappedText(response, MAX_HTML_LENGTH);
 
     return NextResponse.json({
       preview: parseLinkPreview(html, response.url || targetUrl.toString()),
@@ -43,6 +43,40 @@ export async function GET(request: Request): Promise<Response> {
     console.error(error);
     return NextResponse.json({ error: "fetch_failed" }, { status: 502 });
   }
+}
+
+// 악성 서버가 대용량 응답을 흘려보내 메모리를 고갈시키는 것을 막기 위해,
+// 본문을 한꺼번에 읽지 않고 상한(maxLength)까지만 스트림으로 읽고 중단한다.
+async function readCappedText(
+  response: Response,
+  maxLength: number,
+): Promise<string> {
+  const body = response.body;
+
+  if (!body) {
+    return (await response.text()).slice(0, maxLength);
+  }
+
+  const reader = body.getReader();
+  const decoder = new TextDecoder();
+  let result = "";
+
+  try {
+    while (result.length < maxLength) {
+      const { done, value } = await reader.read();
+
+      if (done) {
+        break;
+      }
+
+      result += decoder.decode(value, { stream: true });
+    }
+  } finally {
+    // 상한에 도달해 중단한 경우 남은 다운로드를 취소한다.
+    await reader.cancel();
+  }
+
+  return result.slice(0, maxLength);
 }
 
 // 리다이렉트 목적지도 내부망일 수 있어 한 단계씩 검사하며 따라간다.
