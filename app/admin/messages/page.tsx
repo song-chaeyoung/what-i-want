@@ -165,7 +165,7 @@ function MessageRow({
       </div>
       <div className="flex items-center gap-3 sm:flex-col sm:items-end">
         <p className="text-sm font-bold text-ink sm:text-right">
-          {message.amount ? formatCurrency(message.amount) : "금액 없음"}
+          {message.amount !== null ? formatCurrency(message.amount) : "금액 없음"}
         </p>
         {hidden ? (
           <form action={`/api/admin/messages/${message.id}`} method="post">
