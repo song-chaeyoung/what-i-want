@@ -2,6 +2,7 @@ import Link from "next/link";
 import { submitParticipationAction } from "@/app/wishlist/[slug]/actions";
 import { PublicAccountSection } from "@/components/public-account-section";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
+import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
 import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
 import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
@@ -48,7 +49,10 @@ export function PublicWishlistView({
                 <p className="pub-pill pub-pill-alt">{birthdayBadge}</p>
               ) : null}
             </div>
-            {demo ? <p className="pub-pill pub-pill-alt">SAMPLE</p> : null}
+            <div className="flex flex-wrap items-center gap-3">
+              {demo ? <p className="pub-pill pub-pill-alt">SAMPLE</p> : null}
+              <PublicShareButton title={wishlist.title} />
+            </div>
           </div>
           <h1 className="pub-headline mt-5 sm:text-5xl">{wishlist.title}</h1>
           <p className="mt-5 text-base font-semibold leading-7 text-[var(--pub-header-sub)]">
