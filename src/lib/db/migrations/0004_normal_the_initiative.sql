@@ -1,0 +1,1 @@
+ALTER TABLE "wishlists" ADD COLUMN "messages_read_at" timestamp;

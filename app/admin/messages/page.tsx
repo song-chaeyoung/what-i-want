@@ -1,7 +1,11 @@
 import Link from "next/link";
+import { after } from "next/server";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
-import { listAdminMessages } from "@/src/lib/admin-messages/service";
+import {
+  listAdminMessages,
+  markAdminMessagesRead,
+} from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { AdminToastMessage } from "../admin-toast-message";
 import { HideMessageForm } from "./hide-message-form";
@@ -45,6 +49,11 @@ export default async function AdminMessagesPage({
       </section>
     );
   }
+
+  // 메시지함을 열어본 시점을 기록해 네비 뱃지의 안 읽음 기준으로 사용한다.
+  after(() =>
+    markAdminMessagesRead(user.id, new DrizzleAdminMessagesRepository()),
+  );
 
   return (
     <section className="space-y-4">

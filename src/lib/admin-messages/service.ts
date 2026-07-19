@@ -62,6 +62,42 @@ export async function hideAdminMessage(
   return { ok: true };
 }
 
+export type CountUnreadAdminMessagesResult =
+  | {
+      ok: true;
+      count: number;
+    }
+  | {
+      ok: false;
+      error: "wishlist_not_found";
+    };
+
+export async function countUnreadAdminMessages(
+  ownerId: string,
+  repository: AdminMessagesRepository,
+): Promise<CountUnreadAdminMessagesResult> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return { ok: false, error: "wishlist_not_found" };
+  }
+
+  return { ok: true, count: await repository.countUnreadMessages(wishlist.id) };
+}
+
+export async function markAdminMessagesRead(
+  ownerId: string,
+  repository: AdminMessagesRepository,
+): Promise<void> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return;
+  }
+
+  await repository.markMessagesRead(wishlist.id);
+}
+
 export async function unhideAdminMessage(
   ownerId: string,
   messageId: string,

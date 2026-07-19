@@ -1,7 +1,9 @@
 import { describe, expect, test } from "vitest";
 import {
+  countUnreadAdminMessages,
   hideAdminMessage,
   listAdminMessages,
+  markAdminMessagesRead,
   unhideAdminMessage,
 } from "./service";
 import type {
@@ -22,6 +24,9 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
   requestedListOptions: Array<{ hidden?: boolean }> = [];
   hideRequests: Array<{ wishlistId: string; messageId: string }> = [];
   unhideRequests: Array<{ wishlistId: string; messageId: string }> = [];
+  unreadCount = 0;
+  countRequests: string[] = [];
+  markReadRequests: string[] = [];
 
   async findWishlistByOwnerId(
     ownerId: string,
@@ -50,6 +55,15 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
   ): Promise<boolean> {
     this.unhideRequests.push({ wishlistId, messageId });
     return this.messages.some((message) => message.id === messageId);
+  }
+
+  async countUnreadMessages(wishlistId: string): Promise<number> {
+    this.countRequests.push(wishlistId);
+    return this.unreadCount;
+  }
+
+  async markMessagesRead(wishlistId: string): Promise<void> {
+    this.markReadRequests.push(wishlistId);
   }
 }
 
@@ -140,6 +154,43 @@ describe("admin messages service", () => {
     const result = await unhideAdminMessage("user-1", "message-9", repository);
 
     expect(result).toEqual({ ok: false, error: "message_not_found" });
+  });
+
+  test("counts unread messages for the owner wishlist", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.unreadCount = 3;
+
+    const result = await countUnreadAdminMessages("user-1", repository);
+
+    expect(result).toEqual({ ok: true, count: 3 });
+    expect(repository.countRequests).toEqual(["wishlist-1"]);
+  });
+
+  test("returns wishlist_not_found without counting when onboarding is incomplete", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.wishlist = null;
+
+    const result = await countUnreadAdminMessages("user-1", repository);
+
+    expect(result).toEqual({ ok: false, error: "wishlist_not_found" });
+    expect(repository.countRequests).toEqual([]);
+  });
+
+  test("marks messages read for the owner wishlist", async () => {
+    const repository = new FakeAdminMessagesRepository();
+
+    await markAdminMessagesRead("user-1", repository);
+
+    expect(repository.markReadRequests).toEqual(["wishlist-1"]);
+  });
+
+  test("skips marking read when onboarding is incomplete", async () => {
+    const repository = new FakeAdminMessagesRepository();
+    repository.wishlist = null;
+
+    await markAdminMessagesRead("user-1", repository);
+
+    expect(repository.markReadRequests).toEqual([]);
   });
 });
 

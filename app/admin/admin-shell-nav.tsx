@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import { Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -13,6 +14,7 @@ const adminNavItems = [
 
 type AdminShellNavProps = {
   variant?: "mobile" | "desktop";
+  unreadMessageCount?: number;
 };
 
 export function AdminPageTitle() {
@@ -24,8 +26,20 @@ export function AdminPageTitle() {
   return <>{activeItem?.label ?? "위시리스트 관리"}</>;
 }
 
-export function AdminShellNav({ variant = "mobile" }: AdminShellNavProps) {
+export function AdminShellNav({
+  variant = "mobile",
+  unreadMessageCount = 0,
+}: AdminShellNavProps) {
   const pathname = usePathname();
+  // 메시지함에 들어가는 순간 서버가 읽음 처리하므로, 레이아웃이 다시 렌더링되기
+  // 전까지는 클라이언트에서 뱃지를 지워 최신 상태를 유지한다.
+  const [messagesVisited, setMessagesVisited] = useState(false);
+
+  if (!messagesVisited && isActivePath(pathname, "/admin/messages")) {
+    setMessagesVisited(true);
+  }
+
+  const visibleUnreadCount = messagesVisited ? 0 : unreadMessageCount;
 
   if (variant === "desktop") {
     return (
@@ -48,6 +62,9 @@ export function AdminShellNav({ variant = "mobile" }: AdminShellNavProps) {
             >
               <Icon aria-hidden="true" className="size-4 shrink-0" />
               {item.label}
+              {item.href === "/admin/messages" ? (
+                <UnreadBadge count={visibleUnreadCount} />
+              ) : null}
             </Link>
           );
         })}
@@ -77,11 +94,29 @@ export function AdminShellNav({ variant = "mobile" }: AdminShellNavProps) {
             >
               <Icon aria-hidden="true" className="size-3.5 shrink-0" />
               {item.label}
+              {item.href === "/admin/messages" ? (
+                <UnreadBadge count={visibleUnreadCount} />
+              ) : null}
             </Link>
           );
         })}
       </div>
     </nav>
+  );
+}
+
+function UnreadBadge({ count }: { count: number }) {
+  if (count <= 0) {
+    return null;
+  }
+
+  return (
+    <span
+      aria-label={`새 메시지 ${count}개`}
+      className="inline-flex h-4.5 min-w-4.5 shrink-0 items-center justify-center rounded-full bg-[#f97316] px-1 text-[10px] font-bold leading-none text-white"
+    >
+      {count > 99 ? "99+" : count}
+    </span>
   );
 }
 

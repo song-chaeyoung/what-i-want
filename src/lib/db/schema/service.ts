@@ -63,6 +63,7 @@ export const wishlists = pgTable("wishlists", {
   visibility: wishlistVisibilityEnum("visibility")
     .default("public")
     .notNull(),
+  messagesReadAt: timestamp("messages_read_at", { mode: "date" }),
   createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
   updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
 });

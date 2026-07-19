@@ -16,6 +16,10 @@ const adminToastParams = {
   deleted: { type: "success", message: "선물을 삭제했어요." },
   messageHidden: { type: "success", message: "참여 기록을 숨겼어요." },
   messageRestored: { type: "success", message: "참여 기록을 복구했어요." },
+  wishlistReset: {
+    type: "success",
+    message: "위시리스트를 초기화했어요. 새 생일을 준비해 보세요.",
+  },
   error: { type: "error", message: "요청을 처리하지 못했어요." },
 } as const;
 

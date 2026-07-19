@@ -1,4 +1,4 @@
-import { and, desc, eq, sql } from "drizzle-orm";
+import { and, desc, eq, isNull, or, sql } from "drizzle-orm";
 import { db, type Database } from "@/src/lib/db/client";
 import {
   fundingLogs,
@@ -58,6 +58,32 @@ export class DrizzleAdminMessagesRepository
         ),
       )
       .orderBy(desc(messages.createdAt));
+  }
+
+  async countUnreadMessages(wishlistId: string): Promise<number> {
+    const [row] = await this.database
+      .select({ count: sql<number>`count(*)::int` })
+      .from(messages)
+      .innerJoin(wishlists, eq(wishlists.id, messages.wishlistId))
+      .where(
+        and(
+          eq(messages.wishlistId, wishlistId),
+          eq(messages.isHidden, false),
+          or(
+            isNull(wishlists.messagesReadAt),
+            sql`${messages.createdAt} > ${wishlists.messagesReadAt}`,
+          ),
+        ),
+      );
+
+    return row?.count ?? 0;
+  }
+
+  async markMessagesRead(wishlistId: string): Promise<void> {
+    await this.database
+      .update(wishlists)
+      .set({ messagesReadAt: new Date() })
+      .where(eq(wishlists.id, wishlistId));
   }
 
   // 숨김/해제 시 펀딩 로그는 보존하고 모인 금액만 가감한다.

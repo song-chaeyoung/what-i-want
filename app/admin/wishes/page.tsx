@@ -6,6 +6,7 @@ import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
 import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
 import { AdminToastMessage } from "../admin-toast-message";
+import { LinkAutofillButton } from "./link-autofill-button";
 import {
   AdminField,
   AdminMetric,
@@ -178,14 +179,21 @@ export default async function AdminWishesPage({
             />
           </AdminField>
 
-          <AdminField label="상품 링크" htmlFor="create-productUrl">
-            <input
-              id="create-productUrl"
-              name="productUrl"
-              type="url"
-              placeholder="https://..."
-              className={adminInputClassName}
-            />
+          <AdminField
+            label="상품 링크"
+            htmlFor="create-productUrl"
+            hint="링크를 넣고 정보 불러오기를 누르면 이름, 이미지, 금액을 자동으로 채워요."
+          >
+            <div className="flex gap-2">
+              <input
+                id="create-productUrl"
+                name="productUrl"
+                type="url"
+                placeholder="https://..."
+                className={adminInputClassName}
+              />
+              <LinkAutofillButton />
+            </div>
           </AdminField>
 
           <AdminField label="이미지 링크" htmlFor="create-imageUrl">
@@ -327,13 +335,16 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           </AdminField>
 
           <AdminField label="상품 링크" htmlFor={`productUrl-${item.id}`}>
-            <input
-              id={`productUrl-${item.id}`}
-              name="productUrl"
-              type="url"
-              defaultValue={item.productUrl ?? ""}
-              className={adminInputClassName}
-            />
+            <div className="flex gap-2">
+              <input
+                id={`productUrl-${item.id}`}
+                name="productUrl"
+                type="url"
+                defaultValue={item.productUrl ?? ""}
+                className={adminInputClassName}
+              />
+              <LinkAutofillButton />
+            </div>
           </AdminField>
 
           <AdminField label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
