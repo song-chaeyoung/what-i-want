@@ -110,7 +110,7 @@ describe("public wishlist service", () => {
       makeWishItem({
         id: "wish-3",
         fundedAmount: 0,
-        targetAmount: null,
+        targetAmount: 100000,
         status: "fulfilled",
       }),
     ];
@@ -200,7 +200,7 @@ function makeWishItem(
     wishlistId: overrides.wishlistId ?? "wishlist-1",
     title: overrides.title ?? "Keyboard",
     description: overrides.description ?? null,
-    targetAmount: overrides.targetAmount ?? null,
+    targetAmount: overrides.targetAmount ?? 10000,
     fundedAmount: overrides.fundedAmount ?? 0,
     productUrl: overrides.productUrl ?? null,
     imageUrl: overrides.imageUrl ?? null,

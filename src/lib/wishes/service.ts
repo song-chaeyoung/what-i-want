@@ -15,6 +15,7 @@ export type WishMutationError =
   | "wish_not_found"
   | "title_required"
   | "title_too_long"
+  | "target_amount_required"
   | "invalid_target_amount"
   | "invalid_product_url"
   | "invalid_image_url"
@@ -229,20 +230,20 @@ function normalizeTargetAmount(
   value: string | number | null,
 ):
   | {
-      value: number | null;
+      value: number;
       error?: never;
     }
   | {
       value?: never;
-      error: "invalid_target_amount";
+      error: "target_amount_required" | "invalid_target_amount";
     } {
   if (value === null || value === "") {
-    return { value: null };
+    return { error: "target_amount_required" };
   }
 
   const amount = typeof value === "number" ? value : Number(value.trim());
 
-  if (!Number.isInteger(amount) || amount < 0) {
+  if (!Number.isInteger(amount) || amount < 1) {
     return { error: "invalid_target_amount" };
   }
 

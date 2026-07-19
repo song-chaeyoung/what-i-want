@@ -77,7 +77,7 @@ export const wishItems = pgTable(
       .references(() => wishlists.id, { onDelete: "cascade" }),
     title: varchar("title", { length: 120 }).notNull(),
     description: text("description"),
-    targetAmount: integer("target_amount"),
+    targetAmount: integer("target_amount").notNull(),
     fundedAmount: integer("funded_amount").default(0).notNull(),
     productUrl: text("product_url"),
     imageUrl: text("image_url"),

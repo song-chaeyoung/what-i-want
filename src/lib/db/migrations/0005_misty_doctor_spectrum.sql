@@ -1,0 +1,1 @@
+ALTER TABLE "wish_items" ALTER COLUMN "target_amount" SET NOT NULL;

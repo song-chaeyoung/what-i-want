@@ -29,7 +29,8 @@ const errorMessages: Record<string, string> = {
   wish_not_found: "수정할 선물을 찾을 수 없습니다.",
   title_required: "선물 이름을 입력해주세요.",
   title_too_long: "선물 이름은 120자 이하여야 합니다.",
-  invalid_target_amount: "목표 금액은 0 이상의 정수로 입력해주세요.",
+  target_amount_required: "목표 금액을 입력해주세요.",
+  invalid_target_amount: "목표 금액은 1 이상의 정수로 입력해주세요.",
   invalid_product_url: "상품 링크는 http 또는 https 주소여야 합니다.",
   invalid_image_url: "이미지 링크는 http 또는 https 주소여야 합니다.",
   invalid_status: "지원하지 않는 선물 상태입니다.",
@@ -156,7 +157,7 @@ export default async function AdminWishesPage({
           method="post"
           className="grid gap-4 border-t border-line bg-[#fbfbfa] p-4 md:grid-cols-2"
         >
-          <AdminField label="선물 이름" htmlFor="create-title">
+          <AdminField label="선물 이름" htmlFor="create-title" required>
             <input
               id="create-title"
               name="title"
@@ -167,13 +168,14 @@ export default async function AdminWishesPage({
             />
           </AdminField>
 
-          <AdminField label="목표 금액" htmlFor="create-targetAmount">
+          <AdminField label="목표 금액" htmlFor="create-targetAmount" required>
             <input
               id="create-targetAmount"
               name="targetAmount"
               type="number"
-              min={0}
+              min={1}
               step={1}
+              required
               placeholder="45000"
               className={adminInputClassName}
             />
@@ -295,7 +297,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           className="grid gap-4 md:grid-cols-2"
         >
           <input type="hidden" name="_method" value="patch" />
-          <AdminField label="선물 이름" htmlFor={`title-${item.id}`}>
+          <AdminField label="선물 이름" htmlFor={`title-${item.id}`} required>
             <input
               id={`title-${item.id}`}
               name="title"
@@ -322,13 +324,14 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
             </select>
           </AdminField>
 
-          <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`}>
+          <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`} required>
             <input
               id={`targetAmount-${item.id}`}
               name="targetAmount"
               type="number"
-              min={0}
+              min={1}
               step={1}
+              required
               defaultValue={item.targetAmount ?? ""}
               className={adminInputClassName}
             />

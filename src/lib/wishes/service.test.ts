@@ -186,6 +186,42 @@ describe("admin wishes service", () => {
     ).resolves.toEqual({ ok: false, error: "invalid_product_url" });
   });
 
+  test("requires a target amount before creating a wish", async () => {
+    const repository = new FakeWishRepository();
+
+    for (const targetAmount of [null, ""] as const) {
+      await expect(
+        createWish(
+          {
+            ownerId: "user-1",
+            title: "무선 키보드",
+            description: null,
+            targetAmount,
+            productUrl: null,
+            imageUrl: null,
+          },
+          repository,
+        ),
+      ).resolves.toEqual({ ok: false, error: "target_amount_required" });
+    }
+
+    await expect(
+      createWish(
+        {
+          ownerId: "user-1",
+          title: "무선 키보드",
+          description: null,
+          targetAmount: "0",
+          productUrl: null,
+          imageUrl: null,
+        },
+        repository,
+      ),
+    ).resolves.toEqual({ ok: false, error: "invalid_target_amount" });
+
+    expect(repository.created).toEqual([]);
+  });
+
   test("updates an owned wish and rejects invalid status values", async () => {
     const repository = new FakeWishRepository();
     repository.items = [makeWishItem({ id: "wish-1", title: "키보드" })];
@@ -243,7 +279,7 @@ describe("admin wishes service", () => {
           wishItemId: "wish-1",
           title: "키보드 세트",
           description: null,
-          targetAmount: null,
+          targetAmount: "80000",
           productUrl: null,
           imageUrl: null,
           status: "open",
@@ -267,7 +303,7 @@ function makeWishItem(
     wishlistId: overrides.wishlistId ?? "wishlist-1",
     title: overrides.title ?? "무선 키보드",
     description: overrides.description ?? null,
-    targetAmount: overrides.targetAmount ?? null,
+    targetAmount: overrides.targetAmount ?? 10000,
     fundedAmount: overrides.fundedAmount ?? 0,
     productUrl: overrides.productUrl ?? null,
     imageUrl: overrides.imageUrl ?? null,
