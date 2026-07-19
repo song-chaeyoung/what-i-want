@@ -50,6 +50,12 @@ describe("admin toast contract", () => {
     );
     expect(source).toContain('updated: { type: "success", message: "선물을 수정했어요." }');
     expect(source).toContain('deleted: { type: "success", message: "선물을 삭제했어요." }');
+    expect(source).toContain(
+      'messageHidden: { type: "success", message: "참여 기록을 숨겼어요." }',
+    );
+    expect(source).toContain(
+      'messageRestored: { type: "success", message: "참여 기록을 복구했어요." }',
+    );
     expect(source).toContain('error: { type: "error", message: "요청을 처리하지 못했어요." }');
     expect(source).toContain("toastConfigList.forEach((toastConfig) => {");
     expect(source).toContain("toast[toastConfig.type](");

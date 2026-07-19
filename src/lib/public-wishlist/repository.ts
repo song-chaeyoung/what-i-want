@@ -1,6 +1,11 @@
 import { and, asc, desc, eq } from "drizzle-orm";
 import { db, type Database } from "@/src/lib/db/client";
-import { bankAccounts, wishItems, wishlists } from "@/src/lib/db/schema";
+import {
+  bankAccounts,
+  profiles,
+  wishItems,
+  wishlists,
+} from "@/src/lib/db/schema";
 import type {
   PublicBankAccountRecord,
   PublicWishItemRecord,
@@ -22,8 +27,11 @@ export class DrizzlePublicWishlistRepository
         slug: wishlists.slug,
         title: wishlists.title,
         themeId: wishlists.themeId,
+        ownerBirthday: profiles.birthday,
+        ownerDescription: profiles.description,
       })
       .from(wishlists)
+      .leftJoin(profiles, eq(profiles.userId, wishlists.ownerId))
       .where(and(eq(wishlists.slug, slug), eq(wishlists.visibility, "public")))
       .limit(1);
 

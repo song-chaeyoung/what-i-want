@@ -18,6 +18,7 @@ export type AdminMessagesResult =
 export async function listAdminMessages(
   ownerId: string,
   repository: AdminMessagesRepository,
+  options: { hidden?: boolean } = {},
 ): Promise<AdminMessagesResult> {
   const wishlist = await repository.findWishlistByOwnerId(ownerId);
 
@@ -28,6 +29,91 @@ export async function listAdminMessages(
   return {
     ok: true,
     wishlist,
-    messages: await repository.listMessages(wishlist.id),
+    messages: await repository.listMessages(wishlist.id, options),
   };
+}
+
+export type HideAdminMessageResult =
+  | {
+      ok: true;
+    }
+  | {
+      ok: false;
+      error: "wishlist_not_found" | "message_not_found";
+    };
+
+export async function hideAdminMessage(
+  ownerId: string,
+  messageId: string,
+  repository: AdminMessagesRepository,
+): Promise<HideAdminMessageResult> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return { ok: false, error: "wishlist_not_found" };
+  }
+
+  const hidden = await repository.hideMessage(wishlist.id, messageId);
+
+  if (!hidden) {
+    return { ok: false, error: "message_not_found" };
+  }
+
+  return { ok: true };
+}
+
+export type CountUnreadAdminMessagesResult =
+  | {
+      ok: true;
+      count: number;
+    }
+  | {
+      ok: false;
+      error: "wishlist_not_found";
+    };
+
+export async function countUnreadAdminMessages(
+  ownerId: string,
+  repository: AdminMessagesRepository,
+): Promise<CountUnreadAdminMessagesResult> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return { ok: false, error: "wishlist_not_found" };
+  }
+
+  return { ok: true, count: await repository.countUnreadMessages(wishlist.id) };
+}
+
+export async function markAdminMessagesRead(
+  ownerId: string,
+  repository: AdminMessagesRepository,
+): Promise<void> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return;
+  }
+
+  await repository.markMessagesRead(wishlist.id);
+}
+
+export async function unhideAdminMessage(
+  ownerId: string,
+  messageId: string,
+  repository: AdminMessagesRepository,
+): Promise<HideAdminMessageResult> {
+  const wishlist = await repository.findWishlistByOwnerId(ownerId);
+
+  if (!wishlist) {
+    return { ok: false, error: "wishlist_not_found" };
+  }
+
+  const restored = await repository.unhideMessage(wishlist.id, messageId);
+
+  if (!restored) {
+    return { ok: false, error: "message_not_found" };
+  }
+
+  return { ok: true };
 }

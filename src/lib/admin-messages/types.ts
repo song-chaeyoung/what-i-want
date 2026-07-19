@@ -19,5 +19,12 @@ export type AdminMessagesRepository = {
   findWishlistByOwnerId(
     ownerId: string,
   ): Promise<AdminMessagesWishlistRecord | null>;
-  listMessages(wishlistId: string): Promise<AdminMessageRecord[]>;
+  listMessages(
+    wishlistId: string,
+    options?: { hidden?: boolean },
+  ): Promise<AdminMessageRecord[]>;
+  hideMessage(wishlistId: string, messageId: string): Promise<boolean>;
+  unhideMessage(wishlistId: string, messageId: string): Promise<boolean>;
+  countUnreadMessages(wishlistId: string): Promise<number>;
+  markMessagesRead(wishlistId: string): Promise<void>;
 };

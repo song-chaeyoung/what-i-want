@@ -9,6 +9,7 @@ import {
 } from "@/src/lib/public-participation/rate-limit";
 import { DrizzlePublicParticipationRepository } from "@/src/lib/public-participation/repository";
 import { submitPublicParticipation } from "@/src/lib/public-participation/service";
+import { revalidatePublicWishlist } from "@/src/lib/public-wishlist/cache";
 
 export async function submitParticipationAction(
   slug: string,
@@ -41,6 +42,8 @@ export async function submitParticipationAction(
   if (!result.ok) {
     redirect(`/wishlist/${slug}?error=${result.error}`);
   }
+
+  revalidatePublicWishlist(slug);
 
   redirect(`/wishlist/${slug}?sent=${result.kind}`);
 }

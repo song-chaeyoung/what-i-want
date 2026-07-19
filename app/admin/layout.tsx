@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import { AdminToastEvents } from "./admin-toast-events";
 import { AdminPageTitle, AdminShellNav } from "./admin-shell-nav";
 import AdminLoading from "./loading";
+import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
+import { countUnreadAdminMessages } from "@/src/lib/admin-messages/service";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { BRAND_NAME } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -29,6 +31,12 @@ async function AdminShell({ children }: AdminLayoutProps) {
     redirect("/onboarding");
   }
 
+  const unreadResult = await countUnreadAdminMessages(
+    user.id,
+    new DrizzleAdminMessagesRepository(),
+  );
+  const unreadMessageCount = unreadResult.ok ? unreadResult.count : 0;
+
   return (
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
       <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
@@ -39,7 +47,10 @@ async function AdminShell({ children }: AdminLayoutProps) {
           </h1>
         </div>
 
-        <AdminShellNav variant="desktop" />
+        <AdminShellNav
+          variant="desktop"
+          unreadMessageCount={unreadMessageCount}
+        />
 
         <div className="mt-6 border-t border-line px-1.5 pt-4">
           <div className="text-[11px] font-semibold text-zinc-500">계정</div>
@@ -66,7 +77,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
           ) : null}
         </header>
 
-        <AdminShellNav />
+        <AdminShellNav unreadMessageCount={unreadMessageCount} />
 
         <Suspense fallback={null}>
           <AdminToastEvents />

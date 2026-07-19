@@ -4,6 +4,7 @@ import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import { AdminToastMessage } from "../admin-toast-message";
+import { ResetWishlistForm } from "./reset-wishlist-form";
 import {
   AdminField,
   adminInputClassName,
@@ -215,6 +216,15 @@ export default async function AdminSettingsPage() {
           </button>
         </div>
       </form>
+
+      <SettingsSection
+        title="새 생일 준비"
+        description="지난 생일의 선물, 메시지, 모인 금액 기록을 모두 지우고 새로 시작해요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요."
+      >
+        <SettingsRow>
+          <ResetWishlistForm />
+        </SettingsRow>
+      </SettingsSection>
 
       <SettingsSection
         title="계정"
