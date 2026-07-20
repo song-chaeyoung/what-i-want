@@ -95,7 +95,9 @@ function getPublicToastConfig(
   if (sent === "funding") {
     return {
       type: "success",
-      message: PUBLIC_WISHLIST_COPY.participationSuccess,
+      message: hasAccount
+        ? PUBLIC_WISHLIST_COPY.participationSuccess
+        : PUBLIC_WISHLIST_COPY.participationSuccessNoAccount,
       openAccountModal: hasAccount,
     };
   }
@@ -118,6 +120,8 @@ function AccountRevealModal({
   account: PublicBankAccountView;
   onClose: () => void;
 }) {
+  const showAccountNumber = account.visibility !== "copy_only";
+
   return (
     <div
       role="dialog"
@@ -139,12 +143,20 @@ function AccountRevealModal({
             <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
               {account.accountHolder}
             </p>
+            {showAccountNumber ? (
+              <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
+                {account.bankName} {account.accountNumber}
+              </p>
+            ) : null}
           </div>
           <CopyAccountNumberButton
             bankName={account.bankName}
             accountNumber={account.accountNumber}
           />
         </div>
+        <p className="mt-3 text-xs font-semibold text-[var(--pub-sub)]">
+          {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
+        </p>
         <button
           type="button"
           className="pub-btn pub-btn-block mt-5 h-11 text-sm"

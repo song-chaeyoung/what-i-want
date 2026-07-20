@@ -85,6 +85,7 @@ export function PublicWishlistView({
               item={item}
               slug={wishlist.slug}
               demo={demo}
+              hasAccount={account !== null}
             />
           ))
         ) : (
@@ -193,11 +194,13 @@ function PublicWishCard({
   item,
   slug,
   demo,
+  hasAccount,
 }: {
   index: number;
   item: PublicWishItemView;
   slug: string;
   demo: boolean;
+  hasAccount: boolean;
 }) {
   const productUrl = getHttpUrl(item.productUrl);
   const imageUrl = getHttpUrl(item.imageUrl);
@@ -336,6 +339,12 @@ function PublicWishCard({
                 className={publicTextareaClassName}
               />
             </PublicField>
+
+            <p className="text-xs font-semibold text-[var(--pub-sub)]">
+              {hasAccount
+                ? PUBLIC_WISHLIST_COPY.participationTransferNote
+                : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
+            </p>
 
             <ParticipationSubmit demo={demo} />
           </form>

@@ -29,9 +29,16 @@ export const PUBLIC_WISHLIST_COPY = {
   participationMessageLabel: "메시지",
   participationSubmitCta: "마음 보내기",
   participationSuccess: "마음이 전해졌어요.",
+  participationSuccessNoAccount:
+    "마음이 전해졌어요. 선물 전달 방법은 생일자에게 확인해주세요.",
+  participationTransferNote:
+    "여기서 결제가 되는 건 아니에요. 보내기를 누르면 송금할 계좌를 알려드려요.",
+  participationTransferNoteNoAccount:
+    "실제 선물 전달 방법은 생일자에게 직접 확인해주세요.",
   fundCta: "이 선물에 마음 보태기",
   fundingSuccessTitle: "마음이 전해졌어요",
   fundingSuccessDescription: "아래 계좌로 보내주시면 전달이 완료돼요.",
+  fundingSuccessCorrectionNote: "잘못 보냈다면 생일자에게 알려주세요.",
   accountModalClose: "닫기",
   accountSectionTitle: "계좌 안내",
   accountSectionNote: "마음은 이 계좌로 전할 수 있어요.",
