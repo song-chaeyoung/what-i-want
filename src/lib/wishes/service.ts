@@ -9,12 +9,14 @@ import type {
 
 const WISH_STATUSES = ["open", "fulfilled", "hidden", "paused"] as const;
 const MAX_TITLE_LENGTH = 120;
+const MAX_TARGET_AMOUNT = 2_147_483_647;
 
 export type WishMutationError =
   | "wishlist_not_found"
   | "wish_not_found"
   | "title_required"
   | "title_too_long"
+  | "target_amount_required"
   | "invalid_target_amount"
   | "invalid_product_url"
   | "invalid_image_url"
@@ -229,20 +231,24 @@ function normalizeTargetAmount(
   value: string | number | null,
 ):
   | {
-      value: number | null;
+      value: number;
       error?: never;
     }
   | {
       value?: never;
-      error: "invalid_target_amount";
+      error: "target_amount_required" | "invalid_target_amount";
     } {
-  if (value === null || value === "") {
-    return { value: null };
+  if (value === null || (typeof value === "string" && value.trim() === "")) {
+    return { error: "target_amount_required" };
   }
 
   const amount = typeof value === "number" ? value : Number(value.trim());
 
-  if (!Number.isInteger(amount) || amount < 0) {
+  if (
+    !Number.isInteger(amount) ||
+    amount < 1 ||
+    amount > MAX_TARGET_AMOUNT
+  ) {
     return { error: "invalid_target_amount" };
   }
 

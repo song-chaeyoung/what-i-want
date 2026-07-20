@@ -7,9 +7,13 @@ const pagePath = join(root, "app/onboarding/page.tsx");
 const birthdayPickerPath = join(root, "app/onboarding/birthday-picker.tsx");
 const textLogoPath = join(root, "components/text-logo.tsx");
 
+function readSource(path: string) {
+  return readFileSync(path, "utf8").replaceAll("\r\n", "\n");
+}
+
 describe("onboarding UI contract", () => {
   test("renders the client birthday picker inside the existing server form", () => {
-    const source = readFileSync(pagePath, "utf8");
+    const source = readSource(pagePath);
 
     expect(source).toContain('import { BirthdayPicker } from "./birthday-picker";');
     expect(source).toContain('action="/api/onboarding"');
@@ -21,14 +25,14 @@ describe("onboarding UI contract", () => {
   });
 
   test("does not keep the native date input on the server page", () => {
-    const source = readFileSync(pagePath, "utf8");
+    const source = readSource(pagePath);
 
     expect(source).not.toContain('type="date"');
   });
 
   test("uses the pixel brand shell with calm form fields", () => {
-    const source = readFileSync(pagePath, "utf8");
-    const textLogoSource = readFileSync(textLogoPath, "utf8");
+    const source = readSource(pagePath);
+    const textLogoSource = readSource(textLogoPath);
 
     expect(source).toContain('className="pixel-dot-bg min-h-dvh');
     expect(source).toContain('import { TextLogo } from "@/components/text-logo";');
@@ -46,7 +50,7 @@ describe("onboarding UI contract", () => {
   test("posts birthday through a client picker hidden input", () => {
     expect(existsSync(birthdayPickerPath)).toBe(true);
 
-    const source = readFileSync(birthdayPickerPath, "utf8");
+    const source = readSource(birthdayPickerPath);
 
     expect(source).toContain('"use client";');
     expect(source).toContain('import { Calendar } from "@/components/ui/calendar";');
@@ -63,7 +67,7 @@ describe("onboarding UI contract", () => {
   });
 
   test("uses calm date picker trigger and calendar popover styles", () => {
-    const source = readFileSync(birthdayPickerPath, "utf8");
+    const source = readSource(birthdayPickerPath);
 
     expect(source).toContain(
       "h-11 w-full justify-between rounded-md border border-line bg-white px-3 text-sm text-ink hover:bg-zinc-50",
@@ -88,7 +92,7 @@ describe("onboarding UI contract", () => {
   });
 
   test("points the birthday label at the visible picker trigger", () => {
-    const source = readFileSync(birthdayPickerPath, "utf8");
+    const source = readSource(birthdayPickerPath);
 
     expect(source).toContain(
       '<input name={name} type="hidden" value={birthdayValue} readOnly />',
@@ -102,13 +106,13 @@ describe("onboarding UI contract", () => {
   });
 
   test("maps invalid birthday validation errors", () => {
-    const source = readFileSync(pagePath, "utf8");
+    const source = readSource(pagePath);
 
     expect(source).toContain("invalid_birthday");
   });
 
   test("does not ask users to enter a public slug", () => {
-    const source = readFileSync(pagePath, "utf8");
+    const source = readSource(pagePath);
 
     expect(source).not.toContain('name="slug"');
     expect(source).not.toContain('htmlFor="slug"');

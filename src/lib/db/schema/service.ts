@@ -1,6 +1,7 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import {
   boolean,
+  check,
   date,
   index,
   integer,
@@ -77,7 +78,7 @@ export const wishItems = pgTable(
       .references(() => wishlists.id, { onDelete: "cascade" }),
     title: varchar("title", { length: 120 }).notNull(),
     description: text("description"),
-    targetAmount: integer("target_amount"),
+    targetAmount: integer("target_amount").notNull(),
     fundedAmount: integer("funded_amount").default(0).notNull(),
     productUrl: text("product_url"),
     imageUrl: text("image_url"),
@@ -86,7 +87,13 @@ export const wishItems = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   },
-  (wishItem) => [index("wish_items_wishlist_id_idx").on(wishItem.wishlistId)],
+  (wishItem) => [
+    index("wish_items_wishlist_id_idx").on(wishItem.wishlistId),
+    check(
+      "wish_items_target_amount_min",
+      sql`${wishItem.targetAmount} >= 1`,
+    ),
+  ],
 );
 
 export const bankAccounts = pgTable("bank_accounts", {

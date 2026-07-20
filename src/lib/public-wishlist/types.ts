@@ -16,7 +16,7 @@ export type PublicWishItemRecord = {
   wishlistId: string;
   title: string;
   description: string | null;
-  targetAmount: number | null;
+  targetAmount: number;
   fundedAmount: number;
   productUrl: string | null;
   imageUrl: string | null;

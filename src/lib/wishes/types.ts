@@ -11,7 +11,7 @@ export type WishItemRecord = {
   wishlistId: string;
   title: string;
   description: string | null;
-  targetAmount: number | null;
+  targetAmount: number;
   fundedAmount: number;
   productUrl: string | null;
   imageUrl: string | null;
@@ -25,7 +25,7 @@ export type CreateWishRecord = {
   wishlistId: string;
   title: string;
   description: string | null;
-  targetAmount: number | null;
+  targetAmount: number;
   productUrl: string | null;
   imageUrl: string | null;
   status: WishStatus;
@@ -34,7 +34,7 @@ export type CreateWishRecord = {
 export type UpdateWishRecord = {
   title: string;
   description: string | null;
-  targetAmount: number | null;
+  targetAmount: number;
   productUrl: string | null;
   imageUrl: string | null;
   status: WishStatus;
