@@ -1,5 +1,6 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminToastEvents } from "./admin-toast-events";
@@ -10,6 +11,13 @@ import { countUnreadAdminMessages } from "@/src/lib/admin-messages/service";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { BRAND_NAME } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 type AdminLayoutProps = {
   children: ReactNode;

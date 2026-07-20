@@ -1,8 +1,16 @@
+import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 import { TextLogo } from "@/components/text-logo";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { signInWithGoogle, signInWithKakao } from "./actions";
+
+export const metadata: Metadata = {
+  robots: {
+    index: false,
+    follow: false,
+  },
+};
 
 export default async function LoginPage() {
   const session = await auth();

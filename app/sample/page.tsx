@@ -7,9 +7,28 @@ import type {
 } from "@/src/lib/public-wishlist/types";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 
+const sampleTitle = "샘플 위시리스트 | 뭐갖고싶어";
+const sampleDescription =
+  "뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.";
+
 export const metadata: Metadata = {
-  title: "샘플 위시리스트 | 뭐갖고싶어",
-  description: "뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.",
+  title: sampleTitle,
+  description: sampleDescription,
+  alternates: {
+    canonical: "/sample",
+  },
+  openGraph: {
+    title: sampleTitle,
+    description: sampleDescription,
+    siteName: "뭐갖고싶어",
+    locale: "ko_KR",
+    type: "website",
+    url: "/sample",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
 };
 
 const sampleDate = new Date("2026-01-01T00:00:00+09:00");

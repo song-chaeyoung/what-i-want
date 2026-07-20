@@ -19,7 +19,13 @@ export async function generateMetadata({
   const result = await getCachedPublicWishlist(slug);
 
   if (!result.ok) {
-    return { title: PUBLIC_WISHLIST_COPY.notFoundTitle };
+    return {
+      title: PUBLIC_WISHLIST_COPY.notFoundTitle,
+      robots: {
+        index: false,
+        follow: false,
+      },
+    };
   }
 
   const { title } = result.wishlist;
@@ -28,6 +34,10 @@ export async function generateMetadata({
   return {
     title,
     description,
+    robots: {
+      index: false,
+      follow: false,
+    },
     openGraph: {
       title,
       description,

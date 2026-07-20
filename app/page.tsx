@@ -1,8 +1,27 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/auth";
 import { HOME_COPY } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
+
+export const metadata: Metadata = {
+  alternates: {
+    canonical: "/",
+  },
+  openGraph: {
+    title: "뭐갖고싶어",
+    description: "받고 싶은 선물을 링크 하나로 모아 공유하세요.",
+    siteName: "뭐갖고싶어",
+    locale: "ko_KR",
+    type: "website",
+    url: "/",
+  },
+  robots: {
+    index: true,
+    follow: true,
+  },
+};
 
 const previewWishes = [
   {
