@@ -1,0 +1,1 @@
+ALTER TABLE "wish_items" ADD CONSTRAINT "wish_items_target_amount_min" CHECK ("wish_items"."target_amount" >= 1);

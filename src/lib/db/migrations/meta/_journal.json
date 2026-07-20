@@ -43,6 +43,13 @@
       "when": 1784471445770,
       "tag": "0005_misty_doctor_spectrum",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1784521737860,
+      "tag": "0006_deep_hellion",
+      "breakpoints": true
     }
   ]
 }
