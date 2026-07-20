@@ -24,6 +24,13 @@ export const metadata: Metadata = {
     locale: "ko_KR",
     type: "website",
     url: "/sample",
+    images: ["/opengraph-image"],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: sampleTitle,
+    description: sampleDescription,
+    images: ["/opengraph-image"],
   },
   robots: {
     index: true,

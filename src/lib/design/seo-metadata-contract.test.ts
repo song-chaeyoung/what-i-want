@@ -32,6 +32,10 @@ describe("SEO metadata contract", () => {
     expect(source).toContain('type: "website"');
     expect(source).toContain("index: true");
     expect(source).toContain("follow: true");
+    expect(source.match(/images: \["\/opengraph-image"\]/g) ?? []).toHaveLength(
+      2,
+    );
+    expect(source).toContain("twitter:");
   });
 
   test("keeps user and account routes out of search results", () => {
