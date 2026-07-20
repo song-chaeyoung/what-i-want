@@ -54,8 +54,11 @@ describe("Open Graph image contract", () => {
   test("exposes share metadata from the root layout", () => {
     const source = readFileSync(join(root, "app/layout.tsx"), "utf8");
 
-    expect(source).toContain("metadataBase:");
-    expect(source).toContain("process.env.AUTH_URL");
+    expect(source).toContain(
+      'import { resolveSiteUrl } from "@/src/lib/metadata/site-url";',
+    );
+    expect(source).toContain("metadataBase: resolveSiteUrl(),");
+    expect(source).not.toContain("function resolveMetadataBase");
     expect(source).toContain("openGraph:");
     expect(source).toContain("twitter:");
     expect(source).toContain('siteName: "뭐갖고싶어"');
