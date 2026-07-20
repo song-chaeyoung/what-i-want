@@ -237,7 +237,7 @@ function normalizeTargetAmount(
       value?: never;
       error: "target_amount_required" | "invalid_target_amount";
     } {
-  if (value === null || value === "") {
+  if (value === null || (typeof value === "string" && value.trim() === "")) {
     return { error: "target_amount_required" };
   }
 

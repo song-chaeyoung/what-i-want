@@ -189,7 +189,7 @@ describe("admin wishes service", () => {
   test("requires a target amount before creating a wish", async () => {
     const repository = new FakeWishRepository();
 
-    for (const targetAmount of [null, ""] as const) {
+    for (const targetAmount of [null, "", "   "] as const) {
       await expect(
         createWish(
           {
