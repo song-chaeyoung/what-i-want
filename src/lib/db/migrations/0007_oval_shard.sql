@@ -1,0 +1,1 @@
+ALTER TYPE "public"."wishlist_visibility" ADD VALUE 'private';

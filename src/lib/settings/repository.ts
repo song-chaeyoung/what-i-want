@@ -26,6 +26,7 @@ export class DrizzleSettingsRepository implements SettingsRepository {
         wishlistSlug: wishlists.slug,
         wishlistTitle: wishlists.title,
         wishlistThemeId: wishlists.themeId,
+        wishlistVisibility: wishlists.visibility,
         bankName: bankAccounts.bankName,
         accountHolder: bankAccounts.accountHolder,
         accountNumberEncrypted: bankAccounts.accountNumberEncrypted,
@@ -52,6 +53,7 @@ export class DrizzleSettingsRepository implements SettingsRepository {
         slug: row.wishlistSlug,
         title: row.wishlistTitle,
         themeId: row.wishlistThemeId,
+        visibility: row.wishlistVisibility,
       },
       bankAccount: toBankAccountRecord(row),
     };
@@ -93,6 +95,7 @@ export class DrizzleSettingsRepository implements SettingsRepository {
           slug: record.wishlist.slug,
           title: record.wishlist.title,
           themeId: record.wishlist.themeId,
+          visibility: record.wishlist.visibility,
           updatedAt: now,
         })
         .where(eq(wishlists.ownerId, ownerId));

@@ -3,6 +3,10 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
+import {
+  WISHLIST_VISIBILITIES,
+  type WishlistVisibility,
+} from "@/src/lib/settings/types";
 import { AdminToastMessage } from "../admin-toast-message";
 import { ResetWishlistForm } from "./reset-wishlist-form";
 import {
@@ -23,6 +27,7 @@ const errorMessages: Record<SettingsError, string> = {
   duplicate_slug: "이미 사용 중인 공개 주소입니다.",
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
   invalid_theme: "지원하지 않는 공개 테마입니다.",
+  invalid_wishlist_visibility: "지원하지 않는 공개 여부 값입니다.",
   bank_name_required: "은행 이름을 입력해주세요.",
   account_holder_required: "예금주를 입력해주세요.",
   account_number_required: "계좌번호를 입력해주세요.",
@@ -34,6 +39,11 @@ const themeLabels: Record<PublicThemeId, string> = {
   pixel_y2k: "픽셀 Y2K",
   mono_bw: "모노 흑백",
   soft_pastel: "소프트 파스텔",
+};
+
+const wishlistVisibilityLabels: Record<WishlistVisibility, string> = {
+  public: "공개",
+  private: "비공개",
 };
 
 export default async function AdminSettingsPage() {
@@ -141,6 +151,27 @@ export default async function AdminSettingsPage() {
                 defaultValue={settings.wishlist.title}
                 className={adminInputClassName}
               />
+            </AdminField>
+          </SettingsRow>
+          <SettingsRow>
+            <AdminField
+              label="공개 여부"
+              htmlFor="wishlistVisibility"
+              required
+              hint="비공개로 하면 링크가 있어도 공개 페이지가 보이지 않아요."
+            >
+              <select
+                id="wishlistVisibility"
+                name="wishlistVisibility"
+                defaultValue={settings.wishlist.visibility}
+                className={adminInputClassName}
+              >
+                {WISHLIST_VISIBILITIES.map((visibility) => (
+                  <option key={visibility} value={visibility}>
+                    {wishlistVisibilityLabels[visibility]}
+                  </option>
+                ))}
+              </select>
             </AdminField>
           </SettingsRow>
           <SettingsRow>
