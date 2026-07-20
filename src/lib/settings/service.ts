@@ -8,10 +8,12 @@ import {
   getAccountEncryptionSecret,
 } from "./account-crypto";
 import {
+  WISHLIST_VISIBILITIES,
   type SettingsBankAccountRecord,
   type SettingsRecord,
   type SettingsRepository,
   type UpdateSettingsRecord,
+  type WishlistVisibility,
 } from "./types";
 
 const MAX_DISPLAY_NAME_LENGTH = 80;
@@ -26,6 +28,7 @@ export type UpdateSettingsInput = {
   birthday: string | null;
   wishlistSlug: string | null;
   wishlistTitle: string | null;
+  wishlistVisibility: string | null;
   themeId: string | null;
   bankName: string | null;
   accountHolder: string | null;
@@ -43,6 +46,7 @@ export type SettingsError =
   | "duplicate_slug"
   | "invalid_birthday"
   | "invalid_theme"
+  | "invalid_wishlist_visibility"
   | "bank_name_required"
   | "account_holder_required"
   | "account_number_required"
@@ -167,6 +171,15 @@ async function normalizeSettingsInput(
     return { ok: false, error: themeId.error };
   }
 
+  const wishlistVisibility = normalizeWishlistVisibility(
+    input.wishlistVisibility,
+    current.wishlist.visibility,
+  );
+
+  if (wishlistVisibility.error) {
+    return { ok: false, error: wishlistVisibility.error };
+  }
+
   const bankAccount = normalizeBankAccount(
     input,
     current.bankAccount,
@@ -189,6 +202,7 @@ async function normalizeSettingsInput(
         slug: slug.value,
         title: wishlistTitle,
         themeId: themeId.value,
+        visibility: wishlistVisibility.value,
       },
       bankAccount: bankAccount.value,
     },
@@ -259,6 +273,29 @@ function normalizeBankAccount(
       visibility: "copy_only",
     },
   };
+}
+
+function normalizeWishlistVisibility(
+  value: string | null,
+  current: WishlistVisibility,
+):
+  | {
+      value: WishlistVisibility;
+      error?: never;
+    }
+  | {
+      value?: never;
+      error: "invalid_wishlist_visibility";
+    } {
+  if (!value) {
+    return { value: current };
+  }
+
+  if (!WISHLIST_VISIBILITIES.includes(value as WishlistVisibility)) {
+    return { error: "invalid_wishlist_visibility" };
+  }
+
+  return { value: value as WishlistVisibility };
 }
 
 function normalizeTheme(value: string | null):

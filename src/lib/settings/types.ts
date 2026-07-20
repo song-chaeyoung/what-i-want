@@ -9,6 +9,10 @@ export const ACCOUNT_VISIBILITIES = [
 
 export type AccountVisibility = (typeof ACCOUNT_VISIBILITIES)[number];
 
+export const WISHLIST_VISIBILITIES = ["public", "private"] as const;
+
+export type WishlistVisibility = (typeof WISHLIST_VISIBILITIES)[number];
+
 export type SettingsProfileRecord = {
   displayName: string;
   birthday: string | null;
@@ -20,6 +24,7 @@ export type SettingsWishlistRecord = {
   slug: string;
   title: string;
   themeId: PublicThemeId;
+  visibility: WishlistVisibility;
 };
 
 export type SettingsBankAccountRecord = {

@@ -45,6 +45,7 @@ class FakeSettingsRepository implements SettingsRepository {
         slug: record.wishlist.slug,
         title: record.wishlist.title,
         themeId: record.wishlist.themeId,
+        visibility: record.wishlist.visibility,
       },
       bankAccount: record.bankAccount
         ? {
@@ -171,6 +172,45 @@ describe("admin settings service", () => {
     ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
   });
 
+  test("updates wishlist visibility and keeps it when the input omits it", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+
+    const hidden = await updateSettings(
+      makeInput({ wishlistVisibility: "private" }),
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(hidden).toMatchObject({
+      ok: true,
+      settings: { wishlist: { visibility: "private" } },
+    });
+
+    const kept = await updateSettings(
+      makeInput({ wishlistVisibility: null }),
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(kept).toMatchObject({
+      ok: true,
+      settings: { wishlist: { visibility: "private" } },
+    });
+  });
+
+  test("rejects unsupported wishlist visibility values", async () => {
+    const repository = new FakeSettingsRepository();
+
+    await expect(
+      updateSettings(
+        makeInput({ wishlistVisibility: "secret" }),
+        repository,
+        "secret",
+      ),
+    ).resolves.toEqual({ ok: false, error: "invalid_wishlist_visibility" });
+  });
+
   test("rejects duplicate slugs when the slug changes", async () => {
     const repository = new FakeSettingsRepository();
     repository.slugAvailable = false;
@@ -218,6 +258,7 @@ function makeInput(
     birthday: null,
     wishlistSlug: "birthday",
     wishlistTitle: "차차님의 위시리스트",
+    wishlistVisibility: null,
     themeId: "pixel_y2k",
     bankName: "",
     accountHolder: "",
@@ -239,6 +280,7 @@ function makeSettings(overrides: Partial<SettingsRecord> = {}): SettingsRecord {
       slug: "birthday",
       title: "차차님의 위시리스트",
       themeId: "pixel_y2k",
+      visibility: "public",
     },
     bankAccount: makeBankAccount(),
     ...overrides,

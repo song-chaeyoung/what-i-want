@@ -45,6 +45,18 @@ describe("admin settings UI contract", () => {
     expect(navSource).toContain('href: "/admin/settings"');
   });
 
+  test("lets the owner toggle wishlist visibility", () => {
+    const pageSource = readFileSync(adminSettingsPagePath, "utf8");
+    const routeSource = readFileSync(adminSettingsRoutePath, "utf8");
+
+    expect(pageSource).toContain('name="wishlistVisibility"');
+    expect(pageSource).toContain("WISHLIST_VISIBILITIES");
+    expect(pageSource).toContain(
+      "defaultValue={settings.wishlist.visibility}",
+    );
+    expect(routeSource).toContain('"wishlistVisibility"');
+  });
+
   test("reveals account guidance only after a funding submission", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
     const toastSource = readFileSync(publicToastEventsPath, "utf8");

@@ -88,6 +88,30 @@ describe("public participation UI contract", () => {
     expect(toastSource).toContain("router.replace(nextUrl, { scroll: false });");
   });
 
+  test("guides visitors from the participation form to the actual transfer", () => {
+    const viewSource = readFileSync(publicViewPath, "utf8");
+    const toastSource = readFileSync(publicToastEventsPath, "utf8");
+
+    expect(viewSource).toContain(
+      "PUBLIC_WISHLIST_COPY.participationTransferNote",
+    );
+    expect(viewSource).toContain(
+      "PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount",
+    );
+    expect(viewSource).toContain("hasAccount={account !== null}");
+
+    expect(toastSource).toContain(
+      "PUBLIC_WISHLIST_COPY.participationSuccessNoAccount",
+    );
+    expect(toastSource).toContain(
+      'account.visibility !== "copy_only"',
+    );
+    expect(toastSource).toContain("account.accountNumber");
+    expect(toastSource).toContain(
+      "PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote",
+    );
+  });
+
   test("does not render public participation feedback as inline notices", () => {
     const viewSource = readFileSync(publicViewPath, "utf8");
 

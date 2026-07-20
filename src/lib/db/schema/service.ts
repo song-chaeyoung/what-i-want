@@ -17,7 +17,7 @@ import { users } from "./auth";
 import { PUBLIC_THEME_IDS } from "@/src/lib/wishlist/theme";
 
 const wishStatusValues = ["open", "fulfilled", "hidden", "paused"] as const;
-const wishlistVisibilityValues = ["public"] as const;
+const wishlistVisibilityValues = ["public", "private"] as const;
 const accountVisibilityValues = [
   "always_visible",
   "reveal_on_click",
