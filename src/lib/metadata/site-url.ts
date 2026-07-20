@@ -4,12 +4,16 @@ export function resolveSiteUrl(raw = process.env.AUTH_URL): URL {
   const normalized = raw?.trim().replace(/^["']|["']$/g, "");
 
   if (normalized) {
-    const candidate = /^https?:\/\//.test(normalized)
+    const candidate = /^[a-z][a-z\d+.-]*:\/\//i.test(normalized)
       ? normalized
       : `https://${normalized}`;
 
     try {
-      return new URL(new URL(candidate).origin);
+      const url = new URL(candidate);
+
+      if (url.protocol === "http:" || url.protocol === "https:") {
+        return new URL(url.origin);
+      }
     } catch {
       // Invalid environment values fall back to the canonical production origin.
     }

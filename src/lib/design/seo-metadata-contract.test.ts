@@ -32,9 +32,10 @@ describe("SEO metadata contract", () => {
     expect(source).toContain('type: "website"');
     expect(source).toContain("index: true");
     expect(source).toContain("follow: true");
-    expect(source.match(/images: \["\/opengraph-image"\]/g) ?? []).toHaveLength(
-      2,
-    );
+    expect(source).toContain("export async function generateMetadata");
+    expect(source).toContain("previousMetadata.openGraph?.images");
+    expect(source).toContain("previousMetadata.twitter?.images");
+    expect(source).not.toContain('images: ["/opengraph-image"]');
     expect(source).toContain("twitter:");
   });
 

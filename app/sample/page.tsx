@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, ResolvingMetadata } from "next";
 import { PublicWishlistView } from "@/components/public-wishlist-view";
 import type {
   PublicBankAccountView,
@@ -11,32 +11,39 @@ const sampleTitle = "샘플 위시리스트 | 뭐갖고싶어";
 const sampleDescription =
   "뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.";
 
-export const metadata: Metadata = {
-  title: sampleTitle,
-  description: sampleDescription,
-  alternates: {
-    canonical: "/sample",
-  },
-  openGraph: {
+export async function generateMetadata(
+  _props: SampleWishlistPageProps,
+  parent: ResolvingMetadata,
+): Promise<Metadata> {
+  const previousMetadata = await parent;
+
+  return {
     title: sampleTitle,
     description: sampleDescription,
-    siteName: "뭐갖고싶어",
-    locale: "ko_KR",
-    type: "website",
-    url: "/sample",
-    images: ["/opengraph-image"],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: sampleTitle,
-    description: sampleDescription,
-    images: ["/opengraph-image"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+    alternates: {
+      canonical: "/sample",
+    },
+    openGraph: {
+      title: sampleTitle,
+      description: sampleDescription,
+      siteName: "뭐갖고싶어",
+      locale: "ko_KR",
+      type: "website",
+      url: "/sample",
+      images: previousMetadata.openGraph?.images,
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: sampleTitle,
+      description: sampleDescription,
+      images: previousMetadata.twitter?.images,
+    },
+    robots: {
+      index: true,
+      follow: true,
+    },
+  };
+}
 
 const sampleDate = new Date("2026-01-01T00:00:00+09:00");
 
