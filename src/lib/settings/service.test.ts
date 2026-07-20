@@ -258,6 +258,7 @@ function makeInput(
     birthday: null,
     wishlistSlug: "birthday",
     wishlistTitle: "차차님의 위시리스트",
+    wishlistVisibility: null,
     themeId: "pixel_y2k",
     bankName: "",
     accountHolder: "",

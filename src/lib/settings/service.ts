@@ -28,7 +28,7 @@ export type UpdateSettingsInput = {
   birthday: string | null;
   wishlistSlug: string | null;
   wishlistTitle: string | null;
-  wishlistVisibility?: string | null;
+  wishlistVisibility: string | null;
   themeId: string | null;
   bankName: string | null;
   accountHolder: string | null;
@@ -172,7 +172,7 @@ async function normalizeSettingsInput(
   }
 
   const wishlistVisibility = normalizeWishlistVisibility(
-    input.wishlistVisibility ?? null,
+    input.wishlistVisibility,
     current.wishlist.visibility,
   );
 
