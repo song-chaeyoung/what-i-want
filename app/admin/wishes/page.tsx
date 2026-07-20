@@ -30,7 +30,7 @@ const errorMessages: Record<string, string> = {
   title_required: "선물 이름을 입력해주세요.",
   title_too_long: "선물 이름은 120자 이하여야 합니다.",
   target_amount_required: "목표 금액을 입력해주세요.",
-  invalid_target_amount: "목표 금액은 1 이상의 정수로 입력해주세요.",
+  invalid_target_amount: "목표 금액은 1 이상 2,147,483,647 이하의 정수로 입력해주세요.",
   invalid_product_url: "상품 링크는 http 또는 https 주소여야 합니다.",
   invalid_image_url: "이미지 링크는 http 또는 https 주소여야 합니다.",
   invalid_status: "지원하지 않는 선물 상태입니다.",
@@ -174,6 +174,7 @@ export default async function AdminWishesPage({
               name="targetAmount"
               type="number"
               min={1}
+              max={2_147_483_647}
               step={1}
               required
               placeholder="45000"
@@ -330,6 +331,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               name="targetAmount"
               type="number"
               min={1}
+              max={2_147_483_647}
               step={1}
               required
               defaultValue={item.targetAmount ?? ""}

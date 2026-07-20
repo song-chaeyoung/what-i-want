@@ -222,6 +222,45 @@ describe("admin wishes service", () => {
     expect(repository.created).toEqual([]);
   });
 
+  test("creates a wish at the PostgreSQL integer maximum", async () => {
+    const repository = new FakeWishRepository();
+
+    const result = await createWish(
+      {
+        ownerId: "user-1",
+        title: "wish",
+        description: null,
+        targetAmount: "2147483647",
+        productUrl: null,
+        imageUrl: null,
+      },
+      repository,
+    );
+
+    expect(result).toMatchObject({ ok: true });
+    expect(repository.created).toMatchObject([{ targetAmount: 2_147_483_647 }]);
+  });
+
+  test("rejects target amounts above the PostgreSQL integer maximum before creating a wish", async () => {
+    const repository = new FakeWishRepository();
+
+    await expect(
+      createWish(
+        {
+          ownerId: "user-1",
+          title: "wish",
+          description: null,
+          targetAmount: "2147483648",
+          productUrl: null,
+          imageUrl: null,
+        },
+        repository,
+      ),
+    ).resolves.toEqual({ ok: false, error: "invalid_target_amount" });
+
+    expect(repository.created).toEqual([]);
+  });
+
   test("updates an owned wish and rejects invalid status values", async () => {
     const repository = new FakeWishRepository();
     repository.items = [makeWishItem({ id: "wish-1", title: "키보드" })];

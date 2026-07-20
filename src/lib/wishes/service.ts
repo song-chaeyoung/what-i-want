@@ -9,6 +9,7 @@ import type {
 
 const WISH_STATUSES = ["open", "fulfilled", "hidden", "paused"] as const;
 const MAX_TITLE_LENGTH = 120;
+const MAX_TARGET_AMOUNT = 2_147_483_647;
 
 export type WishMutationError =
   | "wishlist_not_found"
@@ -243,7 +244,11 @@ function normalizeTargetAmount(
 
   const amount = typeof value === "number" ? value : Number(value.trim());
 
-  if (!Number.isInteger(amount) || amount < 1) {
+  if (
+    !Number.isInteger(amount) ||
+    amount < 1 ||
+    amount > MAX_TARGET_AMOUNT
+  ) {
     return { error: "invalid_target_amount" };
   }
 
