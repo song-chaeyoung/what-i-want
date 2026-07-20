@@ -3,6 +3,30 @@
 dev에서 스키마를 바꾸고 테스트한 뒤 prod로 승격하는 절차를 정리한 문서예요.
 운영 DB는 Neon Postgres를 가정해요.
 
+## 이렇게 시키세요 (AI 에이전트에게)
+
+이 문서를 가리키고 아래 한 문단만 주면 돼요. 나머지 판단은 문서가 담당해요.
+
+> `docs/db-migrations.md`의 "에이전트 실행 런북"에 따라 prod DB에 마이그레이션을
+> 적용해줘. 먼저 읽기 전용 진단으로 prod 상태를 확인하고, 실제 쓰기 명령(baseline
+> SQL·migrate)은 실행 직전에 나한테 보여준 뒤 진행해. 대상 env는 `.env.prod`야.
+
+상황별 짧은 변형:
+
+- **dev에 먼저 적용해 테스트만**:
+  > 스키마 바꿨어. `pnpm db:generate` 하고 dev(`.env.local`)에 `pnpm db:migrate`로
+  > 적용한 뒤 `pnpm test`까지 돌려줘. prod는 아직 건드리지 마.
+- **상태 진단만 (쓰기 금지)**:
+  > `docs/db-migrations.md` 트러블슈팅 참고해서 prod 마이그레이션 상태만 조회해줘.
+  > 쓰기는 하지 마.
+
+잘 되게 하는 전제 3가지:
+
+1. `.env.prod`가 유효한 prod direct URL을 가리킬 것 (Neon 브랜치 변경·자격증명 회전 시
+   먼저 갱신).
+2. 적용할 마이그레이션 파일이 repo에 커밋돼 있을 것 (`db:generate` 결과물).
+3. `psql` 또는 Neon 콘솔 접근이 있을 것 (`psql`이 없으면 "실행할 SQL을 출력해줘"로 대체).
+
 ## 왜 이 문서가 필요한가
 
 - 지금까지 스키마는 `db:push`로 반영해 왔어요. push는 현재 스키마와 DB를
