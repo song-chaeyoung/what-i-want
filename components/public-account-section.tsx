@@ -1,4 +1,4 @@
-import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
+import { PublicBankAccountCard } from "@/components/public-bank-account-card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import type { PublicBankAccountView } from "@/src/lib/public-wishlist/types";
 
@@ -7,8 +7,6 @@ export function PublicAccountSection({
 }: {
   account: PublicBankAccountView;
 }) {
-  const showAccountNumber = account.visibility !== "copy_only";
-
   return (
     <details
       className="send-heart-section pub-card"
@@ -25,23 +23,7 @@ export function PublicAccountSection({
       </summary>
 
       <div className="px-5 pb-5">
-        <div className="soft-bank-card pub-bank flex flex-wrap items-center justify-between gap-3 rounded-[var(--pub-radius)] p-4">
-          <div>
-            <p className="pub-label text-xs">예금주</p>
-            <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
-              {account.accountHolder}
-            </p>
-            {showAccountNumber ? (
-              <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
-                {account.bankName} {account.accountNumber}
-              </p>
-            ) : null}
-          </div>
-          <CopyAccountNumberButton
-            bankName={account.bankName}
-            accountNumber={account.accountNumber}
-          />
-        </div>
+        <PublicBankAccountCard account={account} />
       </div>
     </details>
   );

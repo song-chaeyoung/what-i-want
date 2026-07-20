@@ -12,6 +12,10 @@ const publicToastEventsPath = join(
   process.cwd(),
   "components/public-wishlist-toast-events.tsx",
 );
+const publicBankAccountCardPath = join(
+  process.cwd(),
+  "components/public-bank-account-card.tsx",
+);
 const participationActionsPath = join(
   process.cwd(),
   "app/wishlist/[slug]/actions.ts",
@@ -91,6 +95,7 @@ describe("public participation UI contract", () => {
   test("guides visitors from the participation form to the actual transfer", () => {
     const viewSource = readFileSync(publicViewPath, "utf8");
     const toastSource = readFileSync(publicToastEventsPath, "utf8");
+    const cardSource = readFileSync(publicBankAccountCardPath, "utf8");
 
     expect(viewSource).toContain(
       "PUBLIC_WISHLIST_COPY.participationTransferNote",
@@ -103,10 +108,11 @@ describe("public participation UI contract", () => {
     expect(toastSource).toContain(
       "PUBLIC_WISHLIST_COPY.participationSuccessNoAccount",
     );
-    expect(toastSource).toContain(
+    expect(toastSource).toContain("PublicBankAccountCard");
+    expect(cardSource).toContain(
       'account.visibility !== "copy_only"',
     );
-    expect(toastSource).toContain("account.accountNumber");
+    expect(cardSource).toContain("account.accountNumber");
     expect(toastSource).toContain(
       "PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote",
     );

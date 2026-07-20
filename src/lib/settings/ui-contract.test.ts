@@ -62,7 +62,7 @@ describe("admin settings UI contract", () => {
     const toastSource = readFileSync(publicToastEventsPath, "utf8");
 
     expect(toastSource).toContain("AccountRevealModal");
-    expect(toastSource).toContain("CopyAccountNumberButton");
+    expect(toastSource).toContain("PublicBankAccountCard");
     expect(toastSource).toContain('sent === "funding"');
     expect(toastSource).not.toContain("account.accountNumber}\n        aria-label");
     expect(pageSource).toContain("account={result.account}");

@@ -3,7 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { CopyAccountNumberButton } from "@/components/copy-account-number-button";
+import { PublicBankAccountCard } from "@/components/public-bank-account-card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import type { PublicBankAccountView } from "@/src/lib/public-wishlist/types";
 
@@ -120,8 +120,6 @@ function AccountRevealModal({
   account: PublicBankAccountView;
   onClose: () => void;
 }) {
-  const showAccountNumber = account.visibility !== "copy_only";
-
   return (
     <div
       role="dialog"
@@ -137,23 +135,7 @@ function AccountRevealModal({
         <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
         </p>
-        <div className="soft-bank-card pub-bank mt-5 flex flex-wrap items-center justify-between gap-3 rounded-[var(--pub-radius)] p-4">
-          <div>
-            <p className="pub-label text-xs">예금주</p>
-            <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
-              {account.accountHolder}
-            </p>
-            {showAccountNumber ? (
-              <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
-                {account.bankName} {account.accountNumber}
-              </p>
-            ) : null}
-          </div>
-          <CopyAccountNumberButton
-            bankName={account.bankName}
-            accountNumber={account.accountNumber}
-          />
-        </div>
+        <PublicBankAccountCard account={account} className="mt-5" />
         <p className="mt-3 text-xs font-semibold text-[var(--pub-sub)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
         </p>
