@@ -4,7 +4,11 @@ import { PublicAccountSection } from "@/components/public-account-section";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
-import { PUBLIC_WISHLIST_COPY, formatWishCount } from "@/src/lib/design/copy";
+import {
+  BRAND_NAME,
+  PUBLIC_WISHLIST_COPY,
+  formatWishCount,
+} from "@/src/lib/design/copy";
 import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
 import type {
   PublicBankAccountView,
@@ -44,6 +48,12 @@ export function PublicWishlistView({
         <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
+              <Link
+                href="/"
+                className="pub-btn h-9 px-4 text-xs font-black sm:text-sm"
+              >
+                {BRAND_NAME}
+              </Link>
               <p className="pub-pill">birthday wishlist</p>
               {birthdayBadge ? (
                 <p className="pub-pill pub-pill-alt">{birthdayBadge}</p>

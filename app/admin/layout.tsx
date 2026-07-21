@@ -1,6 +1,7 @@
 import { Suspense } from "react";
 import type { ReactNode } from "react";
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminToastEvents } from "./admin-toast-events";
@@ -49,8 +50,24 @@ async function AdminShell({ children }: AdminLayoutProps) {
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
       <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
         <div className="px-1.5 pb-5">
-          <p className="text-[11px] font-bold uppercase text-teal">{BRAND_NAME}</p>
-          <h1 className="mt-1 text-[15px] font-extrabold text-ink">
+          <Link
+            href="/"
+            aria-label={`${BRAND_NAME} 홈`}
+            className="flex items-center gap-1.5"
+          >
+            <Image
+              src="/logo.png"
+              alt=""
+              width={20}
+              height={20}
+              style={{ imageRendering: "pixelated" }}
+              unoptimized
+            />
+            <span className="font-pixel text-base leading-none tracking-normal text-zinc-700">
+              {BRAND_NAME}
+            </span>
+          </Link>
+          <h1 className="mt-1 text-xs font-medium text-zinc-400">
             위시리스트 관리
           </h1>
         </div>
@@ -70,8 +87,25 @@ async function AdminShell({ children }: AdminLayoutProps) {
 
       <main className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+          <Link
+            href="/"
+            aria-label={`${BRAND_NAME} 홈`}
+            className="flex shrink-0 items-center gap-1.5 md:hidden"
+          >
+            <Image
+              src="/logo.png"
+              alt=""
+              width={20}
+              height={20}
+              style={{ imageRendering: "pixelated" }}
+              unoptimized
+            />
+            <span className="font-pixel text-base leading-none tracking-normal text-zinc-700">
+              {BRAND_NAME}
+            </span>
+          </Link>
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px]">
+            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
               <AdminPageTitle />
             </div>
           </div>
@@ -102,8 +136,24 @@ function AdminShellSkeleton() {
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
       <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
         <div className="px-1.5 pb-5">
-          <p className="text-[11px] font-bold uppercase text-teal">{BRAND_NAME}</p>
-          <h1 className="mt-1 text-[15px] font-extrabold text-ink">
+          <Link
+            href="/"
+            aria-label={`${BRAND_NAME} 홈`}
+            className="flex items-center gap-1.5"
+          >
+            <Image
+              src="/logo.png"
+              alt=""
+              width={20}
+              height={20}
+              style={{ imageRendering: "pixelated" }}
+              unoptimized
+            />
+            <span className="font-pixel text-base leading-none tracking-normal text-zinc-700">
+              {BRAND_NAME}
+            </span>
+          </Link>
+          <h1 className="mt-1 text-xs font-medium text-zinc-400">
             위시리스트 관리
           </h1>
         </div>
@@ -119,7 +169,7 @@ function AdminShellSkeleton() {
       <main className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
           <div className="min-w-0 flex-1">
-            <div className="truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px]">
+            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
               <AdminPageTitle />
             </div>
           </div>
