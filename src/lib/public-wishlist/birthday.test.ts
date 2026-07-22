@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import {
   formatBirthdayBadge,
   getDaysUntilBirthday,
+  getKstDateKey,
   parseBirthday,
 } from "./birthday";
 
@@ -68,5 +69,16 @@ describe("formatBirthdayBadge", () => {
 
   test("returns null for invalid birthdays", () => {
     expect(formatBirthdayBadge("invalid", kstDate("2026-07-19"))).toBeNull();
+  });
+});
+
+describe("getKstDateKey", () => {
+  test("changes the date key exactly at KST midnight", () => {
+    expect(getKstDateKey(new Date("2026-07-22T14:59:59.999Z"))).toBe(
+      "2026-07-22",
+    );
+    expect(getKstDateKey(new Date("2026-07-22T15:00:00.000Z"))).toBe(
+      "2026-07-23",
+    );
   });
 });

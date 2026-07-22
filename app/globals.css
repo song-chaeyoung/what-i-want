@@ -248,3 +248,33 @@ body {
     @apply font-sans;
   }
 }
+
+.admin-birthday-confetti-piece {
+  animation-name: admin-birthday-confetti-fall;
+  animation-timing-function: ease-in;
+  animation-fill-mode: both;
+  will-change: transform, opacity;
+}
+
+@keyframes admin-birthday-confetti-fall {
+  0% {
+    transform: translate3d(0, -10vh, 0) rotate(0deg);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  25% {
+    transform: translate3d(var(--drift), 20vh, 0) rotate(180deg);
+  }
+  50% {
+    transform: translate3d(var(--drift-reverse), 50vh, 0) rotate(360deg);
+  }
+  75% {
+    transform: translate3d(var(--drift), 80vh, 0) rotate(540deg);
+  }
+  100% {
+    transform: translate3d(0, 105vh, 0) rotate(720deg);
+    opacity: 0;
+  }
+}
