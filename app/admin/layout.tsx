@@ -168,6 +168,23 @@ function AdminShellSkeleton() {
 
       <main className="flex min-w-0 flex-1 flex-col">
         <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+          <Link
+            href="/"
+            aria-label={`${BRAND_NAME} 홈`}
+            className="flex shrink-0 items-center gap-1.5 md:hidden"
+          >
+            <Image
+              src="/logo.png"
+              alt=""
+              width={20}
+              height={20}
+              style={{ imageRendering: "pixelated" }}
+              unoptimized
+            />
+            <span className="font-pixel text-base leading-none tracking-normal text-zinc-700">
+              {BRAND_NAME}
+            </span>
+          </Link>
           <div className="min-w-0 flex-1">
             <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
               <AdminPageTitle />

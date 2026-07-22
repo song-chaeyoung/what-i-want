@@ -89,6 +89,15 @@ describe("admin calm theme contract", () => {
     expect(source).not.toContain("bg-[#f7f5f0]");
   });
 
+  test("keeps the mobile home link in the admin shell loading fallback", () => {
+    const source = readFileSync(adminLayoutPath, "utf8");
+    const skeletonSource = source.slice(source.indexOf("function AdminShellSkeleton"));
+
+    expect(skeletonSource).toContain('href="/"');
+    expect(skeletonSource).toContain('className="flex shrink-0 items-center gap-1.5 md:hidden"');
+    expect(skeletonSource).toContain('src="/logo.png"');
+  });
+
   test("adds compact icon admin navigation without public theme classes", () => {
     const layoutSource = readFileSync(adminLayoutPath, "utf8");
     const navSource = readFileSync(adminShellNavPath, "utf8");
