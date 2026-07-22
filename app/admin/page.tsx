@@ -3,9 +3,15 @@ import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/reposit
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { requireUser } from "@/src/lib/auth/require-user";
+import {
+  getDaysUntilBirthday,
+  getKstDateKey,
+} from "@/src/lib/public-wishlist/birthday";
+import { getProfileGreeting } from "@/src/lib/profile/repository";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
+import { BirthdayConfetti } from "./birthday-confetti";
 import { AdminToastMessage } from "./admin-toast-message";
 import {
   AdminMetric,
@@ -21,9 +27,10 @@ const errorMessages: Record<string, string> = {
 
 export default async function AdminPage() {
   const user = await requireUser();
-  const [wishesResult, messagesResult] = await Promise.all([
+  const [wishesResult, messagesResult, profileGreeting] = await Promise.all([
     listWishes(user.id, new DrizzleWishRepository()),
     listAdminMessages(user.id, new DrizzleAdminMessagesRepository()),
+    getProfileGreeting(user.id),
   ]);
 
   if (!wishesResult.ok) {
@@ -48,6 +55,11 @@ export default async function AdminPage() {
     );
   }
 
+  const now = new Date();
+  const isBirthday = profileGreeting?.birthday
+    ? getDaysUntilBirthday(profileGreeting.birthday, now) === 0
+    : false;
+  const birthdayDateKey = isBirthday ? getKstDateKey(now) : null;
   const totalFundedAmount = wishesResult.items.reduce(
     (sum, item) => sum + item.fundedAmount,
     0,
@@ -57,6 +69,16 @@ export default async function AdminPage() {
 
   return (
     <section className="space-y-4">
+      {profileGreeting && birthdayDateKey ? (
+        <>
+          <BirthdayConfetti userId={user.id} dateKey={birthdayDateKey} />
+          <div className="rounded-md border border-line bg-white px-3.5 py-3">
+            <p className="text-sm font-bold text-ink">
+              생일 축하해요, {profileGreeting.displayName}님! 🎉
+            </p>
+          </div>
+        </>
+      ) : null}
       <AdminMetricGroup>
         <AdminMetric
           label="선물"

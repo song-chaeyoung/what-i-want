@@ -23,6 +23,15 @@ export function parseBirthday(value: string): MonthDay | null {
   return { month, day };
 }
 
+export function getKstDateKey(now: Date = new Date()): string {
+  const kstNow = new Date(now.getTime() + KST_OFFSET_MS);
+  const year = String(kstNow.getUTCFullYear()).padStart(4, "0");
+  const month = String(kstNow.getUTCMonth() + 1).padStart(2, "0");
+  const day = String(kstNow.getUTCDate()).padStart(2, "0");
+
+  return `${year}-${month}-${day}`;
+}
+
 export function getDaysUntilBirthday(
   birthday: string,
   now: Date = new Date(),
