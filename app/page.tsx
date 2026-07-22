@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { auth } from "@/auth";
-import { HOME_COPY } from "@/src/lib/design/copy";
+import { HOME_COPY, HOME_FAQ } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 
 export const metadata: Metadata = {
@@ -64,11 +64,30 @@ async function getHomeAccountCta(): Promise<{ label: string; href: string }> {
   return { label: "내 위시리스트 관리하기", href: "/admin" };
 }
 
+const faqJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: HOME_FAQ.map((item) => ({
+    "@type": "Question",
+    name: item.question,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: item.answer,
+    },
+  })),
+};
+
 export default async function Home() {
   const homeAccountCta = await getHomeAccountCta();
 
   return (
     <main className="pixel-dot-bg min-h-dvh text-[#171717]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <section className="mx-auto grid min-h-[calc(100dvh-3rem)] w-full max-w-6xl gap-8 px-5 py-8 sm:px-8 lg:grid-cols-[0.82fr_1.18fr] lg:items-center lg:py-12">
         <div className="space-y-6">
           <p className="sticker-label max-w-full whitespace-normal break-keep">
@@ -139,6 +158,37 @@ export default async function Home() {
           </div>
         </div>
       </section>
+
+      <section className="mx-auto w-full max-w-6xl px-5 pb-14 sm:px-8 lg:pb-20">
+        <p className="font-pixel text-sm tracking-normal text-[#0f766e]">FAQ</p>
+        <h2 className="font-pixel mt-2 text-3xl tracking-normal text-[#4c1d95] sm:text-4xl">
+          자주 묻는 질문
+        </h2>
+        <div className="mt-6 space-y-3">
+          {HOME_FAQ.map((item) => (
+            <details
+              key={item.question}
+              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-[4px_4px_0_#111827]"
+            >
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
+                <span className="break-keep text-base font-black text-[#171717] sm:text-lg">
+                  {item.question}
+                </span>
+                <span
+                  aria-hidden="true"
+                  className="font-pixel shrink-0 text-xl text-[#0f766e] transition-transform group-open:rotate-45"
+                >
+                  +
+                </span>
+              </summary>
+              <p className="border-t-2 border-[#171717] p-4 text-sm font-semibold leading-7 text-[#4b5563] sm:p-5">
+                {item.answer}
+              </p>
+            </details>
+          ))}
+        </div>
+      </section>
+
       <SiteFooter variant="full" />
     </main>
   );
