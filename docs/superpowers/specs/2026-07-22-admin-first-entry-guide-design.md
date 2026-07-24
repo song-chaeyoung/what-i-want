@@ -39,7 +39,7 @@
 - 기본 온보딩을 완료했고 가이드 완료 시각이 없는 사용자는 어떤 어드민 경로에 진입해도 모달을 한 번 봅니다.
 - 완료 또는 건너뛰기 이후 다른 브라우저와 기기에서도 자동 노출되지 않습니다.
 - 사용자는 모달 안에서 세 단계를 순서대로 이동할 수 있습니다.
-- `첫 선물 담기`는 가이드 완료 저장 후 `/admin/wishes#create-wish`로 이동합니다.
+- `첫 선물 담기`는 가이드 완료 저장 후 `/admin/wishes?create=1#create-wish`로 이동합니다.
 - `관리 화면 먼저 둘러보기`, 닫기 버튼, Escape는 가이드 완료 저장 후 현재 화면을 유지합니다.
 - 어드민 메뉴의 `사용 가이드`는 완료 여부와 관계없이 모달을 다시 엽니다.
 - 키보드, 스크린 리더, 모바일 터치 환경에서 동일한 흐름을 사용할 수 있습니다.
@@ -83,7 +83,7 @@
 → 다음 / 이전 또는 모바일 스와이프로 단계 이동
 → 3단계에서 첫 선물 담기
 → 완료 시각 저장
-→ /admin/wishes#create-wish 이동
+→ /admin/wishes?create=1#create-wish 이동
 
 또는
 
@@ -231,6 +231,8 @@ onboardingGuideCompletedAt
 
 완료 상태는 브라우저 저장소가 아니라 계정 DB에 저장합니다. 동일 사용자가 다른 브라우저나 기기로 접속해도 중복 자동 노출되지 않습니다.
 
+마이그레이션 시점에 이미 `onboarding_completed_at`이 있는 기존 프로필은 해당 시각을 `onboarding_guide_completed_at`에 백필합니다. 따라서 배포 전에 어드민을 사용하던 기존 사용자에게 새 가이드가 갑자기 자동 노출되지 않습니다. 배포 이후 기본 온보딩을 완료하는 새 프로필은 가이드 완료 시각을 `NULL`로 유지하고 첫 어드민 진입 때 모달을 봅니다.
+
 ### 8.2 서버 상태 조회
 
 기존 `getOnboardingState` 반환값을 확장합니다.
@@ -263,6 +265,8 @@ POST /api/admin/onboarding-guide/complete
 - 예상하지 못한 저장 실패 시 JSON `500`
 
 클라이언트가 완료 API 성공 후 이동 또는 닫기를 수행합니다.
+
+`첫 선물 담기`는 `/admin/wishes?create=1#create-wish`로 이동합니다. `create=1`은 이미 선물이 있는 사용자가 `사용 가이드`를 다시 열어 CTA를 눌러도 네이티브 `<details>` 등록 패널을 확실히 펼치기 위한 서버 렌더 신호이며, hash는 해당 패널로 스크롤하는 역할만 담당합니다.
 
 ### 8.4 클라이언트 컴포넌트
 
@@ -315,7 +319,7 @@ step 3
 → skip / close / Escape → completing
 
 completing
-→ success + first gift → /admin/wishes#create-wish
+→ success + first gift → /admin/wishes?create=1#create-wish
 → success + skip/close → closed on current page
 → failure → current step stays open and error message shown
 ```
@@ -349,6 +353,8 @@ completing
 
 - 가이드 미완료 프로필의 완료 시각 저장
 - 이미 완료된 프로필에 재요청해도 기존 완료 시각 보존
+- 마이그레이션이 기존 온보딩 완료 프로필을 가이드 완료 상태로 백필
+- 배포 이후 생성되는 프로필의 가이드 완료 시각은 `NULL` 유지
 - 다른 사용자의 프로필을 변경하지 않음
 - 기본 온보딩 미완료 상태 처리
 - DB 오류를 예상 가능한 실패로 변환

@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNotNull, isNull } from "drizzle-orm";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
@@ -83,6 +83,24 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
 
     return { ok: true };
   }
+
+  async completeAdminGuide(userId: string): Promise<void> {
+    const now = new Date();
+
+    await this.database
+      .update(profiles)
+      .set({
+        onboardingGuideCompletedAt: now,
+        updatedAt: now,
+      })
+      .where(
+        and(
+          eq(profiles.userId, userId),
+          isNotNull(profiles.onboardingCompletedAt),
+          isNull(profiles.onboardingGuideCompletedAt),
+        ),
+      );
+  }
 }
 
 // Concurrent onboarding submissions can both pass the availability checks;
@@ -113,7 +131,9 @@ export async function getOnboardingState(
   const [state] = await database
     .select({
       completedAt: profiles.onboardingCompletedAt,
+      guideCompletedAt: profiles.onboardingGuideCompletedAt,
       wishlistSlug: wishlists.slug,
+      wishlistThemeId: wishlists.themeId,
     })
     .from(profiles)
     .leftJoin(wishlists, eq(wishlists.ownerId, profiles.userId))
@@ -123,5 +143,7 @@ export async function getOnboardingState(
   return {
     isComplete: Boolean(state?.completedAt),
     wishlistSlug: state?.wishlistSlug ?? null,
+    wishlistThemeId: state?.wishlistThemeId ?? null,
+    guideCompletedAt: state?.guideCompletedAt ?? null,
   };
 }

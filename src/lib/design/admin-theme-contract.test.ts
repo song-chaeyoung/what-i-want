@@ -103,9 +103,11 @@ describe("admin calm theme contract", () => {
     const navSource = readFileSync(adminShellNavPath, "utf8");
 
     expect(navSource).toContain('"use client";');
-    expect(navSource).toContain('import { usePathname } from "next/navigation";');
     expect(navSource).toContain(
-      'import { Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";',
+      'import { usePathname, useSearchParams } from "next/navigation";',
+    );
+    expect(navSource).toContain(
+      'import { BookOpen, Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";',
     );
     expect(navSource).toContain("const adminNavItems");
     expect(navSource).toContain('aria-current={isActive ? "page" : undefined}');
@@ -114,6 +116,7 @@ describe("admin calm theme contract", () => {
     expect(navSource).toContain('href: "/admin/messages"');
     expect(navSource).toContain('href: "/admin/settings"');
     expect(navSource).toContain("icon: LayoutDashboard");
+    expect(navSource).toContain("icon: BookOpen");
     expect(navSource).toContain("icon: Gift");
     expect(navSource).toContain("icon: Inbox");
     expect(navSource).toContain("icon: Settings");
@@ -230,7 +233,8 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain('id="create-wish"');
     expect(source).toContain("<details");
-    expect(source).toContain("open={result.items.length === 0 && !selectedStatus}");
+    expect(source).toContain("result.items.length === 0 && !selectedStatus");
+    expect(source).toContain("open={shouldOpenCreate}");
     expect(source).toContain("<summary");
     expect(source).toContain('action="/api/admin/wishes"');
     expect(source).toContain('method="post"');

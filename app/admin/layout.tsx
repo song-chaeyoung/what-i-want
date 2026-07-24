@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { AdminGuideDialog } from "./admin-guide-dialog";
 import { AdminToastEvents } from "./admin-toast-events";
 import { AdminPageTitle, AdminShellNav } from "./admin-shell-nav";
 import AdminLoading from "./loading";
@@ -120,6 +121,14 @@ async function AdminShell({ children }: AdminLayoutProps) {
         </header>
 
         <AdminShellNav unreadMessageCount={unreadMessageCount} />
+
+        {state.wishlistSlug && state.wishlistThemeId ? (
+          <AdminGuideDialog
+            initialOpen={state.guideCompletedAt === null}
+            wishlistSlug={state.wishlistSlug}
+            themeId={state.wishlistThemeId}
+          />
+        ) : null}
 
         <Suspense fallback={null}>
           <AdminToastEvents />

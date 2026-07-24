@@ -21,6 +21,7 @@ import {
 type AdminWishesPageProps = {
   searchParams: Promise<{
     status?: string;
+    create?: string;
   }>;
 };
 
@@ -74,6 +75,8 @@ export default async function AdminWishesPage({
     );
   }
 
+  const shouldOpenCreate = params.create === "1" ||
+    (result.items.length === 0 && !selectedStatus);
   const visibleItems = selectedStatus
     ? result.items.filter((item) => item.status === selectedStatus)
     : result.items;
@@ -139,7 +142,7 @@ export default async function AdminWishesPage({
 
       <details
         id="create-wish"
-        open={result.items.length === 0 && !selectedStatus}
+        open={shouldOpenCreate}
         className="group rounded-md border border-line bg-white"
       >
         <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
@@ -414,4 +417,3 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
 function getSelectedStatus(value: string | undefined): WishStatus | null {
   return statusOptions.find((status) => status === value) ?? null;
 }
-

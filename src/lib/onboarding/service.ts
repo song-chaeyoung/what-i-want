@@ -27,6 +27,22 @@ export type CompleteOnboardingResult =
       error: CompleteOnboardingError;
     };
 
+export type CompleteAdminGuideResult =
+  | { ok: true }
+  | { ok: false; error: "onboarding_incomplete" };
+
+export async function completeAdminGuide(
+  userId: string,
+  repository: OnboardingRepository,
+): Promise<CompleteAdminGuideResult> {
+  if (!(await repository.hasCompletedOnboarding(userId))) {
+    return { ok: false, error: "onboarding_incomplete" };
+  }
+
+  await repository.completeAdminGuide(userId);
+  return { ok: true };
+}
+
 export async function completeOnboarding(
   input: CompleteOnboardingInput,
   repository: OnboardingRepository,
