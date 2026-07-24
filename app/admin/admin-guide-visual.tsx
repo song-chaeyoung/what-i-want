@@ -59,18 +59,18 @@ function GiftFormVisual() {
 function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
   return (
     <div
-      className="pub-page grid h-full place-items-center overflow-hidden p-5 sm:p-8"
+      className="pub-page grid h-full place-items-center overflow-hidden p-3 sm:p-8"
       data-theme={themeId}
     >
-      <div className="pub-card w-full max-w-[430px] p-4 sm:p-5">
+      <div className="pub-card w-full max-w-[430px] p-3.5 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <span className="pub-pill">NO. 1</span>
           <span className="pub-label">받고 싶은 선물</span>
         </div>
-        <p className="mt-4 text-lg font-black text-[var(--pub-headline-color)] sm:text-xl">
+        <p className="mt-3 text-lg font-black text-[var(--pub-headline-color)] sm:mt-4 sm:text-xl">
           무선 헤드폰
         </p>
-        <div className="mt-4 flex items-end justify-between gap-4">
+        <div className="mt-3 flex items-end justify-between gap-4 sm:mt-4">
           <div>
             <p className="text-base font-black text-[var(--pub-ink)]">
               63,000원
@@ -81,7 +81,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
           </div>
           <p className="text-xs font-black text-[var(--pub-accent)]">33%</p>
         </div>
-        <div className="mt-3 h-3 overflow-hidden rounded-sm border border-[var(--pub-divider-color)] bg-white">
+        <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--pub-divider-color)] bg-white sm:mt-3">
           <div className="h-full w-1/3 bg-[var(--pub-progress-fill)]" />
         </div>
       </div>
@@ -92,7 +92,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
 function ShareVisual({ wishlistSlug }: { wishlistSlug: string }) {
   return (
     <div className="grid h-full content-center gap-3 bg-[#fef3c7] p-4 sm:p-7">
-      <div className="flex items-center gap-2 rounded-md border-2 border-ink bg-white p-3 shadow-[3px_3px_0_#111827]">
+      <div className="flex min-w-0 items-center gap-2 rounded-md border-2 border-ink bg-white p-3 shadow-[3px_3px_0_#111827]">
         <Link2 className="size-4 shrink-0 text-purple" />
         <p className="min-w-0 flex-1 truncate text-xs font-bold text-zinc-600">
           /wishlist/{wishlistSlug}

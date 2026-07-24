@@ -124,7 +124,6 @@ async function AdminShell({ children }: AdminLayoutProps) {
 
         {state.wishlistSlug && state.wishlistThemeId ? (
           <AdminGuideDialog
-            initialOpen={state.guideCompletedAt === null}
             wishlistSlug={state.wishlistSlug}
             themeId={state.wishlistThemeId}
           />

@@ -233,8 +233,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain('id="create-wish"');
     expect(source).toContain("<details");
-    expect(source).toContain("result.items.length === 0 && !selectedStatus");
-    expect(source).toContain("open={shouldOpenCreate}");
+    expect(source).toContain("open={result.items.length === 0 && !selectedStatus}");
     expect(source).toContain("<summary");
     expect(source).toContain('action="/api/admin/wishes"');
     expect(source).toContain('method="post"');

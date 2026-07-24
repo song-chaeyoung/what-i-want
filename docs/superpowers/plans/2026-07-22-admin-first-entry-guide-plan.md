@@ -2,9 +2,18 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** 기본 온보딩 이후 최초 어드민 진입 시 3단계 가이드 모달을 노출하고, 완료 상태를 계정에 저장하며, 어드민 메뉴에서 언제든 다시 열 수 있게 합니다.
+> **⚠️ 업데이트 (2026-07-24) — as-built:** 이 계획의 원래 설계는 완료 상태를 `profiles` DB 컬럼 + 마이그레이션 + `POST /api/admin/onboarding-guide/complete` Route Handler에 저장하는 방식이었습니다. 구현 검토 결과 이 값은 다른 기능과 무관한 순수 UI 상태여서 **브라우저 localStorage**로 전환했습니다. 최종 구현은 다음과 같습니다.
+>
+> - 완료 상태: `app/admin/admin-guide-storage.ts`의 `hasSeenAdminGuide` / `markAdminGuideSeen` (localStorage 키 `mwagotgo:admin-guide-seen`)
+> - 첫 진입 자동 노출: 다이얼로그가 `useSyncExternalStore`로 localStorage를 하이드레이션 안전하게 읽어 결정
+> - 첫 선물 담기 이동: `/admin/wishes#create-wish` (앵커만; `?create=1` 쿼리와 위시 페이지 변경 없음)
+> - DB 컬럼·마이그레이션·API 라우트·`completeAdminGuide` 서비스/리포지토리·완료 요청 모듈·관련 계약 테스트는 최종 구현에 없습니다.
+>
+> 따라서 아래 **File Structure**와 **Task 1·2**(DB·마이그레이션·서비스·API), **Task 3**의 `admin-guide-request` 모듈, **Task 5·6**의 완료 API 호출·`create=1` 부분은 최초 계획 기록으로만 보존합니다. 최종 동작은 설계 문서(`../specs/2026-07-22-admin-first-entry-guide-design.md`)를 기준으로 하세요.
 
-**Architecture:** `profiles`에 nullable 완료 시각을 추가하고 기존 사용자는 마이그레이션에서 완료 상태로 백필합니다. 서버 어드민 레이아웃이 가이드 상태와 위시리스트 맥락을 조회해 Radix 기반 클라이언트 모달에 전달하고, 클라이언트는 idempotent Route Handler로 완료 상태를 저장합니다. 단계 이동과 스와이프는 순수 상태 함수로 분리하고 비네트는 네트워크나 실제 폼 동작이 없는 presentational component로 유지합니다.
+**Goal:** 기본 온보딩 이후 최초 어드민 진입 시 3단계 가이드 모달을 노출하고, 완료 상태를 브라우저(localStorage)에 저장하며, 어드민 메뉴에서 언제든 다시 열 수 있게 합니다.
+
+**Architecture:** 서버 어드민 레이아웃이 위시리스트 맥락(slug·theme)을 조회해 Radix 기반 클라이언트 모달에 전달하고, 완료 상태는 브라우저 localStorage(`admin-guide-storage.ts`)에 저장합니다. 첫 진입 자동 노출은 `useSyncExternalStore`로 하이드레이션 안전하게 판별합니다. 단계 이동·스와이프·`guide` 쿼리 전이는 순수 상태 함수로 분리하고, 비네트는 네트워크나 실제 폼 동작이 없는 presentational component로 유지합니다.
 
 **Tech Stack:** Next.js 16.2.10 App Router, React 19.2.4, TypeScript 5, Tailwind CSS 4, Radix Dialog via `radix-ui` 1.4.3, Drizzle ORM 0.45.2, PostgreSQL, Vitest 4.1.6, pnpm
 
@@ -12,11 +21,11 @@
 
 - 패키지 매니저는 pnpm만 사용합니다.
 - 새 이미지, 사진, AI 생성 이미지, 모달 라이브러리, 애니메이션 라이브러리를 추가하지 않습니다.
-- 가이드 완료 상태는 `profiles.onboarding_guide_completed_at`에 계정 기준으로 저장합니다.
-- 기존 온보딩 완료 사용자는 마이그레이션에서 가이드 완료 상태로 백필합니다.
-- 배포 이후 기본 온보딩을 완료하는 신규 사용자는 첫 어드민 진입에서만 자동 모달을 봅니다.
-- 모달은 3단계이며 새로 열 때마다 1단계부터 시작합니다. 단계 위치는 DB에 저장하지 않습니다.
-- Primary CTA는 마지막 단계의 `첫 선물 담기`이며 `/admin/wishes?create=1#create-wish`로 이동합니다.
+- 가이드 완료 상태는 브라우저 localStorage(`mwagotgo:admin-guide-seen`)에 저장합니다. 서버·DB·API를 사용하지 않습니다.
+- 기기·브라우저 단위 저장이므로 다른 기기에서는 한 번 더 자동 노출될 수 있고, `사용 가이드` 메뉴가 항상 재접근 경로입니다.
+- 기본 온보딩을 완료한 신규 사용자는 해당 브라우저 첫 어드민 진입에서 자동 모달을 봅니다.
+- 모달은 3단계이며 새로 열 때마다 1단계부터 시작합니다. 단계 위치는 저장하지 않습니다.
+- Primary CTA는 마지막 단계의 `첫 선물 담기`이며 `/admin/wishes#create-wish`로 이동합니다.
 - `관리 화면 먼저 둘러보기`, 닫기 버튼, Escape는 완료 저장 후 현재 화면을 유지합니다.
 - 배경 오버레이 클릭은 모달을 닫지 않습니다.
 - `사용 가이드` 메뉴는 현재 경로와 검색 파라미터를 보존하며 `guide=1`만 추가합니다.

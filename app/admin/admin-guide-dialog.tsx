@@ -1,11 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useRef, useState, useSyncExternalStore } from "react";
 import type { TouchEvent } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { toast } from "sonner";
 import type { PublicThemeId } from "@/src/lib/wishlist/theme";
 import {
   adminPrimaryButtonClassName,
@@ -18,7 +17,7 @@ import {
   getPreviousAdminGuideStep,
   type AdminGuideStep,
 } from "./admin-guide-state";
-import { requestAdminGuideCompletion } from "./admin-guide-request";
+import { hasSeenAdminGuide, markAdminGuideSeen } from "./admin-guide-storage";
 import { AdminGuideVisual } from "./admin-guide-visual";
 
 const guideSteps = [
@@ -42,8 +41,11 @@ const guideSteps = [
   },
 ] as const;
 
+// localStorage is not a reactive store, so a no-op subscription is enough: the
+// flag only changes as a result of this dialog's own actions within a render.
+const subscribeToGuideStorage = () => () => {};
+
 type AdminGuideDialogProps = {
-  initialOpen: boolean;
   wishlistSlug: string;
   themeId: PublicThemeId;
 };
@@ -52,7 +54,6 @@ type CompletionIntent = "first-gift" | "dismiss";
 type TransitionDirection = "next" | "previous";
 
 export function AdminGuideDialog({
-  initialOpen,
   wishlistSlug,
   themeId,
 }: AdminGuideDialogProps) {
@@ -60,19 +61,34 @@ export function AdminGuideDialog({
   const router = useRouter();
   const searchParams = useSearchParams();
   const guideRequested = searchParams.get("guide") === "1";
-  const [open, setOpen] = useState(initialOpen || guideRequested);
+  const [open, setOpen] = useState(guideRequested);
   const [step, setStep] = useState<AdminGuideStep>(0);
   const [direction, setDirection] = useState<TransitionDirection>("next");
-  const [saving, setSaving] = useState(false);
   const [previousGuideRequested, setPreviousGuideRequested] =
     useState(guideRequested);
+  const [autoOpened, setAutoOpened] = useState(false);
   const touchStartXRef = useRef<number | null>(null);
   const primaryActionRef = useRef<HTMLButtonElement>(null);
   const currentStep = guideSteps[step];
 
+  // The "already seen" flag lives in localStorage. getServerSnapshot returns
+  // true so the guide stays closed during SSR and the first client render
+  // (avoiding a hydration mismatch); it resolves to the real value immediately
+  // after, which drives the first-entry auto-open below.
+  const hasSeenGuide = useSyncExternalStore(
+    subscribeToGuideStorage,
+    () => hasSeenAdminGuide(),
+    () => true,
+  );
+
+  if (!autoOpened && !hasSeenGuide && !guideRequested) {
+    setAutoOpened(true);
+    setOpen(true);
+  }
+
   if (guideRequested !== previousGuideRequested) {
     const queryTransition = getAdminGuideQueryTransition({
-      initialOpen,
+      initialOpen: autoOpened,
       previousGuideRequested,
       guideRequested,
     });
@@ -122,40 +138,17 @@ export function AdminGuideDialog({
     setStep(nextStep);
   }
 
-  async function completeGuide(intent: CompletionIntent) {
-    if (saving) {
+  function completeGuide(intent: CompletionIntent) {
+    markAdminGuideSeen();
+
+    if (intent === "first-gift") {
+      setOpen(false);
+      router.push("/admin/wishes#create-wish");
       return;
     }
 
-    setSaving(true);
-
-    try {
-      const completionStatus = await requestAdminGuideCompletion();
-
-      if (completionStatus === "unauthorized") {
-        toast.error("로그인이 만료되었습니다. 다시 로그인해주세요.");
-        router.push("/login");
-        return;
-      }
-
-      if (completionStatus === "error") {
-        throw new Error("guide completion failed");
-      }
-
-      if (intent === "first-gift") {
-        setOpen(false);
-        router.push("/admin/wishes?create=1#create-wish");
-        return;
-      }
-
-      setOpen(false);
-      removeGuideQuery();
-    } catch (error) {
-      console.error(error);
-      toast.error("안내 상태를 저장하지 못했어요. 다시 시도해주세요.");
-    } finally {
-      setSaving(false);
-    }
+    setOpen(false);
+    removeGuideQuery();
   }
 
   function removeGuideQuery() {
@@ -172,7 +165,7 @@ export function AdminGuideDialog({
 
   function handleEscapeKeyDown(event: KeyboardEvent) {
     event.preventDefault();
-    void completeGuide("dismiss");
+    completeGuide("dismiss");
   }
 
   const motionClassName =
@@ -192,7 +185,7 @@ export function AdminGuideDialog({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" />
         <DialogPrimitive.Content
-          className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-16px)] w-[calc(100%-16px)] max-w-[760px] -translate-x-1/2 -translate-y-1/2 gap-5 overflow-y-auto rounded-md border-2 border-ink bg-paper p-4 shadow-[7px_7px_0_#111827] outline-none sm:p-7"
+          className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-16px)] w-[calc(100%-16px)] max-w-[760px] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-md border-2 border-ink bg-paper p-4 shadow-[5px_5px_0_#111827] outline-none sm:gap-5 sm:p-7 sm:shadow-[7px_7px_0_#111827]"
           onPointerDownOutside={(event) => event.preventDefault()}
           onEscapeKeyDown={handleEscapeKeyDown}
           onOpenAutoFocus={(event) => {
@@ -205,16 +198,15 @@ export function AdminGuideDialog({
               <p className="text-xs font-black text-purple">
                 {currentStep.progress}
               </p>
-              <DialogPrimitive.Title className="mt-2 text-2xl font-black tracking-tight text-ink sm:text-3xl">
+              <DialogPrimitive.Title className="mt-2 text-2xl font-black tracking-tight break-keep text-balance text-ink sm:text-3xl">
                 이제 위시리스트를 만들어볼까요?
               </DialogPrimitive.Title>
             </div>
             <button
               type="button"
               aria-label="안내 닫기"
-              disabled={saving}
-              onClick={() => void completeGuide("dismiss")}
-              className="absolute top-4 right-4 grid size-9 place-items-center rounded-md border border-line bg-white text-zinc-600 transition-colors hover:bg-zinc-100 disabled:cursor-not-allowed disabled:opacity-50 sm:top-6 sm:right-6"
+              onClick={() => completeGuide("dismiss")}
+              className="absolute top-4 right-4 grid size-9 place-items-center rounded-md border border-line bg-white text-zinc-600 transition-colors hover:bg-zinc-100 sm:top-6 sm:right-6"
             >
               <X aria-hidden="true" className="size-4" />
             </button>
@@ -223,7 +215,7 @@ export function AdminGuideDialog({
           <div
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
-            className="touch-pan-y"
+            className="min-w-0 touch-pan-y"
           >
             <p
               className="sr-only"
@@ -244,10 +236,10 @@ export function AdminGuideDialog({
                 themeId={themeId}
               />
               <div className="mt-4">
-                <h2 className="text-lg font-black text-ink sm:text-xl">
+                <h2 className="text-lg font-black break-keep text-ink sm:text-xl">
                   {currentStep.title}
                 </h2>
-                <DialogPrimitive.Description className="mt-2 text-sm font-medium leading-6 text-zinc-600">
+                <DialogPrimitive.Description className="mt-2 text-sm font-medium leading-6 break-keep text-zinc-600">
                   {currentStep.description}
                 </DialogPrimitive.Description>
               </div>
@@ -271,20 +263,18 @@ export function AdminGuideDialog({
           <div className="flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
             <button
               type="button"
-              disabled={saving}
-              onClick={() => void completeGuide("dismiss")}
-              className="h-9 text-sm font-semibold text-zinc-500 underline-offset-4 hover:text-ink hover:underline disabled:cursor-not-allowed disabled:opacity-50"
+              onClick={() => completeGuide("dismiss")}
+              className="h-9 text-sm font-semibold text-zinc-500 underline-offset-4 hover:text-ink hover:underline"
             >
               관리 화면 먼저 둘러보기
             </button>
 
-            <div className="flex justify-end gap-2">
+            <div className="flex gap-2 sm:justify-end">
               {step > 0 ? (
                 <button
                   type="button"
-                  disabled={saving}
                   onClick={goPrevious}
-                  className={adminSecondaryButtonClassName}
+                  className={`${adminSecondaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
                 >
                   <ArrowLeft aria-hidden="true" className="size-4" />
                   이전
@@ -295,9 +285,8 @@ export function AdminGuideDialog({
                 <button
                   ref={primaryActionRef}
                   type="button"
-                  disabled={saving}
                   onClick={goNext}
-                  className={adminPrimaryButtonClassName}
+                  className={`${adminPrimaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
                 >
                   다음
                   <ArrowRight aria-hidden="true" className="size-4" />
@@ -306,11 +295,10 @@ export function AdminGuideDialog({
                 <button
                   ref={primaryActionRef}
                   type="button"
-                  disabled={saving}
-                  onClick={() => void completeGuide("first-gift")}
-                  className={adminPrimaryButtonClassName}
+                  onClick={() => completeGuide("first-gift")}
+                  className={`${adminPrimaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
                 >
-                  {saving ? "처리 중..." : "첫 선물 담기"}
+                  첫 선물 담기
                 </button>
               )}
             </div>

@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { completeAdminGuide, completeOnboarding } from "./service";
+import { completeOnboarding } from "./service";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
@@ -12,7 +12,6 @@ class FakeOnboardingRepository implements OnboardingRepository {
   requestedSlugs: string[] = [];
   records: CompleteOnboardingRecord[] = [];
   persistResult: CompleteOnboardingPersistResult = { ok: true };
-  completedGuideUserIds: string[] = [];
 
   async hasCompletedOnboarding(): Promise<boolean> {
     return this.completed;
@@ -28,10 +27,6 @@ class FakeOnboardingRepository implements OnboardingRepository {
   ): Promise<CompleteOnboardingPersistResult> {
     this.records.push(record);
     return this.persistResult;
-  }
-
-  async completeAdminGuide(userId: string): Promise<void> {
-    this.completedGuideUserIds.push(userId);
   }
 }
 
@@ -233,27 +228,5 @@ describe("completeOnboarding", () => {
         wishlistVisibility: "public",
       },
     ]);
-  });
-});
-
-describe("completeAdminGuide", () => {
-  test("stores completion for an onboarded user", async () => {
-    const repository = new FakeOnboardingRepository();
-    repository.completed = true;
-
-    await expect(completeAdminGuide("user-1", repository)).resolves.toEqual({
-      ok: true,
-    });
-    expect(repository.completedGuideUserIds).toEqual(["user-1"]);
-  });
-
-  test("rejects users who have not completed base onboarding", async () => {
-    const repository = new FakeOnboardingRepository();
-
-    await expect(completeAdminGuide("user-1", repository)).resolves.toEqual({
-      ok: false,
-      error: "onboarding_incomplete",
-    });
-    expect(repository.completedGuideUserIds).toEqual([]);
   });
 });

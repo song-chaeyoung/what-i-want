@@ -40,7 +40,7 @@ describe("admin guide UI contract", () => {
       /<p\s+className="sr-only"\s+role="status"\s+aria-live="polite"\s+aria-atomic="true"\s*>[\s\S]*?<\/p>\s*<div\s+key=\{step\}/,
     );
     expect(source).not.toMatch(
-      /<div\s+key=\{step\}[^>]*aria-live=/s,
+      /<div\s+key=\{step\}[^>]*aria-live=/,
     );
     expect(source).toContain("01 / 03");
     expect(source).toContain("02 / 03");
@@ -51,11 +51,11 @@ describe("admin guide UI contract", () => {
     expect(source).toContain("관리 화면 먼저 둘러보기");
     expect(source).toContain("첫 선물 담기");
     expect(source).toContain(
-      'import { requestAdminGuideCompletion } from "./admin-guide-request";',
+      'import { hasSeenAdminGuide, markAdminGuideSeen } from "./admin-guide-storage";',
     );
-    expect(source).toContain("await requestAdminGuideCompletion()");
+    expect(source).toContain("markAdminGuideSeen()");
     expect(source).toContain(
-      'router.push("/admin/wishes?create=1#create-wish")',
+      'router.push("/admin/wishes#create-wish")',
     );
     expect(source).toContain('nextParams.delete("guide")');
     expect(source).toContain("onPointerDownOutside={(event) => event.preventDefault()}");
@@ -69,7 +69,6 @@ describe("admin guide UI contract", () => {
     expect(source).toContain(
       'import { AdminGuideDialog } from "./admin-guide-dialog";',
     );
-    expect(source).toContain("state.guideCompletedAt === null");
     expect(source).toContain("wishlistSlug={state.wishlistSlug}");
     expect(source).toContain("themeId={state.wishlistThemeId}");
   });
@@ -88,11 +87,12 @@ describe("admin guide UI contract", () => {
     expect(source).toContain("scroll={false}");
   });
 
-  test("opens the native gift form when the guide requests creation", () => {
+  test("exposes the create form as the guide's first-gift anchor target", () => {
     const source = readSource(join(root, "app/admin/wishes/page.tsx"));
 
-    expect(source).toContain("create?: string;");
-    expect(source).toContain('const shouldOpenCreate = params.create === "1"');
-    expect(source).toContain("open={shouldOpenCreate}");
+    expect(source).toContain('id="create-wish"');
+    expect(source).toContain(
+      "open={result.items.length === 0 && !selectedStatus}",
+    );
   });
 });

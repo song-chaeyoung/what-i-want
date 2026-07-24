@@ -12,7 +12,7 @@
 - 마지막 단계의 Primary 버튼은 `첫 선물 담기`입니다.
 - 모든 단계에서 `관리 화면 먼저 둘러보기`를 선택할 수 있습니다.
 - 안내 이미지는 외부 사진이나 생성형 이미지가 아니라 실제 서비스 UI 스타일을 이용한 비작동 UI 비네트로 구현합니다.
-- 사용자가 가이드를 완료하거나 명시적으로 닫으면 계정의 완료 시각을 저장합니다.
+- 사용자가 가이드를 완료하거나 명시적으로 닫으면 브라우저(localStorage)에 완료 상태를 저장합니다.
 - 완료 이후에는 자동 노출하지 않지만 어드민 메뉴의 `사용 가이드`로 같은 모달을 다시 열 수 있습니다.
 
 이 구조는 별도 경로와 리다이렉트 없이 현재 어드민 화면 위에서 작동하므로, 사용자가 안내를 건너뛰었을 때도 즉시 관리 화면을 이해할 수 있습니다.
@@ -36,11 +36,11 @@
 
 ### 2.2 성공 기준
 
-- 기본 온보딩을 완료했고 가이드 완료 시각이 없는 사용자는 어떤 어드민 경로에 진입해도 모달을 한 번 봅니다.
-- 완료 또는 건너뛰기 이후 다른 브라우저와 기기에서도 자동 노출되지 않습니다.
+- 기본 온보딩을 완료했고 가이드 완료 표시가 없는 사용자는 어떤 어드민 경로에 진입해도 모달을 한 번 봅니다.
+- 완료 또는 건너뛰기 이후 같은 브라우저에서는 자동 노출되지 않습니다. 다른 기기·브라우저에서는 한 번 더 자동 노출될 수 있으며, 언제든 `사용 가이드` 메뉴로 다시 열 수 있습니다.
 - 사용자는 모달 안에서 세 단계를 순서대로 이동할 수 있습니다.
-- `첫 선물 담기`는 가이드 완료 저장 후 `/admin/wishes?create=1#create-wish`로 이동합니다.
-- `관리 화면 먼저 둘러보기`, 닫기 버튼, Escape는 가이드 완료 저장 후 현재 화면을 유지합니다.
+- `첫 선물 담기`는 완료 상태 저장 후 `/admin/wishes#create-wish`로 이동합니다. 빈 위시리스트는 기존 로직으로 등록 패널이 열려 있고, 해시는 그 패널로 스크롤합니다.
+- `관리 화면 먼저 둘러보기`, 닫기 버튼, Escape는 완료 상태 저장 후 현재 화면을 유지합니다.
 - 어드민 메뉴의 `사용 가이드`는 완료 여부와 관계없이 모달을 다시 엽니다.
 - 키보드, 스크린 리더, 모바일 터치 환경에서 동일한 흐름을 사용할 수 있습니다.
 
@@ -52,9 +52,9 @@
 
 - 인증된 사용자입니다.
 - 기본 온보딩이 완료되었습니다.
-- `profiles.onboarding_guide_completed_at` 값이 없습니다.
+- 현재 브라우저 localStorage에 가이드 완료 표시가 없습니다.
 
-현재 `app/admin/layout.tsx`가 모든 어드민 경로를 감싸고 기본 온보딩 상태를 확인하므로, 같은 레이아웃에서 가이드 상태를 조회하고 모달의 `initialOpen` 값을 결정합니다.
+`app/admin/layout.tsx`는 모든 어드민 경로를 감싸며 기본 온보딩 상태와 위시리스트 맥락(slug, theme)을 서버에서 조회합니다. 가이드 완료 여부는 서버가 알 수 없으므로, 클라이언트 모달이 마운트 직후 localStorage를 읽어(`useSyncExternalStore`) 자동 노출을 결정합니다. 서버·최초 렌더에서는 닫힌 상태로 두어 하이드레이션 불일치를 피합니다.
 
 ### 3.2 완료로 처리하는 행동
 
@@ -65,7 +65,7 @@
 - 우측 상단 닫기 버튼 선택
 - Escape 키로 닫기
 
-배경 오버레이 클릭은 모달을 닫지 않습니다. 계정 기준 완료 상태가 영구 저장되므로 실수로 배경을 눌러 안내를 건너뛰는 일을 방지합니다.
+배경 오버레이 클릭은 모달을 닫지 않습니다. 완료 상태가 브라우저에 저장되므로 실수로 배경을 눌러 안내를 영구히 건너뛰는 일을 방지합니다.
 
 ### 3.3 다시 보기
 
@@ -78,17 +78,17 @@
 ```text
 기본 온보딩 완료
 → 어드민 진입
-→ 서버에서 가이드 완료 상태 조회
+→ 클라이언트가 localStorage에서 가이드 완료 표시 확인
 → 미완료면 1단계 모달 자동 열림
 → 다음 / 이전 또는 모바일 스와이프로 단계 이동
 → 3단계에서 첫 선물 담기
-→ 완료 시각 저장
-→ /admin/wishes?create=1#create-wish 이동
+→ localStorage에 완료 표시 저장
+→ /admin/wishes#create-wish 이동 (등록 패널 열림 + 스크롤)
 
 또는
 
 모달에서 관리 화면 먼저 둘러보기 / 닫기 / Escape
-→ 완료 시각 저장
+→ localStorage에 완료 표시 저장
 → 현재 어드민 화면 유지
 
 이후
@@ -215,78 +215,61 @@ UI 비네트:
 
 ## 8. 기술 구조
 
-### 8.1 데이터 모델
+### 8.1 완료 상태 저장소
 
-`profiles` 테이블에 nullable timestamp를 추가합니다.
-
-```text
-onboarding_guide_completed_at timestamp null
-```
-
-Drizzle 필드명:
+가이드 "봤음" 상태는 계정 DB가 아니라 **브라우저 localStorage**에 저장합니다.
 
 ```text
-onboardingGuideCompletedAt
+localStorage["mwagotgo:admin-guide-seen"] = "1"
 ```
 
-완료 상태는 브라우저 저장소가 아니라 계정 DB에 저장합니다. 동일 사용자가 다른 브라우저나 기기로 접속해도 중복 자동 노출되지 않습니다.
+이 값은 "첫 진입 자동 노출을 한 번만 할지"만 결정하는 순수 UI 상태이며, 통계·조인·다른 기능 분기 어디에도 쓰이지 않습니다. 따라서 스키마 변경, 마이그레이션, 서버 왕복 없이 클라이언트에서만 관리합니다.
 
-마이그레이션 시점에 이미 `onboarding_completed_at`이 있는 기존 프로필은 해당 시각을 `onboarding_guide_completed_at`에 백필합니다. 따라서 배포 전에 어드민을 사용하던 기존 사용자에게 새 가이드가 갑자기 자동 노출되지 않습니다. 배포 이후 기본 온보딩을 완료하는 새 프로필은 가이드 완료 시각을 `NULL`로 유지하고 첫 어드민 진입 때 모달을 봅니다.
+트레이드오프:
+
+- 기기·브라우저 단위로 저장되므로 다른 기기에서 자동 노출이 한 번 더 뜰 수 있습니다. 정보성 안내라 무해하고, `사용 가이드` 메뉴가 항상 재접근 경로를 제공하므로 "못 찾는" 상황은 없습니다.
+- Safari 프라이빗 모드 등 저장소 접근이 차단되면 읽기·쓰기를 조용히 무시하고, 결과적으로 가이드가 다시 노출될 뿐 오류는 없습니다.
+
+`app/admin/admin-guide-storage.ts`가 `hasSeenAdminGuide`, `markAdminGuideSeen`를 제공하며, 테스트를 위해 `Storage`를 주입받을 수 있습니다.
 
 ### 8.2 서버 상태 조회
 
-기존 `getOnboardingState` 반환값을 확장합니다.
+기존 `getOnboardingState`는 비네트에 필요한 위시리스트 맥락만 반환하면 됩니다.
 
 ```text
 isComplete
 wishlistSlug
 wishlistThemeId
-guideCompletedAt
 ```
 
-`app/admin/layout.tsx`는 이미 사용자 인증과 기본 온보딩 완료를 확인하고 있습니다. 같은 서버 렌더 과정에서 `guideCompletedAt`과 비네트에 필요한 slug, theme ID를 읽어 클라이언트 모달에 전달합니다.
+`wishlistThemeId`는 기존 `wishlists.themeId`에서 읽으므로 마이그레이션이 필요 없습니다. 가이드 완료 여부(`guideCompletedAt`)는 더 이상 서버 상태에 포함하지 않습니다.
 
-### 8.3 완료 처리 API
+### 8.3 완료 처리
 
-새 Route Handler:
+완료 저장은 서버 API가 아니라 클라이언트에서 동기적으로 수행합니다.
 
-```text
-POST /api/admin/onboarding-guide/complete
-```
+- 완료·건너뛰기 시 `markAdminGuideSeen()`를 호출해 localStorage에 표시합니다.
+- 네트워크 요청, Route Handler, 세션 확인이 없으므로 실패 경로와 로딩 상태가 없습니다.
+- 같은 키를 다시 세팅하는 것뿐이라 재호출에도 안전합니다.
 
-책임:
-
-- Auth.js 세션 확인
-- 인증 사용자의 프로필만 갱신
-- 첫 완료 시각을 저장하고 재호출 시 기존 시각을 보존
-- 여러 번 호출해도 성공하는 idempotent API
-- 성공 시 JSON `200`
-- 세션 만료 시 JSON `401`
-- 예상하지 못한 저장 실패 시 JSON `500`
-
-클라이언트가 완료 API 성공 후 이동 또는 닫기를 수행합니다.
-
-`첫 선물 담기`는 `/admin/wishes?create=1#create-wish`로 이동합니다. `create=1`은 이미 선물이 있는 사용자가 `사용 가이드`를 다시 열어 CTA를 눌러도 네이티브 `<details>` 등록 패널을 확실히 펼치기 위한 서버 렌더 신호이며, hash는 해당 패널로 스크롤하는 역할만 담당합니다.
+`첫 선물 담기`는 `/admin/wishes#create-wish`로 이동합니다. 첫 진입 사용자는 위시리스트가 비어 있어 기존 "빈 목록이면 등록 패널 자동 열림" 로직이 폼을 펼치고, 해시는 그 패널로 스크롤합니다. 별도의 `create` 쿼리나 서버 신호는 사용하지 않습니다.
 
 ### 8.4 클라이언트 컴포넌트
 
-예상 컴포넌트 경계:
+실제 컴포넌트 구성:
 
 ```text
-AdminGuideDialog
-├── AdminGuideProgress
-├── AdminGuideStep
-│   └── GuideStepVisual
-└── AdminGuideActions
+app/admin/admin-guide-dialog.tsx   Radix Dialog, 단계 상태, 완료 처리, 접근성
+app/admin/admin-guide-visual.tsx   3종 비작동 UI 비네트
+app/admin/admin-guide-state.ts     이전·다음·스와이프·쿼리 전이 순수 함수
+app/admin/admin-guide-storage.ts   localStorage 읽기/쓰기 헬퍼
 ```
 
-- `AdminGuideDialog`: 열림 상태, 현재 단계, 완료 요청, 키보드와 스와이프 제어
-- `AdminGuideProgress`: 숫자와 진행 점 표시
-- `AdminGuideStep`: 단계 제목과 설명
-- `GuideStepVisual`: 3종 비작동 UI 비네트
-- `AdminGuideActions`: 이전, 다음, 첫 선물 담기, 관리 화면 둘러보기
+- `AdminGuideDialog`: 열림 상태, 현재 단계, 완료 처리, 키보드·스와이프 제어. 첫 진입 자동 노출은 `useSyncExternalStore`로 localStorage를 하이드레이션 안전하게 읽어 렌더 단계에서 한 번만 연다.
+- `admin-guide-state.ts`: 단계 경계, 48px 스와이프 임계값, `guide` 쿼리 전이(open/close/preserve)를 순수 함수로 분리해 단위 테스트한다.
+- `admin-guide-storage.ts`: `hasSeenAdminGuide`, `markAdminGuideSeen`.
 
-Radix Dialog를 사용합니다. 현재 `radix-ui` 패키지와 `@radix-ui/react-dialog` 의존성이 설치되어 있으므로 새 모달 라이브러리는 추가하지 않습니다.
+Radix Dialog를 사용합니다. 현재 `radix-ui` 패키지가 설치되어 있으므로 새 모달 라이브러리는 추가하지 않습니다.
 
 ### 8.5 사용 가이드 메뉴
 
@@ -301,38 +284,36 @@ Radix Dialog를 사용합니다. 현재 `radix-ui` 패키지와 `@radix-ui/react
 
 ```text
 closed
-→ automatic open when guideCompletedAt is null
+→ automatic open when localStorage has no "seen" flag (client, after hydration)
 → step 1
 
 step 1
 → next → step 2
-→ skip / close / Escape → completing
+→ skip / close / Escape → complete
 
 step 2
 → previous → step 1
 → next → step 3
-→ skip / close / Escape → completing
+→ skip / close / Escape → complete
 
 step 3
 → previous → step 2
-→ first gift → completing
-→ skip / close / Escape → completing
+→ first gift → complete
+→ skip / close / Escape → complete
 
-completing
-→ success + first gift → /admin/wishes?create=1#create-wish
-→ success + skip/close → closed on current page
-→ failure → current step stays open and error message shown
+complete
+→ mark localStorage seen (synchronous)
+→ first gift → /admin/wishes#create-wish
+→ skip / close → closed on current page
 ```
 
-완료 요청 중에는 완료 관련 버튼과 닫기 동작을 잠시 비활성화해 중복 요청을 방지합니다. API 자체도 idempotent하게 구현하여 네트워크 재시도에 안전하게 합니다.
+완료 저장이 localStorage 동기 쓰기라 실패 경로가 없고, 같은 키를 다시 세팅하는 것뿐이라 재호출에도 안전합니다.
 
 ## 10. 오류 처리
 
-- 완료 저장이 실패하면 모달을 닫거나 이동하지 않고 현재 단계를 유지합니다.
-- 저장 중에는 버튼에 `처리 중...` 상태를 표시합니다.
-- `401`이면 `로그인이 만료되었습니다. 다시 로그인해주세요.`를 보여주고 로그인 화면으로 이동할 수 있게 합니다.
-- `500` 또는 네트워크 오류면 `안내 상태를 저장하지 못했어요. 다시 시도해주세요.` 토스트를 표시합니다.
-- 단계 이동은 서버 요청이 없으므로 네트워크 오류와 무관하게 동작합니다.
+- 완료 저장은 localStorage 동기 쓰기이므로 네트워크 실패나 세션 만료 같은 경로가 없습니다.
+- 저장소 접근이 차단된 환경(프라이빗 모드 등)에서는 읽기·쓰기를 조용히 무시합니다. 최악의 경우 가이드가 다음에 다시 노출될 뿐이며, 사용자에게 오류를 표시하지 않습니다.
+- 단계 이동은 순수 클라이언트 상태라 어떤 외부 요인과도 무관하게 동작합니다.
 - UI 비네트는 외부 이미지와 API에 의존하지 않으므로 로딩 실패 상태가 없습니다.
 
 ## 11. 접근성
@@ -343,52 +324,41 @@ completing
 - 진행 점은 장식으로 처리하고 `01 / 03` 형태의 텍스트 진행 정보를 제공합니다.
 - 닫기 버튼에 `안내 닫기` 접근성 이름을 제공합니다.
 - 비네트 안의 가짜 필드와 버튼은 포커스 순서와 접근성 트리에서 제외합니다.
-- Escape는 완료 저장을 시도하며, 저장 실패 시 닫기를 취소하고 오류를 알립니다.
+- Escape는 완료 상태를 저장하고 모달을 닫습니다.
 - 배경 콘텐츠는 모달이 열린 동안 포인터와 키보드로 조작할 수 없습니다.
 - 모든 텍스트와 버튼은 WCAG AA 대비를 확인합니다.
 
 ## 12. 테스트 전략
 
-### 12.1 데이터와 서비스 테스트
+### 12.1 상태·저장소 단위 테스트
 
-- 가이드 미완료 프로필의 완료 시각 저장
-- 이미 완료된 프로필에 재요청해도 기존 완료 시각 보존
-- 마이그레이션이 기존 온보딩 완료 프로필을 가이드 완료 상태로 백필
-- 배포 이후 생성되는 프로필의 가이드 완료 시각은 `NULL` 유지
-- 다른 사용자의 프로필을 변경하지 않음
-- 기본 온보딩 미완료 상태 처리
-- DB 오류를 예상 가능한 실패로 변환
+- 단계 이동 경계(다음·이전)와 48px 스와이프 임계값 (`admin-guide-state.test.ts`)
+- `guide` 쿼리 전이(open/close/preserve) (`admin-guide-state.test.ts`)
+- localStorage 미표시→표시 전이, 표시 후 `hasSeenAdminGuide`가 `true` 반환 (`admin-guide-storage.test.ts`)
+- 저장소 접근이 throw하면 `hasSeenAdminGuide`는 `false` 반환, `markAdminGuideSeen`은 예외를 삼킴
 
-### 12.2 Route Handler 테스트
+### 12.2 UI 계약(소스) 테스트
 
-- 인증된 사용자 요청은 `200`
-- 인증되지 않은 요청은 `401`
-- 반복 요청도 `200`
-- 저장 실패는 `500`
+`admin-guide-ui-contract.test.ts`가 소스 문자열로 검증합니다.
 
-### 12.3 UI 상태 테스트
+- 비네트가 이미지 없이 비작동(`aria-hidden`, `pointer-events-none`, `select-none`)으로 렌더
+- 다이얼로그가 3단계 Radix Dialog이며 완료 시 `markAdminGuideSeen()` 호출, `admin-guide-storage`에서 import
+- `첫 선물 담기`가 `/admin/wishes#create-wish`로 이동
+- 레이아웃이 `AdminGuideDialog`를 마운트하고 slug·theme 전달
+- 네비게이션 양쪽에 `사용 가이드` 링크(`guide=1`) 추가
+- 위시 페이지가 앵커 대상(`id="create-wish"`)과 빈-목록 자동 오픈 유지
 
-- `initialOpen=true`일 때 1단계 자동 노출
-- 다음과 이전 경계 처리
-- 첫 단계 이전 이동과 마지막 단계 다음 이동 방지
-- 48px 이상 모바일 스와이프만 단계 이동
-- `prefers-reduced-motion`에서 전환 애니메이션 제거
-- 완료 API 실패 시 모달 유지
-- 완료 API 성공 후 올바른 이동 또는 닫기
-- 다시 보기 시 1단계부터 시작
-- `guide` 검색 파라미터만 추가·제거하고 다른 파라미터 보존
-
-### 12.4 수동 검증
+### 12.3 수동 검증
 
 - 데스크톱 어드민 모든 경로에서 첫 자동 노출
 - 모바일 세로 화면에서 콘텐츠와 하단 버튼이 잘리지 않음
 - 키보드 Tab 순서, Shift+Tab, Enter, Escape
 - 스크린 리더의 제목, 설명, 단계 변경 안내
-- 첫 선물 담기 후 선물 추가 패널 노출
-- 다른 브라우저 또는 로그아웃·재로그인 후 중복 자동 노출 없음
+- 첫 선물 담기 후 위시 페이지 등록 패널 노출과 스크롤
+- 완료·건너뛰기 후 같은 브라우저에서 재노출 없음, 다른 브라우저에서는 한 번 재노출될 수 있음
 - 사용 가이드 메뉴를 통한 재호출
 
-### 12.5 실행 명령
+### 12.4 실행 명령
 
 ```text
 pnpm typecheck
@@ -397,23 +367,23 @@ pnpm test
 pnpm build
 ```
 
-현재 로컬 Node `v20.15.0`에서는 설치된 Vitest/Vite 조합의 ESM 호환 문제로 `pnpm test`가 설정 로딩 단계에서 실패하는 기존 환경 문제가 있습니다. 구현 검증 시 호환되는 Node 런타임으로 테스트하거나, 실패 원인이 이번 기능과 무관함을 명시적으로 기록합니다.
+로컬 검증 결과: `pnpm typecheck`·`pnpm lint` 통과, `pnpm test`는 40개 파일 234개 테스트 통과.
 
 ## 13. 구현 순서
 
-1. DB 필드와 마이그레이션을 추가합니다.
-2. 온보딩 상태 조회와 idempotent 완료 저장을 구현하고 서비스 테스트를 작성합니다.
-3. 완료 Route Handler를 구현하고 인증·오류 테스트를 작성합니다.
-4. Radix 기반 가이드 모달과 단계 상태를 구현합니다.
-5. 3종 UI 비네트와 반응형 스타일을 구현합니다.
-6. 어드민 레이아웃의 자동 노출과 메뉴의 다시 보기를 연결합니다.
+1. 단계·스와이프·`guide` 쿼리 전이 순수 함수(`admin-guide-state.ts`)와 테스트를 구현합니다.
+2. localStorage 헬퍼(`admin-guide-storage.ts`)와 주입 가능한 테스트를 구현합니다.
+3. 3종 UI 비네트(`admin-guide-visual.tsx`)와 반응형 스타일을 구현합니다.
+4. Radix 기반 가이드 모달을 구현하고 `useSyncExternalStore`로 첫 진입 자동 노출을 연결합니다.
+5. 어드민 레이아웃 마운트와 네비게이션 `사용 가이드` 재열람을 연결합니다.
+6. 위시 페이지 앵커(`#create-wish`)로 첫 선물 담기 이동을 연결합니다.
 7. 접근성, 모바일, 전체 명령을 검증합니다.
 
 ## 14. 제외 범위
 
 이번 기능에는 다음을 포함하지 않습니다.
 
-- 단계별 완료 상태의 DB 저장
+- 가이드 완료 상태나 단계 위치의 서버·DB 저장 (완료 상태는 브라우저 localStorage에만 저장)
 - 사용자의 실제 선물 데이터에 따른 가이드 내용 변경
 - 선물 등록 이후 자동으로 2단계나 3단계를 다시 띄우는 기능
 - 분석 이벤트와 전환 퍼널 대시보드
@@ -427,8 +397,8 @@ pnpm build
 - 최초 어드민 진입 시 3단계 모달이 자동으로 열립니다.
 - 사용자는 이전, 다음, 모바일 스와이프로 단계를 이동할 수 있습니다.
 - 각 단계에는 실제 서비스 스타일과 연결된 비작동 UI 비네트가 표시됩니다.
-- 완료 또는 건너뛰기 상태가 계정 DB에 저장됩니다.
-- 완료 이후 어떤 기기에서도 자동 재노출되지 않습니다.
+- 완료 또는 건너뛰기 상태가 브라우저 localStorage에 저장됩니다.
+- 완료 이후 같은 브라우저에서 자동 재노출되지 않습니다. (다른 기기·브라우저에서는 한 번 재노출될 수 있고, `사용 가이드` 메뉴로 항상 다시 열 수 있습니다.)
 - `사용 가이드` 메뉴로 언제든 같은 모달을 다시 열 수 있습니다.
 - Primary CTA는 첫 선물 등록 패널로 이동합니다.
 - 배경 클릭으로 실수로 영구 건너뛰기 되지 않습니다.

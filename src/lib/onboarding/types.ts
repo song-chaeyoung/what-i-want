@@ -17,7 +17,6 @@ export type OnboardingState = {
   isComplete: boolean;
   wishlistSlug: string | null;
   wishlistThemeId: PublicThemeId | null;
-  guideCompletedAt: Date | null;
 };
 
 export type CompleteOnboardingPersistResult =
@@ -35,5 +34,4 @@ export interface OnboardingRepository {
   completeOnboarding(
     record: CompleteOnboardingRecord,
   ): Promise<CompleteOnboardingPersistResult>;
-  completeAdminGuide(userId: string): Promise<void>;
 }
