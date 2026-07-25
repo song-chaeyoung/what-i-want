@@ -1,7 +1,7 @@
 # Admin First-Entry Guide Modal Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
-
+>
 > **⚠️ 업데이트 (2026-07-24) — as-built:** 이 계획의 원래 설계는 완료 상태를 `profiles` DB 컬럼 + 마이그레이션 + `POST /api/admin/onboarding-guide/complete` Route Handler에 저장하는 방식이었습니다. 구현 검토 결과 이 값은 다른 기능과 무관한 순수 UI 상태여서 **브라우저 localStorage**로 전환했습니다. 최종 구현은 다음과 같습니다.
 >
 > - 완료 상태: `app/admin/admin-guide-storage.ts`의 `hasSeenAdminGuide` / `markAdminGuideSeen` (localStorage 키 `mwagotgo:admin-guide-seen`)
@@ -34,6 +34,10 @@
 - Vitest/Vite 검증에는 Node `^20.19.0 || >=22.12.0`이 필요합니다. 현재 기본 Node `v20.15.0`에서 테스트가 시작되지 않으면 호환 Node 런타임을 선택한 뒤 같은 pnpm 명령을 실행합니다.
 
 ---
+
+## ⛔ 부록: 원본 실행 계획 (폐기 · 실행 금지 · 참고용)
+
+> **이 지점 아래 전체(File Structure 및 Task 1~7)는 폐기된 원본 계획입니다.** 완료 상태를 `profiles` DB 컬럼·마이그레이션·완료 API로 저장하는 방식으로 설계되었고, 이미 구현된 뒤 localStorage 방식으로 전환되었습니다. **아래 체크리스트를 실행하지 마세요** — 제거된 스키마·마이그레이션(0008)·`onboarding-guide/complete` 라우트·`completeAdminGuide` 서비스/리포지토리·`create=1` 흐름이 되살아납니다. 최종 구현과 동작은 상단 요약과 설계 문서(`../specs/2026-07-22-admin-first-entry-guide-design.md`)를 기준으로 하며, 아래는 히스토리 참고용으로만 보존합니다.
 
 ## File Structure
 

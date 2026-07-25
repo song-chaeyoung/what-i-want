@@ -358,16 +358,16 @@ complete
 - 완료·건너뛰기 후 같은 브라우저에서 재노출 없음, 다른 브라우저에서는 한 번 재노출될 수 있음
 - 사용 가이드 메뉴를 통한 재호출
 
-### 12.4 실행 명령
+### 12.4 검증 결과
 
-```text
-pnpm typecheck
-pnpm lint
-pnpm test
-pnpm build
-```
+localStorage 전환 시점 로컬 검증(Node `v26.3.1`) 기록:
 
-로컬 검증 결과: `pnpm typecheck`·`pnpm lint` 통과, `pnpm test`는 40개 파일 234개 테스트 통과.
+- `pnpm typecheck` — ✅ 통과
+- `pnpm lint` — ✅ 통과
+- `pnpm test` — ✅ 40개 파일 234개 테스트 통과
+- `pnpm build` — ⚠️ 미실행 (프로덕션 빌드는 CI/배포에서 확인)
+- 모바일 반응형 — ✅ 375px·320px에서 3단계 렌더·터치 스와이프·버튼 탭·가로 오버플로 0 실측 확인
+- 접근성 — Radix Dialog의 포커스 트랩·제목/설명 연결·Escape는 기본 제공하나, 스크린 리더·키보드 흐름의 별도 수동 감사는 ⚠️ 미실행
 
 ## 13. 구현 순서
 
