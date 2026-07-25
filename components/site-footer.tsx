@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { BRAND_NAME, FOOTER_COPY } from "@/src/lib/design/copy";
 
 type SiteFooterProps = {
@@ -15,6 +16,18 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
           {BRAND_NAME}
         </p>
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
+          <Link
+            href="/terms"
+            className="text-sm font-black underline-offset-4 hover:underline"
+          >
+            {FOOTER_COPY.termsLabel}
+          </Link>
+          <Link
+            href="/privacy"
+            className="text-sm font-black underline-offset-4 hover:underline"
+          >
+            {FOOTER_COPY.privacyLabel}
+          </Link>
           <FooterLink href={FOOTER_COPY.contactUrl} label={FOOTER_COPY.contactLabel} />
           {variant === "full" && supportUrl ? (
             <FooterLink href={supportUrl} label={FOOTER_COPY.supportLabel} />

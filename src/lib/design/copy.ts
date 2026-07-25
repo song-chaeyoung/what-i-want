@@ -45,6 +45,8 @@ export const HOME_FAQ = [
 export const FOOTER_COPY = {
   contactLabel: "문의하기",
   supportLabel: "후원하기",
+  termsLabel: "이용약관",
+  privacyLabel: "개인정보 처리방침",
   contactUrl: "https://forms.gle/WYpBboXs3WphC7ai6",
 } as const;
 
