@@ -334,7 +334,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('label="메시지"');
     expect(source).toContain('label="모인 금액"');
     expect(source).toContain("내 공개 주소");
-    expect(source).toContain("<CopyPublicLinkButton");
+    expect(source).toContain("<SharePublicLinkButton");
     expect(source).not.toContain("function SummaryCard");
     expect(source).not.toContain("shadow-pub");
     expect(source).not.toContain("pub-page");

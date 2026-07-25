@@ -82,6 +82,7 @@ export const PUBLIC_WISHLIST_COPY = {
   messageFormTitle: "축하 메시지 남기기",
   messageFormNote: "결제 없이 메시지만 전할 수 있어요.",
   messageSuccess: "축하 메시지가 전해졌어요.",
+  postCreateCtaLabel: "나도 만들기",
   participationErrors: {
     wishlist_not_found: "위시리스트를 찾을 수 없어요.",
     wish_not_found: "선물을 다시 선택해주세요.",

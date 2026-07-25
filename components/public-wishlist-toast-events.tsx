@@ -1,11 +1,15 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { PublicBankAccountCard } from "@/components/public-bank-account-card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
+import { buildCreateCtaHref } from "@/src/lib/share/share-url";
 import type { PublicBankAccountView } from "@/src/lib/public-wishlist/types";
+
+const POST_PARTICIPATION_CTA_HREF = buildCreateCtaHref("post_participation");
 
 type PublicWishlistToastEventsProps = {
   account: PublicBankAccountView | null;
@@ -15,6 +19,7 @@ type PublicToastConfig = {
   type: "success" | "error";
   message: string;
   openAccountModal?: boolean;
+  showCreateCta?: boolean;
 };
 
 export function PublicWishlistToastEvents({
@@ -46,7 +51,17 @@ export function PublicWishlistToastEvents({
     const toastConfig = getPublicToastConfig(sent, error, account !== null);
 
     if (toastConfig) {
-      toast[toastConfig.type](toastConfig.message);
+      toast[toastConfig.type](
+        toastConfig.message,
+        toastConfig.showCreateCta
+          ? {
+              action: {
+                label: PUBLIC_WISHLIST_COPY.postCreateCtaLabel,
+                onClick: () => router.push(POST_PARTICIPATION_CTA_HREF),
+              },
+            }
+          : undefined,
+      );
       queueMicrotask(() => {
         setAccountModalOpen(toastConfig.openAccountModal === true);
       });
@@ -89,6 +104,7 @@ function getPublicToastConfig(
     return {
       type: "success",
       message: PUBLIC_WISHLIST_COPY.messageSuccess,
+      showCreateCta: true,
     };
   }
 
@@ -99,6 +115,8 @@ function getPublicToastConfig(
         ? PUBLIC_WISHLIST_COPY.participationSuccess
         : PUBLIC_WISHLIST_COPY.participationSuccessNoAccount,
       openAccountModal: hasAccount,
+      // 계좌 모달이 뜨는 경우엔 모달 안 CTA로 유도하므로 토스트 액션은 생략한다.
+      showCreateCta: !hasAccount,
     };
   }
 
@@ -139,9 +157,15 @@ function AccountRevealModal({
         <p className="mt-3 text-xs font-semibold text-[var(--pub-sub)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
         </p>
+        <Link
+          href={POST_PARTICIPATION_CTA_HREF}
+          className="pub-btn pub-btn-accent pub-btn-block mt-5 h-11 text-sm"
+        >
+          {PUBLIC_WISHLIST_COPY.postCreateCtaLabel}
+        </Link>
         <button
           type="button"
-          className="pub-btn pub-btn-block mt-5 h-11 text-sm"
+          className="pub-btn pub-btn-block mt-3 h-11 text-sm"
           onClick={onClose}
         >
           {PUBLIC_WISHLIST_COPY.accountModalClose}
