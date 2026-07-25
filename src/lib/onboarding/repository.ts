@@ -114,6 +114,7 @@ export async function getOnboardingState(
     .select({
       completedAt: profiles.onboardingCompletedAt,
       wishlistSlug: wishlists.slug,
+      wishlistThemeId: wishlists.themeId,
     })
     .from(profiles)
     .leftJoin(wishlists, eq(wishlists.ownerId, profiles.userId))
@@ -123,5 +124,6 @@ export async function getOnboardingState(
   return {
     isComplete: Boolean(state?.completedAt),
     wishlistSlug: state?.wishlistSlug ?? null,
+    wishlistThemeId: state?.wishlistThemeId ?? null,
   };
 }

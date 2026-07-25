@@ -16,6 +16,7 @@ export type CompleteOnboardingRecord = {
 export type OnboardingState = {
   isComplete: boolean;
   wishlistSlug: string | null;
+  wishlistThemeId: PublicThemeId | null;
 };
 
 export type CompleteOnboardingPersistResult =

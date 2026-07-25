@@ -1,9 +1,9 @@
 "use client";
 
 import { useState } from "react";
-import { Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";
+import { BookOpen, Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 
 const adminNavItems = [
   { href: "/admin", label: "대시보드", icon: LayoutDashboard },
@@ -11,6 +11,11 @@ const adminNavItems = [
   { href: "/admin/messages", label: "메시지함", icon: Inbox },
   { href: "/admin/settings", label: "설정", icon: Settings },
 ];
+
+const adminGuideItem = {
+  label: "사용 가이드",
+  icon: BookOpen,
+};
 
 type AdminShellNavProps = {
   variant?: "mobile" | "desktop";
@@ -78,6 +83,7 @@ export function AdminShellNav({
             </Link>
           );
         })}
+        <AdminGuideLink variant="desktop" />
       </nav>
     );
   }
@@ -110,8 +116,42 @@ export function AdminShellNav({
             </Link>
           );
         })}
+        <AdminGuideLink variant="mobile" />
       </div>
     </nav>
+  );
+}
+
+function AdminGuideLink({ variant }: { variant: "mobile" | "desktop" }) {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  const nextParams = new URLSearchParams(searchParams.toString());
+  nextParams.set("guide", "1");
+  const href = `${pathname}?${nextParams.toString()}`;
+  const Icon = adminGuideItem.icon;
+
+  if (variant === "desktop") {
+    return (
+      <Link
+        href={href}
+        scroll={false}
+        className="flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-[13.5px] font-semibold text-zinc-600 transition-colors hover:bg-white/70 hover:text-ink"
+      >
+        <Icon aria-hidden="true" className="size-4 shrink-0" />
+        {adminGuideItem.label}
+      </Link>
+    );
+  }
+
+  return (
+    <Link
+      href={href}
+      scroll={false}
+      className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-0 py-2.5 text-[13px] font-semibold text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-800"
+    >
+      <Icon aria-hidden="true" className="size-3.5 shrink-0" />
+      {adminGuideItem.label}
+    </Link>
   );
 }
 
