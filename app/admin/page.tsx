@@ -19,7 +19,7 @@ import {
   adminSecondaryButtonClassName,
   formatCurrency,
 } from "./admin-ui";
-import { CopyPublicLinkButton } from "./copy-public-link-button";
+import { SharePublicLinkButton } from "./share-public-link-button";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -105,7 +105,7 @@ export default async function AdminPage() {
           </p>
         </div>
         <div className="flex shrink-0 gap-2">
-          <CopyPublicLinkButton slug={wishesResult.wishlist.slug} />
+          <SharePublicLinkButton slug={wishesResult.wishlist.slug} />
           <Link
             href={`/wishlist/${wishesResult.wishlist.slug}`}
             className={adminSecondaryButtonClassName}

@@ -61,7 +61,7 @@ export function PublicWishlistView({
             </div>
             <div className="flex flex-wrap items-center gap-3">
               {demo ? <p className="pub-pill pub-pill-alt">SAMPLE</p> : null}
-              <PublicShareButton title={wishlist.title} />
+              <PublicShareButton slug={wishlist.slug} title={wishlist.title} />
             </div>
           </div>
           <h1 className="pub-headline mt-5 sm:text-5xl">{wishlist.title}</h1>

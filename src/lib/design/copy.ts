@@ -45,6 +45,8 @@ export const HOME_FAQ = [
 export const FOOTER_COPY = {
   contactLabel: "문의하기",
   supportLabel: "후원하기",
+  termsLabel: "이용약관",
+  privacyLabel: "개인정보 처리방침",
   contactUrl: "https://forms.gle/WYpBboXs3WphC7ai6",
 } as const;
 
@@ -82,6 +84,7 @@ export const PUBLIC_WISHLIST_COPY = {
   messageFormTitle: "축하 메시지 남기기",
   messageFormNote: "결제 없이 메시지만 전할 수 있어요.",
   messageSuccess: "축하 메시지가 전해졌어요.",
+  postCreateCtaLabel: "나도 만들기",
   participationErrors: {
     wishlist_not_found: "위시리스트를 찾을 수 없어요.",
     wish_not_found: "선물을 다시 선택해주세요.",

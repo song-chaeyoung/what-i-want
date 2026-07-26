@@ -11,7 +11,7 @@ describe("metadata routes", () => {
     vi.unstubAllEnvs();
   });
 
-  test("publishes only home and sample in the sitemap", () => {
+  test("publishes home, sample, and legal pages in the sitemap", () => {
     expect(sitemap()).toEqual([
       {
         url: "https://iwantbirthdaygift.com/",
@@ -22,6 +22,16 @@ describe("metadata routes", () => {
         url: "https://iwantbirthdaygift.com/sample",
         changeFrequency: "monthly",
         priority: 0.8,
+      },
+      {
+        url: "https://iwantbirthdaygift.com/terms",
+        changeFrequency: "yearly",
+        priority: 0.3,
+      },
+      {
+        url: "https://iwantbirthdaygift.com/privacy",
+        changeFrequency: "yearly",
+        priority: 0.3,
       },
     ]);
   });
