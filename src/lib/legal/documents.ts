@@ -9,10 +9,35 @@ import { BRAND_NAME } from "@/src/lib/design/copy";
  *    이 모듈은 서버 컴포넌트에서만 사용되므로 process.env를 직접 읽습니다.
  */
 
-export const LEGAL_OPERATOR_NAME =
-  process.env.LEGAL_OPERATOR_NAME?.trim() || "[운영자 이름]";
-export const LEGAL_OPERATOR_CONTACT =
-  process.env.LEGAL_OPERATOR_CONTACT?.trim() || "[문의 이메일 주소]";
+// 프로덕션 빌드에서 운영자 정보가 비면 배포를 차단한다.
+// (연락처 누락된 법률 문서가 공개되는 것을 방지 — 개발 환경은 플레이스홀더 폴백)
+function resolveOperatorValue(
+  raw: string | undefined,
+  envKey: string,
+  fallback: string,
+): string {
+  const value = raw?.trim();
+  if (value) {
+    return value;
+  }
+  if (process.env.NODE_ENV === "production") {
+    throw new Error(
+      `${envKey} 환경변수가 비어 있습니다. 운영자 정보가 누락된 법률 문서는 배포할 수 없습니다.`,
+    );
+  }
+  return fallback;
+}
+
+export const LEGAL_OPERATOR_NAME = resolveOperatorValue(
+  process.env.LEGAL_OPERATOR_NAME,
+  "LEGAL_OPERATOR_NAME",
+  "[운영자 이름]",
+);
+export const LEGAL_OPERATOR_CONTACT = resolveOperatorValue(
+  process.env.LEGAL_OPERATOR_CONTACT,
+  "LEGAL_OPERATOR_CONTACT",
+  "[문의 이메일 주소]",
+);
 export const LEGAL_EFFECTIVE_DATE = "2026년 7월 26일";
 
 export type LegalSection = {
@@ -81,12 +106,15 @@ export const PRIVACY_POLICY: LegalDocument = {
         "공개 위시리스트 페이지에 표시되는 정보(표시 이름, 위시리스트·선물 내용, 계좌 안내 등)는 이용자가 공개 링크를 공유한 대상에게 열람되며, 이는 이용자의 공유 행위에 따른 것입니다. 공개 페이지는 검색엔진에 노출되지 않도록 처리됩니다.",
       ],
     },
+    // ⚠️ 국외 이전 법적 근거(제28조의8 제1항 제3호)는 일반적 해석 기준.
+    //    실제 Vercel·Neon 계약·데이터 흐름 기준으로 법무 검토 후 확정 필요.
     {
       heading: "제6조 (개인정보 처리의 위탁 및 국외 이전)",
       paragraphs: [
-        "운영자는 안정적인 서비스 제공을 위해 아래와 같이 개인정보 처리를 위탁하고 있으며, 이 과정에서 개인정보가 국외에 저장·처리됩니다. 이용자는 개인정보 국외 이전에 관하여 아래 사항을 확인할 수 있습니다.",
+        "운영자는 안정적인 서비스 제공을 위해 아래와 같이 개인정보 처리를 위탁하고 있으며, 이 과정에서 개인정보가 국외에 저장·처리됩니다. 운영자는 「개인정보 보호법」 제28조의8 제1항 제3호에 따라, 정보주체와의 계약 이행 및 원활한 서비스 제공을 위한 처리위탁·보관을 목적으로 아래 사항을 본 방침에 공개함으로써 개인정보를 국외로 이전합니다.",
       ],
       items: [
+        "국외 이전의 근거: 「개인정보 보호법」 제28조의8 제1항 제3호 (계약의 이행 및 서비스 제공을 위한 처리위탁·보관을 개인정보 처리방침에 공개하는 경우)",
         "이전받는 자 및 국가: Vercel Inc. (미국) — 서비스 호스팅 및 운영 인프라",
         "이전받는 자 및 국가: Neon Inc. (미국) — 데이터베이스 저장 및 관리",
         "이전되는 개인정보 항목: 제1조에 기재된 수집 항목 전체",
