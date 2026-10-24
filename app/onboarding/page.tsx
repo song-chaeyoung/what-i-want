@@ -21,6 +21,9 @@ type OnboardingPageProps = {
 const errorMessages: Record<string, string> = {
   display_name_required: "표시 이름을 입력해주세요.",
   invalid_birthday: "생일은 YYYY-MM-DD 형식의 실제 날짜로 선택해주세요.",
+  age_confirmation_required: "만 14세 이상인지 확인해주세요.",
+  under_minimum_age:
+    "선택한 생일 기준으로 만 14세 미만이라 가입할 수 없어요. 생일 연도를 잘못 고르셨다면 다시 선택해주세요.",
   duplicate_slug: "공개 주소를 만드는 중 문제가 발생했습니다. 다시 시도해주세요.",
   already_completed: "이미 온보딩이 완료되었습니다.",
   unexpected: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.",
@@ -90,6 +93,21 @@ export default async function OnboardingPage({
                 className={textareaClassName}
               />
             </Field>
+
+            <label className="flex items-start gap-2 text-sm leading-6 text-zinc-700">
+              <input
+                name="ageConfirmed"
+                type="checkbox"
+                required
+                className="mt-1 size-4 shrink-0 accent-[#111827]"
+              />
+              <span>
+                만 14세 이상입니다.{" "}
+                <span className="text-zinc-500">
+                  (만 14세 미만은 가입할 수 없어요)
+                </span>
+              </span>
+            </label>
 
             <button
               type="submit"

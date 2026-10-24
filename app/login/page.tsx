@@ -37,6 +37,9 @@ export default async function LoginPage() {
             <p className="text-sm leading-6 text-[#4b5563]">
               위시리스트를 만들고 공유하려면 소셜 계정으로 로그인해주세요.
             </p>
+            <p className="text-sm leading-6 text-[#4b5563]">
+              만 14세 이상만 가입할 수 있어요.
+            </p>
           </div>
 
           <div className="mt-8 space-y-3">

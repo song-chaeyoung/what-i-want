@@ -11,6 +11,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";
 
 type BirthdayPickerProps = {
   id?: string;
@@ -28,6 +29,9 @@ export function BirthdayPicker({
     parseBirthday(defaultValue),
   );
   const birthdayValue = selected ? format(selected, "yyyy-MM-dd") : "";
+  // 달력이 올해에서 열려 연도를 안 바꾸고 고르는 경우가 많다. 제출 전에 알려준다.
+  const isUnderMinimumAge =
+    birthdayValue !== "" && isUnderMinimumSignupAge(birthdayValue);
 
   const handleSelect = (date: Date | undefined) => {
     setSelected(date);
@@ -95,6 +99,17 @@ export function BirthdayPicker({
           />
         </PopoverContent>
       </Popover>
+
+      {isUnderMinimumAge ? (
+        <p
+          role="alert"
+          className="text-sm font-semibold leading-6 text-[#9a3412]"
+        >
+          {birthdayValue.slice(0, 4)}년생으로 선택됐어요. 만 14세 미만은 가입할 수
+          없어요. 연도를 잘못 고르셨다면 달력 위쪽에서 태어난 연도로
+          바꿔주세요.
+        </p>
+      ) : null}
 
       {selected ? (
         <Button

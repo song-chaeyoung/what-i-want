@@ -22,6 +22,7 @@ export async function POST(request: Request): Promise<Response> {
         displayName: getFormString(formData, "displayName"),
         birthday: getOptionalFormString(formData, "birthday"),
         description: getOptionalFormString(formData, "description"),
+        ageConfirmed: formData.get("ageConfirmed") === "on",
       },
       repository,
     );

@@ -3,6 +3,7 @@ import type {
   OnboardingRepository,
 } from "./types";
 import type { CompleteOnboardingError } from "./errors";
+import { isUnderMinimumSignupAge } from "./age";
 import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
@@ -11,10 +12,12 @@ export type CompleteOnboardingInput = {
   displayName: string;
   birthday: string | null;
   description: string | null;
+  ageConfirmed: boolean;
 };
 
 type CompleteOnboardingOptions = {
   createWishlistSlug?: () => string;
+  now?: Date;
 };
 
 export type CompleteOnboardingResult =
@@ -41,6 +44,17 @@ export async function completeOnboarding(
 
   if (!birthday.ok) {
     return { ok: false, error: "invalid_birthday" };
+  }
+
+  if (!input.ageConfirmed) {
+    return { ok: false, error: "age_confirmation_required" };
+  }
+
+  if (
+    birthday.value &&
+    isUnderMinimumSignupAge(birthday.value, options.now ?? new Date())
+  ) {
+    return { ok: false, error: "under_minimum_age" };
   }
 
   if (await repository.hasCompletedOnboarding(input.userId)) {

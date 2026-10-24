@@ -40,6 +40,7 @@ describe("completeOnboarding", () => {
         displayName: "   ",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
     );
@@ -60,6 +61,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -83,6 +85,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -108,6 +111,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -130,6 +134,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -149,6 +154,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: null,
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -168,6 +174,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: "2026-5-14",
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -188,6 +195,7 @@ describe("completeOnboarding", () => {
         displayName: "민지",
         birthday: "2026-02-30",
         description: null,
+        ageConfirmed: true,
       },
       repository,
       {
@@ -206,8 +214,9 @@ describe("completeOnboarding", () => {
       {
         userId: "user-1",
         displayName: "민지",
-        birthday: "2026-05-14",
+        birthday: "2000-05-14",
         description: "생일 선물 목록",
+        ageConfirmed: true,
       },
       repository,
       {
@@ -221,12 +230,86 @@ describe("completeOnboarding", () => {
         userId: "user-1",
         displayName: "민지",
         description: "생일 선물 목록",
-        birthday: "2026-05-14",
+        birthday: "2000-05-14",
         wishlistSlug: "w-a3f91c0e7b42d8aa",
         wishlistTitle: "민지님의 위시리스트",
         wishlistThemeId: "pixel_y2k",
         wishlistVisibility: "public",
       },
     ]);
+  });
+
+  describe("minimum signup age", () => {
+    async function submit(
+      input: { birthday: string | null; ageConfirmed: boolean },
+      now: Date,
+    ) {
+      const repository = new FakeOnboardingRepository();
+      const result = await completeOnboarding(
+        {
+          userId: "user-1",
+          displayName: "민지",
+          description: null,
+          ...input,
+        },
+        repository,
+        {
+          createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
+          now,
+        },
+      );
+
+      return { result, records: repository.records };
+    }
+
+    const kstMidnight = new Date("2026-10-24T00:00:00+09:00");
+
+    test("requires the 14-or-older confirmation", async () => {
+      const { result, records } = await submit(
+        { birthday: null, ageConfirmed: false },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "age_confirmation_required" });
+      expect(records).toEqual([]);
+    });
+
+    test("rejects a birthday under 14 even when confirmed", async () => {
+      const { result, records } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "under_minimum_age" });
+      expect(records).toEqual([]);
+    });
+
+    test("allows signup on the 14th birthday in KST", async () => {
+      const { result } = await submit(
+        { birthday: "2012-10-24", ageConfirmed: true },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: true, wishlistSlug: "w-a3f91c0e7b42d8aa" });
+    });
+
+    test("treats Feb 29 birthdays as turning 14 on Mar 1 in common years", async () => {
+      const birthday = "2012-02-29";
+
+      const beforeBirthday = await submit(
+        { birthday, ageConfirmed: true },
+        new Date("2026-02-28T12:00:00+09:00"),
+      );
+      const afterBirthday = await submit(
+        { birthday, ageConfirmed: true },
+        new Date("2026-03-01T00:00:00+09:00"),
+      );
+
+      expect(beforeBirthday.result).toEqual({
+        ok: false,
+        error: "under_minimum_age",
+      });
+      expect(afterBirthday.result.ok).toBe(true);
+    });
   });
 });
