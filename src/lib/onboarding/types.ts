@@ -34,5 +34,6 @@ export interface OnboardingRepository {
   completeOnboarding(
     record: CompleteOnboardingRecord,
   ): Promise<CompleteOnboardingPersistResult>;
-  deleteIncompleteUser(userId: string): Promise<void>;
+  // 실제로 삭제했으면 true, 그사이 온보딩을 마쳤거나 이미 없으면 false.
+  deleteIncompleteUser(userId: string): Promise<boolean>;
 }

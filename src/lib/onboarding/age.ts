@@ -17,6 +17,15 @@ export function getLatestSignupBirthday(now: Date = new Date()): string {
   return `${year}-${monthDay}`;
 }
 
+// 아직 오지 않은 날짜(KST)는 생일이 아니다. 나이 판정 전에 형식 오류로 거른다.
+// birthday는 검증된 YYYY-MM-DD 문자열이어야 한다.
+export function isFutureBirthday(
+  birthday: string,
+  now: Date = new Date(),
+): boolean {
+  return birthday > getKstDateKey(now);
+}
+
 // birthday는 검증된 YYYY-MM-DD 문자열이어야 한다.
 export function isUnderMinimumSignupAge(
   birthday: string,

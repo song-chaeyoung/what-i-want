@@ -77,9 +77,8 @@ describe("onboarding UI contract", () => {
       'className="w-auto rounded-md border border-line bg-white p-3 shadow-pub"',
     );
     expect(source).toContain("startMonth={new Date(1900, 0)}");
-    expect(source).toContain(
-      "endMonth={new Date(new Date().getFullYear(), 11)}",
-    );
+    expect(source).toContain("endMonth={new Date()}");
+    expect(source).toContain("disabled={{ after: new Date() }}");
     expect(source).toContain("classNames={{");
     expect(source).toContain('caption_label: "text-sm font-semibold text-ink"');
     expect(source).toContain("day_button:");

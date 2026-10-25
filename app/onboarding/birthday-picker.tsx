@@ -76,7 +76,9 @@ export function BirthdayPicker({
             onSelect={handleSelect}
             captionLayout="dropdown"
             startMonth={new Date(1900, 0)}
-            endMonth={new Date(new Date().getFullYear(), 11)}
+            endMonth={new Date()}
+            // 미래 날짜는 생일이 아니므로 고를 수 없게 한다(서버도 invalid_birthday로 거절).
+            disabled={{ after: new Date() }}
             className="bg-white text-ink"
             classNames={{
               caption_label: "text-sm font-semibold text-ink",

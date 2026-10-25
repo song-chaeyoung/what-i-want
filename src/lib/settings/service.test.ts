@@ -172,6 +172,20 @@ describe("admin settings service", () => {
     ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
   });
 
+  test("rejects a future birthday as invalid without saving", async () => {
+    const repository = new FakeSettingsRepository();
+    const nextYear = new Date().getFullYear() + 1;
+
+    await expect(
+      updateSettings(
+        makeInput({ birthday: `${nextYear}-01-01` }),
+        repository,
+        "secret",
+      ),
+    ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
+    expect(repository.updated).toEqual([]);
+  });
+
   test("rejects a birthday under the minimum signup age without saving", async () => {
     const repository = new FakeSettingsRepository();
     const lastYear = new Date().getFullYear() - 1;

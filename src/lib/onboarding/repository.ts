@@ -1,4 +1,4 @@
-import { and, eq, isNotNull, notExists } from "drizzle-orm";
+import { and, eq, isNotNull } from "drizzle-orm";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
@@ -85,25 +85,38 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
   }
 
   // 온보딩을 마친 회원은 지우지 않는다. accounts·sessions는 cascade로 함께 삭제된다.
-  async deleteIncompleteUser(userId: string): Promise<void> {
-    await this.database
-      .delete(users)
-      .where(
-        and(
-          eq(users.id, userId),
-          notExists(
-            this.database
-              .select({ userId: profiles.userId })
-              .from(profiles)
-              .where(
-                and(
-                  eq(profiles.userId, users.id),
-                  isNotNull(profiles.onboardingCompletedAt),
-                ),
-              ),
+  // 동시에 진행 중인 온보딩 완료가 있으면 그 트랜잭션이 users 행을 잠그고 있으므로,
+  // 행을 먼저 FOR UPDATE로 잠근 뒤 완료 여부를 다시 읽어야 방금 완료된 회원을 지우지 않는다.
+  async deleteIncompleteUser(userId: string): Promise<boolean> {
+    return this.database.transaction(async (tx) => {
+      const [user] = await tx
+        .select({ id: users.id })
+        .from(users)
+        .where(eq(users.id, userId))
+        .for("update");
+
+      if (!user) {
+        return false;
+      }
+
+      const [completed] = await tx
+        .select({ userId: profiles.userId })
+        .from(profiles)
+        .where(
+          and(
+            eq(profiles.userId, userId),
+            isNotNull(profiles.onboardingCompletedAt),
           ),
-        ),
-      );
+        )
+        .limit(1);
+
+      if (completed) {
+        return false;
+      }
+
+      await tx.delete(users).where(eq(users.id, userId));
+      return true;
+    });
   }
 }
 

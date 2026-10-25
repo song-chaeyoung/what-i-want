@@ -37,7 +37,11 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
   }
 
   const { notice } = await searchParams;
-  const noticeMessage = notice ? noticeMessages[notice] : null;
+  // 쿼리값으로 constructor 등 상속 속성이 조회되지 않게 자기 키만 허용한다.
+  const noticeMessage =
+    notice && Object.hasOwn(noticeMessages, notice)
+      ? noticeMessages[notice]
+      : null;
 
   return (
     <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">

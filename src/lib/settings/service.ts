@@ -3,7 +3,10 @@ import {
   isPublicThemeId,
 } from "@/src/lib/wishlist/theme";
 import { parseWishlistSlug } from "@/src/lib/wishlist/slug";
-import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";
+import {
+  isFutureBirthday,
+  isUnderMinimumSignupAge,
+} from "@/src/lib/onboarding/age";
 import {
   encryptAccountNumber,
   getAccountEncryptionSecret,
@@ -165,6 +168,10 @@ async function normalizeSettingsInput(
 
   if (birthday.error) {
     return { ok: false, error: birthday.error };
+  }
+
+  if (birthday.value && isFutureBirthday(birthday.value)) {
+    return { ok: false, error: "invalid_birthday" };
   }
 
   // 가입 후 생일을 바꿔 나이 제한을 우회하지 못하게 한다. 기존 회원은 연도 실수가

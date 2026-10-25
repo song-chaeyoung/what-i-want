@@ -12,6 +12,8 @@ class FakeOnboardingRepository implements OnboardingRepository {
   requestedSlugs: string[] = [];
   records: CompleteOnboardingRecord[] = [];
   deletedUserIds: string[] = [];
+  // 삭제 직전에 다른 요청이 온보딩을 마친 경우를 흉내 낸다.
+  completedBeforeDelete = false;
   persistResult: CompleteOnboardingPersistResult = { ok: true };
 
   async hasCompletedOnboarding(): Promise<boolean> {
@@ -30,8 +32,13 @@ class FakeOnboardingRepository implements OnboardingRepository {
     return this.persistResult;
   }
 
-  async deleteIncompleteUser(userId: string): Promise<void> {
+  async deleteIncompleteUser(userId: string): Promise<boolean> {
+    if (this.completed || this.completedBeforeDelete) {
+      return false;
+    }
+
     this.deletedUserIds.push(userId);
+    return true;
   }
 }
 
@@ -248,10 +255,14 @@ describe("completeOnboarding", () => {
     async function submit(
       input: { birthday: string | null; ageConfirmed: boolean },
       now: Date,
-      { completed = false }: { completed?: boolean } = {},
+      {
+        completed = false,
+        completedBeforeDelete = false,
+      }: { completed?: boolean; completedBeforeDelete?: boolean } = {},
     ) {
       const repository = new FakeOnboardingRepository();
       repository.completed = completed;
+      repository.completedBeforeDelete = completedBeforeDelete;
       const result = await completeOnboarding(
         {
           userId: "user-1",
@@ -305,6 +316,39 @@ describe("completeOnboarding", () => {
 
       expect(result).toEqual({ ok: false, error: "already_completed" });
       expect(deletedUserIds).toEqual([]);
+    });
+
+    test("does not report a deletion when onboarding completed concurrently", async () => {
+      const { result, records, deletedUserIds } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+        { completedBeforeDelete: true },
+      );
+
+      expect(result).toEqual({ ok: false, error: "already_completed" });
+      expect(records).toEqual([]);
+      expect(deletedUserIds).toEqual([]);
+    });
+
+    test("rejects a future birthday as invalid without deleting the user", async () => {
+      const { result, records, deletedUserIds } = await submit(
+        { birthday: "2026-10-25", ageConfirmed: true },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "invalid_birthday" });
+      expect(records).toEqual([]);
+      expect(deletedUserIds).toEqual([]);
+    });
+
+    test("treats today's date in KST as a real (not future) birthday", async () => {
+      const { result, deletedUserIds } = await submit(
+        { birthday: "2026-10-24", ageConfirmed: true },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "under_minimum_age" });
+      expect(deletedUserIds).toEqual(["user-1"]);
     });
 
     test("allows signup on the 14th birthday in KST", async () => {
