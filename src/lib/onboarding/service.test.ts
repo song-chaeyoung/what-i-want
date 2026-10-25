@@ -307,6 +307,16 @@ describe("completeOnboarding", () => {
       expect(deletedUserIds).toEqual(["user-1"]);
     });
 
+    test("deletes an under-14 signup even without the confirmation", async () => {
+      const { result, deletedUserIds } = await submit(
+        { birthday: "2015-06-01", ageConfirmed: false },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "under_minimum_age" });
+      expect(deletedUserIds).toEqual(["user-1"]);
+    });
+
     test("never deletes a user who already completed onboarding", async () => {
       const { result, deletedUserIds } = await submit(
         { birthday: "2012-10-25", ageConfirmed: true },

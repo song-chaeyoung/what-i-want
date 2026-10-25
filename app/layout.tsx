@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Analytics } from "@vercel/analytics/next";
+import { SiteAnalytics } from "./analytics";
 import { monaPixel } from "./fonts";
 import "./globals.css";
 import { Geist } from "next/font/google";
@@ -34,7 +34,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="ko" className={cn("h-full", "antialiased", monaPixel.variable, "font-sans", geist.variable)}>
-      <body className="flex min-h-full flex-col">{children}<Toaster /><Analytics /></body>
+      <body className="flex min-h-full flex-col">{children}<Toaster /><SiteAnalytics /></body>
     </html>
   );
 }

@@ -51,10 +51,6 @@ export async function completeOnboarding(
     return { ok: false, error: "invalid_birthday" };
   }
 
-  if (!input.ageConfirmed) {
-    return { ok: false, error: "age_confirmation_required" };
-  }
-
   // 아래 삭제가 기존 회원에게 닿지 않도록 완료 여부를 먼저 확인한다.
   if (await repository.hasCompletedOnboarding(input.userId)) {
     return { ok: false, error: "already_completed" };
@@ -68,6 +64,11 @@ export async function completeOnboarding(
     }
 
     return { ok: false, error: "under_minimum_age" };
+  }
+
+  // 14세 미만임을 알게 된 경우는 확인 누락과 관계없이 위에서 삭제한다.
+  if (!input.ageConfirmed) {
+    return { ok: false, error: "age_confirmation_required" };
   }
 
   const slug = await createAvailableWishlistSlug(
