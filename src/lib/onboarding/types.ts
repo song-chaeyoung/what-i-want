@@ -34,4 +34,5 @@ export interface OnboardingRepository {
   completeOnboarding(
     record: CompleteOnboardingRecord,
   ): Promise<CompleteOnboardingPersistResult>;
+  deleteIncompleteUser(userId: string): Promise<void>;
 }

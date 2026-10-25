@@ -80,7 +80,7 @@ describe("admin settings service", () => {
       makeInput({
         displayName: "  차차  ",
         description: "  생일 선물만 받습니다  ",
-        birthday: "2026-05-15",
+        birthday: "2000-05-15",
         wishlistSlug: "  CHA-BIRTHDAY  ",
         wishlistTitle: "  차차의 갖고 싶은 것  ",
         themeId: "mono_bw",
@@ -98,7 +98,7 @@ describe("admin settings service", () => {
       settings: {
         profile: {
           displayName: "차차",
-          birthday: "2026-05-15",
+          birthday: "2000-05-15",
           description: "생일 선물만 받습니다",
         },
         wishlist: {
@@ -170,6 +170,20 @@ describe("admin settings service", () => {
     await expect(
       updateSettings(makeInput({ birthday: "2026-15-01" }), repository, "secret"),
     ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
+  });
+
+  test("rejects a birthday under the minimum signup age without saving", async () => {
+    const repository = new FakeSettingsRepository();
+    const lastYear = new Date().getFullYear() - 1;
+
+    await expect(
+      updateSettings(
+        makeInput({ birthday: `${lastYear}-01-01` }),
+        repository,
+        "secret",
+      ),
+    ).resolves.toEqual({ ok: false, error: "under_minimum_age" });
+    expect(repository.updated).toEqual([]);
   });
 
   test("updates wishlist visibility and keeps it when the input omits it", async () => {

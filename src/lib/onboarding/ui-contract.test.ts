@@ -117,7 +117,6 @@ describe("onboarding UI contract", () => {
     expect(source).toContain('name="ageConfirmed"');
     expect(source).toContain('type="checkbox"');
     expect(source).toContain("age_confirmation_required");
-    expect(source).toContain("under_minimum_age");
   });
 
   test("warns about an under-14 birthday before submitting", () => {

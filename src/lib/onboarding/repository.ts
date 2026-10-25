@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNotNull, notExists } from "drizzle-orm";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
@@ -6,7 +6,7 @@ import type {
   OnboardingState,
 } from "./types";
 import { db, type Database } from "@/src/lib/db/client";
-import { profiles, wishlists } from "@/src/lib/db/schema";
+import { profiles, users, wishlists } from "@/src/lib/db/schema";
 
 export class DrizzleOnboardingRepository implements OnboardingRepository {
   constructor(private readonly database: Database = db) {}
@@ -82,6 +82,28 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
     }
 
     return { ok: true };
+  }
+
+  // 온보딩을 마친 회원은 지우지 않는다. accounts·sessions는 cascade로 함께 삭제된다.
+  async deleteIncompleteUser(userId: string): Promise<void> {
+    await this.database
+      .delete(users)
+      .where(
+        and(
+          eq(users.id, userId),
+          notExists(
+            this.database
+              .select({ userId: profiles.userId })
+              .from(profiles)
+              .where(
+                and(
+                  eq(profiles.userId, users.id),
+                  isNotNull(profiles.onboardingCompletedAt),
+                ),
+              ),
+          ),
+        ),
+      );
   }
 }
 

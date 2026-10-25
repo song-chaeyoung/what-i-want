@@ -1,5 +1,6 @@
 import { signOutAction } from "@/app/login/actions";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
@@ -26,6 +27,8 @@ const errorMessages: Record<SettingsError, string> = {
   invalid_slug: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
   duplicate_slug: "이미 사용 중인 공개 주소입니다.",
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
+  under_minimum_age:
+    "생일 기준 만 14세 미만이라 저장할 수 없어요. 태어난 연도를 확인해주세요.",
   invalid_theme: "지원하지 않는 공개 테마입니다.",
   invalid_wishlist_visibility: "지원하지 않는 공개 여부 값입니다.",
   bank_name_required: "은행 이름을 입력해주세요.",
@@ -94,6 +97,8 @@ export default async function AdminSettingsPage() {
                 id="birthday"
                 name="birthday"
                 type="date"
+                // 저장 실패는 공통 토스트로만 보이므로, 14세 미만 생일은 제출 전에 브라우저가 이 칸을 가리키게 한다.
+                max={getLatestSignupBirthday()}
                 defaultValue={settings.profile.birthday ?? ""}
                 className={adminInputClassName}
               />

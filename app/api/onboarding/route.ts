@@ -28,6 +28,13 @@ export async function POST(request: Request): Promise<Response> {
     );
 
     if (!result.ok) {
+      // 계정이 삭제돼 세션도 사라졌으므로 로그인 화면에서 안내한다.
+      if (result.error === "under_minimum_age") {
+        const loginUrl = new URL("/login", requestUrl);
+        loginUrl.searchParams.set("notice", result.error);
+        return NextResponse.redirect(loginUrl);
+      }
+
       return redirectWithError(requestUrl, result.error);
     }
 

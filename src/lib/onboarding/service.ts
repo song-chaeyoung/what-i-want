@@ -50,15 +50,18 @@ export async function completeOnboarding(
     return { ok: false, error: "age_confirmation_required" };
   }
 
+  // 아래 삭제가 기존 회원에게 닿지 않도록 완료 여부를 먼저 확인한다.
+  if (await repository.hasCompletedOnboarding(input.userId)) {
+    return { ok: false, error: "already_completed" };
+  }
+
+  // 만 14세 미만은 받지 않으므로 소셜 로그인 때 저장된 정보를 바로 지운다.
   if (
     birthday.value &&
     isUnderMinimumSignupAge(birthday.value, options.now ?? new Date())
   ) {
+    await repository.deleteIncompleteUser(input.userId);
     return { ok: false, error: "under_minimum_age" };
-  }
-
-  if (await repository.hasCompletedOnboarding(input.userId)) {
-    return { ok: false, error: "already_completed" };
   }
 
   const slug = await createAvailableWishlistSlug(

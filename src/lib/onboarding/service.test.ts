@@ -11,6 +11,7 @@ class FakeOnboardingRepository implements OnboardingRepository {
   slugAvailability: boolean[] = [true];
   requestedSlugs: string[] = [];
   records: CompleteOnboardingRecord[] = [];
+  deletedUserIds: string[] = [];
   persistResult: CompleteOnboardingPersistResult = { ok: true };
 
   async hasCompletedOnboarding(): Promise<boolean> {
@@ -27,6 +28,10 @@ class FakeOnboardingRepository implements OnboardingRepository {
   ): Promise<CompleteOnboardingPersistResult> {
     this.records.push(record);
     return this.persistResult;
+  }
+
+  async deleteIncompleteUser(userId: string): Promise<void> {
+    this.deletedUserIds.push(userId);
   }
 }
 
@@ -243,8 +248,10 @@ describe("completeOnboarding", () => {
     async function submit(
       input: { birthday: string | null; ageConfirmed: boolean },
       now: Date,
+      { completed = false }: { completed?: boolean } = {},
     ) {
       const repository = new FakeOnboardingRepository();
+      repository.completed = completed;
       const result = await completeOnboarding(
         {
           userId: "user-1",
@@ -259,7 +266,11 @@ describe("completeOnboarding", () => {
         },
       );
 
-      return { result, records: repository.records };
+      return {
+        result,
+        records: repository.records,
+        deletedUserIds: repository.deletedUserIds,
+      };
     }
 
     const kstMidnight = new Date("2026-10-24T00:00:00+09:00");
@@ -274,14 +285,26 @@ describe("completeOnboarding", () => {
       expect(records).toEqual([]);
     });
 
-    test("rejects a birthday under 14 even when confirmed", async () => {
-      const { result, records } = await submit(
+    test("rejects a birthday under 14 and deletes the signed-in user", async () => {
+      const { result, records, deletedUserIds } = await submit(
         { birthday: "2012-10-25", ageConfirmed: true },
         kstMidnight,
       );
 
       expect(result).toEqual({ ok: false, error: "under_minimum_age" });
       expect(records).toEqual([]);
+      expect(deletedUserIds).toEqual(["user-1"]);
+    });
+
+    test("never deletes a user who already completed onboarding", async () => {
+      const { result, deletedUserIds } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+        { completed: true },
+      );
+
+      expect(result).toEqual({ ok: false, error: "already_completed" });
+      expect(deletedUserIds).toEqual([]);
     });
 
     test("allows signup on the 14th birthday in KST", async () => {
@@ -310,6 +333,25 @@ describe("completeOnboarding", () => {
         error: "under_minimum_age",
       });
       expect(afterBirthday.result.ok).toBe(true);
+    });
+
+    test("uses Feb 28 as the cutoff when today is Feb 29", async () => {
+      const leapDay = new Date("2028-02-29T12:00:00+09:00");
+
+      const turnedFourteen = await submit(
+        { birthday: "2014-02-28", ageConfirmed: true },
+        leapDay,
+      );
+      const notYetFourteen = await submit(
+        { birthday: "2014-03-01", ageConfirmed: true },
+        leapDay,
+      );
+
+      expect(turnedFourteen.result.ok).toBe(true);
+      expect(notYetFourteen.result).toEqual({
+        ok: false,
+        error: "under_minimum_age",
+      });
     });
   });
 });

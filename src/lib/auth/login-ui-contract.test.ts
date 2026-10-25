@@ -13,7 +13,7 @@ describe("login UI contract", () => {
     expect(source).toContain(
       'import { getOnboardingState } from "@/src/lib/onboarding/repository";',
     );
-    expect(source).toContain("export default async function LoginPage()");
+    expect(source).toContain("export default async function LoginPage(");
     expect(source).toContain("const session = await auth();");
     expect(source).toContain("if (session?.user?.id)");
     expect(source).toContain(
@@ -28,5 +28,18 @@ describe("login UI contract", () => {
 
     expect(source).toContain("signInWithGoogle");
     expect(source).toContain("signInWithKakao");
+  });
+
+  test("explains that an under-14 signup was deleted", () => {
+    const source = readFileSync(loginPagePath, "utf8");
+    const onboardingRoute = readFileSync(
+      join(process.cwd(), "app/api/onboarding/route.ts"),
+      "utf8",
+    );
+
+    expect(onboardingRoute).toContain('new URL("/login", requestUrl)');
+    expect(onboardingRoute).toContain('searchParams.set("notice", result.error)');
+    expect(source).toContain("under_minimum_age:");
+    expect(source).toContain("로그인 정보를 삭제했어요");
   });
 });
