@@ -69,7 +69,12 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
         });
       });
     } catch (error) {
-      const constraint = findUniqueViolationConstraint(error);
+      // users 행은 14세 미만 거절로만 삭제되므로, 그사이 다른 요청이 계정을 지운 경우다.
+      if (findViolatedConstraint(error, FOREIGN_KEY_VIOLATION) !== null) {
+        return { ok: false, error: "under_minimum_age" };
+      }
+
+      const constraint = findViolatedConstraint(error, UNIQUE_VIOLATION);
 
       if (constraint === null) {
         throw error;
@@ -95,8 +100,9 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
         .where(eq(users.id, userId))
         .for("update");
 
+      // 동시에 제출된 다른 14세 미만 요청이 먼저 지운 경우다. 계정이 없어졌으므로 삭제로 본다.
       if (!user) {
-        return false;
+        return true;
       }
 
       const [completed] = await tx
@@ -120,16 +126,19 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
   }
 }
 
+const UNIQUE_VIOLATION = "23505";
+const FOREIGN_KEY_VIOLATION = "23503";
+
 // Concurrent onboarding submissions can both pass the availability checks;
 // the unique constraints on wishlists.slug and wishlists.owner_id are the
 // final arbiter, so translate their violations into domain errors.
-function findUniqueViolationConstraint(error: unknown): string | null {
+function findViolatedConstraint(error: unknown, code: string): string | null {
   let current: unknown = error;
 
   while (current instanceof Error) {
     const candidate = current as { code?: unknown; constraint_name?: unknown };
 
-    if (candidate.code === "23505") {
+    if (candidate.code === code) {
       return typeof candidate.constraint_name === "string"
         ? candidate.constraint_name
         : "";

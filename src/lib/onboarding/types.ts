@@ -25,7 +25,7 @@ export type CompleteOnboardingPersistResult =
     }
   | {
       ok: false;
-      error: "duplicate_slug" | "already_completed";
+      error: "duplicate_slug" | "already_completed" | "under_minimum_age";
     };
 
 export interface OnboardingRepository {
@@ -34,6 +34,6 @@ export interface OnboardingRepository {
   completeOnboarding(
     record: CompleteOnboardingRecord,
   ): Promise<CompleteOnboardingPersistResult>;
-  // 실제로 삭제했으면 true, 그사이 온보딩을 마쳤거나 이미 없으면 false.
+  // 계정이 없어졌으면(이번에 삭제했거나 이미 삭제됐으면) true, 그사이 온보딩을 마쳤으면 false.
   deleteIncompleteUser(userId: string): Promise<boolean>;
 }

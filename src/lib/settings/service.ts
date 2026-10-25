@@ -3,10 +3,7 @@ import {
   isPublicThemeId,
 } from "@/src/lib/wishlist/theme";
 import { parseWishlistSlug } from "@/src/lib/wishlist/slug";
-import {
-  isFutureBirthday,
-  isUnderMinimumSignupAge,
-} from "@/src/lib/onboarding/age";
+import { getSignupBirthdayError } from "@/src/lib/onboarding/age";
 import {
   encryptAccountNumber,
   getAccountEncryptionSecret,
@@ -170,14 +167,14 @@ async function normalizeSettingsInput(
     return { ok: false, error: birthday.error };
   }
 
-  if (birthday.value && isFutureBirthday(birthday.value)) {
-    return { ok: false, error: "invalid_birthday" };
-  }
-
   // 가입 후 생일을 바꿔 나이 제한을 우회하지 못하게 한다. 기존 회원은 연도 실수가
   // 대부분이라 계정을 지우지 않고 저장만 막는다.
-  if (birthday.value && isUnderMinimumSignupAge(birthday.value)) {
-    return { ok: false, error: "under_minimum_age" };
+  const birthdayError = birthday.value
+    ? getSignupBirthdayError(birthday.value)
+    : null;
+
+  if (birthdayError) {
+    return { ok: false, error: birthdayError };
   }
 
   const themeId = normalizeTheme(input.themeId);

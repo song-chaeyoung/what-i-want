@@ -33,3 +33,20 @@ export function isUnderMinimumSignupAge(
 ): boolean {
   return birthday > getLatestSignupBirthday(now);
 }
+
+// 미래 날짜도 기준일보다 늦으므로, 14세 미만보다 먼저 걸러야 다가오는 생일을 고른 성인이
+// 14세 미만으로 판정되지 않는다. birthday는 검증된 YYYY-MM-DD 문자열이어야 한다.
+export function getSignupBirthdayError(
+  birthday: string,
+  now: Date = new Date(),
+): "invalid_birthday" | "under_minimum_age" | null {
+  if (isFutureBirthday(birthday, now)) {
+    return "invalid_birthday";
+  }
+
+  if (isUnderMinimumSignupAge(birthday, now)) {
+    return "under_minimum_age";
+  }
+
+  return null;
+}

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -12,6 +12,7 @@ import {
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
 import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";
+import { getKstDateKey } from "@/src/lib/public-wishlist/birthday";
 
 type BirthdayPickerProps = {
   id?: string;
@@ -28,10 +29,36 @@ export function BirthdayPicker({
   const [selected, setSelected] = useState<Date | undefined>(() =>
     parseBirthday(defaultValue),
   );
+  const inputRef = useRef<HTMLInputElement>(null);
   const birthdayValue = selected ? format(selected, "yyyy-MM-dd") : "";
   // 달력이 올해에서 열려 연도를 안 바꾸고 고르는 경우가 많다. 제출 전에 알려준다.
   const isUnderMinimumAge =
     birthdayValue !== "" && isUnderMinimumSignupAge(birthdayValue);
+  // 서버는 KST 기준으로 미래 생일을 거절하므로 달력도 KST 오늘까지만 고르게 한다.
+  const kstToday = getKstToday();
+
+  // 경고를 못 본 채 제출하면 계정이 바로 삭제되므로, 서버 폼 제출 직전에 한 번 더 확인한다.
+  useEffect(() => {
+    const form = inputRef.current?.form;
+
+    if (!form || !isUnderMinimumAge) {
+      return;
+    }
+
+    const confirmUnderMinimumAge = (event: SubmitEvent) => {
+      if (
+        !window.confirm(
+          `${birthdayValue.slice(0, 4)}년생으로 선택됐어요. 만 14세 미만은 가입할 수 없어서 제출하면 로그인 정보가 바로 삭제돼요. 생일이 맞으면 확인, 연도를 고치려면 취소를 눌러주세요.`,
+        )
+      ) {
+        event.preventDefault();
+      }
+    };
+
+    form.addEventListener("submit", confirmUnderMinimumAge);
+
+    return () => form.removeEventListener("submit", confirmUnderMinimumAge);
+  }, [birthdayValue, isUnderMinimumAge]);
 
   const handleSelect = (date: Date | undefined) => {
     setSelected(date);
@@ -43,7 +70,7 @@ export function BirthdayPicker({
 
   return (
     <div className="space-y-2">
-      <input name={name} type="hidden" value={birthdayValue} readOnly />
+      <input ref={inputRef} name={name} type="hidden" value={birthdayValue} readOnly />
 
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
@@ -76,9 +103,9 @@ export function BirthdayPicker({
             onSelect={handleSelect}
             captionLayout="dropdown"
             startMonth={new Date(1900, 0)}
-            endMonth={new Date()}
+            endMonth={kstToday}
             // 미래 날짜는 생일이 아니므로 고를 수 없게 한다(서버도 invalid_birthday로 거절).
-            disabled={{ after: new Date() }}
+            disabled={{ after: kstToday }}
             className="bg-white text-ink"
             classNames={{
               caption_label: "text-sm font-semibold text-ink",
@@ -126,6 +153,11 @@ export function BirthdayPicker({
       ) : null}
     </div>
   );
+}
+
+function getKstToday(): Date {
+  const [year, month, day] = getKstDateKey().split("-").map(Number);
+  return new Date(year, month - 1, day);
 }
 
 function parseBirthday(value: string | null): Date | undefined {

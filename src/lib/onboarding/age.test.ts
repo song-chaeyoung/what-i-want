@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   getLatestSignupBirthday,
+  getSignupBirthdayError,
   isFutureBirthday,
   isUnderMinimumSignupAge,
 } from "./age";
@@ -38,5 +39,22 @@ describe("isUnderMinimumSignupAge", () => {
   test("is false on the 14th birthday and true the day after the cutoff", () => {
     expect(isUnderMinimumSignupAge("2012-10-24", kstMorning)).toBe(false);
     expect(isUnderMinimumSignupAge("2012-10-25", kstMorning)).toBe(true);
+  });
+});
+
+describe("getSignupBirthdayError", () => {
+  const kstMorning = new Date("2026-10-24T09:00:00+09:00");
+
+  test("treats a future date as invalid before checking the minimum age", () => {
+    expect(getSignupBirthdayError("2026-10-25", kstMorning)).toBe(
+      "invalid_birthday",
+    );
+  });
+
+  test("reports under-14 birthdays and accepts the cutoff date", () => {
+    expect(getSignupBirthdayError("2026-10-24", kstMorning)).toBe(
+      "under_minimum_age",
+    );
+    expect(getSignupBirthdayError("2012-10-24", kstMorning)).toBeNull();
   });
 });

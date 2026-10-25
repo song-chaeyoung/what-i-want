@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   getSettings,
   updateSettings,
@@ -172,32 +172,41 @@ describe("admin settings service", () => {
     ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
   });
 
-  test("rejects a future birthday as invalid without saving", async () => {
-    const repository = new FakeSettingsRepository();
-    const nextYear = new Date().getFullYear() + 1;
+  describe("birthday age checks", () => {
+    // 나이 판정은 KST 날짜 기준이므로, 실행 환경의 시간대·날짜와 무관하게 오늘을 고정한다.
+    beforeEach(() => {
+      vi.setSystemTime(new Date("2026-10-24T09:00:00+09:00"));
+    });
 
-    await expect(
-      updateSettings(
-        makeInput({ birthday: `${nextYear}-01-01` }),
-        repository,
-        "secret",
-      ),
-    ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
-    expect(repository.updated).toEqual([]);
-  });
+    afterEach(() => {
+      vi.useRealTimers();
+    });
 
-  test("rejects a birthday under the minimum signup age without saving", async () => {
-    const repository = new FakeSettingsRepository();
-    const lastYear = new Date().getFullYear() - 1;
+    test("rejects a future birthday as invalid without saving", async () => {
+      const repository = new FakeSettingsRepository();
 
-    await expect(
-      updateSettings(
-        makeInput({ birthday: `${lastYear}-01-01` }),
-        repository,
-        "secret",
-      ),
-    ).resolves.toEqual({ ok: false, error: "under_minimum_age" });
-    expect(repository.updated).toEqual([]);
+      await expect(
+        updateSettings(
+          makeInput({ birthday: "2026-10-25" }),
+          repository,
+          "secret",
+        ),
+      ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
+      expect(repository.updated).toEqual([]);
+    });
+
+    test("rejects a birthday under the minimum signup age without saving", async () => {
+      const repository = new FakeSettingsRepository();
+
+      await expect(
+        updateSettings(
+          makeInput({ birthday: "2012-10-25" }),
+          repository,
+          "secret",
+        ),
+      ).resolves.toEqual({ ok: false, error: "under_minimum_age" });
+      expect(repository.updated).toEqual([]);
+    });
   });
 
   test("updates wishlist visibility and keeps it when the input omits it", async () => {
