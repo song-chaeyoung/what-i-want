@@ -179,7 +179,7 @@ function ParticipationSubmit({ demo }: { demo: boolean }) {
     return (
       <div className="space-y-2">
         <button
-          type="button"
+          type="submit"
           disabled
           className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm opacity-60"
         >
