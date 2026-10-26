@@ -34,6 +34,8 @@ export default async function AdminMessagesPage({
   const user = await requireUser();
   const params = await searchParams;
   const hiddenView = params.filter === "hidden";
+  // 목록을 읽기 전 시각까지만 읽음 처리해, 렌더링 중 도착한 메시지는 안 읽음으로 남긴다.
+  const viewedAt = new Date();
   const result = await listAdminMessages(
     user.id,
     new DrizzleAdminMessagesRepository(),
@@ -55,7 +57,11 @@ export default async function AdminMessagesPage({
   // 숨긴 메시지함에서는 받은 메시지를 보지 않았으므로 읽음 처리하지 않는다.
   if (!hiddenView) {
     after(() =>
-      markAdminMessagesRead(user.id, new DrizzleAdminMessagesRepository()),
+      markAdminMessagesRead(
+        result.wishlist.id,
+        viewedAt,
+        new DrizzleAdminMessagesRepository(),
+      ),
     );
   }
 

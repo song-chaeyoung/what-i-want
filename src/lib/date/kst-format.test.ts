@@ -1,4 +1,4 @@
-import { afterEach, describe, expect, test } from "vitest";
+import { afterEach, describe, expect, test, vi } from "vitest";
 import { formatKstDate, formatKstDateTime } from "./kst-format";
 
 const originalTz = process.env.TZ;
@@ -32,3 +32,21 @@ describe.each(["UTC", "America/Los_Angeles", "Asia/Seoul"])(
     });
   },
 );
+
+test("reuses module-level formatters instead of building one per call", () => {
+  const OriginalDateTimeFormat = Intl.DateTimeFormat;
+  const formatterConstructor = vi
+    .spyOn(Intl, "DateTimeFormat")
+    .mockImplementation(function (
+      ...args: ConstructorParameters<typeof Intl.DateTimeFormat>
+    ) {
+      return new OriginalDateTimeFormat(...args);
+    });
+
+  formatKstDate(kstMidnightAfter);
+  formatKstDateTime(kstMidnightAfter);
+
+  const constructorCalls = formatterConstructor.mock.calls.length;
+  formatterConstructor.mockRestore();
+  expect(constructorCalls).toBe(0);
+});

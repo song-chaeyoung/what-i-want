@@ -26,7 +26,7 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
   unhideRequests: Array<{ wishlistId: string; messageId: string }> = [];
   unreadCount = 0;
   countRequests: string[] = [];
-  markReadRequests: string[] = [];
+  markReadRequests: Array<{ wishlistId: string; readAt: Date }> = [];
 
   async findWishlistByOwnerId(
     ownerId: string,
@@ -62,8 +62,8 @@ class FakeAdminMessagesRepository implements AdminMessagesRepository {
     return this.unreadCount;
   }
 
-  async markMessagesRead(wishlistId: string): Promise<void> {
-    this.markReadRequests.push(wishlistId);
+  async markMessagesRead(wishlistId: string, readAt: Date): Promise<void> {
+    this.markReadRequests.push({ wishlistId, readAt });
   }
 }
 
@@ -176,21 +176,16 @@ describe("admin messages service", () => {
     expect(repository.countRequests).toEqual([]);
   });
 
-  test("marks messages read for the owner wishlist", async () => {
+  test("marks messages read up to the given time without re-fetching the wishlist", async () => {
     const repository = new FakeAdminMessagesRepository();
+    const readAt = new Date("2026-10-26T03:00:00.000Z");
 
-    await markAdminMessagesRead("user-1", repository);
+    await markAdminMessagesRead("wishlist-1", readAt, repository);
 
-    expect(repository.markReadRequests).toEqual(["wishlist-1"]);
-  });
-
-  test("skips marking read when onboarding is incomplete", async () => {
-    const repository = new FakeAdminMessagesRepository();
-    repository.wishlist = null;
-
-    await markAdminMessagesRead("user-1", repository);
-
-    expect(repository.markReadRequests).toEqual([]);
+    expect(repository.markReadRequests).toEqual([
+      { wishlistId: "wishlist-1", readAt },
+    ]);
+    expect(repository.requestedOwnerIds).toEqual([]);
   });
 });
 

@@ -86,16 +86,11 @@ export async function countUnreadAdminMessages(
 }
 
 export async function markAdminMessagesRead(
-  ownerId: string,
+  wishlistId: string,
+  readAt: Date,
   repository: AdminMessagesRepository,
 ): Promise<void> {
-  const wishlist = await repository.findWishlistByOwnerId(ownerId);
-
-  if (!wishlist) {
-    return;
-  }
-
-  await repository.markMessagesRead(wishlist.id);
+  await repository.markMessagesRead(wishlistId, readAt);
 }
 
 export async function unhideAdminMessage(

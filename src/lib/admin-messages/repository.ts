@@ -79,10 +79,10 @@ export class DrizzleAdminMessagesRepository
     return row?.count ?? 0;
   }
 
-  async markMessagesRead(wishlistId: string): Promise<void> {
+  async markMessagesRead(wishlistId: string, readAt: Date): Promise<void> {
     await this.database
       .update(wishlists)
-      .set({ messagesReadAt: new Date() })
+      .set({ messagesReadAt: readAt })
       .where(eq(wishlists.id, wishlistId));
   }
 
