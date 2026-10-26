@@ -1,83 +1,79 @@
-// 상품 링크 미리보기는 서버가 대신 URL을 열어보므로,
-// 내부망을 향한 요청(SSRF)을 막기 위해 호스트를 검사한다.
-// 주의: 이 가드는 호스트 "문자열"만 검사하므로, 공개 도메인이 내부 IP로
-// resolve되는 DNS 리바인딩(예: 127.0.0.1.nip.io)은 막지 못한다. 완전한
-// 방어는 호스트명을 직접 resolve해 IP를 검사·고정(pin)하는 방식이 필요하다.
+import { BlockList, isIP } from "node:net";
+
+const blockedIpv4 = new BlockList();
+for (const [network, prefix] of [
+  ["0.0.0.0", 8],
+  ["10.0.0.0", 8],
+  ["100.64.0.0", 10],
+  ["127.0.0.0", 8],
+  ["169.254.0.0", 16],
+  ["172.16.0.0", 12],
+  ["192.0.0.0", 24],
+  ["192.0.2.0", 24],
+  ["192.88.99.0", 24],
+  ["192.168.0.0", 16],
+  ["198.18.0.0", 15],
+  ["198.51.100.0", 24],
+  ["203.0.113.0", 24],
+  ["224.0.0.0", 4],
+  ["240.0.0.0", 4],
+] as const) {
+  blockedIpv4.addSubnet(network, prefix, "ipv4");
+}
+
+// Only ordinary global-unicast IPv6 destinations are useful for shop previews.
+// Exclude protocol assignments, documentation, and IPv4 transition mechanisms.
+const globalIpv6 = new BlockList();
+globalIpv6.addSubnet("2000::", 3, "ipv6");
+const blockedIpv6 = new BlockList();
+for (const [network, prefix] of [
+  ["2001::", 23],
+  ["2001:db8::", 32],
+  ["2002::", 16],
+  ["3fff::", 20],
+] as const) {
+  blockedIpv6.addSubnet(network, prefix, "ipv6");
+}
+
+export function isPublicIpAddress(address: string): boolean {
+  if (address.includes("%")) {
+    return false;
+  }
+  const family = isIP(address);
+  if (family === 4) {
+    return !blockedIpv4.check(address, "ipv4");
+  }
+  return (
+    family === 6 &&
+    globalIpv6.check(address, "ipv6") &&
+    !blockedIpv6.check(address, "ipv6")
+  );
+}
+
 export function parseFetchableUrl(value: string): URL | null {
   let url: URL;
-
   try {
     url = new URL(value);
   } catch {
     return null;
   }
-
   if (url.protocol !== "http:" && url.protocol !== "https:") {
     return null;
   }
 
-  if (isPrivateHostname(url.hostname)) {
+  const hostname = url.hostname
+    .toLowerCase()
+    .replace(/^\[|\]$/g, "")
+    .replace(/\.+$/, "");
+  if (
+    !hostname ||
+    hostname === "localhost" ||
+    hostname.endsWith(".localhost") ||
+    hostname.endsWith(".local") ||
+    hostname.endsWith(".internal") ||
+    (isIP(hostname) !== 0 && !isPublicIpAddress(hostname))
+  ) {
     return null;
   }
-
   return url;
-}
-
-function isPrivateHostname(hostname: string): boolean {
-  // 런타임에 따라 IPv6 호스트명이 대괄호를 포함할 수 있다. (예: "[::1]")
-  const normalized = hostname.toLowerCase().replace(/^\[|\]$/g, "");
-
-  if (
-    normalized === "" ||
-    normalized === "localhost" ||
-    normalized.endsWith(".localhost") ||
-    normalized.endsWith(".local") ||
-    normalized.endsWith(".internal")
-  ) {
-    return true;
-  }
-
-  if (isPrivateIpv4(normalized)) {
-    return true;
-  }
-
-  return isPrivateIpv6(normalized);
-}
-
-function isPrivateIpv4(hostname: string): boolean {
-  const match = /^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/.exec(hostname);
-
-  if (!match) {
-    return false;
-  }
-
-  const [first, second] = [Number(match[1]), Number(match[2])];
-
-  return (
-    first === 0 ||
-    first === 10 ||
-    first === 127 ||
-    (first === 100 && second >= 64 && second <= 127) ||
-    (first === 169 && second === 254) ||
-    (first === 172 && second >= 16 && second <= 31) ||
-    (first === 192 && second === 168)
-  );
-}
-
-function isPrivateIpv6(hostname: string): boolean {
-  if (!hostname.includes(":")) {
-    return false;
-  }
-
-  // IPv4-매핑 IPv6(예: ::ffff:127.0.0.1)는 그대로 내부 IPv4로 연결되므로
-  // 어떤 대상이든 차단한다. Node의 URL이 ::ffff:7f00:1 형태로 정규화해도
-  // 프리픽스는 유지되어 이 검사에 걸린다.
-  return (
-    hostname === "::" ||
-    hostname === "::1" ||
-    hostname.startsWith("fc") ||
-    hostname.startsWith("fd") ||
-    hostname.startsWith("fe80") ||
-    hostname.startsWith("::ffff:")
-  );
 }

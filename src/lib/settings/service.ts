@@ -69,6 +69,7 @@ export type UpdateSettingsResult =
   | {
       ok: true;
       settings: SettingsRecord;
+      previousWishlistSlug: string;
     }
   | {
       ok: false;
@@ -117,6 +118,7 @@ export async function updateSettings(
 
   return {
     ok: true,
+    previousWishlistSlug: current.wishlist.slug,
     settings: await repository.updateSettings(input.ownerId, record.value),
   };
 }

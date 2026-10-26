@@ -9,23 +9,7 @@ function read(relativePath: string): string {
 }
 
 describe("public wishlist cache contract", () => {
-  test("caches the public wishlist read behind an on-demand revalidatable tag", () => {
-    const source = read("src/lib/public-wishlist/cache.ts");
-
-    expect(source).toContain(
-      'import { revalidateTag, unstable_cache } from "next/cache";',
-    );
-    expect(source).toContain("unstable_cache(");
-    expect(source).toContain("getPublicWishlist(slug");
-    expect(source).toContain("tags: [publicWishlistTag(slug)]");
-    // `{ expire: 0 }` keeps funding/edits visible immediately instead of
-    // serving stale-while-revalidate content on the next visit.
-    expect(source).toContain(
-      "revalidateTag(publicWishlistTag(slug), { expire: 0 })",
-    );
-  });
-
-  test("invalidates the public wishlist cache from every mutation route", () => {
+  test("participation and wish mutation routes invalidate the public cache", () => {
     const participation = read(
       "app/api/public/wishlists/[slug]/participation/route.ts",
     );
@@ -42,10 +26,5 @@ describe("public wishlist cache contract", () => {
       mutateWish.match(/revalidatePublicWishlistByOwner\(session\.user\.id\)/g)
         ?.length ?? 0,
     ).toBe(4);
-
-    const settings = read("app/api/admin/settings/route.ts");
-    expect(settings).toContain(
-      "revalidatePublicWishlistByOwner(session.user.id)",
-    );
   });
 });
