@@ -123,7 +123,8 @@ export class DrizzlePublicParticipationRepository
           )
           .returning({ id: wishItems.id });
 
-        // The wish is no longer open (or was removed): undo the inserts above.
+        // The wish is no longer open: undo the inserts above. A deleted wish
+        // never gets here; the message insert fails its foreign key first.
         if (!updatedWishItem) {
           tx.rollback();
         }
