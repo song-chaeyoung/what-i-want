@@ -1,4 +1,4 @@
-import { and, eq, ne, sql } from "drizzle-orm";
+import { and, eq, ne, sql, TransactionRollbackError } from "drizzle-orm";
 import { db, type Database } from "@/src/lib/db/client";
 import {
   fundingLogs,
@@ -80,51 +80,63 @@ export class DrizzlePublicParticipationRepository
         : this.findDuplicateParticipation(record.message.clientRequestId);
     }
 
-    const created = await this.database.transaction(async (tx) => {
-      const [message] = await tx
-        .insert(messages)
-        .values({
-          wishlistId: record.message.wishlistId,
-          wishItemId: record.message.wishItemId,
-          senderName: record.message.senderName,
-          body: record.message.body,
-          clientRequestId: record.message.clientRequestId,
-        })
-        .onConflictDoNothing({ target: messages.clientRequestId })
-        .returning({ id: messages.id });
+    let created: boolean;
 
-      // Duplicate client request id: the participation is already recorded,
-      // so skip the funding insert and amount update.
-      if (!message) {
-        return false;
-      }
+    try {
+      created = await this.database.transaction(async (tx) => {
+        const [message] = await tx
+          .insert(messages)
+          .values({
+            wishlistId: record.message.wishlistId,
+            wishItemId: record.message.wishItemId,
+            senderName: record.message.senderName,
+            body: record.message.body,
+            clientRequestId: record.message.clientRequestId,
+          })
+          .onConflictDoNothing({ target: messages.clientRequestId })
+          .returning({ id: messages.id });
 
-      await tx.insert(fundingLogs).values({
-        wishItemId: funding.wishItemId,
-        messageId: message.id,
-        amount: funding.amount,
+        // Duplicate client request id: the participation is already recorded,
+        // so skip the funding insert and amount update.
+        if (!message) {
+          return false;
+        }
+
+        await tx.insert(fundingLogs).values({
+          wishItemId: funding.wishItemId,
+          messageId: message.id,
+          amount: funding.amount,
+        });
+
+        const [updatedWishItem] = await tx
+          .update(wishItems)
+          .set({
+            fundedAmount: sql`${wishItems.fundedAmount} + ${funding.amount}`,
+            updatedAt: new Date(),
+          })
+          .where(
+            and(
+              eq(wishItems.id, funding.wishItemId),
+              eq(wishItems.wishlistId, funding.wishlistId),
+              eq(wishItems.status, "open"),
+            ),
+          )
+          .returning({ id: wishItems.id });
+
+        // The wish is no longer open (or was removed): undo the inserts above.
+        if (!updatedWishItem) {
+          tx.rollback();
+        }
+
+        return true;
       });
-
-      const [updatedWishItem] = await tx
-        .update(wishItems)
-        .set({
-          fundedAmount: sql`${wishItems.fundedAmount} + ${funding.amount}`,
-          updatedAt: new Date(),
-        })
-        .where(
-          and(
-            eq(wishItems.id, funding.wishItemId),
-            eq(wishItems.wishlistId, funding.wishlistId),
-          ),
-        )
-        .returning({ id: wishItems.id });
-
-      if (!updatedWishItem) {
-        throw new Error("Wish item was not updated for public participation.");
+    } catch (error) {
+      if (error instanceof TransactionRollbackError) {
+        return { status: "not_open" };
       }
 
-      return true;
-    });
+      throw error;
+    }
 
     return created
       ? { status: "created" }
@@ -143,6 +155,8 @@ export class DrizzlePublicParticipationRepository
       .select({
         wishlistId: messages.wishlistId,
         wishItemId: messages.wishItemId,
+        senderName: messages.senderName,
+        body: messages.body,
         amount: fundingLogs.amount,
       })
       .from(messages)

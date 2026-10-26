@@ -60,9 +60,23 @@ class FakePublicParticipationRepository
         existing: {
           wishlistId: existing.message.wishlistId,
           wishItemId: existing.message.wishItemId,
+          senderName: existing.message.senderName,
+          body: existing.message.body,
           amount: existing.funding?.amount ?? null,
         },
       };
+    }
+
+    // Mirrors the transactional funded-amount update, which only matches open wishes.
+    const funding = record.funding;
+
+    if (
+      funding &&
+      !this.items.some(
+        (item) => item.id === funding.wishItemId && item.status === "open",
+      )
+    ) {
+      return { status: "not_open" };
     }
 
     this.created.push(record);
@@ -297,7 +311,27 @@ describe("public participation service", () => {
     expect(repository.created).toHaveLength(1);
   });
 
-  test("rejects a repeated client request id with a different wishlist, wish, or amount", async () => {
+  test("returns success for a retried client request id after the wish stops being open", async () => {
+    const repository = new FakePublicParticipationRepository();
+    const input = {
+      slug: "birthday",
+      clientRequestId: "request-1",
+      wishItemId: "wish-1",
+      senderName: "Ari",
+      body: "Happy birthday",
+      amount: "1000",
+    };
+
+    await submitPublicParticipation(input, repository);
+    repository.items = [makeWishItem({ id: "wish-1", status: "paused" })];
+
+    await expect(submitPublicParticipation(input, repository)).resolves.toEqual(
+      { ok: true, kind: "funding" },
+    );
+    expect(repository.created).toHaveLength(1);
+  });
+
+  test("rejects a repeated client request id with a different payload", async () => {
     const firstInput = {
       slug: "birthday",
       clientRequestId: "request-1",
@@ -311,6 +345,8 @@ describe("public participation service", () => {
       { ...firstInput, amount: "2000" },
       { ...firstInput, wishItemId: "", amount: null },
       { ...firstInput, slug: "anniversary", wishItemId: "wish-3" },
+      { ...firstInput, body: "Happy birthday!!" },
+      { ...firstInput, senderName: "Bo" },
     ];
 
     for (const changedInput of changedInputs) {

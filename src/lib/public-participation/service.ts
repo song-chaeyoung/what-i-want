@@ -100,10 +100,6 @@ export async function submitPublicParticipation(
     return { ok: false, error: "wish_not_found" };
   }
 
-  if (wishItem.status !== "open") {
-    return { ok: false, error: "wish_not_open" };
-  }
-
   const record: CreatePublicParticipationRecord = {
     message: {
       wishlistId: wishlist.id,
@@ -120,6 +116,10 @@ export async function submitPublicParticipation(
   };
   const stored = await repository.createPublicParticipation(record);
 
+  if (stored.status === "not_open") {
+    return { ok: false, error: "wish_not_open" };
+  }
+
   if (isConflictingDuplicate(stored, record)) {
     return { ok: false, error: "client_request_conflict" };
   }
@@ -127,19 +127,21 @@ export async function submitPublicParticipation(
   return { ok: true, kind: "funding" };
 }
 
-// A reused client request id is only an idempotent retry when it targets the
-// same wishlist, wish, and amount as the participation already stored.
+// A reused client request id is only an idempotent retry when it carries the
+// same payload as the participation already stored.
 function isConflictingDuplicate(
   stored: CreatePublicParticipationResult,
   record: CreatePublicParticipationRecord,
 ): boolean {
-  if (stored.status === "created") {
+  if (stored.status !== "duplicate") {
     return false;
   }
 
   return (
     stored.existing.wishlistId !== record.message.wishlistId ||
     stored.existing.wishItemId !== record.message.wishItemId ||
+    stored.existing.senderName !== record.message.senderName ||
+    stored.existing.body !== record.message.body ||
     stored.existing.amount !== (record.funding?.amount ?? null)
   );
 }
