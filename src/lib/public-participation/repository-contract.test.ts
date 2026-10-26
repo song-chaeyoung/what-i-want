@@ -26,6 +26,18 @@ describe("public participation persistence contract", () => {
     expect(source).toContain("sql`");
   });
 
+  test("only adds funding to open wishes inside the transaction", () => {
+    const source = readFileSync(repositoryPath, "utf8");
+    const updateIndex = source.indexOf(".update(wishItems)");
+
+    expect(source.indexOf('eq(wishItems.status, "open")')).toBeGreaterThan(
+      updateIndex,
+    );
+    expect(source).toContain("tx.rollback()");
+    expect(source).toContain("error instanceof TransactionRollbackError");
+    expect(source).toContain('{ status: "not_open" }');
+  });
+
   test("exposes the public participation route handler under app api", () => {
     const source = readFileSync(routePath, "utf8");
 

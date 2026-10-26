@@ -88,9 +88,12 @@ export const PUBLIC_WISHLIST_COPY = {
   participationErrors: {
     wishlist_not_found: "위시리스트를 찾을 수 없어요.",
     wish_not_found: "선물을 다시 선택해주세요.",
+    wish_not_open: "지금은 마음을 보탤 수 없는 선물이에요.",
     message_required: "메시지를 입력해주세요.",
     message_too_long: "메시지는 500자까지 쓸 수 있어요.",
     invalid_amount: "금액은 1원 이상으로 입력해주세요.",
+    client_request_conflict:
+      "이미 처리된 요청이에요. 새로고침한 뒤 다시 시도해주세요.",
     rate_limited: "지금 이용자가 많아요. 잠시 후 다시 시도해주세요.",
     unexpected: "일시적인 오류가 발생했어요. 잠시 후 다시 시도해주세요.",
   },

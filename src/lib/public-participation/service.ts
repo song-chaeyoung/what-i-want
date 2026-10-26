@@ -1,5 +1,7 @@
 import { parseWishlistSlug } from "@/src/lib/wishlist/slug";
 import type {
+  CreatePublicParticipationRecord,
+  CreatePublicParticipationResult,
   PublicParticipationInput,
   PublicParticipationRepository,
 } from "./types";
@@ -12,9 +14,11 @@ const MAX_CLIENT_REQUEST_ID_LENGTH = 64;
 export type PublicParticipationError =
   | "wishlist_not_found"
   | "wish_not_found"
+  | "wish_not_open"
   | "message_required"
   | "message_too_long"
-  | "invalid_amount";
+  | "invalid_amount"
+  | "client_request_conflict";
 
 export type PublicParticipationKind = "funding" | "message";
 
@@ -56,7 +60,7 @@ export async function submitPublicParticipation(
       return { ok: false, error: "wishlist_not_found" };
     }
 
-    await repository.createPublicParticipation({
+    const record: CreatePublicParticipationRecord = {
       message: {
         wishlistId: wishlist.id,
         wishItemId: null,
@@ -65,7 +69,12 @@ export async function submitPublicParticipation(
         clientRequestId,
       },
       funding: null,
-    });
+    };
+    const stored = await repository.createPublicParticipation(record);
+
+    if (isConflictingDuplicate(stored, record)) {
+      return { ok: false, error: "client_request_conflict" };
+    }
 
     return { ok: true, kind: "message" };
   }
@@ -91,7 +100,7 @@ export async function submitPublicParticipation(
     return { ok: false, error: "wish_not_found" };
   }
 
-  await repository.createPublicParticipation({
+  const record: CreatePublicParticipationRecord = {
     message: {
       wishlistId: wishlist.id,
       wishItemId: wishItem.id,
@@ -104,9 +113,37 @@ export async function submitPublicParticipation(
       wishItemId: wishItem.id,
       amount: amount.value,
     },
-  });
+  };
+  const stored = await repository.createPublicParticipation(record);
+
+  if (stored.status === "not_open") {
+    return { ok: false, error: "wish_not_open" };
+  }
+
+  if (isConflictingDuplicate(stored, record)) {
+    return { ok: false, error: "client_request_conflict" };
+  }
 
   return { ok: true, kind: "funding" };
+}
+
+// A reused client request id is only an idempotent retry when it carries the
+// same payload as the participation already stored.
+function isConflictingDuplicate(
+  stored: CreatePublicParticipationResult,
+  record: CreatePublicParticipationRecord,
+): boolean {
+  if (stored.status !== "duplicate") {
+    return false;
+  }
+
+  return (
+    stored.existing.wishlistId !== record.message.wishlistId ||
+    stored.existing.wishItemId !== record.message.wishItemId ||
+    stored.existing.senderName !== record.message.senderName ||
+    stored.existing.body !== record.message.body ||
+    stored.existing.amount !== (record.funding?.amount ?? null)
+  );
 }
 
 function normalizeMessageBody(value: string | null):

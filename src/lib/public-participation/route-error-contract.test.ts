@@ -56,4 +56,17 @@ describe("public participation error-handling contract", () => {
   test("the unexpected toast key resolves to a user-facing message", () => {
     expect(PUBLIC_WISHLIST_COPY.participationErrors.unexpected).toBeTruthy();
   });
+
+  test("route maps state conflicts to a 409 with a user-facing toast message", () => {
+    const routeSource = readFileSync(participationRoutePath, "utf8");
+
+    expect(routeSource).toContain(
+      'error === "wish_not_open" || error === "client_request_conflict"',
+    );
+    expect(routeSource).toContain("return 409;");
+    expect(PUBLIC_WISHLIST_COPY.participationErrors.wish_not_open).toBeTruthy();
+    expect(
+      PUBLIC_WISHLIST_COPY.participationErrors.client_request_conflict,
+    ).toBeTruthy();
+  });
 });

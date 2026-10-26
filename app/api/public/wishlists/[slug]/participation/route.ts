@@ -128,9 +128,15 @@ function getBodyStringOrNumber(
 }
 
 function getErrorStatus(error: PublicParticipationError): number {
-  return error === "wishlist_not_found" || error === "wish_not_found"
-    ? 404
-    : 400;
+  if (error === "wishlist_not_found" || error === "wish_not_found") {
+    return 404;
+  }
+
+  if (error === "wish_not_open" || error === "client_request_conflict") {
+    return 409;
+  }
+
+  return 400;
 }
 
 function redirectToPublicPage(

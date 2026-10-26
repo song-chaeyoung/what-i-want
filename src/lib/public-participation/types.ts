@@ -39,6 +39,19 @@ export type CreatePublicParticipationRecord = {
   funding: PublicParticipationFundingRecord | null;
 };
 
+export type PublicParticipationStoredRecord = {
+  wishlistId: string;
+  wishItemId: string | null;
+  senderName: string | null;
+  body: string;
+  amount: number | null;
+};
+
+export type CreatePublicParticipationResult =
+  | { status: "created" }
+  | { status: "duplicate"; existing: PublicParticipationStoredRecord }
+  | { status: "not_open" };
+
 export type PublicParticipationRepository = {
   findPublicWishlistBySlug(
     slug: string,
@@ -49,5 +62,5 @@ export type PublicParticipationRepository = {
   ): Promise<PublicParticipationWishItemRecord | null>;
   createPublicParticipation(
     record: CreatePublicParticipationRecord,
-  ): Promise<void>;
+  ): Promise<CreatePublicParticipationResult>;
 };
