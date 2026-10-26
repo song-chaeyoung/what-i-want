@@ -3,6 +3,7 @@ import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/reposit
 import { listAdminMessages } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { formatKstDate } from "@/src/lib/date/kst-format";
 import {
   getDaysUntilBirthday,
   getKstDateKey,
@@ -130,7 +131,7 @@ export default async function AdminPage() {
               key={wish.id}
               label={wish.title}
               meta={formatWishAmount(wish)}
-              value={formatDate(wish.updatedAt)}
+              value={formatKstDate(wish.updatedAt)}
             />
           ))}
         </DashboardQueue>
@@ -149,7 +150,7 @@ export default async function AdminPage() {
               key={message.id}
               label={message.senderName ?? "익명"}
               meta={formatMessageMeta(message)}
-              value={formatDate(message.createdAt)}
+              value={formatKstDate(message.createdAt)}
             />
           ))}
         </DashboardQueue>
@@ -240,10 +241,4 @@ function formatMessageMeta(message: AdminMessageRecord): string {
   const amount = message.amount ? formatCurrency(message.amount) : "금액 없음";
 
   return `${message.wishTitle ?? "선물 없음"} · ${amount}`;
-}
-
-function formatDate(value: Date): string {
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-  }).format(value);
 }

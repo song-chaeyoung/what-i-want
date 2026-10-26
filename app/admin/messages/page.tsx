@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { after } from "next/server";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { formatKstDateTime } from "@/src/lib/date/kst-format";
 import { DrizzleAdminMessagesRepository } from "@/src/lib/admin-messages/repository";
 import {
   listAdminMessages,
@@ -33,6 +34,8 @@ export default async function AdminMessagesPage({
   const user = await requireUser();
   const params = await searchParams;
   const hiddenView = params.filter === "hidden";
+  // 목록을 읽기 전 시각까지만 읽음 처리해, 렌더링 중 도착한 메시지는 안 읽음으로 남긴다.
+  const viewedAt = new Date();
   const result = await listAdminMessages(
     user.id,
     new DrizzleAdminMessagesRepository(),
@@ -51,9 +54,16 @@ export default async function AdminMessagesPage({
   }
 
   // 메시지함을 열어본 시점을 기록해 네비 뱃지의 안 읽음 기준으로 사용한다.
-  after(() =>
-    markAdminMessagesRead(user.id, new DrizzleAdminMessagesRepository()),
-  );
+  // 숨긴 메시지함에서는 받은 메시지를 보지 않았으므로 읽음 처리하지 않는다.
+  if (!hiddenView) {
+    after(() =>
+      markAdminMessagesRead(
+        result.wishlist.id,
+        viewedAt,
+        new DrizzleAdminMessagesRepository(),
+      ),
+    );
+  }
 
   return (
     <section className="space-y-4">
@@ -153,13 +163,13 @@ function MessageRow({
             {message.wishTitle ?? "선물 없음"}
           </span>
           <span className="text-xs font-semibold text-zinc-500">
-            {formatDate(message.createdAt)}
+            {formatKstDateTime(message.createdAt)}
           </span>
         </div>
         <h3 className="mt-2 text-sm font-bold tracking-normal text-ink">
           {message.senderName ?? "익명"}
         </h3>
-        <p className="mt-1 line-clamp-2 whitespace-pre-wrap text-sm leading-6 text-zinc-600">
+        <p className="mt-1 whitespace-pre-wrap wrap-break-word text-sm leading-6 text-zinc-600">
           {message.body}
         </p>
       </div>
@@ -186,11 +196,4 @@ function MessageRow({
       </div>
     </article>
   );
-}
-
-function formatDate(value: Date): string {
-  return new Intl.DateTimeFormat("ko-KR", {
-    dateStyle: "medium",
-    timeStyle: "short",
-  }).format(value);
 }

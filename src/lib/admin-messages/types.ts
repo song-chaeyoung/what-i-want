@@ -26,5 +26,5 @@ export type AdminMessagesRepository = {
   hideMessage(wishlistId: string, messageId: string): Promise<boolean>;
   unhideMessage(wishlistId: string, messageId: string): Promise<boolean>;
   countUnreadMessages(wishlistId: string): Promise<number>;
-  markMessagesRead(wishlistId: string): Promise<void>;
+  markMessagesRead(wishlistId: string, readAt: Date): Promise<void>;
 };

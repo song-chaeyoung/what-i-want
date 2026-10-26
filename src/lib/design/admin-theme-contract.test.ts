@@ -268,7 +268,7 @@ describe("admin calm theme contract", () => {
       "<MessageRow key={message.id} message={message} hidden={hiddenView} />",
     );
     expect(source).toContain("formatCurrency(message.amount)");
-    expect(source).toContain("formatDate(message.createdAt)");
+    expect(source).toContain("formatKstDateTime(message.createdAt)");
   });
 
   test("adds soft message card tone and empty-state CTAs", () => {
@@ -353,7 +353,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('title="최근 메시지"');
     expect(source).toContain("<DashboardQueueRow");
     expect(source).toContain('emptyActionHref="/admin/wishes"');
-    expect(source).toContain("formatDate(message.createdAt)");
+    expect(source).toContain("formatKstDate(message.createdAt)");
   });
 
   test("renders admin messages as inbox rows without large public card shadows", () => {
