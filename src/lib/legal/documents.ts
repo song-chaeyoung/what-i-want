@@ -38,7 +38,7 @@ export const LEGAL_OPERATOR_CONTACT = resolveOperatorValue(
   "LEGAL_OPERATOR_CONTACT",
   "[문의 이메일 주소]",
 );
-export const LEGAL_EFFECTIVE_DATE = "2026년 10월 25일";
+export const LEGAL_EFFECTIVE_DATE = "2026년 10월 26일";
 
 export type LegalSection = {
   heading: string;
