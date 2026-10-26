@@ -40,3 +40,22 @@ describe("parseFetchableUrl", () => {
     expect(parseFetchableUrl("http://[::ffff:169.254.169.254]")).toBeNull();
   });
 });
+
+describe("special-use addresses", () => {
+  test.each([
+    "http://localhost.", "http://printer.local.", "http://192.0.0.1",
+    "http://192.0.2.1", "http://198.18.0.1", "http://198.51.100.1",
+    "http://203.0.113.1", "http://224.0.0.1", "http://240.0.0.1",
+    "http://[febf::1]", "http://[fec0::1]", "http://[ff02::1]",
+    "http://[64:ff9b::7f00:1]", "http://[2002:7f00:1::]",
+    "http://[2001:db8::1]", "http://[3fff::1]",
+  ])("rejects %s", (url) => {
+    expect(parseFetchableUrl(url)).toBeNull();
+  });
+
+  test.each(["https://8.8.8.8/item", "https://[2606:4700:4700::1111]/item"])(
+    "accepts public IP %s", (url) => {
+      expect(parseFetchableUrl(url)).not.toBeNull();
+    },
+  );
+});
