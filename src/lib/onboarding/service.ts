@@ -3,6 +3,7 @@ import type {
   OnboardingRepository,
 } from "./types";
 import type { CompleteOnboardingError } from "./errors";
+import { getSignupBirthdayError } from "./age";
 import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
@@ -11,10 +12,12 @@ export type CompleteOnboardingInput = {
   displayName: string;
   birthday: string | null;
   description: string | null;
+  ageConfirmed: boolean;
 };
 
 type CompleteOnboardingOptions = {
   createWishlistSlug?: () => string;
+  now?: Date;
 };
 
 export type CompleteOnboardingResult =
@@ -39,12 +42,33 @@ export async function completeOnboarding(
     return { ok: false, error: "display_name_required" };
   }
 
-  if (!birthday.ok) {
+  const birthdayError =
+    birthday.ok && birthday.value
+      ? getSignupBirthdayError(birthday.value, options.now)
+      : null;
+
+  if (!birthday.ok || birthdayError === "invalid_birthday") {
     return { ok: false, error: "invalid_birthday" };
   }
 
+  // 아래 삭제가 기존 회원에게 닿지 않도록 완료 여부를 먼저 확인한다.
   if (await repository.hasCompletedOnboarding(input.userId)) {
     return { ok: false, error: "already_completed" };
+  }
+
+  // 만 14세 미만은 받지 않으므로 소셜 로그인 때 저장된 정보를 바로 지운다.
+  if (birthdayError === "under_minimum_age") {
+    // 그사이 다른 요청이 온보딩을 마쳤다면 지우지 않았으므로 삭제 안내를 하지 않는다.
+    if (!(await repository.deleteIncompleteUser(input.userId))) {
+      return { ok: false, error: "already_completed" };
+    }
+
+    return { ok: false, error: "under_minimum_age" };
+  }
+
+  // 14세 미만임을 알게 된 경우는 확인 누락과 관계없이 위에서 삭제한다.
+  if (!input.ageConfirmed) {
+    return { ok: false, error: "age_confirmation_required" };
   }
 
   const slug = await createAvailableWishlistSlug(

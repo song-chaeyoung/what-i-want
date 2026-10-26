@@ -12,7 +12,18 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function LoginPage() {
+type LoginPageProps = {
+  searchParams: Promise<{
+    notice?: string;
+  }>;
+};
+
+const noticeMessages: Record<string, string> = {
+  under_minimum_age:
+    "만 14세 미만은 가입할 수 없어 로그인 정보를 삭제했어요. 생일 연도를 잘못 고르셨다면 다시 로그인해주세요.",
+};
+
+export default async function LoginPage({ searchParams }: LoginPageProps) {
   const session = await auth();
 
   if (session?.user?.id) {
@@ -24,6 +35,13 @@ export default async function LoginPage() {
 
     redirect("/admin");
   }
+
+  const { notice } = await searchParams;
+  // 쿼리값으로 constructor 등 상속 속성이 조회되지 않게 자기 키만 허용한다.
+  const noticeMessage =
+    notice && Object.hasOwn(noticeMessages, notice)
+      ? noticeMessages[notice]
+      : null;
 
   return (
     <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
@@ -37,7 +55,16 @@ export default async function LoginPage() {
             <p className="text-sm leading-6 text-[#4b5563]">
               위시리스트를 만들고 공유하려면 소셜 계정으로 로그인해주세요.
             </p>
+            <p className="text-sm leading-6 text-[#4b5563]">
+              만 14세 이상만 가입할 수 있어요.
+            </p>
           </div>
+
+          {noticeMessage ? (
+            <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+              {noticeMessage}
+            </p>
+          ) : null}
 
           <div className="mt-8 space-y-3">
             <form action={signInWithGoogle}>

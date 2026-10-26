@@ -1,4 +1,4 @@
-import { describe, expect, test } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import {
   getSettings,
   updateSettings,
@@ -80,7 +80,7 @@ describe("admin settings service", () => {
       makeInput({
         displayName: "  차차  ",
         description: "  생일 선물만 받습니다  ",
-        birthday: "2026-05-15",
+        birthday: "2000-05-15",
         wishlistSlug: "  CHA-BIRTHDAY  ",
         wishlistTitle: "  차차의 갖고 싶은 것  ",
         themeId: "mono_bw",
@@ -98,7 +98,7 @@ describe("admin settings service", () => {
       settings: {
         profile: {
           displayName: "차차",
-          birthday: "2026-05-15",
+          birthday: "2000-05-15",
           description: "생일 선물만 받습니다",
         },
         wishlist: {
@@ -170,6 +170,43 @@ describe("admin settings service", () => {
     await expect(
       updateSettings(makeInput({ birthday: "2026-15-01" }), repository, "secret"),
     ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
+  });
+
+  describe("birthday age checks", () => {
+    // 나이 판정은 KST 날짜 기준이므로, 실행 환경의 시간대·날짜와 무관하게 오늘을 고정한다.
+    beforeEach(() => {
+      vi.setSystemTime(new Date("2026-10-24T09:00:00+09:00"));
+    });
+
+    afterEach(() => {
+      vi.useRealTimers();
+    });
+
+    test("rejects a future birthday as invalid without saving", async () => {
+      const repository = new FakeSettingsRepository();
+
+      await expect(
+        updateSettings(
+          makeInput({ birthday: "2026-10-25" }),
+          repository,
+          "secret",
+        ),
+      ).resolves.toEqual({ ok: false, error: "invalid_birthday" });
+      expect(repository.updated).toEqual([]);
+    });
+
+    test("rejects a birthday under the minimum signup age without saving", async () => {
+      const repository = new FakeSettingsRepository();
+
+      await expect(
+        updateSettings(
+          makeInput({ birthday: "2012-10-25" }),
+          repository,
+          "secret",
+        ),
+      ).resolves.toEqual({ ok: false, error: "under_minimum_age" });
+      expect(repository.updated).toEqual([]);
+    });
   });
 
   test("updates wishlist visibility and keeps it when the input omits it", async () => {

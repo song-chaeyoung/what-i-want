@@ -77,8 +77,10 @@ describe("onboarding UI contract", () => {
       'className="w-auto rounded-md border border-line bg-white p-3 shadow-pub"',
     );
     expect(source).toContain("startMonth={new Date(1900, 0)}");
+    expect(source).toContain("endMonth={kstToday}");
+    expect(source).toContain("disabled={{ after: kstToday }}");
     expect(source).toContain(
-      "endMonth={new Date(new Date().getFullYear(), 11)}",
+      'import { getKstDateKey } from "@/src/lib/public-wishlist/birthday";',
     );
     expect(source).toContain("classNames={{");
     expect(source).toContain('caption_label: "text-sm font-semibold text-ink"');
@@ -95,7 +97,7 @@ describe("onboarding UI contract", () => {
     const source = readSource(birthdayPickerPath);
 
     expect(source).toContain(
-      '<input name={name} type="hidden" value={birthdayValue} readOnly />',
+      '<input ref={inputRef} name={name} type="hidden" value={birthdayValue} readOnly />',
     );
     expect(source).not.toContain('<input id={id} name={name} type="hidden"');
     expect(source).toContain(
@@ -109,6 +111,33 @@ describe("onboarding UI contract", () => {
     const source = readSource(pagePath);
 
     expect(source).toContain("invalid_birthday");
+  });
+
+  test("requires a 14-or-older confirmation and maps age errors", () => {
+    const source = readSource(pagePath);
+
+    expect(source).toContain('name="ageConfirmed"');
+    expect(source).toContain('type="checkbox"');
+    expect(source).toContain("age_confirmation_required");
+  });
+
+  test("warns about an under-14 birthday before submitting", () => {
+    const source = readSource(birthdayPickerPath);
+
+    expect(source).toContain(
+      'import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";',
+    );
+    expect(source).toContain('role="alert"');
+    expect(source).toContain("태어난 연도로");
+  });
+
+  test("confirms before submitting an under-14 birthday from the server form", () => {
+    const source = readSource(birthdayPickerPath);
+
+    expect(source).toContain("const form = inputRef.current?.form;");
+    expect(source).toContain('form.addEventListener("submit", confirmUnderMinimumAge);');
+    expect(source).toContain("window.confirm(");
+    expect(source).toContain("event.preventDefault();");
   });
 
   test("does not ask users to enter a public slug", () => {

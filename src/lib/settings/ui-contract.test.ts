@@ -25,6 +25,15 @@ describe("admin settings UI contract", () => {
     expect(source).toContain("/admin/settings?saved=1");
   });
 
+  test("blocks under-14 birthdays in the date input before submitting", () => {
+    const pageSource = readFileSync(adminSettingsPagePath, "utf8");
+
+    expect(pageSource).toContain(
+      'import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";',
+    );
+    expect(pageSource).toContain("max={getLatestSignupBirthday()}");
+  });
+
   test("renders settings page fields and admin navigation", () => {
     const pageSource = readFileSync(adminSettingsPagePath, "utf8");
     const layoutSource = readFileSync(adminLayoutPath, "utf8");
