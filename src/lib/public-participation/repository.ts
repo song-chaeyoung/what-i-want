@@ -8,6 +8,7 @@ import {
 } from "@/src/lib/db/schema";
 import type {
   CreatePublicParticipationRecord,
+  CreatePublicParticipationResult,
   PublicParticipationRepository,
   PublicParticipationWishlistRecord,
   PublicParticipationWishItemRecord,
@@ -58,11 +59,11 @@ export class DrizzlePublicParticipationRepository
 
   async createPublicParticipation(
     record: CreatePublicParticipationRecord,
-  ): Promise<void> {
+  ): Promise<CreatePublicParticipationResult> {
     const funding = record.funding;
 
     if (!funding) {
-      await this.database
+      const [message] = await this.database
         .insert(messages)
         .values({
           wishlistId: record.message.wishlistId,
@@ -71,11 +72,15 @@ export class DrizzlePublicParticipationRepository
           body: record.message.body,
           clientRequestId: record.message.clientRequestId,
         })
-        .onConflictDoNothing({ target: messages.clientRequestId });
-      return;
+        .onConflictDoNothing({ target: messages.clientRequestId })
+        .returning({ id: messages.id });
+
+      return message
+        ? { status: "created" }
+        : this.findDuplicateParticipation(record.message.clientRequestId);
     }
 
-    await this.database.transaction(async (tx) => {
+    const created = await this.database.transaction(async (tx) => {
       const [message] = await tx
         .insert(messages)
         .values({
@@ -91,7 +96,7 @@ export class DrizzlePublicParticipationRepository
       // Duplicate client request id: the participation is already recorded,
       // so skip the funding insert and amount update.
       if (!message) {
-        return;
+        return false;
       }
 
       await tx.insert(fundingLogs).values({
@@ -117,6 +122,38 @@ export class DrizzlePublicParticipationRepository
       if (!updatedWishItem) {
         throw new Error("Wish item was not updated for public participation.");
       }
+
+      return true;
     });
+
+    return created
+      ? { status: "created" }
+      : this.findDuplicateParticipation(record.message.clientRequestId);
+  }
+
+  private async findDuplicateParticipation(
+    clientRequestId: string | null,
+  ): Promise<CreatePublicParticipationResult> {
+    // A null client request id never conflicts on the unique index.
+    if (!clientRequestId) {
+      throw new Error("Public participation conflicted without a request id.");
+    }
+
+    const [existing] = await this.database
+      .select({
+        wishlistId: messages.wishlistId,
+        wishItemId: messages.wishItemId,
+        amount: fundingLogs.amount,
+      })
+      .from(messages)
+      .leftJoin(fundingLogs, eq(fundingLogs.messageId, messages.id))
+      .where(eq(messages.clientRequestId, clientRequestId))
+      .limit(1);
+
+    if (!existing) {
+      throw new Error("Duplicate public participation was not found.");
+    }
+
+    return { status: "duplicate", existing };
   }
 }

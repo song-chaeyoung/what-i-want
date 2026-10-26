@@ -2,6 +2,7 @@ import { describe, expect, test } from "vitest";
 import { submitPublicParticipation } from "./service";
 import type {
   CreatePublicParticipationRecord,
+  CreatePublicParticipationResult,
   PublicParticipationRepository,
   PublicParticipationWishItemRecord,
   PublicParticipationWishlistRecord,
@@ -45,8 +46,27 @@ class FakePublicParticipationRepository
 
   async createPublicParticipation(
     record: CreatePublicParticipationRecord,
-  ): Promise<void> {
+  ): Promise<CreatePublicParticipationResult> {
+    // Mirrors the global unique index on messages.client_request_id.
+    const existing = this.created.find(
+      (created) =>
+        record.message.clientRequestId !== null &&
+        created.message.clientRequestId === record.message.clientRequestId,
+    );
+
+    if (existing) {
+      return {
+        status: "duplicate",
+        existing: {
+          wishlistId: existing.message.wishlistId,
+          wishItemId: existing.message.wishItemId,
+          amount: existing.funding?.amount ?? null,
+        },
+      };
+    }
+
     this.created.push(record);
+    return { status: "created" };
   }
 }
 
@@ -233,6 +253,85 @@ describe("public participation service", () => {
       ),
     ).resolves.toEqual({ ok: false, error: "wish_not_found" });
     expect(hiddenWishRepository.created).toEqual([]);
+  });
+
+  test("rejects funding for wishes that are paused or fulfilled", async () => {
+    for (const status of ["paused", "fulfilled"] as const) {
+      const repository = new FakePublicParticipationRepository();
+      repository.items = [makeWishItem({ id: "wish-1", status })];
+
+      await expect(
+        submitPublicParticipation(
+          {
+            slug: "birthday",
+            clientRequestId: null,
+            wishItemId: "wish-1",
+            senderName: "Ari",
+            body: "Happy birthday",
+            amount: "1000",
+          },
+          repository,
+        ),
+      ).resolves.toEqual({ ok: false, error: "wish_not_open" });
+      expect(repository.created).toEqual([]);
+    }
+  });
+
+  test("returns success again for a repeated client request id with the same payload", async () => {
+    const repository = new FakePublicParticipationRepository();
+    const input = {
+      slug: "birthday",
+      clientRequestId: "request-1",
+      wishItemId: "wish-1",
+      senderName: "Ari",
+      body: "Happy birthday",
+      amount: "1000",
+    };
+
+    await expect(submitPublicParticipation(input, repository)).resolves.toEqual(
+      { ok: true, kind: "funding" },
+    );
+    await expect(submitPublicParticipation(input, repository)).resolves.toEqual(
+      { ok: true, kind: "funding" },
+    );
+    expect(repository.created).toHaveLength(1);
+  });
+
+  test("rejects a repeated client request id with a different wishlist, wish, or amount", async () => {
+    const firstInput = {
+      slug: "birthday",
+      clientRequestId: "request-1",
+      wishItemId: "wish-1",
+      senderName: "Ari",
+      body: "Happy birthday",
+      amount: "1000",
+    };
+    const changedInputs = [
+      { ...firstInput, wishItemId: "wish-2" },
+      { ...firstInput, amount: "2000" },
+      { ...firstInput, wishItemId: "", amount: null },
+      { ...firstInput, slug: "anniversary", wishItemId: "wish-3" },
+    ];
+
+    for (const changedInput of changedInputs) {
+      const repository = new FakePublicParticipationRepository();
+      repository.items = [
+        makeWishItem({ id: "wish-1" }),
+        makeWishItem({ id: "wish-2" }),
+        makeWishItem({ id: "wish-3", wishlistId: "wishlist-2" }),
+      ];
+
+      await submitPublicParticipation(firstInput, repository);
+
+      if (changedInput.slug === "anniversary") {
+        repository.wishlist = { id: "wishlist-2", slug: "anniversary" };
+      }
+
+      await expect(
+        submitPublicParticipation(changedInput, repository),
+      ).resolves.toEqual({ ok: false, error: "client_request_conflict" });
+      expect(repository.created).toHaveLength(1);
+    }
   });
 
   test("stores normalized message and funding records for valid input", async () => {
