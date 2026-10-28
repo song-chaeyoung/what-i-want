@@ -51,8 +51,12 @@ export function AdminToastEvents() {
       (paramName) => adminToastParams[paramName],
     );
     toastConfigList.forEach((toastConfig) => {
+      const message =
+        toastConfig.type === "error" && searchParams.get("error") === "reserved_slug"
+          ? "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요."
+          : toastConfig.message;
       toast[toastConfig.type](
-        toastConfig.message,
+        message,
         getAdminToastOptions(toastConfig, router),
       );
     });

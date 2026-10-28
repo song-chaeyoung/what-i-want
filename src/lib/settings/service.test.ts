@@ -265,6 +265,64 @@ describe("admin settings service", () => {
     expect(result).toEqual({ ok: false, error: "duplicate_slug" });
   });
 
+  test.each(["sample", "SAMPLE", "  SaMpLe  "])(
+    "rejects the reserved wishlist slug %j before checking or saving it",
+    async (wishlistSlug) => {
+      const repository = new FakeSettingsRepository();
+      repository.settings = makeSettings({ bankAccount: null });
+
+      const result = await updateSettings(
+        makeInput({ wishlistSlug }),
+        repository,
+        "secret",
+      );
+
+      expect(result).toEqual({ ok: false, error: "reserved_slug" });
+      expect(repository.requestedSlugChecks).toEqual([]);
+      expect(repository.updated).toEqual([]);
+    },
+  );
+
+  test("allows a wishlist slug that starts with the reserved word", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+
+    const result = await updateSettings(
+      makeInput({ wishlistSlug: "sample-gift" }),
+      repository,
+      "secret",
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      settings: { wishlist: { slug: "sample-gift" } },
+    });
+    expect(repository.requestedSlugChecks).toEqual([
+      { slug: "sample-gift", ownerId: "user-1" },
+    ]);
+    expect(repository.updated).toHaveLength(1);
+  });
+
+  test("allows the reserved word as a display name with a different slug", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+
+    const result = await updateSettings(
+      makeInput({ displayName: "sample", wishlistSlug: "my-birthday" }),
+      repository,
+      "secret",
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      settings: {
+        profile: { displayName: "sample" },
+        wishlist: { slug: "my-birthday" },
+      },
+    });
+    expect(repository.updated).toHaveLength(1);
+  });
+
   test("requires complete bank account fields before creating a public account", async () => {
     const repository = new FakeSettingsRepository();
     repository.settings = makeSettings({ bankAccount: null });
