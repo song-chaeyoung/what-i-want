@@ -7,6 +7,8 @@ import { getSignupBirthdayError } from "./age";
 import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
+const MAX_DISPLAY_NAME_LENGTH = 80;
+
 export type CompleteOnboardingInput = {
   userId: string;
   displayName: string;
@@ -40,6 +42,10 @@ export async function completeOnboarding(
 
   if (!displayName) {
     return { ok: false, error: "display_name_required" };
+  }
+
+  if (displayName.length > MAX_DISPLAY_NAME_LENGTH) {
+    return { ok: false, error: "display_name_too_long" };
   }
 
   const birthdayError =
