@@ -4,14 +4,20 @@
  * - 참여 직후 "나도 만들기" 전환을 별도 소스로 추적한다.
  */
 
+import type { PublicThemeId } from "@/src/lib/wishlist/theme";
+
 export type WishlistShareSource = "owner" | "visitor";
 
 export function buildWishlistShareUrl(
   origin: string,
   slug: string,
   source: WishlistShareSource,
+  sampleTheme?: PublicThemeId,
 ): string {
-  const url = new URL(`/wishlist/${slug}`, origin);
+  const url = new URL(sampleTheme ? "/sample" : `/wishlist/${slug}`, origin);
+  if (sampleTheme) {
+    url.searchParams.set("theme", sampleTheme);
+  }
   url.searchParams.set("utm_source", `${source}_share`);
   url.searchParams.set("utm_medium", "share");
   return url.toString();

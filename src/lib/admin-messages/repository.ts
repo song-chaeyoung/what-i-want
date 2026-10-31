@@ -82,7 +82,9 @@ export class DrizzleAdminMessagesRepository
   async markMessagesRead(wishlistId: string, readAt: Date): Promise<void> {
     await this.database
       .update(wishlists)
-      .set({ messagesReadAt: readAt })
+      .set({
+        messagesReadAt: sql`GREATEST(${wishlists.messagesReadAt}, ${sql.param(readAt, wishlists.messagesReadAt)})`,
+      })
       .where(eq(wishlists.id, wishlistId));
   }
 

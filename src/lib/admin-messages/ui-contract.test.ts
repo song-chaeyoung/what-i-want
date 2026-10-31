@@ -9,7 +9,10 @@ const adminMessagesPagePath = join(
 
 describe("admin messages UI contract", () => {
   test("marks messages read only when viewing received messages", () => {
-    const source = readFileSync(adminMessagesPagePath, "utf8");
+    const source = readFileSync(adminMessagesPagePath, "utf8").replaceAll(
+      "\r\n",
+      "\n",
+    );
     const guardIndex = source.indexOf("if (!hiddenView) {");
     const markReadIndex = source.indexOf("markAdminMessagesRead(\n");
 

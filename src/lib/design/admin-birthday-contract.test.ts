@@ -8,7 +8,7 @@ const globalsCssPath = join(root, "app/globals.css");
 
 describe("admin birthday celebration contract", () => {
   test("keeps confetti client-only, account-scoped, and Strict Mode safe", () => {
-    const source = readFileSync(confettiPath, "utf8");
+    const source = readFileSync(confettiPath, "utf8").replaceAll("\r\n", "\n");
 
     expect(source.startsWith('"use client";')).toBe(true);
     expect(source).toContain("useEffect");

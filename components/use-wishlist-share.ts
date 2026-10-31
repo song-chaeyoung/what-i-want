@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { toast } from "sonner";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
+import type { PublicThemeId } from "@/src/lib/wishlist/theme";
 import {
   buildWishlistShareUrl,
   type WishlistShareSource,
@@ -12,17 +13,28 @@ type UseWishlistShareParams = {
   slug: string;
   source: WishlistShareSource;
   title: string;
+  sampleTheme?: PublicThemeId;
 };
 
 /**
  * 모바일에서는 네이티브 공유 시트(카카오톡 선택 가능), 그 외에는 링크 복사로 폴백한다.
  * 공유 링크에는 UTM이 붙어 유입 채널을 구분할 수 있다.
  */
-export function useWishlistShare({ slug, source, title }: UseWishlistShareParams) {
+export function useWishlistShare({
+  slug,
+  source,
+  title,
+  sampleTheme,
+}: UseWishlistShareParams) {
   const [copied, setCopied] = useState(false);
 
   async function share() {
-    const url = buildWishlistShareUrl(window.location.origin, slug, source);
+    const url = buildWishlistShareUrl(
+      window.location.origin,
+      slug,
+      source,
+      sampleTheme,
+    );
 
     if (typeof navigator.share === "function") {
       try {

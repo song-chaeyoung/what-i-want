@@ -64,6 +64,45 @@ describe("completeOnboarding", () => {
     expect(repository.records).toEqual([]);
   });
 
+  test("accepts an 80-character display name after trimming", async () => {
+    const repository = new FakeOnboardingRepository();
+    const displayName = "가".repeat(80);
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: `  ${displayName}  `,
+        birthday: null,
+        description: null,
+        ageConfirmed: true,
+      },
+      repository,
+      { createWishlistSlug: () => "w-a3f91c0e7b42d8aa" },
+    );
+
+    expect(result.ok).toBe(true);
+    expect(repository.records[0]?.displayName).toBe(displayName);
+  });
+
+  test("rejects an 81-character display name without persisting", async () => {
+    const repository = new FakeOnboardingRepository();
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: "가".repeat(81),
+        birthday: null,
+        description: null,
+        ageConfirmed: true,
+      },
+      repository,
+      { createWishlistSlug: () => "w-a3f91c0e7b42d8aa" },
+    );
+
+    expect(result).toEqual({ ok: false, error: "display_name_too_long" });
+    expect(repository.records).toEqual([]);
+  });
+
   test("generates and stores a random wishlist slug", async () => {
     const repository = new FakeOnboardingRepository();
 

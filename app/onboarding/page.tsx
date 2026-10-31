@@ -20,6 +20,7 @@ type OnboardingPageProps = {
 
 const errorMessages: Record<string, string> = {
   display_name_required: "표시 이름을 입력해주세요.",
+  display_name_too_long: "표시 이름은 80자 이내로 입력해주세요.",
   invalid_birthday: "생일은 YYYY-MM-DD 형식의 실제 날짜로 선택해주세요.",
   age_confirmation_required: "만 14세 이상인지 확인해주세요.",
   duplicate_slug: "공개 주소를 만드는 중 문제가 발생했습니다. 다시 시도해주세요.",
@@ -38,7 +39,8 @@ export default async function OnboardingPage({
   }
 
   const { error } = await searchParams;
-  const errorMessage = error ? errorMessages[error] : null;
+  const errorMessage =
+    error && Object.hasOwn(errorMessages, error) ? errorMessages[error] : null;
 
   return (
     <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
@@ -73,6 +75,7 @@ export default async function OnboardingPage({
                 id="displayName"
                 name="displayName"
                 type="text"
+                maxLength={80}
                 defaultValue={user.name ?? ""}
                 required
                 className={inputClassName}

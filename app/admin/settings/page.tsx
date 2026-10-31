@@ -25,6 +25,7 @@ const errorMessages: Record<SettingsError, string> = {
   wishlist_title_required: "위시리스트 제목을 입력해주세요.",
   wishlist_title_too_long: "위시리스트 제목은 120자 이하여야 합니다.",
   invalid_slug: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+  reserved_slug: "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
   duplicate_slug: "이미 사용 중인 공개 주소입니다.",
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
   under_minimum_age:
@@ -126,7 +127,7 @@ export default async function AdminSettingsPage() {
               label="공개 주소"
               htmlFor="wishlistSlug"
               required
-              hint="영문 소문자, 숫자, 하이픈만 사용할 수 있습니다."
+              hint="영문 소문자, 숫자, 하이픈만 사용할 수 있습니다. sample은 서비스 전용 주소입니다."
             >
               <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
                 <span className="inline-flex items-center border-r border-line px-3 text-sm font-semibold text-zinc-600">

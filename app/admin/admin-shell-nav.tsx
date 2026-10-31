@@ -36,23 +36,26 @@ export function AdminShellNav({
   unreadMessageCount = 0,
 }: AdminShellNavProps) {
   const pathname = usePathname();
-  // 메시지함에 들어가는 순간 서버가 읽음 처리하므로, 레이아웃이 다시 렌더링되기
-  // 전까지는 클라이언트에서 뱃지를 지워 최신 상태를 유지한다. 확인한 시점의
-  // 카운트를 기억해두고, 이후 서버가 더 큰 값을 내려주면(=새 메시지 도착)
-  // 뱃지를 다시 띄운다.
+  const searchParams = useSearchParams();
+  // 받은 메시지함에서는 서버 읽음 처리 전 카운트를 임시로 숨긴다.
+  // 메시지함 밖에서 서버 카운트가 바뀌면 임시 읽음 표시를 해제한다.
   const [acknowledgedCount, setAcknowledgedCount] = useState<number | null>(
     null,
   );
 
-  if (
-    acknowledgedCount !== unreadMessageCount &&
-    isActivePath(pathname, "/admin/messages")
-  ) {
-    setAcknowledgedCount(unreadMessageCount);
+  if (acknowledgedCount !== unreadMessageCount) {
+    if (
+      isActivePath(pathname, "/admin/messages") &&
+      searchParams.get("filter") !== "hidden"
+    ) {
+      setAcknowledgedCount(unreadMessageCount);
+    } else if (acknowledgedCount !== null) {
+      setAcknowledgedCount(null);
+    }
   }
 
   const visibleUnreadCount =
-    acknowledgedCount !== null && unreadMessageCount <= acknowledgedCount
+    acknowledgedCount !== null && unreadMessageCount === acknowledgedCount
       ? 0
       : unreadMessageCount;
 

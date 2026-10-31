@@ -5,7 +5,7 @@ import { test, expect } from "@playwright/test";
 import type { BrowserContext, Page } from "@playwright/test";
 
 const SHARE_URL =
-  "http://localhost:3200/wishlist/sample?utm_source=visitor_share&utm_medium=share";
+  "http://localhost:3200/sample?theme=pixel_y2k&utm_source=visitor_share&utm_medium=share";
 
 type ShareOutcome = "resolve" | "AbortError" | "NotAllowedError";
 
@@ -72,7 +72,7 @@ test.describe("Share", () => {
       await header.getByRole("button", { name: "공유하기" }).click();
 
       // expect: `navigator.share` 가 정확히 1번 호출되고 인자가
-      // `{ title: '민지님의 위시리스트', url: 'http://localhost:3200/wishlist/sample?utm_source=visitor_share&utm_medium=share' }` 이다.
+      // `{ title: '민지님의 위시리스트', url: 'http://localhost:3200/sample?theme=pixel_y2k&utm_source=visitor_share&utm_medium=share' }` 이다.
       await expect
         .poll(() =>
           page.evaluate(() => (window as unknown as ShareStubWindow).__shareCalls),
@@ -155,7 +155,7 @@ test.describe("Share", () => {
         page.getByText("위시리스트 링크를 복사했어요.", { exact: true }),
       ).toBeVisible();
 
-      // expect: 클립보드 문자열이 `http://localhost:3200/wishlist/sample?utm_source=visitor_share&utm_medium=share` 이다.
+      // expect: 클립보드 문자열이 `http://localhost:3200/sample?theme=pixel_y2k&utm_source=visitor_share&utm_medium=share` 이다.
       await expect
         .poll(() => page.evaluate(() => navigator.clipboard.readText()))
         .toBe(SHARE_URL);

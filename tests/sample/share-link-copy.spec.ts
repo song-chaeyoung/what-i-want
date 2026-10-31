@@ -41,7 +41,8 @@ test.describe("Share", () => {
     ).toBeVisible();
 
     // expect: 클립보드 문자열을 `new URL(...)` 로 파싱하면 origin 이 `http://localhost:3200`,
-    // pathname 이 `/wishlist/sample`, `utm_source` 가 `visitor_share`, `utm_medium` 이 `share` 이다.
+    // pathname 이 `/sample`, `theme` 가 현재 렌더된 `pixel_y2k`, `utm_source` 가 `visitor_share`,
+    // `utm_medium` 이 `share` 이다.
     await expect
       .poll(async () => {
         const text = await page.evaluate(() => navigator.clipboard.readText());
@@ -49,13 +50,15 @@ test.describe("Share", () => {
         return {
           origin: url.origin,
           pathname: url.pathname,
+          theme: url.searchParams.get("theme"),
           utmSource: url.searchParams.get("utm_source"),
           utmMedium: url.searchParams.get("utm_medium"),
         };
       })
       .toEqual({
         origin: "http://localhost:3200",
-        pathname: "/wishlist/sample",
+        pathname: "/sample",
+        theme: "pixel_y2k",
         utmSource: "visitor_share",
         utmMedium: "share",
       });

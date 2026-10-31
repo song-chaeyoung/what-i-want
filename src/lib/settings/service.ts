@@ -21,6 +21,7 @@ const MAX_DISPLAY_NAME_LENGTH = 80;
 const MAX_WISHLIST_TITLE_LENGTH = 120;
 const MAX_ACCOUNT_FIELD_LENGTH = 80;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
+const RESERVED_WISHLIST_SLUGS = new Set(["sample"]);
 
 export type UpdateSettingsInput = {
   ownerId: string;
@@ -44,6 +45,7 @@ export type SettingsError =
   | "wishlist_title_required"
   | "wishlist_title_too_long"
   | "invalid_slug"
+  | "reserved_slug"
   | "duplicate_slug"
   | "invalid_birthday"
   | "under_minimum_age"
@@ -161,6 +163,10 @@ async function normalizeSettingsInput(
 
   if (!slug.ok) {
     return { ok: false, error: "invalid_slug" };
+  }
+
+  if (RESERVED_WISHLIST_SLUGS.has(slug.value)) {
+    return { ok: false, error: "reserved_slug" };
   }
 
   const birthday = normalizeBirthday(input.birthday);
