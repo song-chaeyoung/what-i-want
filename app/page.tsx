@@ -5,18 +5,28 @@ import { auth } from "@/auth";
 import { HOME_COPY, HOME_FAQ } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 
+const homeTitle = "생일 선물 펀딩 · 위시리스트 | 뭐갖고싶어";
+const homeDescription =
+  "친구들과 함께하는 생일 선물 펀딩. 받고 싶은 선물과 목표 금액을 정해 링크로 공유하세요. 친구들은 로그인 없이 축하 메시지를 남기고, 안내된 계좌로 직접 송금할 수 있어요.";
+
 export const metadata: Metadata = {
+  title: homeTitle,
+  description: homeDescription,
   alternates: {
     canonical: "/",
   },
   openGraph: {
-    title: "생일 선물 펀딩 · 위시리스트 | 뭐갖고싶어",
-    description:
-      "친구들과 함께하는 생일 선물 펀딩. 받고 싶은 선물과 목표 금액을 정해 링크로 공유하세요. 친구들은 로그인 없이 축하 메시지를 남기고, 안내된 계좌로 직접 송금할 수 있어요.",
+    title: homeTitle,
+    description: homeDescription,
     siteName: "뭐갖고싶어",
     locale: "ko_KR",
     type: "website",
     url: "/",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: homeTitle,
+    description: homeDescription,
   },
   robots: {
     index: true,

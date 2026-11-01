@@ -22,6 +22,17 @@ describe("SEO metadata contract", () => {
     expect(source).toContain("follow: true");
   });
 
+  test("keeps home-only search copy out of the root layout", () => {
+    const layout = read("app/layout.tsx");
+    const home = read("app/page.tsx");
+
+    expect(layout).toContain('title: "뭐갖고싶어"');
+    expect(layout).not.toContain("생일 선물 펀딩");
+    expect(home).toContain("title: homeTitle");
+    expect(home).toContain("description: homeDescription");
+    expect(home).toContain("twitter:");
+  });
+
   test("indexes sample with self canonical and complete Open Graph metadata", () => {
     const source = read("app/sample/page.tsx");
 
