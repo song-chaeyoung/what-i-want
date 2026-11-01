@@ -10,10 +10,12 @@ describe("visual system copy", () => {
   test("defines the public brand and home hero copy", () => {
     expect(BRAND_NAME).toBe("뭐갖고싶어");
     expect(HOME_COPY).toEqual({
-      headline: "뭐갖고싶어",
-      eyebrow: "생일 위시리스트",
-      description: "받고 싶은 선물을 링크 하나로 모아 친구들에게 공유해요.",
-      subDescription: "친구는 로그인 없이 축하 메시지와 마음을 보낼 수 있어요.",
+      headline: "친구들과 함께하는 생일 선물 펀딩",
+      eyebrow: "뭐갖고싶어 · 생일 위시리스트",
+      description:
+        "받고 싶은 선물과 목표 금액을 정하고, 링크 하나로 친구들에게 공유해요.",
+      subDescription:
+        "친구는 로그인 없이 축하 메시지를 남기고, 안내된 계좌로 마음을 보탤 수 있어요.",
       cta: "내 위시리스트 만들기",
       previewSlug: "birthday-wish",
     });

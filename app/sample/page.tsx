@@ -7,9 +7,9 @@ import type {
 } from "@/src/lib/public-wishlist/types";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 
-const sampleTitle = "샘플 위시리스트 | 뭐갖고싶어";
+const sampleTitle = "생일 선물 펀딩 예시 | 뭐갖고싶어";
 const sampleDescription =
-  "뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.";
+  "생일 선물 펀딩 페이지 예시를 확인하세요. 선물 목록과 목표 금액, 모인 마음, 축하 메시지 입력 화면을 미리 볼 수 있어요.";
 
 export async function generateMetadata(
   _props: SampleWishlistPageProps,

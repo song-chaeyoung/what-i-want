@@ -10,8 +10,9 @@ export const metadata: Metadata = {
     canonical: "/",
   },
   openGraph: {
-    title: "뭐갖고싶어",
-    description: "받고 싶은 선물을 링크 하나로 모아 공유하세요.",
+    title: "생일 선물 펀딩 · 위시리스트 | 뭐갖고싶어",
+    description:
+      "친구들과 함께하는 생일 선물 펀딩. 받고 싶은 선물과 목표 금액을 정해 링크로 공유하세요. 친구들은 로그인 없이 축하 메시지를 남기고, 안내된 계좌로 직접 송금할 수 있어요.",
     siteName: "뭐갖고싶어",
     locale: "ko_KR",
     type: "website",
@@ -94,7 +95,7 @@ export default async function Home() {
             {HOME_COPY.eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="font-pixel max-w-2xl text-4xl leading-tight tracking-normal text-[#4c1d95] sm:text-6xl">
+            <h1 className="font-pixel max-w-2xl break-keep text-4xl leading-tight tracking-normal text-[#4c1d95] sm:text-6xl">
               {HOME_COPY.headline}
             </h1>
             <p className="max-w-lg text-base font-semibold leading-7 text-[#4b5563] sm:text-lg sm:leading-8">
@@ -117,7 +118,7 @@ export default async function Home() {
               href="/sample"
               className="inline-flex min-h-12 max-w-full items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 py-3 text-center text-sm font-black transition-colors hover:bg-[#ccfbf1] sm:px-6"
             >
-              <span className="whitespace-normal break-keep">샘플 보기</span>
+              <span className="whitespace-normal break-keep">펀딩 예시 보기</span>
             </Link>
           </div>
 
