@@ -10,6 +10,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:e2e": "playwright test",
+    "db:seed:screenshots": "node --disable-warning=MODULE_TYPELESS_PACKAGE_JSON scripts/seed-screenshots.mts",
+    "screenshots": "playwright test -c playwright.screenshots.config.ts",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
     "db:push": "drizzle-kit push"

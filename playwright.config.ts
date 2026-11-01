@@ -6,6 +6,8 @@ const baseURL = `http://localhost:${PORT}`;
 
 export default defineConfig({
   testDir: "./tests",
+  // 캡처 스펙은 tests/screenshots 에 두고, 기존 E2E(`pnpm test:e2e`)에서는 돌리지 않는다.
+  testIgnore: "**/screenshots/**",
   reporter: [["html", { open: "never" }]],
   use: {
     baseURL,
