@@ -13,7 +13,7 @@
 
 ## 탐색으로 확인한 실제 렌더링 데이터 (기본 테마)
 
-- 문서 title: `샘플 위시리스트 | 뭐갖고싶어`
+- 문서 title: `생일 선물 펀딩 예시 | 뭐갖고싶어`
 - 헤더: 링크 `뭐갖고싶어`(href `/`), pill `birthday wishlist`, 생일 배지 `5월 15일 · D-201`(2026-10-26 기준, 날짜에 따라 변동), pill `SAMPLE`, 버튼 `공유하기`
 - `h1` `민지님의 위시리스트`, 소개문 `올해도 함께 축하해줘서 고마워요. 편하게 골라주세요!`
 - 요약(dl): `선물` = `2개`, `모인 마음` = `₩43,040`
@@ -76,10 +76,10 @@
     - expect: 레벨 1 제목 `민지님의 위시리스트` 가 보인다.
     - expect: `main[data-theme]` 요소가 정확히 1개이고 `data-theme` 값이 `pixel_y2k` 이다.
   2. 문서 title 을 확인합니다.
-    - expect: `document.title` 이 정확히 `샘플 위시리스트 | 뭐갖고싶어` 이다.
+    - expect: `document.title` 이 정확히 `생일 선물 펀딩 예시 | 뭐갖고싶어` 이다.
   3. `<head>` 의 메타 태그를 확인합니다.
-    - expect: `meta[name=description]` 의 content 가 `뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.` 이다.
-    - expect: `meta[property='og:title']` 의 content 가 `샘플 위시리스트 | 뭐갖고싶어` 이다.
+    - expect: `meta[name=description]` 의 content 가 `생일 선물 펀딩 페이지 예시를 확인하세요. 선물 목록과 목표 금액, 모인 마음, 축하 메시지 입력 화면을 미리 볼 수 있어요.` 이다.
+    - expect: `meta[property='og:title']` 의 content 가 `생일 선물 펀딩 예시 | 뭐갖고싶어` 이다.
     - expect: `meta[name=robots]` 의 content 가 `index, follow` 이다.
     - expect: `link[rel=canonical]` 의 href 를 URL 로 파싱했을 때 pathname 이 `/sample` 이다 (호스트는 단언하지 않는다).
 

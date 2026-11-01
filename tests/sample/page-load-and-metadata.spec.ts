@@ -28,20 +28,20 @@ test.describe("Page Overview", () => {
     await expect(themedMain).toHaveAttribute("data-theme", "pixel_y2k");
 
     // 2. 문서 title 을 확인합니다.
-    // expect: `document.title` 이 정확히 `샘플 위시리스트 | 뭐갖고싶어` 이다.
-    await expect(page).toHaveTitle("샘플 위시리스트 | 뭐갖고싶어");
+    // expect: `document.title` 이 정확히 `생일 선물 펀딩 예시 | 뭐갖고싶어` 이다.
+    await expect(page).toHaveTitle("생일 선물 펀딩 예시 | 뭐갖고싶어");
 
     // 3. `<head>` 의 메타 태그를 확인합니다.
-    // expect: `meta[name=description]` 의 content 가 `뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.` 이다.
+    // expect: `meta[name=description]` 의 content 가 `생일 선물 펀딩 페이지 예시를 확인하세요. 선물 목록과 목표 금액, 모인 마음, 축하 메시지 입력 화면을 미리 볼 수 있어요.` 이다.
     await expect(page.locator('meta[name="description"]')).toHaveAttribute(
       "content",
-      "뭐갖고싶어로 만들 수 있는 공개 위시리스트 샘플 페이지입니다.",
+      "생일 선물 펀딩 페이지 예시를 확인하세요. 선물 목록과 목표 금액, 모인 마음, 축하 메시지 입력 화면을 미리 볼 수 있어요.",
     );
 
-    // expect: `meta[property='og:title']` 의 content 가 `샘플 위시리스트 | 뭐갖고싶어` 이다.
+    // expect: `meta[property='og:title']` 의 content 가 `생일 선물 펀딩 예시 | 뭐갖고싶어` 이다.
     await expect(page.locator('meta[property="og:title"]')).toHaveAttribute(
       "content",
-      "샘플 위시리스트 | 뭐갖고싶어",
+      "생일 선물 펀딩 예시 | 뭐갖고싶어",
     );
 
     // expect: `meta[name=robots]` 의 content 가 `index, follow` 이다.

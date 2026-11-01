@@ -2,7 +2,7 @@ import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
 
-export const alt = "뭐갖고싶어 - 생일 위시리스트 공유 서비스";
+export const alt = "뭐갖고싶어 - 친구들과 함께하는 생일 선물 펀딩";
 
 export const size = {
   width: 1200,
@@ -91,7 +91,7 @@ export default async function Image() {
               생일 축하해. 뭐 갖고 싶어?
             </div>
             <div style={{ display: "flex", flexDirection: "column" }}>
-              {["받고 싶은 선물을", "링크 하나로 모아", "공유해요."].map(
+              {["친구들과 함께하는", "생일 선물 펀딩"].map(
                 (line) => (
                   <div
                     key={line}
