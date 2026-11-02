@@ -1,8 +1,11 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test, vi } from "vitest";
+import { metadata as layoutMetadata } from "@/app/layout";
 import { metadata as homeMetadata } from "@/app/page";
 
+vi.mock("next/font/google", () => ({ Geist: () => ({ variable: "" }) }));
+vi.mock("@/app/fonts", () => ({ monaPixel: { variable: "" } }));
 vi.mock("@/auth", () => ({ auth: async () => null }));
 vi.mock("@/src/lib/onboarding/repository", () => ({
   getOnboardingState: async () => ({ isComplete: false }),
@@ -31,12 +34,16 @@ describe("SEO metadata contract", () => {
   test("keeps home-only search copy out of the root layout", () => {
     const layout = read("app/layout.tsx");
 
-    expect(layout).toContain('title: "뭐갖고싶어"');
+    expect(layoutMetadata.title).toBe("뭐갖고싶어");
     expect(layout).not.toContain("생일 선물 펀딩");
     expect(homeMetadata.title).toBe("생일 선물 펀딩 · 위시리스트 | 뭐갖고싶어");
     expect(homeMetadata.description).toBe(
       "친구들과 함께하는 생일 선물 펀딩. 받고 싶은 선물과 목표 금액을 정해 링크로 공유하세요. 친구들은 로그인 없이 축하 메시지를 남기고, 안내된 계좌로 직접 송금할 수 있어요.",
     );
+    expect(homeMetadata.openGraph).toMatchObject({
+      title: homeMetadata.title,
+      description: homeMetadata.description,
+    });
     expect(homeMetadata.twitter).toMatchObject({
       card: "summary_large_image",
       title: homeMetadata.title,
