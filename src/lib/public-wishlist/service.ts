@@ -1,4 +1,7 @@
-import { isWishComplete } from "@/src/lib/wish-item/status";
+import {
+  getWishFundingProgress,
+  isWishComplete,
+} from "@/src/lib/wish-item/status";
 import {
   decryptAccountNumber,
   getAccountEncryptionSecret,
@@ -58,7 +61,7 @@ function isPublicWish(item: PublicWishItemRecord): boolean {
 }
 
 function toPublicWishItemView(item: PublicWishItemRecord): PublicWishItemView {
-  const progress = calculateProgress(item);
+  const progress = getWishFundingProgress(item.fundedAmount, item.targetAmount);
 
   return {
     ...item,
@@ -92,13 +95,3 @@ function toPublicBankAccountView(
   };
 }
 
-function calculateProgress(item: PublicWishItemRecord): number {
-  if (!item.targetAmount || item.targetAmount <= 0) {
-    return 0;
-  }
-
-  return Math.min(
-    100,
-    Math.floor((item.fundedAmount / item.targetAmount) * 100),
-  );
-}

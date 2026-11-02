@@ -22,6 +22,31 @@ describe("wish item status", () => {
       hidden: "숨김",
       paused: "잠시 멈춤",
     });
+    expect(getWishStatusLabel("open")).toBe("마음 모으는 중");
+    expect(getWishStatusLabel("fulfilled")).toBe("완료");
+    expect(getWishStatusLabel("hidden")).toBe("숨김");
     expect(getWishStatusLabel("paused")).toBe("잠시 멈춤");
+  });
+
+  test("labels fulfilled wishes as complete", () => {
+    expect(getWishStatusLabel("fulfilled", 0)).toBe("완료");
+    expect(getWishStatusLabel("fulfilled", 40)).toBe("완료");
+  });
+
+  test("labels open wishes below 100 percent as still gathering", () => {
+    expect(getWishStatusLabel("open", 0)).toBe("마음 모으는 중");
+    expect(getWishStatusLabel("open", 99)).toBe("마음 모으는 중");
+  });
+
+  test("labels open wishes at or above 100 percent as complete", () => {
+    expect(getWishStatusLabel("open", 100)).toBe("완료");
+    expect(getWishStatusLabel("open", 120)).toBe("완료");
+  });
+
+  test("keeps the owner's paused and hidden labels", () => {
+    expect(getWishStatusLabel("paused", 0)).toBe("잠시 멈춤");
+    expect(getWishStatusLabel("paused", 100)).toBe("잠시 멈춤");
+    expect(getWishStatusLabel("hidden", 0)).toBe("숨김");
+    expect(getWishStatusLabel("hidden", 100)).toBe("숨김");
   });
 });

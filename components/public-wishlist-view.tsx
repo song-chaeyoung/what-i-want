@@ -241,9 +241,7 @@ function PublicWishCard({
             <div className="flex flex-wrap items-center gap-2">
               <p className="pub-pill">NO. {index + 1}</p>
               <p className="pub-label text-xs">
-                {item.isComplete
-                  ? PUBLIC_WISHLIST_COPY.completeLabel
-                  : getWishStatusLabel(item.status)}
+                {getWishStatusLabel(item.status, item.progress)}
               </p>
             </div>
             <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl">

@@ -4,7 +4,11 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
-import { getWishStatusLabel, type WishStatus } from "@/src/lib/wish-item/status";
+import {
+  getWishFundingProgress,
+  getWishStatusLabel,
+  type WishStatus,
+} from "@/src/lib/wish-item/status";
 import { AdminToastMessage } from "../admin-toast-message";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
@@ -253,10 +257,7 @@ export default async function AdminWishesPage({
 }
 
 function WishItemEditor({ item }: { item: WishItemRecord }) {
-  const progress =
-    item.targetAmount && item.targetAmount > 0
-      ? Math.min(100, Math.floor((item.fundedAmount / item.targetAmount) * 100))
-      : 0;
+  const progress = getWishFundingProgress(item.fundedAmount, item.targetAmount);
 
   return (
     <details className="group rounded-md border border-line bg-white">
@@ -274,7 +275,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
                 aria-hidden="true"
                 className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[item.status]}`}
               />
-              {getWishStatusLabel(item.status)}
+              {getWishStatusLabel(item.status, progress)}
             </span>
           </div>
           <p className="mt-1 text-xs text-zinc-600">
