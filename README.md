@@ -86,3 +86,8 @@
 - `DATABASE_DIRECT_URL`: Drizzle schema push와 migration에서 사용하는 direct Postgres 연결 문자열입니다.
 
 스키마 변경은 `pnpm db:generate`로 SQL을 생성하고 검토한 뒤, 개발 환경에서 `pnpm db:migrate`로 적용·검증합니다. 운영 반영과 과거 `pnpm db:push`로 구성한 DB의 baseline 전환은 [DB 마이그레이션 운영 가이드](docs/db-migrations.md)를 따릅니다. 실제 DB의 적용 상태는 진단 결과로 확인하며, 다른 DB의 데이터 이전은 별도 export/import 계획이 필요합니다.
+
+## 문서 안내
+
+- [문서 지도와 읽는 순서](docs/README.md): 설계·가이드·과거 계획·검증 기록의 역할을 안내합니다.
+- [E2E 테스트 명세](specs/README.md): 샘플 화면 시나리오와 실제 테스트 코드로 연결합니다.
