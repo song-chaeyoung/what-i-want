@@ -5,6 +5,7 @@ import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
 import {
+  getDisplayedWishStatus,
   getWishFundingProgress,
   getWishStatusLabel,
   type WishStatus,
@@ -258,6 +259,7 @@ export default async function AdminWishesPage({
 
 function WishItemEditor({ item }: { item: WishItemRecord }) {
   const progress = getWishFundingProgress(item.fundedAmount, item.targetAmount);
+  const displayedStatus = getDisplayedWishStatus(item.status, progress);
 
   return (
     <details className="group rounded-md border border-line bg-white">
@@ -269,11 +271,11 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               {item.title}
             </h3>
             <span
-              className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[item.status]}`}
+              className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[displayedStatus]}`}
             >
               <span
                 aria-hidden="true"
-                className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[item.status]}`}
+                className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[displayedStatus]}`}
               />
               {getWishStatusLabel(item.status, progress)}
             </span>

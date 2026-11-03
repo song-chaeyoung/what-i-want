@@ -22,18 +22,27 @@ export function getWishFundingProgress(
   return Math.min(100, Math.floor((fundedAmount / targetAmount) * 100));
 }
 
+export function getDisplayedWishStatus(
+  status: WishStatus,
+  progress: number,
+): WishStatus {
+  if (status === "paused" || status === "hidden") {
+    return status;
+  }
+
+  if (isWishComplete(status, progress)) {
+    return "fulfilled";
+  }
+
+  return status;
+}
+
 export function getWishStatusLabel(
   status: WishStatus,
   progress?: number,
 ): string {
-  if (
-    progress !== undefined &&
-    status !== "paused" &&
-    status !== "hidden" &&
-    isWishComplete(status, progress)
-  ) {
-    return WISH_STATUS_LABELS.fulfilled;
-  }
+  const displayedStatus =
+    progress === undefined ? status : getDisplayedWishStatus(status, progress);
 
-  return WISH_STATUS_LABELS[status];
+  return WISH_STATUS_LABELS[displayedStatus];
 }
