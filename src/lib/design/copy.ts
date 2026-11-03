@@ -101,7 +101,6 @@ export const PUBLIC_WISHLIST_COPY = {
   },
   noTargetAmount: "목표 금액 없음",
   progressSuffix: "달성",
-  completeLabel: "완료",
   notFoundTitle: "위시리스트를 찾을 수 없어요",
   notFoundDescription:
     "주소가 잘못되었거나 아직 공개되지 않은 위시리스트예요.",

@@ -12,6 +12,10 @@ import { getProfileGreeting } from "@/src/lib/profile/repository";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
+import {
+  getWishFundingProgress,
+  getWishStatusLabel,
+} from "@/src/lib/wish-item/status";
 import { BirthdayConfetti } from "./birthday-confetti";
 import { AdminToastMessage } from "./admin-toast-message";
 import {
@@ -131,6 +135,10 @@ export default async function AdminPage() {
               key={wish.id}
               label={wish.title}
               meta={formatWishAmount(wish)}
+              statusLabel={getWishStatusLabel(
+                wish.status,
+                getWishFundingProgress(wish.fundedAmount, wish.targetAmount),
+              )}
               value={formatKstDate(wish.updatedAt)}
             />
           ))}
@@ -213,15 +221,24 @@ function DashboardQueueRow({
   label,
   meta,
   value,
+  statusLabel,
 }: {
   label: string;
   meta: string;
   value: string;
+  statusLabel?: string;
 }) {
   return (
     <div className="grid grid-cols-[1fr_auto] items-center gap-3 px-3.5 py-3">
       <div className="min-w-0">
-        <p className="truncate text-sm font-semibold text-ink">{label}</p>
+        <div className="flex min-w-0 items-center gap-2">
+          <p className="truncate text-sm font-semibold text-ink">{label}</p>
+          {statusLabel ? (
+            <span className="shrink-0 text-xs font-bold text-zinc-500">
+              {statusLabel}
+            </span>
+          ) : null}
+        </div>
         <p className="mt-0.5 truncate text-xs text-zinc-500">{meta}</p>
       </div>
       <span className="text-xs font-semibold text-zinc-400">{value}</span>
