@@ -1,5 +1,7 @@
 # Sample Wishlist Page (/sample) E2E Test Plan
 
+2026-11-04 보정 범위: 메타데이터와 데모 공유 주소를 [샘플 페이지](../app/sample/page.tsx), [공유 URL 헬퍼](../src/lib/share/share-url.ts), [메타데이터 테스트](../tests/sample/page-load-and-metadata.spec.ts), [공유 테스트](../tests/sample/share-link-copy.spec.ts)와 정적으로 대조했습니다. 현재 데모 공유는 렌더된 테마를 보존한 `/sample` 주소를 사용합니다. 아래 최초 탐색 관찰은 과거 기록과 구분하며, 이번 보정에서 브라우저·HTTP 조회나 테스트를 새로 실행하지 않았습니다.
+
 ## Application Overview
 
 ## 대상 및 범위
@@ -40,7 +42,7 @@
 ## 탐색 중 발견한 사항 (계획에 반영됨)
 
 - **[수정된 버그 / 시나리오 10 은 회귀 테스트]** 탐색 당시 축하 메시지 폼은 `<form>` 에 submit 버튼이 없고(버튼이 `type="button"` + disabled) action 도 없으며 텍스트 입력이 `이름` 하나뿐이라, 메시지를 입력한 뒤 `이름` 필드에서 Enter 를 누르면 브라우저 기본 암묵적 제출(GET)이 발생했습니다. 실제로 `/sample?clientRequestId=<uuid>&senderName=%EC%A7%80%EB%AF%BC&body=%EC%83%9D%EC%9D%BC+%EC%B6%95%ED%95%98%ED%95%B4%21` 로 이동했고, 입력한 이름/메시지가 URL 쿼리에 노출되었으며 폼이 닫히고 입력값이 사라졌습니다. 읽기 전용 데모의 의도("제출 불가")와 "메시지는 비공개" 요구사항에 어긋나므로, 데모 버튼을 disabled 인 `type="submit"` 으로 바꿔 수정했습니다(`components/public-wishlist-view.tsx` 의 `ParticipationSubmit`). 시나리오 10 은 이 동작이 다시 생기지 않는지 확인하며, `test.fail()`/`test.fixme()`/`test.skip()` 을 달지 않습니다. (선물 카드 폼은 `보낼 마음` + `이름` 두 개의 입력이 있어 Enter 로 제출되지 않음을 확인했습니다.)
-- **[관찰 / 시나리오 6, 7]** 공유 버튼이 만드는 링크는 `/sample` 이 아니라 `<origin>/wishlist/sample?utm_source=visitor_share&utm_medium=share` 입니다(slug 가 `sample` 이므로). 탐색 시 `GET /wishlist/sample` 은 HTTP 200 이었으나 해당 페이지 내용은 검증 범위 밖이므로 이동하지 않고 클립보드/공유 인자의 문자열만 단언합니다.
+- **[과거 관찰 / 시나리오 6, 7]** 최초 탐색에는 `<origin>/wishlist/sample?utm_source=visitor_share&utm_medium=share` 공유와 `GET /wishlist/sample` HTTP 200 관찰이 기록되어 있었습니다. 해당 페이지 내용은 당시 검증 범위 밖이었습니다. 현재 데모의 공유 계약은 `<origin>/sample?theme=<렌더된 테마>&utm_source=visitor_share&utm_medium=share`이며, 아래 시나리오는 현재 [공유 URL 헬퍼](../src/lib/share/share-url.ts)와 [공유 테스트](../tests/sample/share-link-copy.spec.ts), [네이티브 공유 테스트](../tests/sample/native-share-paths.spec.ts)를 따릅니다. 과거 HTTP 관찰은 현재 공유 대상이나 현재 페이지 응답 상태의 근거로 사용하지 않습니다.
 
 ## 시나리오 목록 요약
 
@@ -179,7 +181,7 @@
   2. 헤더의 버튼 `공유하기` 를 클릭합니다.
     - expect: 버튼 라벨이 `복사 완료` 로 바뀐다.
     - expect: 토스트 `위시리스트 링크를 복사했어요.` 가 표시된다.
-    - expect: 클립보드 문자열을 `new URL(...)` 로 파싱하면 origin 이 `http://localhost:3200`, pathname 이 `/wishlist/sample`, `utm_source` 가 `visitor_share`, `utm_medium` 이 `share` 이다 (현재 구현은 `/sample` 이 아니라 `/wishlist/sample` 링크를 공유함).
+    - expect: 클립보드 문자열을 `new URL(...)` 로 파싱하면 origin 이 `http://localhost:3200`, pathname 이 `/sample`, `theme`이 현재 렌더된 `pixel_y2k`, `utm_source` 가 `visitor_share`, `utm_medium` 이 `share` 이다.
     - expect: 페이지 URL 은 `/sample` 그대로이며 새 탭/네비게이션이 발생하지 않는다.
   3. 약 2~3초 대기합니다.
     - expect: 헤더 버튼 라벨이 `공유하기` 로 되돌아간다.
@@ -190,7 +192,7 @@
 
 **Steps:**
   1. [하위 케이스 A: 공유 성공] 새 페이지에서 `addInitScript` 로 `navigator.share` 를 `window.__shareCalls` 에 인자를 기록하고 `Promise.resolve()` 를 반환하는 함수로 교체한 뒤 `/sample` 로 이동하고 헤더의 `공유하기` 를 클릭합니다.
-    - expect: `navigator.share` 가 정확히 1번 호출되고 인자가 `{ title: '민지님의 위시리스트', url: 'http://localhost:3200/wishlist/sample?utm_source=visitor_share&utm_medium=share' }` 이다.
+    - expect: `navigator.share` 가 정확히 1번 호출되고 인자가 `{ title: '민지님의 위시리스트', url: 'http://localhost:3200/sample?theme=pixel_y2k&utm_source=visitor_share&utm_medium=share' }` 이다.
     - expect: 토스트 `위시리스트 링크를 복사했어요.` 가 나타나지 않는다.
     - expect: 버튼 라벨은 `공유하기` 그대로이다 (`복사 완료` 로 바뀌지 않음).
   2. [하위 케이스 B: 사용자가 공유 시트를 닫음] 새 페이지에서 `navigator.share` 가 `new DOMException('x', 'AbortError')` 로 reject 되도록 스텁하고 `/sample` 에서 `공유하기` 를 클릭합니다.
@@ -199,7 +201,7 @@
   3. [하위 케이스 C: 공유 실패 후 폴백] `clipboard-read`, `clipboard-write` 권한을 부여하고 `navigator.share` 가 `new DOMException('x', 'NotAllowedError')` 로 reject 되도록 스텁한 뒤 `/sample` 에서 `공유하기` 를 클릭합니다.
     - expect: 클립보드 복사 폴백이 실행되어 버튼 라벨이 `복사 완료` 로 바뀐다.
     - expect: 토스트 `위시리스트 링크를 복사했어요.` 가 표시된다.
-    - expect: 클립보드 문자열이 `http://localhost:3200/wishlist/sample?utm_source=visitor_share&utm_medium=share` 이다.
+    - expect: 클립보드 문자열이 `http://localhost:3200/sample?theme=pixel_y2k&utm_source=visitor_share&utm_medium=share` 이다.
 
 #### 3.3. Clipboard Failure Toasts
 

@@ -1,8 +1,8 @@
 # Admin Settings Bank Account Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **문서 역할 — 당시 실행 계획 기록 (코드 대조: 2026-10-30):** 체크박스·RED/GREEN·코드 예시는 당시 작업 이력이며 현재 작업 목록으로 재실행하지 않습니다. 현재 구현은 [설정 화면](../../../app/admin/settings/page.tsx), [설정 서비스](../../../src/lib/settings/service.ts), [공개 계좌 안내](../../../components/public-account-section.tsx)를 확인합니다. 운영 DB 변경 절차는 [마이그레이션 가이드](../../db-migrations.md)를 따릅니다. 이번 대조에서는 테스트·DB 작업을 실행하지 않았습니다.
 
-> **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 커밋 단계는 이번 요청 범위에서 제외했습니다.
+> **과거 상태 (2026-06-09):** 당시 구현 파일과 전역 점검을 기준으로 완료 상태로 정리했습니다. 커밋 단계는 당시 요청 범위에서 제외했습니다. 이 기록은 현재 테스트 통과를 의미하지 않습니다.
 
 **Goal:** Add `/admin/settings` so owners can edit profile, public link settings, and bank account visibility, then show safe account guidance on `/wishlist/[slug]`.
 

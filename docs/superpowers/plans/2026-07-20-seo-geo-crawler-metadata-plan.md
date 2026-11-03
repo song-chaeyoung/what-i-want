@@ -1,6 +1,6 @@
 # SEO·GEO Crawler Metadata Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **문서 역할 — 최초 실행 계획 기록 (코드 대조: 2026-10-30):** 아래 미체크 항목은 현재 미구현 목록이 아닙니다. URL 모듈·robots·sitemap·페이지 메타데이터는 구현되어 있으며, 현재 의도와 범위는 [SEO 설계](../specs/2026-07-20-seo-geo-crawler-metadata-design.md), 코드 근거는 [sitemap](../../../app/sitemap.ts), [robots](../../../app/robots.ts), [라우트 테스트](../../../src/lib/design/metadata-routes.test.ts)를 확인합니다. 최초 계획의 sitemap 대상은 두 페이지였지만 현재는 `/terms`·`/privacy`까지 네 페이지입니다. 아래 코드·환경·검증 명령은 당시 계획으로 보존하며 재실행 지침이나 현재 테스트 결과로 해석하지 않습니다. 이번 대조에서는 테스트·운영 HTTP 조회를 실행하지 않았습니다.
 
 **Goal:** 홈과 샘플만 검색·AI 답변 노출 대상으로 선언하고, 사용자별·인증·관리 경로를 보호하는 robots, sitemap, canonical, Open Graph URL 메타데이터를 구현합니다.
 
@@ -17,7 +17,7 @@
 - `GPTBot`, `ClaudeBot`, `Google-Extended`는 홈과 샘플만 사용할 수 있고 사용자별·인증·관리 경로에는 접근할 수 없습니다.
 - 기존 OG 이미지와 소셜 공유 메타데이터는 유지합니다.
 - JSON-LD, `llms.txt`, Search Console 제출은 이번 구현에 포함하지 않습니다.
-- Vitest/Vite 검증에는 Node `^20.19.0 || >=22.12.0`이 필요합니다. 현재 기본 Node `v20.15.0`으로 테스트가 시작되지 않으면 호환 Node 런타임을 먼저 선택합니다.
+- 최초 계획 당시 Node `v20.15.0`이 Vitest/Vite 요구사항 `^20.19.0 || >=22.12.0`보다 낮았습니다. 현재 검증에서는 실제 런타임과 설치된 의존성의 요구사항을 다시 확인합니다.
 
 ---
 

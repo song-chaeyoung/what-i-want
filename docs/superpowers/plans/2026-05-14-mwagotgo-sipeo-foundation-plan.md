@@ -1,6 +1,6 @@
 # 뭐갖고싶어 Foundation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use `superpowers:executing-plans` to implement this plan task-by-task.
+> **문서 역할 — 최초 구현 계획 기록 (코드 대조: 2026-10-30):** 아래는 기반 기능을 만들던 당시의 순서와 파일 구상입니다. 현재 작업 목록으로 재실행하지 않습니다. 인증·온보딩·DB 구현은 이미 존재하며, 현재 의도와 범위는 [서비스 설계](../specs/2026-05-14-mwagotgo-sipeo-service-design.md), 실제 동작은 [인증 설정](../../../auth.ts), [온보딩 서비스](../../../src/lib/onboarding/service.ts), [DB 스키마](../../../src/lib/db/schema/service.ts)를 확인합니다. 아래 검증 명령은 당시 계획이며 이번 대조에서 실행한 결과가 아닙니다.
 
 **Goal:** 현재 루트 Next.js 앱 구조를 유지하면서 Auth.js Google/Kakao 로그인, Postgres/Drizzle schema, 도메인 규칙, 온보딩 흐름의 기반을 구축합니다.
 
