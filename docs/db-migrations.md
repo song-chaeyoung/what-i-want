@@ -3,6 +3,10 @@
 dev에서 스키마를 바꾸고 테스트한 뒤 prod로 승격하는 절차를 정리한 문서예요.
 운영 DB는 Neon Postgres를 가정해요.
 
+코드 대조일: 2026-10-30. 이 문서는 운영 절차이며, 실제 dev·prod DB의 적용 상태를 기록한 보고서는 아닙니다. 이번 대조에서는 DB에 접속하지 않았습니다.
+
+저장소의 [마이그레이션 journal](../src/lib/db/migrations/meta/_journal.json)은 `0000`~`0007`을 포함합니다. 아래 `0003`·`0004` baseline SQL은 당시 특정 스키마 상태에 맞춘 과거 예시입니다. 현재 대상 DB의 스키마와 적용 이력을 진단하기 전에는 그대로 선택하거나 실행하지 마세요. 명령과 환경 파일 선택은 [package.json](../package.json), [drizzle.config.ts](../drizzle.config.ts)를 기준으로 확인합니다.
+
 ## 이렇게 시키세요 (AI 에이전트에게)
 
 이 문서를 가리키고 아래 한 문단만 주면 돼요. 나머지 판단은 문서가 담당해요.
@@ -64,22 +68,23 @@ DRIZZLE_ENV_FILE=.env.prod pnpm db:migrate   # prod (.env.prod)
 > 실행하세요. `.env*`의 `DATABASE_DIRECT_URL`이 direct 주소예요 (호스트에 `-pooler`가
 > 없음). `.env.prod`는 비밀값이라 git에 커밋되지 않아요.
 
-## 최초 1회: baseline (전환 부트스트랩)
+## 최초 1회: baseline과 과거 전환 사례
 
-dev·prod 모두 과거에 `db:push`로 만들어져서 `__drizzle_migrations` 이력 테이블이
-없어요. 이 상태에서 `db:migrate`를 그냥 돌리면 `0000`부터 전부 재실행하려다 이미
-존재하는 테이블에서 충돌나요. 그래서 **"현재 DB 스키마에 이미 반영된 마이그레이션"을
-적용됨으로 seed**해 두어야 해요. DB별로 한 번씩만 실행하면 됩니다.
+`db:push`로 이미 스키마를 만든 DB에 마이그레이션 이력이 없다면, `db:migrate`가
+`0000`부터 재실행하며 기존 테이블과 충돌할 수 있어요. 이 경우 **실제 스키마에 이미
+반영된 마이그레이션만** 적용됨으로 seed하는 baseline이 필요합니다. 비어 있는 신규
+DB는 기존 스키마가 없으므로 이 baseline 사례를 적용하지 않습니다.
 
-각 DB의 현재 상태가 다르므로 seed 범위가 달라요:
+아래는 문서 최초 작성 당시의 전환 사례입니다. `dev`·`prod`라는 이름과 다음 범위는
+현재 DB 상태를 뜻하지 않습니다.
 
 - **dev**: `messages_read_at`까지(=`0004`) 이미 push로 반영됨 → `0000`~`0004` 전부 seed
 - **prod**: `0003`까지만 반영됨(`messages_read_at` 없음) → `0000`~`0003`만 seed 후,
   `db:migrate`로 `0004`를 적용
 
 > seed 행의 `created_at`은 journal의 `when` 값, `hash`는 마이그레이션 SQL 파일 전체의
-> sha256이에요. 아래 값은 현재 파일 기준으로 계산된 것이라 파일을 수정하면 다시 계산해야
-> 해요.
+> sha256이에요. 아래 값은 당시 예시 파일에서 계산한 값입니다. 새로운 baseline을
+> 작성할 때는 현재 SQL 파일의 해시를 다시 계산하고 실제 스키마 반영 여부를 대조해야 합니다.
 
 ### dev baseline (`0000`~`0004`)
 
@@ -103,7 +108,9 @@ WHERE NOT EXISTS (SELECT 1 FROM "drizzle"."__drizzle_migrations");
 COMMIT;
 ```
 
-이후 `pnpm db:migrate`는 "적용할 것 없음"으로 끝나요 (dev는 이미 최신).
+당시 `0004`까지 존재했던 저장소에서는 이후 `pnpm db:migrate`가 "적용할 것 없음"으로
+끝났습니다. 현재 journal에는 `0005`~`0007`도 있으므로 같은 baseline 이후의 명령은
+그 마이그레이션들을 적용할 수 있습니다.
 
 ### prod baseline (`0000`~`0003`)
 
@@ -112,7 +119,8 @@ COMMIT;
 ```sql
 SELECT column_name FROM information_schema.columns
 WHERE table_name = 'wishlists' AND column_name = 'messages_read_at';
--- 0행이어야 정상. 1행이면 이미 스키마가 반영된 것이니 dev용(0000~0004) seed를 쓰세요.
+-- 당시 0004 포함 여부를 확인한 예시입니다.
+-- 이 컬럼 하나로 현재 DB 전체의 반영 상태나 baseline 범위를 결정하지 마세요.
 ```
 
 baseline seed:
@@ -136,14 +144,15 @@ WHERE NOT EXISTS (SELECT 1 FROM "drizzle"."__drizzle_migrations");
 COMMIT;
 ```
 
-그다음 `0004` 적용:
+당시 후속 적용 명령 예시:
 
 ```bash
 DRIZZLE_ENV_FILE=.env.prod pnpm db:migrate
 ```
 
-drizzle가 이력의 최대 `created_at`(=`0003`의 `when`)을 보고 그보다 큰 `0004`만
-적용하고, `0004` 행을 정확한 해시로 기록해요.
+당시에는 이력의 최대 `created_at`보다 큰 파일이 `0004`뿐이었습니다. 현재 같은 명령은
+선택한 DB의 이력보다 뒤에 있는 모든 journal 항목을 적용할 수 있으므로, `0004`만
+실행된다고 가정하지 말고 전체 대기 SQL을 먼저 검토해야 합니다.
 
 ## 평상시 루프 (baseline 이후)
 
@@ -213,22 +222,25 @@ URL=$(grep '^DATABASE_DIRECT_URL=' .env.prod | cut -d= -f2- | tr -d '"')
 psql "$URL" -c "SELECT to_regclass('drizzle.__drizzle_migrations') AS migrations_table;"
 # (b) 이력이 있으면 어디까지 적용됐는지
 psql "$URL" -c "SELECT created_at FROM drizzle.__drizzle_migrations ORDER BY created_at;"
-# (c) 대상 스키마 반영 여부 (0004 예시)
+# (c) 대상 스키마 반영 여부 (과거 0004 예시; 현재 대기 SQL마다 별도 대조 필요)
 psql "$URL" -c "SELECT column_name FROM information_schema.columns WHERE table_name='wishlists' AND column_name='messages_read_at';"
 ```
 
 **2단계 — 상태로 분기 판단**
 
-| (a) 이력 테이블 | (c) 대상 컬럼 | 해석 | 할 일 |
-| --- | --- | --- | --- |
-| `null` (없음) | 0행 | push로 구축, 아직 baseline 안 됨 | 3단계(baseline `0000~0003`) → 4단계 |
-| `null` (없음) | 1행 | push로 이미 스키마 반영됨, 이력만 없음 | baseline을 `0000~0004`(대상 포함)로 seed, 4단계 생략 |
-| 존재 | — | 이미 migrate 체계 | baseline 생략, 바로 4단계 |
+| 이력·스키마 진단 | 해석 | 할 일 |
+| --- | --- | --- |
+| 이력 없음, 앱 스키마도 없음 | 비어 있는 신규 DB | baseline 없이 전체 SQL 검토 후 4단계 |
+| 이력 없음, 앱 스키마 존재 | 과거 push 등으로 구축했을 가능성 | journal별 실제 반영 상태를 확인해 3단계 범위 결정 |
+| 이력 존재, 스키마와 일치 | migrate 체계 사용 중 | baseline 생략, 미적용 SQL 검토 후 4단계 |
+| 이력과 스키마가 다름 | 수동 변경·부분 적용 등 추가 진단 필요 | 원인을 확인한 뒤 복구·적용 계획 결정 |
 
 **3단계 — baseline seed (이력 테이블이 없을 때만, 1회성)**
 
-위 "최초 1회: baseline" 절의 **prod baseline (`0000`~`0003`)** SQL을 파일로 저장한 뒤
-실행하세요. (WHERE NOT EXISTS 가드가 있어 재실행해도 중복 seed되지 않아요.)
+현재 journal의 각 SQL과 실제 테이블·컬럼·제약조건을 대조해 이미 반영된 범위를 확정하고,
+그 범위에 해당하는 해시와 `when`으로 baseline SQL을 작성합니다. 위 과거 SQL을
+현재 DB용으로 자동 선택하지 마세요. `WHERE NOT EXISTS`는 중복 삽입 가드일 뿐,
+잘못 선택한 baseline 범위가 안전하다는 뜻은 아닙니다.
 
 ```bash
 psql "$URL" -f <baseline-sql-파일경로>
@@ -243,16 +255,20 @@ DRIZZLE_ENV_FILE=.env.prod pnpm db:migrate
 **5단계 — 검증**
 
 ```bash
-# 이력 행 수 == _journal.json 엔트리 수 인지 확인
-psql "$URL" -c "SELECT count(*) FROM drizzle.__drizzle_migrations;"
-# 대상 스키마가 실제로 반영됐는지 (0004 예시)
+# journal의 when·SQL 해시와 적용 이력을 대조
+psql "$URL" -c "SELECT hash, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at;"
+# 대상 스키마가 실제로 반영됐는지 (과거 0004 예시; 현재 대기 SQL마다 별도 대조 필요)
 psql "$URL" -c "SELECT column_name FROM information_schema.columns WHERE table_name='wishlists' AND column_name='messages_read_at';"
 ```
 
-## 새 마이그레이션 추가 시: baseline 값 재계산
+행 수 일치는 참고 신호입니다. journal의 `when`·SQL 해시가 이력과 일치하는지,
+대상 테이블·컬럼·제약조건이 의도한 스키마와 같은지까지 확인해야 합니다.
 
-이 문서의 baseline SQL에 박힌 `hash`/`created_at`은 **현재 마이그레이션 파일 기준**이에요.
-마이그레이션이 추가·수정되면 아래 스니펫으로 다시 계산해서 baseline 표를 갱신하세요.
+## 새 baseline 작성 시: 해시와 journal 대조
+
+새 baseline이 필요한 DB에 대해서만 아래 스니펫으로 현재 SQL의 `hash`와 journal의
+`created_at` 후보를 계산하세요. 출력된 모든 항목을 seed하지 말고, 실제 DB에 이미
+반영된 항목만 선택합니다. 이미 적용한 마이그레이션 SQL을 이 문서에 맞추기 위해 수정하지 않습니다.
 (`hash` = SQL 파일 전체의 sha256, `created_at` = `_journal.json`의 `when`. drizzle의
 `readMigrationFiles` 구현과 동일: `node_modules/drizzle-orm/migrator.js`)
 
@@ -280,9 +296,11 @@ for(const e of j.entries){
 SELECT id, created_at FROM drizzle.__drizzle_migrations ORDER BY created_at;
 ```
 
-- journal 엔트리 수와 이력 행 수가 같으면 최신 상태예요.
+- journal 엔트리 수와 이력 행 수만으로 최신 상태를 확정하지 않습니다. 해시·`when`과
+  실제 스키마까지 대조하세요.
 - **`relation "drizzle.__drizzle_migrations" does not exist`** → 아직 baseline 안 한
-  DB예요. 위 baseline 절차를 먼저 실행하세요.
+  기존 DB이거나 비어 있는 신규 DB일 수 있어요. 앱 스키마 존재 여부를 진단한 뒤
+  baseline이 필요한지 먼저 결정하세요.
 - **migrate가 이미 있는 테이블을 다시 만들려다 실패** → 이력이 비어 있어 `0000`부터
   재실행한 경우예요. baseline이 제대로 seed됐는지 확인하세요.
 - **엉뚱한 DB에 적용됨** → `DRIZZLE_ENV_FILE`을 빠뜨렸는지 확인. 셸에 직접 export한

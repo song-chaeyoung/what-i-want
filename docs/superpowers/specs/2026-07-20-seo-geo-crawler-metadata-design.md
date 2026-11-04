@@ -1,19 +1,31 @@
 # 뭐갖고싶어 SEO·GEO 크롤러 및 메타데이터 설계
 
 작성일: 2026-07-20
+코드 대조일: 2026-10-30
+추가 코드 대조일: 2026-11-04 (홈·샘플의 title·description·OG·Twitter 선언만)
+
+이 문서는 SEO 기능의 의도와 현재 코드 구조를 설명합니다. 배포 환경을 이번에 다시 조회하거나 테스트를 실행한 결과는 아닙니다. 최초 배포 점검은 2.1절의 날짜 있는 이력으로 보존합니다.
 
 ## 1. 목적
 
 배포 사이트 `https://iwantbirthdaygift.com`에서 검색엔진과 AI 답변 엔진이 서비스 소개 페이지를 안정적으로 발견하고 인용할 수 있도록 메타데이터와 크롤러 정책을 보완합니다.
 
-검색 노출 대상은 다음 두 페이지만으로 제한합니다.
+현재 sitemap에 포함하는 공개 페이지는 다음 네 가지입니다.
 
 - 홈: `/`
 - 샘플 위시리스트: `/sample`
+- 이용약관: `/terms`
+- 개인정보 처리방침: `/privacy`
+
+최초 설계의 홈·샘플 두 페이지에서 법적 고지 페이지까지 확장된 현재 구현을 반영했습니다. 근거는 [sitemap](../../../app/sitemap.ts), [약관 메타데이터](../../../app/terms/page.tsx), [개인정보 메타데이터](../../../app/privacy/page.tsx), [메타데이터 라우트 테스트](../../../src/lib/design/metadata-routes.test.ts)입니다. AI 학습 봇에 허용하는 경로는 여전히 홈·샘플 두 개이며 sitemap 범위와 다릅니다.
 
 사용자별 공개 위시리스트, 로그인, 온보딩, 관리, 인증, API 경로는 sitemap에서 제외합니다. 특히 사용자별 위시리스트에 표시될 수 있는 이름, 소개, 계좌 안내가 검색 결과나 AI 학습 데이터에 의도치 않게 노출되지 않도록 별도 정책을 적용합니다.
 
-## 2. 확인된 현재 상태
+## 2. 구현 현황과 최초 점검 이력
+
+2026-10-30 정적 대조 기준으로 [robots](../../../app/robots.ts), [sitemap](../../../app/sitemap.ts), [사이트 URL 모듈](../../../src/lib/metadata/site-url.ts)이 구현되어 있습니다. [홈](../../../app/page.tsx)과 [샘플](../../../app/sample/page.tsx)은 각각 canonical과 `og:url`을 선언하고, 루트 layout은 공통 `resolveSiteUrl()`을 사용합니다. 실제 운영 HTTP 상태와 검색엔진 반영 여부는 별도 검증이 필요합니다.
+
+### 2.1 최초 배포 점검 이력
 
 2026-07-20 배포본 점검 결과는 다음과 같습니다.
 
@@ -43,9 +55,9 @@
 
 Google 공식 문서에 따르면 `robots.txt`로 차단한 페이지는 크롤러가 `noindex` 메타데이터를 읽을 수 없으며, 외부 링크를 통해 URL 자체가 검색 결과에 나타날 수 있습니다. 따라서 공개 접근이 가능한 비노출 페이지는 검색 크롤러가 읽을 수 있게 두고 페이지 수준에서 `noindex`를 반환합니다.
 
-### 3.2 sitemap은 명시적으로 두 URL만 제공합니다
+### 3.2 sitemap은 명시적으로 네 URL을 제공합니다
 
-동적 위시리스트 slug를 DB에서 읽거나 sitemap에 포함하지 않습니다. sitemap 생성은 DB와 인증 상태에 의존하지 않는 정적·결정적 함수로 유지합니다.
+홈·샘플·이용약관·개인정보 처리방침만 포함합니다. 동적 위시리스트 slug를 DB에서 읽거나 sitemap에 포함하지 않습니다. sitemap 생성은 DB와 인증 상태에 의존하지 않는 정적·결정적 함수로 유지합니다.
 
 ### 3.3 canonical과 `og:url`은 페이지별로 지정합니다
 
@@ -61,6 +73,8 @@ Google 공식 문서에 따르면 `robots.txt`로 차단한 페이지는 크롤�
 | --- | --- | --- | --- | --- |
 | `/` | 포함 | `index, follow` | 허용 | 허용 |
 | `/sample` | 포함 | `index, follow` | 허용 | 허용 |
+| `/terms` | 포함 | 별도 `noindex` 선언 없음, canonical 지정 | 허용 | 차단 |
+| `/privacy` | 포함 | 별도 `noindex` 선언 없음, canonical 지정 | 허용 | 차단 |
 | `/wishlist/[slug]` | 제외 | `noindex, nofollow` | `noindex` 확인을 위해 허용 | 차단 |
 | `/login` | 제외 | `noindex, nofollow` | `noindex` 확인을 위해 허용 | 차단 |
 | `/onboarding` | 제외 | `noindex, nofollow` | `noindex` 확인을 위해 허용 | 차단 |
@@ -110,7 +124,7 @@ robots 경로 패턴의 `$` 끝 일치 문자를 사용하므로 `/sample`의 �
 
 ### 6.1 사이트 기준 URL 모듈
 
-새 파일 `src/lib/metadata/site-url.ts`에서 사이트 기준 URL 계산을 담당합니다.
+[사이트 기준 URL 모듈](../../../src/lib/metadata/site-url.ts)에서 사이트 기준 URL 계산을 담당합니다.
 
 책임:
 
@@ -119,11 +133,11 @@ robots 경로 패턴의 `$` 끝 일치 문자를 사용하므로 `/sample`의 �
 - 누락되거나 잘못된 값이면 `https://iwantbirthdaygift.com`을 반환합니다.
 - `app/layout.tsx`, `app/robots.ts`, `app/sitemap.ts`가 동일한 기준 URL을 사용하게 합니다.
 
-기존 `app/layout.tsx`의 `resolveMetadataBase` 로직은 이 모듈로 이동합니다. 메타데이터가 실수로 `localhost`를 canonical 또는 sitemap에 출력하지 않도록 운영 도메인을 최종 fallback으로 사용합니다.
+기존 `app/layout.tsx`의 URL 계산은 이 모듈로 통합되어 있습니다. 유효한 `AUTH_URL`은 그대로 사용하고, 누락·잘못된 값에 대해서만 운영 도메인을 최종 fallback으로 사용합니다. 운영 환경의 `AUTH_URL`이 의도한 origin을 가리키는지는 배포 시 별도로 확인합니다.
 
 ### 6.2 `app/robots.ts`
 
-Next.js `MetadataRoute.Robots`를 반환하는 정적 함수를 추가합니다.
+Next.js `MetadataRoute.Robots`를 반환하는 정적 함수입니다.
 
 책임:
 
@@ -134,9 +148,9 @@ Next.js `MetadataRoute.Robots`를 반환하는 정적 함수를 추가합니다.
 
 ### 6.3 `app/sitemap.ts`
 
-Next.js `MetadataRoute.Sitemap`을 반환하는 정적 함수를 추가합니다.
+Next.js `MetadataRoute.Sitemap`을 반환하는 정적 함수입니다.
 
-반환 항목:
+운영 fallback URL 기준 반환 항목 (유효한 `AUTH_URL` 설정 시 그 origin을 사용):
 
 - `https://iwantbirthdaygift.com/`
   - `changeFrequency: "monthly"`
@@ -144,34 +158,40 @@ Next.js `MetadataRoute.Sitemap`을 반환하는 정적 함수를 추가합니다
 - `https://iwantbirthdaygift.com/sample`
   - `changeFrequency: "monthly"`
   - `priority: 0.8`
+- `https://iwantbirthdaygift.com/terms`
+  - `changeFrequency: "yearly"`
+  - `priority: 0.3`
+- `https://iwantbirthdaygift.com/privacy`
+  - `changeFrequency: "yearly"`
+  - `priority: 0.3`
 
 실제 콘텐츠 수정 시각을 추적하지 않으므로 부정확한 `lastModified`는 넣지 않습니다.
 
 ### 6.4 홈 메타데이터
 
-`app/page.tsx`에 페이지 수준 `Metadata`를 추가합니다.
+`app/page.tsx`에 페이지 수준 `Metadata`를 선언합니다.
 
 - `alternates.canonical: "/"`
 - `openGraph.url: "/"`
 - `robots.index: true`
 - `robots.follow: true`
 
-기존 루트 title, description, OG 이미지 설정은 그대로 상속합니다.
+현재 홈은 `생일 선물 펀딩 · 위시리스트 | 뭐갖고싶어`와 계좌 직접 송금 안내를 포함한 description을 페이지에서 선언하고, OG·Twitter에도 같은 title·description을 사용합니다. OG 이미지 설정은 루트에서 상속합니다. 근거: [홈 메타데이터](../../../app/page.tsx).
 
 ### 6.5 샘플 메타데이터
 
-`app/sample/page.tsx`의 기존 `metadata`를 확장합니다.
+`app/sample/page.tsx`의 `generateMetadata`가 선언합니다.
 
 - `alternates.canonical: "/sample"`
 - `openGraph.url: "/sample"`
 - `robots.index: true`
 - `robots.follow: true`
 
-기존 샘플 title과 description은 유지합니다.
+현재 샘플 title은 `생일 선물 펀딩 예시 | 뭐갖고싶어`이며 description은 펀딩 페이지 예시 설명입니다. 페이지의 `generateMetadata`가 OG·Twitter에도 같은 문구를 사용하고 이미지는 부모 메타데이터에서 가져옵니다. 근거: [샘플 메타데이터](../../../app/sample/page.tsx).
 
 ### 6.6 비노출 페이지 메타데이터
 
-다음 페이지 또는 route segment에 `robots: { index: false, follow: false }`를 추가합니다.
+다음 페이지 또는 route segment에 `robots: { index: false, follow: false }`를 선언합니다.
 
 - `app/wishlist/[slug]/page.tsx`의 `generateMetadata`
 - `app/login/page.tsx`
@@ -189,9 +209,9 @@ AUTH_URL 또는 운영 fallback
 
 검색·답변 크롤러
 → /robots.txt 확인
-→ / 또는 /sample 크롤링
-→ canonical + index/follow + OG URL 확인
-→ /sitemap.xml에서 두 URL만 발견
+→ /, /sample, /terms, /privacy 크롤링
+→ 페이지별 canonical·검색 메타데이터 확인 (홈·샘플은 OG URL도 선언)
+→ /sitemap.xml에서 네 URL 발견
 
 공개 위시리스트 크롤러
 → 페이지 접근
@@ -218,7 +238,7 @@ AI 학습 크롤러
 
 1. 사이트 URL 정규화와 fallback 테스트를 먼저 작성합니다.
 2. robots 함수의 기본·AI 봇별 규칙 테스트를 작성합니다.
-3. sitemap이 홈·샘플 두 URL만 반환하는 테스트를 작성합니다.
+3. sitemap이 홈·샘플·이용약관·개인정보 처리방침 네 URL을 반환하는지 확인합니다.
 4. 홈·샘플 canonical과 `og:url` 계약 테스트를 작성합니다.
 5. 공개 위시리스트·로그인·온보딩·관리 화면의 `noindex` 계약 테스트를 작성합니다.
 6. 구현 후 전체 검증을 수행합니다.
@@ -230,7 +250,7 @@ AI 학습 크롤러
 - `pnpm test`
 - `pnpm build`
 
-현재 로컬 Node `v20.15.0`은 설치된 Vite `8.0.12`의 요구사항인 `^20.19.0 || >=22.12.0`보다 낮아 Vitest 설정 로딩이 실패합니다. 구현 검증 전 호환되는 Node 런타임을 사용해야 하며, 테스트 실패를 코드 실패로 오판하지 않습니다.
+최초 설계 시점의 로컬 Node `v20.15.0`에서는 설치된 Vite `8.0.12`의 요구사항인 `^20.19.0 || >=22.12.0`보다 낮아 Vitest 설정 로딩이 실패한 이력이 있습니다. 현재 검증을 실행할 때는 실제 `node --version`과 설치된 의존성 요구사항을 확인합니다. 이 문서 최신화에서는 테스트를 다시 실행하지 않았습니다.
 
 ### 9.3 로컬 런타임 검증
 
@@ -238,9 +258,9 @@ AI 학습 크롤러
 
 - `/robots.txt`가 `200`과 `text/plain`을 반환합니다.
 - `/sitemap.xml`이 `200`과 XML content type을 반환합니다.
-- sitemap에는 `/`와 `/sample`만 있습니다.
-- 홈 canonical과 `og:url`은 `https://iwantbirthdaygift.com/`입니다.
-- 샘플 canonical과 `og:url`은 `https://iwantbirthdaygift.com/sample`입니다.
+- sitemap에는 `/`, `/sample`, `/terms`, `/privacy`만 있습니다.
+- 홈 canonical과 `og:url`은 설정된 기준 origin의 `/`를 가리킵니다.
+- 샘플 canonical과 `og:url`은 같은 기준 origin의 `/sample`을 가리킵니다.
 - 공개 위시리스트, 로그인, 온보딩 응답에는 `noindex`가 있습니다.
 - robots 출력에 `OAI-SearchBot`, `Claude-SearchBot`, `PerplexityBot`을 막는 규칙이 없습니다.
 - robots 출력의 `GPTBot`, `ClaudeBot`, `Google-Extended` 규칙은 사용자별·인증·관리 경로를 차단합니다.
@@ -259,7 +279,7 @@ Search Console과 Bing Webmaster Tools 등록·제출은 외부 계정 상태를
 ## 10. 완료 기준
 
 - 운영 `/robots.txt`와 `/sitemap.xml`이 더 이상 404가 아닙니다.
-- sitemap에는 홈과 샘플만 포함됩니다.
+- sitemap에는 홈·샘플·이용약관·개인정보 처리방침만 포함됩니다.
 - 홈과 샘플은 각각 자기 자신을 canonical 및 `og:url`로 가리킵니다.
 - 공개 위시리스트, 로그인, 온보딩, 관리 화면은 검색 인덱싱 대상이 아닙니다.
 - 검색 및 AI 답변 크롤러는 홈과 샘플을 크롤링할 수 있습니다.
@@ -296,7 +316,7 @@ Search Console과 Bing Webmaster Tools 등록·제출은 외부 계정 상태를
 
 ## 13. 결정 기록
 
-- 검색 대상은 홈과 샘플만으로 확정했습니다.
+- 최초 검색 대상은 홈·샘플 두 페이지였습니다. 2026-10-30 코드 대조에서는 이용약관·개인정보 처리방침이 sitemap에 추가되어 총 네 페이지임을 반영했습니다.
 - 사용자별 공개 위시리스트는 sitemap에서 제외하고 `noindex, nofollow`를 적용합니다.
 - 검색·답변 크롤러는 공개 페이지를 읽을 수 있게 합니다.
 - 모델 학습 크롤러는 홈과 샘플만 허용합니다.

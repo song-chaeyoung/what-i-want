@@ -1,8 +1,8 @@
 # Public Participation Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **문서 역할 — 당시 실행 계획 기록 (코드 대조: 2026-10-30):** 아래 체크박스와 POST 폼 구상은 최초 구현 이력입니다. 현재 작업 목록으로 재실행하지 않습니다. 현재 공개 UI는 [공개 화면](../../../components/public-wishlist-view.tsx)의 Server Action 폼이며, [액션](../../../app/wishlist/[slug]/actions.ts)과 [API](../../../app/api/public/wishlists/[slug]/participation/route.ts)가 [공통 서비스](../../../src/lib/public-participation/service.ts)를 호출합니다. 이번 대조에서는 테스트를 실행하지 않았습니다.
 
-> **Status (2026-06-09):** 현재 구현 파일과 전역 점검 문서를 기준으로 완료 상태로 정리했습니다. 최신 검증 결과는 `docs/tasks/2026-06-09-global-project-task-check.md`를 기준으로 봅니다.
+> **과거 상태 (2026-06-09):** 당시 구현 파일과 [전역 점검 기록](../../tasks/2026-06-09-global-project-task-check.md)을 기준으로 완료 상태로 정리했습니다. 해당 문서의 검증 결과는 2026-06-09의 이력이며 현재 테스트 통과를 의미하지 않습니다.
 
 **Goal:** 공개 위시리스트 방문자가 선물에 이름, 메시지, 금액을 남기면 메시지와 금액 로그가 저장되고 관리자에서 확인할 수 있게 합니다.
 

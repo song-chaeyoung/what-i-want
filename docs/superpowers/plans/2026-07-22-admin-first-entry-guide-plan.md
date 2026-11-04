@@ -1,6 +1,6 @@
 # Admin First-Entry Guide Modal Implementation Plan
 
-> **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
+> **문서 역할 — 최초 실행 계획과 변경 이력 (코드 대조: 2026-10-30):** 현재 동작은 [기능 설계](../specs/2026-07-22-admin-first-entry-guide-design.md), [localStorage 헬퍼](../../../app/admin/admin-guide-storage.ts), [가이드 다이얼로그](../../../app/admin/admin-guide-dialog.tsx)를 확인합니다. 아래 미체크 항목과 검증 명령은 당시 계획이며 현재 미구현 목록이나 최신 검증 결과가 아닙니다. 이번 대조에서는 테스트를 실행하지 않았습니다.
 >
 > **⚠️ 업데이트 (2026-07-24) — as-built:** 이 계획의 원래 설계는 완료 상태를 `profiles` DB 컬럼 + 마이그레이션 + `POST /api/admin/onboarding-guide/complete` Route Handler에 저장하는 방식이었습니다. 구현 검토 결과 이 값은 다른 기능과 무관한 순수 UI 상태여서 **브라우저 localStorage**로 전환했습니다. 최종 구현은 다음과 같습니다.
 >
@@ -31,7 +31,7 @@
 - `사용 가이드` 메뉴는 현재 경로와 검색 파라미터를 보존하며 `guide=1`만 추가합니다.
 - 비네트는 `aria-hidden`, `pointer-events-none`, `select-none`으로 비작동 장식 처리합니다.
 - 모션은 150-200ms의 `transform`과 `opacity`만 사용하고 reduced motion에서는 제거합니다.
-- Vitest/Vite 검증에는 Node `^20.19.0 || >=22.12.0`이 필요합니다. 현재 기본 Node `v20.15.0`에서 테스트가 시작되지 않으면 호환 Node 런타임을 선택한 뒤 같은 pnpm 명령을 실행합니다.
+- 최초 계획 당시 Node `v20.15.0`이 Vitest/Vite 요구사항 `^20.19.0 || >=22.12.0`보다 낮았습니다. 현재 검증에서는 실제 런타임과 설치된 의존성의 요구사항을 다시 확인합니다.
 
 ---
 

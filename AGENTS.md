@@ -9,6 +9,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Use Korean honorifics when responding to the user.
 - Every recommendation, change, and conclusion must include evidence, such as file paths, command output, test results, documentation, or explicit assumptions.
 
+# Documentation and Design
+
+- Before updating documentation, read [docs/README.md](docs/README.md) for document roles and how to distinguish current guidance from historical plans and verification records.
+- Before creating or modifying UI, read [the design guide](docs/design/README.md), identify the target UI context, then read only the relevant foundations and pattern documents linked there.
+- Reuse the target context's existing components and CSS tokens. Preserve its form submission and domain contracts unless the requested change includes them.
+- Treat code as evidence of current implementation and design documents as evidence of intent. Record gaps and unresolved decisions instead of presenting every existing behavior as a recommended rule.
+- Read historical plans for context; do not automatically execute old checklists or restore superseded implementations. Follow their status notes and current design/code links.
+
 # Common Commands
 
 - `pnpm install`

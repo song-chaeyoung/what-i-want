@@ -1,6 +1,9 @@
 # 어드민 첫 진입 가이드 모달 설계
 
 작성일: 2026-07-22
+코드 대조일: 2026-10-30
+
+이 문서는 관리자 첫 진입 안내 기능의 의도와 구현 구조를 설명합니다. 현행 완료 저장 방식은 [브라우저 localStorage](../../../app/admin/admin-guide-storage.ts)이며, DB·완료 API 방식은 [이전 계획](../plans/2026-07-22-admin-first-entry-guide-plan.md)의 폐기된 기록입니다. 12.4절의 테스트·화면 확인 결과는 localStorage 전환 당시의 이력이며 이번 대조에서 다시 실행한 결과가 아닙니다.
 
 ## 1. 결정 요약
 
@@ -22,7 +25,7 @@
 - `app/admin/layout.tsx`는 모든 어드민 경로를 감싸며 인증과 기본 온보딩 상태를 이미 조회합니다.
 - `app/admin/wishes/page.tsx`에는 상품 링크 자동 채움 안내와 `create-wish` 진입점이 있습니다.
 - `components/public-wishlist-view.tsx`는 `themeId` 기반 공개 화면과 선물 카드 스타일을 제공합니다.
-- `app/admin/copy-public-link-button.tsx`에는 링크 복사 완료 상태와 토스트가 구현되어 있습니다.
+- [공유 버튼](../../../app/admin/share-public-link-button.tsx)과 [공유 훅](../../../components/use-wishlist-share.ts)에 네이티브 공유·링크 복사 폴백, 복사 완료 상태와 토스트가 구현되어 있습니다.
 - `package.json`에는 `radix-ui`가 설치되어 있고 lockfile에는 Radix Dialog 의존성이 확인됩니다.
 - Wishes의 공식 How it works는 상품 추가, 링크 공유, 선물 확인을 실제 상품과 제품 화면으로 설명합니다: https://wishes.app/
 - Giftster의 Quick Start Guide는 각 행동을 실제 등록·공유 화면과 함께 제시합니다: https://www.giftster.com/quick-start-guide/
@@ -358,7 +361,7 @@ complete
 - 완료·건너뛰기 후 같은 브라우저에서 재노출 없음, 다른 브라우저에서는 한 번 재노출될 수 있음
 - 사용 가이드 메뉴를 통한 재호출
 
-### 12.4 검증 결과
+### 12.4 과거 검증 결과
 
 localStorage 전환 시점 로컬 검증(Node `v26.3.1`) 기록:
 
