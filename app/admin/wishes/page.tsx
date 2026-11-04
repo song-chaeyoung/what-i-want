@@ -409,7 +409,7 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
           : undefined
       }
     >
-      {item.imageUrl ? null : "선물"}
+      {item.imageUrl ? null : "GIFT"}
     </div>
   );
 }

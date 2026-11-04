@@ -251,6 +251,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('className="flex cursor-pointer list-none items-start gap-3 p-3');
     expect(source).toContain("<WishThumbnail item={item} />");
     expect(source).toContain("function WishThumbnail");
+    expect(source).toContain('item.imageUrl ? null : "GIFT"');
     expect(source).toContain("item.imageUrl");
     expect(source).toContain("backgroundImage: `url(${JSON.stringify(item.imageUrl)})`");
     expect(source).toContain("bg-[#f4f4f3]");

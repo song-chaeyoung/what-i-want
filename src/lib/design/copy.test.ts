@@ -4,6 +4,7 @@ import {
   HOME_COPY,
   PUBLIC_WISHLIST_COPY,
   formatWishCount,
+  getPublicParticipationNotice,
 } from "./copy";
 
 describe("visual system copy", () => {
@@ -27,6 +28,15 @@ describe("visual system copy", () => {
     );
     expect(PUBLIC_WISHLIST_COPY.notFoundTitle).toBe(
       "위시리스트를 찾을 수 없어요",
+    );
+  });
+
+  test("defines closed participation notices for complete and paused wishes", () => {
+    expect(PUBLIC_WISHLIST_COPY.participationClosedComplete).toBe(
+      "마음이 다 모였어요. 고마워요!",
+    );
+    expect(PUBLIC_WISHLIST_COPY.participationClosedPaused).toBe(
+      "지금은 잠시 마음을 받지 않아요.",
     );
   });
 
@@ -59,6 +69,23 @@ describe("visual system copy", () => {
     expect(PUBLIC_WISHLIST_COPY.accountSectionNote).toBe(
       "마음은 이 계좌로 전할 수 있어요.",
     );
+  });
+
+  test("chooses a closed participation notice from the displayed status", () => {
+    expect(getPublicParticipationNotice("open", 99)).toBeNull();
+    expect(getPublicParticipationNotice("open", 100)).toBe(
+      "마음이 다 모였어요. 고마워요!",
+    );
+    expect(getPublicParticipationNotice("fulfilled", 0)).toBe(
+      "마음이 다 모였어요. 고마워요!",
+    );
+    expect(getPublicParticipationNotice("paused", 0)).toBe(
+      "지금은 잠시 마음을 받지 않아요.",
+    );
+    expect(getPublicParticipationNotice("paused", 100)).toBe(
+      "지금은 잠시 마음을 받지 않아요.",
+    );
+    expect(getPublicParticipationNotice("hidden", 100)).toBeNull();
   });
 
   test("formats wish counts in Korean", () => {

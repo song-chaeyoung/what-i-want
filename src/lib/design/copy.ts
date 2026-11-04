@@ -1,3 +1,8 @@
+import {
+  getDisplayedWishStatus,
+  type WishStatus,
+} from "../wish-item/status";
+
 export const BRAND_NAME = "뭐갖고싶어";
 
 export const HOME_COPY = {
@@ -73,6 +78,8 @@ export const PUBLIC_WISHLIST_COPY = {
   participationTransferNoteNoAccount:
     "실제 선물 전달 방법은 생일자에게 직접 확인해주세요.",
   fundCta: "이 선물에 마음 보태기",
+  participationClosedComplete: "마음이 다 모였어요. 고마워요!",
+  participationClosedPaused: "지금은 잠시 마음을 받지 않아요.",
   fundingSuccessTitle: "마음이 전해졌어요",
   fundingSuccessDescription: "아래 계좌로 보내주시면 전달이 완료돼요.",
   fundingSuccessCorrectionNote: "잘못 보냈다면 생일자에게 알려주세요.",
@@ -112,4 +119,21 @@ export const PUBLIC_WISHLIST_COPY = {
 
 export function formatWishCount(count: number): string {
   return `${count}개`;
+}
+
+export function getPublicParticipationNotice(
+  status: WishStatus,
+  progress: number,
+): string | null {
+  const displayedStatus = getDisplayedWishStatus(status, progress);
+
+  if (displayedStatus === "fulfilled") {
+    return PUBLIC_WISHLIST_COPY.participationClosedComplete;
+  }
+
+  if (displayedStatus === "paused") {
+    return PUBLIC_WISHLIST_COPY.participationClosedPaused;
+  }
+
+  return null;
 }

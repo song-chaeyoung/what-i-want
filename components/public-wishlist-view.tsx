@@ -8,6 +8,7 @@ import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
   formatWishCount,
+  getPublicParticipationNotice,
 } from "@/src/lib/design/copy";
 import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
 import type {
@@ -219,6 +220,10 @@ function PublicWishCard({
   const productUrl = getHttpUrl(item.productUrl);
   const imageUrl = getHttpUrl(item.imageUrl);
   const canFund = item.status === "open" && !item.isComplete;
+  const participationNotice = getPublicParticipationNotice(
+    item.status,
+    item.progress,
+  );
 
   return (
     <article className="gift-card-shell pub-card overflow-hidden">
@@ -361,6 +366,10 @@ function PublicWishCard({
             <ParticipationSubmit demo={demo} />
           </form>
         </details>
+      ) : participationNotice ? (
+        <p className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]">
+          {participationNotice}
+        </p>
       ) : null}
     </article>
   );
