@@ -1,5 +1,25 @@
 export const ACCOUNT_REVEAL_RETURN_FOCUS_KEY = "account-reveal-return-focus";
 
+const PARTICIPATION_SUBMIT_ID_PREFIX = "participation-submit-";
+const WISH_TITLE_ID_PREFIX = "wish-title-";
+
+export function participationSubmitId(itemId: string): string {
+  return `${PARTICIPATION_SUBMIT_ID_PREFIX}${itemId}`;
+}
+
+export function wishTitleId(itemId: string): string {
+  return `${WISH_TITLE_ID_PREFIX}${itemId}`;
+}
+
+function wishTitleIdForSubmit(triggerId: string): string | null {
+  if (!triggerId.startsWith(PARTICIPATION_SUBMIT_ID_PREFIX)) {
+    return null;
+  }
+
+  const itemId = triggerId.slice(PARTICIPATION_SUBMIT_ID_PREFIX.length);
+  return itemId ? wishTitleId(itemId) : null;
+}
+
 export function rememberAccountRevealTrigger(id: string): void {
   try {
     sessionStorage.setItem(ACCOUNT_REVEAL_RETURN_FOCUS_KEY, id);
@@ -43,7 +63,22 @@ export function restoreAccountRevealTriggerFocus(): void {
   }
 
   const id = takeAccountRevealTriggerId();
-  openDetailsAndFocus(id ? document.getElementById(id) : null);
+  if (!id) {
+    return;
+  }
+
+  const trigger = document.getElementById(id);
+  if (trigger) {
+    openDetailsAndFocus(trigger);
+    return;
+  }
+
+  const headingId = wishTitleIdForSubmit(id);
+  if (!headingId) {
+    return;
+  }
+
+  document.getElementById(headingId)?.focus();
 }
 
 export function accountRevealTabTarget<T>(

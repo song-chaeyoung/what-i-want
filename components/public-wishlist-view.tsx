@@ -10,6 +10,10 @@ import {
   formatWishCount,
   getPublicParticipationNotice,
 } from "@/src/lib/design/copy";
+import {
+  participationSubmitId,
+  wishTitleId,
+} from "@/src/lib/public-wishlist/account-reveal-focus";
 import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
 import type {
   PublicBankAccountView,
@@ -256,7 +260,11 @@ function PublicWishCard({
                 {getWishStatusLabel(item.status, item.progress)}
               </p>
             </div>
-            <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl">
+            <h2
+              id={wishTitleId(item.id)}
+              tabIndex={-1}
+              className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl"
+            >
               {item.title}
             </h2>
 
@@ -376,7 +384,7 @@ function PublicWishCard({
 
             <ParticipationSubmit
               demo={demo}
-              returnFocusId={`participation-submit-${item.id}`}
+              returnFocusId={participationSubmitId(item.id)}
             />
           </form>
         </details>

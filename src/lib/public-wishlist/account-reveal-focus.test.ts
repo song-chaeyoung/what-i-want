@@ -6,6 +6,7 @@ import {
   accountRevealTabTarget,
   openDetailsAndFocus,
   rememberAccountRevealTrigger,
+  restoreAccountRevealTriggerFocus,
   takeAccountRevealTriggerId,
 } from "./account-reveal-focus";
 
@@ -86,6 +87,33 @@ describe("account reveal focus", () => {
     expect(accountRevealTabTarget([], copy, false)).toBeNull();
   });
 
+  test("returns focus to the send button while it is still on the card", () => {
+    const result = restoreFocus(
+      "participation-submit-wish-1",
+      {
+        "participation-submit-wish-1": "button",
+        "wish-title-wish-1": "heading",
+      },
+      storage,
+    );
+
+    expect(result.focused).toBe("button");
+    expect(result.detailsOpen).toBe(true);
+  });
+
+  test("focuses the card title when the send button is gone", () => {
+    const result = restoreFocus(
+      "participation-submit-wish-1",
+      {
+        "wish-title-wish-1": "heading",
+      },
+      storage,
+    );
+
+    expect(result.focused).toBe("heading");
+    expect(result.detailsOpen).toBe(false);
+  });
+
   test("wires the public account dialog to the copy button and the send button", () => {
     const dialogSource = readFileSync(
       join(process.cwd(), "components/public-wishlist-toast-events.tsx"),
@@ -112,7 +140,56 @@ describe("account reveal focus", () => {
     expect(dialogSource).toContain("accountRevealTabTarget");
     expect(dialogSource).toContain("restoreAccountRevealTriggerFocus");
     expect(submitSource).toContain("rememberAccountRevealTrigger");
-    expect(viewSource).toContain("participation-submit-${item.id}");
+    expect(viewSource).toContain("participationSubmitId(item.id)");
+    expect(viewSource).toContain("wishTitleId(item.id)");
     expect(viewSource).toContain("PUBLIC_WISHLIST_COPY.participationSubmitCta");
   });
 });
+
+function restoreFocus(
+  triggerId: string,
+  present: Record<string, "button" | "heading">,
+  storage: MemoryStorage,
+): { focused: string | null; detailsOpen: boolean } {
+  Object.defineProperty(globalThis, "sessionStorage", {
+    configurable: true,
+    value: storage,
+  });
+  rememberAccountRevealTrigger(triggerId);
+
+  const details = { open: false };
+  let focused: string | null = null;
+  const originalDocument = globalThis.document;
+
+  Object.defineProperty(globalThis, "document", {
+    configurable: true,
+    value: {
+      getElementById(id: string) {
+        const kind = present[id];
+        if (!kind) {
+          return null;
+        }
+
+        return {
+          focus() {
+            focused = kind;
+          },
+          closest(selector: string) {
+            return kind === "button" && selector === "details" ? details : null;
+          },
+        };
+      },
+    },
+  });
+
+  try {
+    restoreAccountRevealTriggerFocus();
+  } finally {
+    Object.defineProperty(globalThis, "document", {
+      configurable: true,
+      value: originalDocument,
+    });
+  }
+
+  return { focused, detailsOpen: details.open };
+}

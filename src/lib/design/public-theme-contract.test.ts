@@ -108,13 +108,7 @@ describe("public theme contract", () => {
     expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
     expect(source).toContain("선물 링크 보기");
     expect(source).toContain("PUBLIC_WISHLIST_COPY.noTargetAmount");
-    expect(source).toContain(
-      '{item.targetAmount ? (\n              <>\n                <div className="pub-progress mt-2">',
-    );
     expect(source).not.toContain("pub-progress-done");
-    expect(source).toContain(
-      "getPublicParticipationNotice(\n    item.status,\n    item.progress,\n  )",
-    );
     expect(source).toContain(
       'className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]"',
     );

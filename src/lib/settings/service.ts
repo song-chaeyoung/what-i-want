@@ -23,7 +23,7 @@ const MAX_WISHLIST_TITLE_LENGTH = 120;
 const MAX_ACCOUNT_FIELD_LENGTH = 80;
 const MIN_ACCOUNT_NUMBER_LENGTH = 8;
 const MAX_ACCOUNT_NUMBER_LENGTH = 30;
-const ACCOUNT_NUMBER_PATTERN = /^[0-9-]+$/;
+const ACCOUNT_NUMBER_PATTERN = /^(?=.*[0-9])[0-9-]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RESERVED_WISHLIST_SLUGS = new Set(["sample"]);
 

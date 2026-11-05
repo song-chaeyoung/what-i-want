@@ -3,7 +3,10 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
-import { INVALID_ACCOUNT_NUMBER_MESSAGE } from "@/src/lib/settings/account-number";
+import {
+  ACCOUNT_NUMBER_INPUT_PATTERN,
+  INVALID_ACCOUNT_NUMBER_MESSAGE,
+} from "@/src/lib/settings/account-number";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
   WISHLIST_VISIBILITIES,
@@ -242,7 +245,7 @@ export default async function AdminSettingsPage() {
                 name="accountNumber"
                 type="text"
                 inputMode="numeric"
-                pattern="[0-9\\s-]*"
+                pattern={ACCOUNT_NUMBER_INPUT_PATTERN}
                 title={INVALID_ACCOUNT_NUMBER_MESSAGE}
                 placeholder={
                   settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"

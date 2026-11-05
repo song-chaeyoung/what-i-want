@@ -87,7 +87,10 @@ describe("public wish card progress", () => {
     expect(html).toContain(`26% ${PUBLIC_WISHLIST_COPY.progressSuffix}`);
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.noTargetAmount);
     expect(html).not.toContain("pub-progress-done");
+    expect(html).not.toContain(PUBLIC_WISHLIST_COPY.participationClosedComplete);
     expect(html).toContain(PUBLIC_WISHLIST_COPY.fundCta);
+    expect(html).toContain('id="wish-title-wish-1"');
+    expect(html).toContain('tabindex="-1"');
   });
 
   test("keeps the same progress bar on a completed card with a target", () => {
@@ -106,7 +109,30 @@ describe("public wish card progress", () => {
     expect(html).toContain(`100% ${PUBLIC_WISHLIST_COPY.progressSuffix}`);
     expect(html).not.toContain("pub-progress-done");
     expect(html).toContain(PUBLIC_WISHLIST_COPY.participationClosedComplete);
+    expect(html).toContain(
+      'class="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]"',
+    );
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.fundCta);
+    expect(html).not.toContain('id="participation-submit-wish-1"');
+    expect(html).toContain('id="wish-title-wish-1"');
+    expect(html).toContain("무선 헤드폰");
+  });
+
+  test("shows the paused notice and keeps the card title focusable", () => {
+    const html = renderCard(
+      wishItem({
+        status: "paused",
+        targetAmount: 45000,
+        fundedAmount: 12000,
+        progress: 26,
+      }),
+    );
+
+    expect(html).toContain(PUBLIC_WISHLIST_COPY.participationClosedPaused);
+    expect(html).not.toContain(PUBLIC_WISHLIST_COPY.fundCta);
+    expect(html).not.toContain('id="participation-submit-wish-1"');
+    expect(html).toContain('id="wish-title-wish-1"');
+    expect(html).toContain('tabindex="-1"');
   });
 
   test("hides the progress bar and percentage when there is no target amount", () => {
@@ -123,5 +149,25 @@ describe("public wish card progress", () => {
     expect(html).not.toContain("pub-progress");
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.progressSuffix);
     expect(html).toContain(PUBLIC_WISHLIST_COPY.fundCta);
+  });
+
+  test("puts the return-focus id on the real send button", () => {
+    const html = renderToStaticMarkup(
+      createElement(PublicWishlistView, {
+        wishlist,
+        items: [
+          wishItem({
+            targetAmount: 45000,
+            fundedAmount: 12000,
+            progress: 26,
+          }),
+        ],
+        account: null,
+      }),
+    );
+
+    expect(html).toContain('id="participation-submit-wish-1"');
+    expect(html).toContain('id="wish-title-wish-1"');
+    expect(html).toContain(PUBLIC_WISHLIST_COPY.participationSubmitCta);
   });
 });

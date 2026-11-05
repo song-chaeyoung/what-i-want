@@ -315,6 +315,8 @@ describe("admin settings service", () => {
     "3333/12/1234567",
     "1234567",
     "1".repeat(31),
+    "--------",
+    "-".repeat(30),
   ])("rejects account number %j", async (accountNumber) => {
     const repository = new FakeSettingsRepository();
 
