@@ -13,7 +13,9 @@ describe("account visibility field", () => {
     );
 
     expect(html).toContain("계좌 공개");
-    expect(html).toContain("마음을 보낸 친구에게 계좌가 안내돼요.");
+    expect(html).toContain(
+      "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
+    );
     expect(html).toContain('name="accountVisibility"');
     expect(html).toContain('value="copy_only" selected=""');
     expect(html).toContain("숨기기");

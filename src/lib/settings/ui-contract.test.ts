@@ -77,7 +77,9 @@ describe("admin settings UI contract", () => {
     expect(fieldSource).toContain('label="계좌 공개"');
     expect(fieldSource).toContain("공개 페이지에 보이기");
     expect(fieldSource).toContain("숨기기");
-    expect(fieldSource).toContain("마음을 보낸 친구에게 계좌가 안내돼요.");
+    expect(fieldSource).toContain(
+      "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
+    );
     expect(fieldSource).toContain("공개 페이지에 계좌가 보이지 않아요.");
     expect(fieldSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
     expect(routeSource).toContain('"accountVisibility"');

@@ -13,7 +13,7 @@ const accountVisibilityLabels: Record<SelectableAccountVisibility, string> = {
 };
 
 const accountVisibilityHints: Record<SelectableAccountVisibility, string> = {
-  copy_only: "마음을 보낸 친구에게 계좌가 안내돼요.",
+  copy_only: "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
   hidden: "공개 페이지에 계좌가 보이지 않아요.",
 };
 
