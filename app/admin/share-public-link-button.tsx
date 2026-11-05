@@ -1,7 +1,7 @@
 "use client";
 
 import { Check, Share2 } from "lucide-react";
-import { BRAND_NAME } from "@/src/lib/design/copy";
+import { BRAND_NAME, PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import { useWishlistShare } from "@/components/use-wishlist-share";
 
 export function SharePublicLinkButton({ slug }: { slug: string }) {
@@ -22,7 +22,7 @@ export function SharePublicLinkButton({ slug }: { slug: string }) {
       ) : (
         <Share2 aria-hidden="true" className="size-3.5" />
       )}
-      {copied ? "복사 완료" : "공유하기"}
+      {copied ? PUBLIC_WISHLIST_COPY.shareCopied : PUBLIC_WISHLIST_COPY.shareCta}
     </button>
   );
 }
