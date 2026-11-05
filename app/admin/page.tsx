@@ -24,7 +24,10 @@ import {
   adminSecondaryButtonClassName,
   formatCurrency,
 } from "./admin-ui";
-import { SharePublicLinkButton } from "./share-public-link-button";
+import {
+  PrivateShareNotice,
+  SharePublicLinkButton,
+} from "./share-public-link-button";
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
@@ -108,6 +111,7 @@ export default async function AdminPage() {
           <p className="mt-1 truncate text-sm font-semibold text-ink">
             /wishlist/{wishesResult.wishlist.slug}
           </p>
+          <PrivateShareNotice visibility={wishesResult.wishlist.visibility} />
         </div>
         <div className="flex shrink-0 gap-2">
           <SharePublicLinkButton slug={wishesResult.wishlist.slug} />

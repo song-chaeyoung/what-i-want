@@ -38,7 +38,7 @@
 - 신규 사용자 온보딩
 - 생일자 어드민 대시보드
 - 선물 등록, 수정, 삭제, 상태 관리
-- 계좌 정보 등록·수정과 계좌 안내(`copy_only`로 저장)
+- 계좌 정보 등록·수정과 계좌 공개 선택(`공개 페이지에 보이기`는 `copy_only`, `숨기기`는 `hidden`)
 - 공개 위시리스트 페이지
 - 친구의 비공개 메시지 작성
 - 생일자의 메시지함
@@ -49,7 +49,7 @@
 
 근거: [관리자 선물](../../../app/admin/wishes/page.tsx), [설정](../../../app/admin/settings/page.tsx), [설정 저장](../../../src/lib/settings/service.ts), [공개 참여 저장](../../../src/lib/public-participation/repository.ts), [참여 숨김·복구](../../../src/lib/admin-messages/repository.ts), [개인별 OG](../../../app/wishlist/[slug]/opengraph-image.tsx), [기본 OG](../../../app/opengraph-image.tsx).
 
-초기 설계의 관리자 수동 금액 입력, 계좌 공개 방식 선택 UI, OG 선택 테마 반영은 현재 구현된 기능과 구분합니다. 아래 해당 절에 차이를 기록하며, 이번 문서 갱신에서 구현 여부나 우선순위를 새로 정하지 않습니다.
+초기 설계의 관리자 수동 금액 입력과 OG 선택 테마 반영은 현재 구현된 기능과 구분합니다. 계좌 공개는 설정의 `계좌 공개`에서 보이기(`copy_only`)와 숨기기(`hidden`)를 고릅니다. 아래 해당 절에 차이를 기록하며, 이번 문서 갱신에서 구현 여부나 우선순위를 새로 정하지 않습니다.
 
 ### 3.2 제외 범위
 
@@ -350,7 +350,7 @@ copy_only
 hidden
 ```
 
-현재 DB 기본값은 `hidden`이고 설정 저장은 `copy_only`를 사용합니다. 설정 화면에는 공개 방식 선택 필드가 없습니다. 위 네 값은 schema가 지원하는 값이며, 네 방식을 사용자가 선택할 수 있다는 뜻은 아닙니다. 공개 UI는 `always_visible`이면 계좌 영역을 펼치고 `copy_only`이면 번호 텍스트를 숨겨 복사를 제공합니다. 근거: [서비스 schema](../../../src/lib/db/schema/service.ts), [설정 서비스](../../../src/lib/settings/service.ts), [설정 화면](../../../app/admin/settings/page.tsx), [계좌 영역](../../../components/public-account-section.tsx), [계좌 카드](../../../components/public-bank-account-card.tsx).
+DB 기본값은 `hidden`입니다. 설정 화면의 `계좌 공개`에서 `공개 페이지에 보이기`는 `copy_only`, `숨기기`는 `hidden`으로 저장합니다. 계좌가 아직 없으면 선택은 비활성이고, 값을 보내지 않은 첫 저장은 `copy_only`입니다. `always_visible`과 `reveal_on_click`은 schema에 남아 있지만 이 선택에는 없습니다. 공개 UI는 `always_visible`이면 계좌 영역을 펼치고 `copy_only`이면 번호 텍스트를 숨겨 복사를 제공합니다. `hidden`이면 공개 페이지에서 계좌를 뺍니다. 근거: [서비스 schema](../../../src/lib/db/schema/service.ts), [설정 서비스](../../../src/lib/settings/service.ts), [설정 화면](../../../app/admin/settings/page.tsx), [계좌 영역](../../../components/public-account-section.tsx), [계좌 카드](../../../components/public-bank-account-card.tsx).
 
 계좌번호는 평문 저장을 피합니다. 초기에는 애플리케이션 레벨 암호화를 사용하고, 운영 환경에서는 암호화 키를 환경 변수 또는 secret manager로 관리합니다.
 
@@ -529,7 +529,7 @@ URL:
 - 공개 테마 선택
 - 선물·메시지·모인 금액 기록 초기화(프로필·공개 주소·테마·계좌 안내 유지)
 
-계좌 공개 방식 선택과 OG 이미지 미리보기는 현재 설정 화면에 없습니다. 계좌 저장은 `copy_only`를 사용합니다. 근거: [설정 화면](../../../app/admin/settings/page.tsx), [설정 저장](../../../src/lib/settings/service.ts), [초기화 폼](../../../app/admin/settings/reset-wishlist-form.tsx).
+설정 화면에는 `계좌 공개` 선택이 있습니다. `공개 페이지에 보이기`는 `copy_only`, `숨기기`는 `hidden`입니다. OG 이미지 미리보기는 현재 설정 화면에 없습니다. 근거: [설정 화면](../../../app/admin/settings/page.tsx), [설정 저장](../../../src/lib/settings/service.ts), [초기화 폼](../../../app/admin/settings/reset-wishlist-form.tsx).
 
 ### 8.8 공개 위시리스트
 
@@ -922,7 +922,7 @@ CTA:
 - `나도 만들기` CTA
 - 개인별 OG 이미지
 
-현재 공개 참여·계좌 안내·개인별 OG는 존재합니다. 공개 방식 선택 UI와 개인별 OG 선택 테마 반영은 현재 구현에 없습니다. 근거: [공개 화면](../../../components/public-wishlist-view.tsx), [개인별 OG](../../../app/wishlist/[slug]/opengraph-image.tsx).
+현재 공개 참여·계좌 안내·개인별 OG는 존재합니다. 관리자 설정의 `계좌 공개`에서 보이기(`copy_only`)와 숨기기(`hidden`)를 고릅니다. 개인별 OG 선택 테마 반영은 현재 구현에 없습니다. 근거: [설정 화면](../../../app/admin/settings/page.tsx), [공개 화면](../../../components/public-wishlist-view.tsx), [개인별 OG](../../../app/wishlist/[slug]/opengraph-image.tsx).
 
 ### 14.5 랜딩과 마감
 

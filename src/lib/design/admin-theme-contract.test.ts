@@ -251,6 +251,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('className="flex cursor-pointer list-none items-start gap-3 p-3');
     expect(source).toContain("<WishThumbnail item={item} />");
     expect(source).toContain("function WishThumbnail");
+    expect(source).toContain('item.imageUrl ? null : "GIFT"');
     expect(source).toContain("item.imageUrl");
     expect(source).toContain("backgroundImage: `url(${JSON.stringify(item.imageUrl)})`");
     expect(source).toContain("bg-[#f4f4f3]");
@@ -298,8 +299,16 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('name="bankName"');
     expect(source).toContain('name="accountHolder"');
     expect(source).toContain('name="accountNumber"');
-    expect(source).not.toContain('name="accountVisibility"');
-    expect(source).not.toContain("accountVisibilityOptions");
+    expect(source).toContain("<AccountVisibilityField");
+    const fieldSource = readFileSync(
+      join(root, "app/admin/settings/account-visibility-field.tsx"),
+      "utf8",
+    );
+    expect(fieldSource).toContain('name="accountVisibility"');
+    expect(fieldSource).toContain("<AdminField");
+    expect(fieldSource).toContain("adminInputClassName");
+    expect(fieldSource).not.toContain("accountVisibilityOptions");
+    expect(fieldSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
   });
 
   test("adds settings section boundaries and field requirement hints", () => {

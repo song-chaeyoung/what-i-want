@@ -3,12 +3,15 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
+import { ACCOUNT_NUMBER_INPUT_PATTERN } from "@/src/lib/settings/account-number";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
   WISHLIST_VISIBILITIES,
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
 import { AdminToastMessage } from "../admin-toast-message";
+import { AccountVisibilityField } from "./account-visibility-field";
 import { ResetWishlistForm } from "./reset-wishlist-form";
 import {
   AdminField,
@@ -25,18 +28,20 @@ const errorMessages: Record<SettingsError, string> = {
   wishlist_title_required: "위시리스트 제목을 입력해주세요.",
   wishlist_title_too_long: "위시리스트 제목은 120자 이하여야 합니다.",
   invalid_slug: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
-  reserved_slug: "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
+  reserved_slug: ADMIN_COPY.reservedSlug,
   duplicate_slug: "이미 사용 중인 공개 주소입니다.",
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
   under_minimum_age:
     "생일 기준 만 14세 미만이라 저장할 수 없어요. 태어난 연도를 확인해주세요.",
   invalid_theme: "지원하지 않는 공개 테마입니다.",
   invalid_wishlist_visibility: "지원하지 않는 공개 여부 값입니다.",
-  bank_name_required: "은행 이름을 입력해주세요.",
-  account_holder_required: "예금주를 입력해주세요.",
-  account_number_required: "계좌번호를 입력해주세요.",
-  account_field_too_long: "계좌 정보는 80자 이하여야 합니다.",
-  account_encryption_unavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
+  invalid_account_visibility: ADMIN_COPY.invalidAccountVisibility,
+  bank_name_required: ADMIN_COPY.bankNameRequired,
+  account_holder_required: ADMIN_COPY.accountHolderRequired,
+  account_number_required: ADMIN_COPY.accountNumberRequired,
+  invalid_account_number: ADMIN_COPY.invalidAccountNumber,
+  account_field_too_long: ADMIN_COPY.accountFieldTooLong,
+  account_encryption_unavailable: ADMIN_COPY.accountEncryptionUnavailable,
 };
 
 const themeLabels: Record<PublicThemeId, string> = {
@@ -238,12 +243,24 @@ export default async function AdminSettingsPage() {
                 name="accountNumber"
                 type="text"
                 inputMode="numeric"
+                pattern={ACCOUNT_NUMBER_INPUT_PATTERN}
+                title={ADMIN_COPY.invalidAccountNumber}
                 placeholder={
                   settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
                 }
                 className={adminInputClassName}
               />
             </AdminField>
+          </SettingsRow>
+          <SettingsRow>
+            <AccountVisibilityField
+              defaultVisibility={
+                settings.bankAccount?.visibility === "hidden"
+                  ? "hidden"
+                  : "copy_only"
+              }
+              disabled={settings.bankAccount === null}
+            />
           </SettingsRow>
         </SettingsSection>
 

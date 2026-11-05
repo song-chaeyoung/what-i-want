@@ -10,6 +10,7 @@ import {
 } from "./account-crypto";
 import {
   WISHLIST_VISIBILITIES,
+  type AccountVisibility,
   type SettingsBankAccountRecord,
   type SettingsRecord,
   type SettingsRepository,
@@ -20,6 +21,7 @@ import {
 const MAX_DISPLAY_NAME_LENGTH = 80;
 const MAX_WISHLIST_TITLE_LENGTH = 120;
 const MAX_ACCOUNT_FIELD_LENGTH = 80;
+const ACCOUNT_NUMBER_PATTERN = /^(?=.*[0-9])[0-9-]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RESERVED_WISHLIST_SLUGS = new Set(["sample"]);
 
@@ -51,9 +53,11 @@ export type SettingsError =
   | "under_minimum_age"
   | "invalid_theme"
   | "invalid_wishlist_visibility"
+  | "invalid_account_visibility"
   | "bank_name_required"
   | "account_holder_required"
   | "account_number_required"
+  | "invalid_account_number"
   | "account_field_too_long"
   | "account_encryption_unavailable";
 
@@ -242,9 +246,23 @@ function normalizeBankAccount(
       ok: false;
       error: SettingsError;
     } {
+  const visibility = normalizeAccountVisibility(
+    input.accountVisibility,
+    current?.visibility ?? null,
+  );
+
+  if (visibility.error) {
+    return { ok: false, error: visibility.error };
+  }
+
   const bankName = normalizeOptionalText(input.bankName);
   const accountHolder = normalizeOptionalText(input.accountHolder);
-  const accountNumber = normalizeOptionalText(input.accountNumber);
+  const accountNumber = normalizeAccountNumber(input.accountNumber);
+
+  if (accountNumber && !isValidAccountNumber(accountNumber)) {
+    return { ok: false, error: "invalid_account_number" };
+  }
+
   const hasAnyAccountInput =
     Boolean(bankName) ||
     Boolean(accountHolder) ||
@@ -290,9 +308,41 @@ function normalizeBankAccount(
       bankName,
       accountHolder,
       accountNumberEncrypted: encryptedAccountNumber.value,
-      visibility: "copy_only",
+      visibility: visibility.value,
     },
   };
+}
+
+function normalizeAccountNumber(value: string | null): string | null {
+  const stripped = (value ?? "").replace(/\s/g, "");
+  return stripped.length > 0 ? stripped : null;
+}
+
+function isValidAccountNumber(value: string): boolean {
+  return ACCOUNT_NUMBER_PATTERN.test(value);
+}
+
+function normalizeAccountVisibility(
+  value: string | null | undefined,
+  current: AccountVisibility | null,
+):
+  | {
+      value: AccountVisibility;
+      error?: never;
+    }
+  | {
+      value?: never;
+      error: "invalid_account_visibility";
+    } {
+  if (!value) {
+    return { value: current ?? "copy_only" };
+  }
+
+  if (value === "copy_only" || value === "hidden") {
+    return { value };
+  }
+
+  return { error: "invalid_account_visibility" };
 }
 
 function normalizeWishlistVisibility(

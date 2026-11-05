@@ -8,7 +8,12 @@ import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
   formatWishCount,
+  getPublicParticipationNotice,
 } from "@/src/lib/design/copy";
+import {
+  participationSubmitId,
+  wishTitleId,
+} from "@/src/lib/public-wishlist/account-reveal-focus";
 import { formatBirthdayBadge } from "@/src/lib/public-wishlist/birthday";
 import type {
   PublicBankAccountView,
@@ -178,7 +183,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
   );
 }
 
-function ParticipationSubmit({ demo }: { demo: boolean }) {
+function ParticipationSubmit({
+  demo,
+  returnFocusId,
+}: {
+  demo: boolean;
+  returnFocusId?: string;
+}) {
   if (demo) {
     return (
       <div className="space-y-2">
@@ -198,6 +209,7 @@ function ParticipationSubmit({ demo }: { demo: boolean }) {
 
   return (
     <PublicParticipationSubmitButton
+      id={returnFocusId}
       label={PUBLIC_WISHLIST_COPY.participationSubmitCta}
     />
   );
@@ -219,6 +231,10 @@ function PublicWishCard({
   const productUrl = getHttpUrl(item.productUrl);
   const imageUrl = getHttpUrl(item.imageUrl);
   const canFund = item.status === "open" && !item.isComplete;
+  const participationNotice = getPublicParticipationNotice(
+    item.status,
+    item.progress,
+  );
 
   return (
     <article className="gift-card-shell pub-card overflow-hidden">
@@ -244,7 +260,11 @@ function PublicWishCard({
                 {getWishStatusLabel(item.status, item.progress)}
               </p>
             </div>
-            <h2 className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl">
+            <h2
+              id={wishTitleId(item.id)}
+              tabIndex={-1}
+              className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl"
+            >
               {item.title}
             </h2>
 
@@ -267,12 +287,16 @@ function PublicWishCard({
                   : PUBLIC_WISHLIST_COPY.noTargetAmount}
               </p>
             </div>
-            <div className="pub-progress mt-2">
-              <i style={{ width: `${item.progress}%` }} />
-            </div>
-            <p className="text-xs font-black text-[var(--pub-sub)]">
-              {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
-            </p>
+            {item.targetAmount ? (
+              <>
+                <div className="pub-progress mt-2">
+                  <i style={{ width: `${item.progress}%` }} />
+                </div>
+                <p className="text-xs font-black text-[var(--pub-sub)]">
+                  {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
+                </p>
+              </>
+            ) : null}
             {productUrl ? (
               <a
                 href={productUrl}
@@ -358,9 +382,16 @@ function PublicWishCard({
                 : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
             </p>
 
-            <ParticipationSubmit demo={demo} />
+            <ParticipationSubmit
+              demo={demo}
+              returnFocusId={participationSubmitId(item.id)}
+            />
           </form>
         </details>
+      ) : participationNotice ? (
+        <p className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]">
+          {participationNotice}
+        </p>
       ) : null}
     </article>
   );

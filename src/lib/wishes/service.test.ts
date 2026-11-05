@@ -18,6 +18,7 @@ class FakeWishRepository implements WishRepository {
     id: "wishlist-1",
     slug: "birthday",
     title: "민지님의 위시리스트",
+    visibility: "public",
   };
   items: WishItemRecord[] = [];
   created: CreateWishRecord[] = [];

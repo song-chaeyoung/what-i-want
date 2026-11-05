@@ -68,7 +68,7 @@
 
 - 친구 방문자는 로그인하지 않아도 공개 위시리스트를 볼 수 있습니다.
 - 비공개 메시지는 공개 페이지에 노출되지 않고 생일자만 확인합니다.
-- 현재 설정 화면은 등록한 계좌를 `copy_only` 방식으로 저장하며, 공개 화면은 번호 텍스트를 숨기고 복사 버튼을 제공합니다. 공개 방식 선택 UI는 없습니다. 근거: [계좌 설정](src/lib/settings/service.ts), [공개 계좌 카드](components/public-bank-account-card.tsx).
+- 설정 화면의 `계좌 공개`에서 `공개 페이지에 보이기`는 `copy_only`, `숨기기`는 `hidden`입니다. 보이기로 저장한 계좌는 공개 화면에서 번호 텍스트를 숨기고 복사 버튼으로 안내합니다. 근거: [계좌 설정](src/lib/settings/service.ts), [설정 화면](app/admin/settings/page.tsx), [공개 계좌 카드](components/public-bank-account-card.tsx).
 - 계좌번호는 저장 전에 애플리케이션에서 암호화합니다. 구현은 [계좌 암호화 모듈](src/lib/settings/account-crypto.ts)에서 확인할 수 있습니다.
 - 실제 결제, 자동 정산, 배송지 관리, 알림 기능은 현재 범위에 포함하지 않습니다.
 

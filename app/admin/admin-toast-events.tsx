@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast, type ExternalToast } from "sonner";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 
 const adminToastParams = {
   saved: { type: "success", message: "설정을 저장했어요." },
@@ -22,6 +23,11 @@ const adminToastParams = {
   },
   error: { type: "error", message: "요청을 처리하지 못했어요." },
 } as const;
+
+const adminErrorMessages: Record<string, string> = {
+  reserved_slug: ADMIN_COPY.reservedSlug,
+  invalid_account_number: ADMIN_COPY.invalidAccountNumber,
+};
 
 type AdminToastParam = keyof typeof adminToastParams;
 type AdminToastConfig = (typeof adminToastParams)[AdminToastParam];
@@ -50,10 +56,11 @@ export function AdminToastEvents() {
     const toastConfigList = toastParamNames.map(
       (paramName) => adminToastParams[paramName],
     );
+    const errorMessage = getAdminErrorMessage(searchParams.get("error"));
     toastConfigList.forEach((toastConfig) => {
       const message =
-        toastConfig.type === "error" && searchParams.get("error") === "reserved_slug"
-          ? "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요."
+        toastConfig.type === "error" && errorMessage
+          ? errorMessage
           : toastConfig.message;
       toast[toastConfig.type](
         message,
@@ -72,6 +79,14 @@ export function AdminToastEvents() {
   }, [pathname, router, searchParams]);
 
   return null;
+}
+
+function getAdminErrorMessage(errorCode: string | null): string | null {
+  if (!errorCode || !Object.hasOwn(adminErrorMessages, errorCode)) {
+    return null;
+  }
+
+  return adminErrorMessages[errorCode];
 }
 
 function getAdminToastParams(

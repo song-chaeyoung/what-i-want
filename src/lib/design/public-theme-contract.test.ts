@@ -40,6 +40,8 @@ describe("public theme contract", () => {
     expect(source).toContain(".pub-page");
     expect(source).toContain(".pub-card");
     expect(source).toContain(".pub-btn");
+    expect(source).toContain(".pub-progress > i");
+    expect(source).not.toContain("pub-progress-done");
     expect(source).not.toContain("@import url(");
     expect(source).toContain("var(--font-mona");
   });
@@ -105,6 +107,11 @@ describe("public theme contract", () => {
     expect(PUBLIC_WISHLIST_COPY.participationTitle).toBe("마음 보내기");
     expect(source).toContain("PUBLIC_WISHLIST_COPY.participationTitle");
     expect(source).toContain("선물 링크 보기");
+    expect(source).toContain("PUBLIC_WISHLIST_COPY.noTargetAmount");
+    expect(source).not.toContain("pub-progress-done");
+    expect(source).toContain(
+      'className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]"',
+    );
     expect(source).not.toContain("statusFilter");
   });
 

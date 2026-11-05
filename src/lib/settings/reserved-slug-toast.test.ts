@@ -26,6 +26,10 @@ describe("reserved wishlist slug feedback", () => {
       "reserved_slug",
       "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
     ],
+    [
+      "invalid_account_number",
+      "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
+    ],
     ["invalid_slug", "요청을 처리하지 못했어요."],
     ["__proto__", "요청을 처리하지 못했어요."],
   ])("shows the expected feedback for %s", (error, message) => {

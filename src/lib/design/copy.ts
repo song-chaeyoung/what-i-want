@@ -1,3 +1,8 @@
+import {
+  getDisplayedWishStatus,
+  type WishStatus,
+} from "../wish-item/status";
+
 export const BRAND_NAME = "뭐갖고싶어";
 
 export const HOME_COPY = {
@@ -73,12 +78,18 @@ export const PUBLIC_WISHLIST_COPY = {
   participationTransferNoteNoAccount:
     "실제 선물 전달 방법은 생일자에게 직접 확인해주세요.",
   fundCta: "이 선물에 마음 보태기",
+  participationClosedComplete: "마음이 다 모였어요. 고마워요!",
+  participationClosedPaused: "지금은 잠시 마음을 받지 않아요.",
   fundingSuccessTitle: "마음이 전해졌어요",
   fundingSuccessDescription: "아래 계좌로 보내주시면 전달이 완료돼요.",
   fundingSuccessCorrectionNote: "잘못 보냈다면 생일자에게 알려주세요.",
   accountModalClose: "닫기",
   accountSectionTitle: "계좌 안내",
   accountSectionNote: "마음은 이 계좌로 전할 수 있어요.",
+  accountCopyLabel: "계좌번호 복사",
+  accountCopyCopied: "복사 완료",
+  accountCopySuccess: "은행과 계좌번호를 복사했어요.",
+  accountCopyError: "계좌번호 복사에 실패했어요.",
   shareCta: "공유하기",
   shareCopied: "복사 완료",
   shareSuccess: "위시리스트 링크를 복사했어요.",
@@ -110,6 +121,39 @@ export const PUBLIC_WISHLIST_COPY = {
   retryCta: "다시 시도",
 } as const;
 
+export const ADMIN_COPY = {
+  reservedSlug:
+    "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
+  invalidAccountVisibility: "지원하지 않는 계좌 공개 값입니다.",
+  bankNameRequired: "은행 이름을 입력해주세요.",
+  accountHolderRequired: "예금주를 입력해주세요.",
+  accountNumberRequired: "계좌번호를 입력해주세요.",
+  invalidAccountNumber: "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
+  accountFieldTooLong: "계좌 정보는 80자 이하여야 합니다.",
+  accountEncryptionUnavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
+  privateShareNotice: "비공개라 친구가 열 수 없어요.",
+  accountVisibilityCopyOnlyHint:
+    "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
+  accountVisibilityHiddenHint: "공개 페이지에 계좌가 보이지 않아요.",
+} as const;
+
 export function formatWishCount(count: number): string {
   return `${count}개`;
+}
+
+export function getPublicParticipationNotice(
+  status: WishStatus,
+  progress: number,
+): string | null {
+  const displayedStatus = getDisplayedWishStatus(status, progress);
+
+  if (displayedStatus === "fulfilled") {
+    return PUBLIC_WISHLIST_COPY.participationClosedComplete;
+  }
+
+  if (displayedStatus === "paused") {
+    return PUBLIC_WISHLIST_COPY.participationClosedPaused;
+  }
+
+  return null;
 }

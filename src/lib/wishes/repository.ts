@@ -20,6 +20,7 @@ export class DrizzleWishRepository implements WishRepository {
         id: wishlists.id,
         slug: wishlists.slug,
         title: wishlists.title,
+        visibility: wishlists.visibility,
       })
       .from(wishlists)
       .where(eq(wishlists.ownerId, ownerId))
