@@ -102,6 +102,12 @@ describe("visual system copy", () => {
     expect(ADMIN_COPY.privateShareNotice).toBe(
       "비공개라 친구가 열 수 없어요.",
     );
+    expect(ADMIN_COPY.accountVisibilityCopyOnlyHint).toBe(
+      "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
+    );
+    expect(ADMIN_COPY.accountVisibilityHiddenHint).toBe(
+      "공개 페이지에 계좌가 보이지 않아요.",
+    );
   });
 
   test("chooses a closed participation notice from the displayed status", () => {

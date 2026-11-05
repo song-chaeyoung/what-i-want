@@ -132,6 +132,9 @@ export const ADMIN_COPY = {
   accountFieldTooLong: "계좌 정보는 80자 이하여야 합니다.",
   accountEncryptionUnavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
   privateShareNotice: "비공개라 친구가 열 수 없어요.",
+  accountVisibilityCopyOnlyHint:
+    "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
+  accountVisibilityHiddenHint: "공개 페이지에 계좌가 보이지 않아요.",
 } as const;
 
 export function formatWishCount(count: number): string {

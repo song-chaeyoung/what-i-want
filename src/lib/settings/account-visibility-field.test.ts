@@ -2,6 +2,7 @@ import { createElement } from "react";
 import { renderToStaticMarkup } from "react-dom/server";
 import { describe, expect, test } from "vitest";
 import { AccountVisibilityField } from "@/app/admin/settings/account-visibility-field";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 
 describe("account visibility field", () => {
   test("explains copy guidance and stays disabled until an account is saved", () => {
@@ -13,9 +14,7 @@ describe("account visibility field", () => {
     );
 
     expect(html).toContain("계좌 공개");
-    expect(html).toContain(
-      "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
-    );
+    expect(html).toContain(ADMIN_COPY.accountVisibilityCopyOnlyHint);
     expect(html).toContain('name="accountVisibility"');
     expect(html).toContain('value="copy_only" selected=""');
     expect(html).toContain("숨기기");
@@ -31,7 +30,7 @@ describe("account visibility field", () => {
       }),
     );
 
-    expect(html).toContain("공개 페이지에 계좌가 보이지 않아요.");
+    expect(html).toContain(ADMIN_COPY.accountVisibilityHiddenHint);
     expect(html).toContain('value="hidden" selected=""');
     expect(html).not.toContain("disabled");
   });

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { AdminField, adminInputClassName } from "../admin-ui";
 
 const selectableAccountVisibilities = ["copy_only", "hidden"] as const;
@@ -13,8 +14,8 @@ const accountVisibilityLabels: Record<SelectableAccountVisibility, string> = {
 };
 
 const accountVisibilityHints: Record<SelectableAccountVisibility, string> = {
-  copy_only: "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
-  hidden: "공개 페이지에 계좌가 보이지 않아요.",
+  copy_only: ADMIN_COPY.accountVisibilityCopyOnlyHint,
+  hidden: ADMIN_COPY.accountVisibilityHiddenHint,
 };
 
 export function AccountVisibilityField({
