@@ -3,6 +3,7 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
+import { INVALID_ACCOUNT_NUMBER_MESSAGE } from "@/src/lib/settings/account-number";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
   WISHLIST_VISIBILITIES,
@@ -37,6 +38,7 @@ const errorMessages: Record<SettingsError, string> = {
   bank_name_required: "은행 이름을 입력해주세요.",
   account_holder_required: "예금주를 입력해주세요.",
   account_number_required: "계좌번호를 입력해주세요.",
+  invalid_account_number: INVALID_ACCOUNT_NUMBER_MESSAGE,
   account_field_too_long: "계좌 정보는 80자 이하여야 합니다.",
   account_encryption_unavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
 };
@@ -240,6 +242,8 @@ export default async function AdminSettingsPage() {
                 name="accountNumber"
                 type="text"
                 inputMode="numeric"
+                pattern="[0-9\\s-]*"
+                title={INVALID_ACCOUNT_NUMBER_MESSAGE}
                 placeholder={
                   settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
                 }

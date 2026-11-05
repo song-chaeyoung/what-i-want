@@ -1,4 +1,6 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { decryptAccountNumber } from "./account-crypto";
+import { INVALID_ACCOUNT_NUMBER_MESSAGE } from "./account-number";
 import {
   getSettings,
   updateSettings,
@@ -235,6 +237,126 @@ describe("admin settings service", () => {
       ok: true,
       settings: { bankAccount: { visibility: "always_visible" } },
     });
+  });
+
+  test("saves a newly entered account number made of digits and hyphens", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+    const secret = "test-secret-test-secret-test-secret-test-secret";
+
+    const result = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "3333-12-1234567",
+      }),
+      repository,
+      secret,
+    );
+
+    expect(result).toMatchObject({ ok: true });
+    expect(
+      decryptAccountNumber(
+        repository.updated[0].bankAccount?.accountNumberEncrypted ?? "",
+        secret,
+      ),
+    ).toBe("3333-12-1234567");
+    expect(INVALID_ACCOUNT_NUMBER_MESSAGE).toBe(
+      "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
+    );
+  });
+
+  test("strips whitespace from a new account number before validating and saving", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+    const secret = "test-secret-test-secret-test-secret-test-secret";
+
+    const result = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "  3333 12-\n1234567\t",
+      }),
+      repository,
+      secret,
+    );
+
+    expect(result).toMatchObject({ ok: true });
+    expect(
+      decryptAccountNumber(
+        repository.updated[0].bankAccount?.accountNumberEncrypted ?? "",
+        secret,
+      ),
+    ).toBe("333312-1234567");
+  });
+
+  test.each(["12345678", "1".repeat(30), "1234-5678"])(
+    "accepts account number length boundary %j",
+    async (accountNumber) => {
+      const repository = new FakeSettingsRepository();
+      repository.settings = makeSettings({ bankAccount: null });
+
+      const result = await updateSettings(
+        makeInput({
+          bankName: "국민은행",
+          accountHolder: "차차",
+          accountNumber,
+        }),
+        repository,
+        "test-secret-test-secret-test-secret-test-secret",
+      );
+
+      expect(result).toMatchObject({ ok: true });
+    },
+  );
+
+  test.each([
+    "3333-12-AB1234",
+    "3333/12/1234567",
+    "1234567",
+    "1".repeat(31),
+  ])("rejects account number %j", async (accountNumber) => {
+    const repository = new FakeSettingsRepository();
+
+    await expect(
+      updateSettings(
+        makeInput({
+          bankName: "국민은행",
+          accountHolder: "차차",
+          accountNumber,
+        }),
+        repository,
+        "secret",
+      ),
+    ).resolves.toEqual({ ok: false, error: "invalid_account_number" });
+    expect(repository.updated).toEqual([]);
+  });
+
+  test("keeps the saved account number when the field is blank or only whitespace", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({
+      bankAccount: makeBankAccount({
+        accountNumberEncrypted: "v1:existing-ciphertext",
+      }),
+    });
+
+    const blank = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "   \n\t",
+      }),
+      repository,
+      "secret",
+    );
+
+    expect(blank).toMatchObject({
+      ok: true,
+      settings: {
+        bankAccount: { accountNumberEncrypted: "v1:existing-ciphertext" },
+      },
+    });
+    expect(repository.updated).toHaveLength(1);
   });
 
   test.each(["always_visible", "reveal_on_click", "secret"])(

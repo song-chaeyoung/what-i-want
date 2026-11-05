@@ -21,6 +21,9 @@ import {
 const MAX_DISPLAY_NAME_LENGTH = 80;
 const MAX_WISHLIST_TITLE_LENGTH = 120;
 const MAX_ACCOUNT_FIELD_LENGTH = 80;
+const MIN_ACCOUNT_NUMBER_LENGTH = 8;
+const MAX_ACCOUNT_NUMBER_LENGTH = 30;
+const ACCOUNT_NUMBER_PATTERN = /^[0-9-]+$/;
 const DATE_PATTERN = /^\d{4}-\d{2}-\d{2}$/;
 const RESERVED_WISHLIST_SLUGS = new Set(["sample"]);
 
@@ -56,6 +59,7 @@ export type SettingsError =
   | "bank_name_required"
   | "account_holder_required"
   | "account_number_required"
+  | "invalid_account_number"
   | "account_field_too_long"
   | "account_encryption_unavailable";
 
@@ -255,7 +259,12 @@ function normalizeBankAccount(
 
   const bankName = normalizeOptionalText(input.bankName);
   const accountHolder = normalizeOptionalText(input.accountHolder);
-  const accountNumber = normalizeOptionalText(input.accountNumber);
+  const accountNumber = normalizeAccountNumber(input.accountNumber);
+
+  if (accountNumber && !isValidAccountNumber(accountNumber)) {
+    return { ok: false, error: "invalid_account_number" };
+  }
+
   const hasAnyAccountInput =
     Boolean(bankName) ||
     Boolean(accountHolder) ||
@@ -304,6 +313,19 @@ function normalizeBankAccount(
       visibility: visibility.value,
     },
   };
+}
+
+function normalizeAccountNumber(value: string | null): string | null {
+  const stripped = (value ?? "").replace(/\s/g, "");
+  return stripped.length > 0 ? stripped : null;
+}
+
+function isValidAccountNumber(value: string): boolean {
+  return (
+    value.length >= MIN_ACCOUNT_NUMBER_LENGTH &&
+    value.length <= MAX_ACCOUNT_NUMBER_LENGTH &&
+    ACCOUNT_NUMBER_PATTERN.test(value)
+  );
 }
 
 function normalizeAccountVisibility(
