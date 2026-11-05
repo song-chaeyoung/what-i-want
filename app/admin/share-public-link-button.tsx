@@ -1,8 +1,25 @@
 "use client";
 
 import { Check, Share2 } from "lucide-react";
-import { BRAND_NAME, PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
+import { ADMIN_COPY, BRAND_NAME, PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
+import type { WishlistVisibility } from "@/src/lib/settings/types";
 import { useWishlistShare } from "@/components/use-wishlist-share";
+
+export function PrivateShareNotice({
+  visibility,
+}: {
+  visibility: WishlistVisibility;
+}) {
+  if (visibility !== "private") {
+    return null;
+  }
+
+  return (
+    <p className="mt-1 text-xs font-semibold text-zinc-500">
+      {ADMIN_COPY.privateShareNotice}
+    </p>
+  );
+}
 
 export function SharePublicLinkButton({ slug }: { slug: string }) {
   const { share, copied } = useWishlistShare({

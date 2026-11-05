@@ -131,6 +131,7 @@ export const ADMIN_COPY = {
   invalidAccountNumber: "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
   accountFieldTooLong: "계좌 정보는 80자 이하여야 합니다.",
   accountEncryptionUnavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
+  privateShareNotice: "비공개라 친구가 열 수 없어요.",
 } as const;
 
 export function formatWishCount(count: number): string {

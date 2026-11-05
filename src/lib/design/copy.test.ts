@@ -99,6 +99,9 @@ describe("visual system copy", () => {
     expect(ADMIN_COPY.accountEncryptionUnavailable).toBe(
       "계좌 암호화 키가 설정되어 있지 않습니다.",
     );
+    expect(ADMIN_COPY.privateShareNotice).toBe(
+      "비공개라 친구가 열 수 없어요.",
+    );
   });
 
   test("chooses a closed participation notice from the displayed status", () => {

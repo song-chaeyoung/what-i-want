@@ -1,9 +1,11 @@
+import type { WishlistVisibility } from "@/src/lib/settings/types";
 import type { WishStatus } from "@/src/lib/wish-item/status";
 
 export type WishlistRecord = {
   id: string;
   slug: string;
   title: string;
+  visibility: WishlistVisibility;
 };
 
 export type WishItemRecord = {
