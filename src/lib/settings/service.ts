@@ -10,6 +10,7 @@ import {
 } from "./account-crypto";
 import {
   WISHLIST_VISIBILITIES,
+  type AccountVisibility,
   type SettingsBankAccountRecord,
   type SettingsRecord,
   type SettingsRepository,
@@ -51,6 +52,7 @@ export type SettingsError =
   | "under_minimum_age"
   | "invalid_theme"
   | "invalid_wishlist_visibility"
+  | "invalid_account_visibility"
   | "bank_name_required"
   | "account_holder_required"
   | "account_number_required"
@@ -242,6 +244,15 @@ function normalizeBankAccount(
       ok: false;
       error: SettingsError;
     } {
+  const visibility = normalizeAccountVisibility(
+    input.accountVisibility,
+    current?.visibility ?? null,
+  );
+
+  if (visibility.error) {
+    return { ok: false, error: visibility.error };
+  }
+
   const bankName = normalizeOptionalText(input.bankName);
   const accountHolder = normalizeOptionalText(input.accountHolder);
   const accountNumber = normalizeOptionalText(input.accountNumber);
@@ -290,9 +301,32 @@ function normalizeBankAccount(
       bankName,
       accountHolder,
       accountNumberEncrypted: encryptedAccountNumber.value,
-      visibility: "copy_only",
+      visibility: visibility.value,
     },
   };
+}
+
+function normalizeAccountVisibility(
+  value: string | null | undefined,
+  current: AccountVisibility | null,
+):
+  | {
+      value: AccountVisibility;
+      error?: never;
+    }
+  | {
+      value?: never;
+      error: "invalid_account_visibility";
+    } {
+  if (!value) {
+    return { value: current ?? "copy_only" };
+  }
+
+  if (value === "copy_only" || value === "hidden") {
+    return { value };
+  }
+
+  return { error: "invalid_account_visibility" };
 }
 
 function normalizeWishlistVisibility(

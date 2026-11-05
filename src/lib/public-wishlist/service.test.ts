@@ -153,6 +153,12 @@ describe("public wishlist service", () => {
       ok: true,
       account: null,
     });
+    expect(repository.account).toMatchObject({
+      bankName: "카카오뱅크",
+      accountHolder: "차차",
+      accountNumberEncrypted: encrypted.value,
+      visibility: "hidden",
+    });
   });
 
   test.each(["always_visible", "reveal_on_click", "copy_only"] as const)(

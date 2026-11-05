@@ -44,12 +44,7 @@ describe("admin settings UI contract", () => {
     expect(pageSource).toContain('name="wishlistSlug"');
     expect(pageSource).toContain('name="bankName"');
     expect(pageSource).toContain('id="account-settings"');
-    expect(pageSource).not.toContain('name="accountVisibility"');
-    expect(pageSource).not.toContain("accountVisibilityOptions");
-    expect(pageSource).not.toContain("toAccountVisibilityOption");
-    expect(readFileSync(adminSettingsRoutePath, "utf8")).not.toContain(
-      '"accountVisibility"',
-    );
+    expect(pageSource).toContain("<AccountVisibilityField");
     expect(layoutSource).toContain("<AdminShellNav");
     expect(navSource).toContain('href: "/admin/settings"');
   });
@@ -64,6 +59,28 @@ describe("admin settings UI contract", () => {
       "defaultValue={settings.wishlist.visibility}",
     );
     expect(routeSource).toContain('"wishlistVisibility"');
+  });
+
+  test("lets the owner choose whether the public page shows the bank account", () => {
+    const pageSource = readFileSync(adminSettingsPagePath, "utf8");
+    const fieldSource = readFileSync(
+      join(process.cwd(), "app/admin/settings/account-visibility-field.tsx"),
+      "utf8",
+    );
+    const routeSource = readFileSync(adminSettingsRoutePath, "utf8");
+
+    expect(pageSource).toContain("<AccountVisibilityField");
+    expect(pageSource).toContain("disabled={settings.bankAccount === null}");
+    expect(fieldSource).toContain('name="accountVisibility"');
+    expect(fieldSource).toContain("adminInputClassName");
+    expect(fieldSource).toContain("<AdminField");
+    expect(fieldSource).toContain('label="계좌 공개"');
+    expect(fieldSource).toContain("공개 페이지에 보이기");
+    expect(fieldSource).toContain("숨기기");
+    expect(fieldSource).toContain("마음을 보낸 친구에게 계좌가 안내돼요.");
+    expect(fieldSource).toContain("공개 페이지에 계좌가 보이지 않아요.");
+    expect(fieldSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
+    expect(routeSource).toContain('"accountVisibility"');
   });
 
   test("reveals account guidance only after a funding submission", () => {

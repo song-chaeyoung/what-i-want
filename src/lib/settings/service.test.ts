@@ -126,6 +126,7 @@ describe("admin settings service", () => {
     repository.settings = makeSettings({
       bankAccount: makeBankAccount({
         accountNumberEncrypted: "v1:existing-ciphertext",
+        visibility: "hidden",
       }),
     });
 
@@ -147,7 +148,7 @@ describe("admin settings service", () => {
           bankName: "국민은행",
           accountHolder: "차차",
           accountNumberEncrypted: "v1:existing-ciphertext",
-          visibility: "copy_only",
+          visibility: "hidden",
         },
       },
     });
@@ -155,6 +156,106 @@ describe("admin settings service", () => {
       "v1:existing-ciphertext",
     );
   });
+
+  test("hides a saved account without dropping its details and shows it again", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({
+      bankAccount: makeBankAccount({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumberEncrypted: "v1:existing-ciphertext",
+        visibility: "copy_only",
+      }),
+    });
+
+    const hidden = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "",
+        accountVisibility: "hidden",
+      }),
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(hidden).toMatchObject({
+      ok: true,
+      settings: {
+        bankAccount: {
+          bankName: "국민은행",
+          accountHolder: "차차",
+          accountNumberEncrypted: "v1:existing-ciphertext",
+          visibility: "hidden",
+        },
+      },
+    });
+
+    const shown = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "",
+        accountVisibility: "copy_only",
+      }),
+      repository,
+      "test-secret-test-secret-test-secret-test-secret",
+    );
+
+    expect(shown).toMatchObject({
+      ok: true,
+      settings: {
+        bankAccount: {
+          bankName: "국민은행",
+          accountHolder: "차차",
+          accountNumberEncrypted: "v1:existing-ciphertext",
+          visibility: "copy_only",
+        },
+      },
+    });
+  });
+
+  test("keeps a legacy account visibility when the update omits it", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({
+      bankAccount: makeBankAccount({ visibility: "always_visible" }),
+    });
+
+    const result = await updateSettings(
+      makeInput({
+        bankName: "신한은행",
+        accountHolder: "차차",
+        accountVisibility: null,
+      }),
+      repository,
+      "secret",
+    );
+
+    expect(result).toMatchObject({
+      ok: true,
+      settings: { bankAccount: { visibility: "always_visible" } },
+    });
+  });
+
+  test.each(["always_visible", "reveal_on_click", "secret"])(
+    "rejects account visibility %j",
+    async (accountVisibility) => {
+      const repository = new FakeSettingsRepository();
+
+      await expect(
+        updateSettings(
+          makeInput({
+            bankName: "국민은행",
+            accountHolder: "차차",
+            accountVisibility,
+          }),
+          repository,
+          "secret",
+        ),
+      ).resolves.toEqual({ ok: false, error: "invalid_account_visibility" });
+      expect(repository.updated).toEqual([]);
+    },
+  );
 
   test("rejects invalid identity and wishlist input", async () => {
     const repository = new FakeSettingsRepository();

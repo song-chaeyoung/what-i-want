@@ -9,6 +9,7 @@ import {
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
 import { AdminToastMessage } from "../admin-toast-message";
+import { AccountVisibilityField } from "./account-visibility-field";
 import { ResetWishlistForm } from "./reset-wishlist-form";
 import {
   AdminField,
@@ -32,6 +33,7 @@ const errorMessages: Record<SettingsError, string> = {
     "생일 기준 만 14세 미만이라 저장할 수 없어요. 태어난 연도를 확인해주세요.",
   invalid_theme: "지원하지 않는 공개 테마입니다.",
   invalid_wishlist_visibility: "지원하지 않는 공개 여부 값입니다.",
+  invalid_account_visibility: "지원하지 않는 계좌 공개 값입니다.",
   bank_name_required: "은행 이름을 입력해주세요.",
   account_holder_required: "예금주를 입력해주세요.",
   account_number_required: "계좌번호를 입력해주세요.",
@@ -244,6 +246,16 @@ export default async function AdminSettingsPage() {
                 className={adminInputClassName}
               />
             </AdminField>
+          </SettingsRow>
+          <SettingsRow>
+            <AccountVisibilityField
+              defaultVisibility={
+                settings.bankAccount?.visibility === "hidden"
+                  ? "hidden"
+                  : "copy_only"
+              }
+              disabled={settings.bankAccount === null}
+            />
           </SettingsRow>
         </SettingsSection>
 
