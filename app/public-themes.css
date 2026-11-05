@@ -1,17 +1,27 @@
 @layer base {
   .pub-page,
   .pub-page[data-theme="pixel_y2k"] {
-    --pub-bg: #fff7ed;
+    --ink: #171717;
+    --ink-muted: #3f3f46;
+    --surface-page: #fff7ed;
+    --surface: #fffdf7;
+    --surface-header: #fef3c7;
+    --headline: #4c1d95;
+    --accent-main: #0f766e;
+    --point: #f97316;
+    --tint-mint: #ccfbf1;
+    --tint-blush: #ffe4e6;
+    --pub-bg: var(--surface-page);
     --pub-bg-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --pub-dot-size: 18px;
-    --pub-header-bg: #fef3c7;
+    --pub-header-bg: var(--surface-header);
     --pub-header-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --pub-header-border: 2px solid #171717;
-    --pub-surface: #fffdf7;
-    --pub-ink: #171717;
-    --pub-sub: #3f3f46;
-    --pub-headline-color: #4c1d95;
-    --pub-headline-on-header: #4c1d95;
+    --pub-surface: var(--surface);
+    --pub-ink: var(--ink);
+    --pub-sub: var(--ink-muted);
+    --pub-headline-color: var(--headline);
+    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-mona, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 700;
     --pub-headline-size: 36px;
@@ -23,9 +33,9 @@
     --pub-label-ls: 0;
     --pub-label-transform: none;
     --pub-label-weight: 700;
-    --pub-accent: #0f766e;
+    --pub-accent: var(--accent-main);
     --pub-stat-accent: #0f766e;
-    --pub-point: #f97316;
+    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: 2px solid #171717;
     --pub-divider-color: #171717;
@@ -33,7 +43,7 @@
     --pub-shadow-lg: 8px 8px 0 #111827;
     --pub-shadow-sm: 3px 3px 0 #111827;
     --pub-radius: 4px;
-    --pub-fallback-bg: #ccfbf1;
+    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: #f97316;
     --pub-pill-color: #fff;
     --pub-pill-alt-bg: #ccfbf1;
@@ -61,23 +71,33 @@
     --pub-field-bg: #fff;
     --pub-bank-bg: #ccfbf1;
     --pub-bank-ink: #134e4a;
-    --pub-msg-bg: #ffe4e6;
+    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #171717;
     --pub-msg-sub: #9d174d;
   }
 
   .pub-page[data-theme="mono_bw"] {
-    --pub-bg: #ffffff;
+    --ink: #111;
+    --ink-muted: #6b6b6b;
+    --surface-page: #ffffff;
+    --surface: #fff;
+    --surface-header: #111111;
+    --headline: #fff;
+    --accent-main: #111;
+    --point: #111;
+    --tint-mint: #f3f3f3;
+    --tint-blush: #fafafa;
+    --pub-bg: var(--surface-page);
     --pub-bg-dots: none;
     --pub-dot-size: 0;
-    --pub-header-bg: #111111;
+    --pub-header-bg: var(--surface-header);
     --pub-header-dots: none;
     --pub-header-border: 1.5px solid #111;
-    --pub-surface: #fff;
-    --pub-ink: #111;
-    --pub-sub: #6b6b6b;
-    --pub-headline-color: #fff;
-    --pub-headline-on-header: #fff;
+    --pub-surface: var(--surface);
+    --pub-ink: var(--ink);
+    --pub-sub: var(--ink-muted);
+    --pub-headline-color: var(--headline);
+    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 900;
     --pub-headline-size: 30px;
@@ -89,9 +109,9 @@
     --pub-label-ls: 1.6px;
     --pub-label-transform: uppercase;
     --pub-label-weight: 700;
-    --pub-accent: #111;
+    --pub-accent: var(--accent-main);
     --pub-stat-accent: #fff;
-    --pub-point: #111;
+    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: 1.5px solid #111;
     --pub-divider-color: #111;
@@ -99,7 +119,7 @@
     --pub-shadow-lg: none;
     --pub-shadow-sm: none;
     --pub-radius: 0;
-    --pub-fallback-bg: #f3f3f3;
+    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: transparent;
     --pub-pill-color: #111;
     --pub-pill-alt-bg: #111;
@@ -127,23 +147,33 @@
     --pub-field-bg: #fff;
     --pub-bank-bg: #f6f6f6;
     --pub-bank-ink: #333;
-    --pub-msg-bg: #fafafa;
+    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #111;
     --pub-msg-sub: #6b6b6b;
   }
 
   .pub-page[data-theme="soft_pastel"] {
-    --pub-bg: #fbf5ff;
+    --ink: #5b5566;
+    --ink-muted: #8b8398;
+    --surface-page: #fbf5ff;
+    --surface: #ffffff;
+    --surface-header: #ffeaf3;
+    --headline: #bd6595;
+    --accent-main: #7fb8ab;
+    --point: #f79f97;
+    --tint-mint: #fdeef5;
+    --tint-blush: #fdeef5;
+    --pub-bg: var(--surface-page);
     --pub-bg-dots: none;
     --pub-dot-size: 0;
-    --pub-header-bg: #ffeaf3;
+    --pub-header-bg: var(--surface-header);
     --pub-header-dots: none;
     --pub-header-border: none;
-    --pub-surface: #ffffff;
-    --pub-ink: #5b5566;
-    --pub-sub: #8b8398;
-    --pub-headline-color: #bd6595;
-    --pub-headline-on-header: #bd6595;
+    --pub-surface: var(--surface);
+    --pub-ink: var(--ink);
+    --pub-sub: var(--ink-muted);
+    --pub-headline-color: var(--headline);
+    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 800;
     --pub-headline-size: 30px;
@@ -155,9 +185,9 @@
     --pub-label-ls: 0.4px;
     --pub-label-transform: none;
     --pub-label-weight: 700;
-    --pub-accent: #7fb8ab;
+    --pub-accent: var(--accent-main);
     --pub-stat-accent: #7fb8ab;
-    --pub-point: #f79f97;
+    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: none;
     --pub-divider-color: #f0dfe9;
@@ -165,7 +195,7 @@
     --pub-shadow-lg: 0 14px 32px rgba(150, 120, 160, 0.18);
     --pub-shadow-sm: 0 6px 16px rgba(150, 120, 160, 0.2);
     --pub-radius: 22px;
-    --pub-fallback-bg: #fdeef5;
+    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: #ffe1ec;
     --pub-pill-color: #bd6595;
     --pub-pill-alt-bg: #dff1ec;
@@ -193,9 +223,30 @@
     --pub-field-bg: #fffafc;
     --pub-bank-bg: #dff1ec;
     --pub-bank-ink: #3f7a6e;
-    --pub-msg-bg: #fdeef5;
+    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #bd6595;
     --pub-msg-sub: #c77ba0;
+  }
+
+  /* 테마가 의미 토큰을 덮어써도 고정 브랜드 색과 Tailwind 색 유틸은 기존 :root 값으로 유지 */
+  .pub-page {
+    --brand-ink: #171717;
+    --brand-paper: #fffdf7;
+    --brand-cream: #fff7ed;
+    --brand-yellow: #fef3c7;
+    --brand-mint: #ccfbf1;
+    --brand-blush: #ffe4e6;
+    --brand-orange: #f97316;
+    --brand-teal: #0f766e;
+    --brand-purple: #4c1d95;
+    --brand-line: #d1d5db;
+    --color-ink: var(--brand-ink);
+    --color-paper: var(--brand-paper);
+    --color-line: var(--brand-line);
+    --color-teal: var(--brand-teal);
+    --color-purple: var(--brand-purple);
+    --color-mint: var(--brand-mint);
+    --color-orange: var(--brand-orange);
   }
 
   /* 토스트는 .pub-page 바깥(루트 Toaster)에 렌더링되므로 body:has()로 테마 변수를 전달 */
