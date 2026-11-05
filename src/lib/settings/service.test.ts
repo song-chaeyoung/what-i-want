@@ -1,6 +1,5 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { decryptAccountNumber } from "./account-crypto";
-import { INVALID_ACCOUNT_NUMBER_MESSAGE } from "./account-number";
 import {
   getSettings,
   updateSettings,
@@ -261,9 +260,6 @@ describe("admin settings service", () => {
         secret,
       ),
     ).toBe("3333-12-1234567");
-    expect(INVALID_ACCOUNT_NUMBER_MESSAGE).toBe(
-      "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
-    );
   });
 
   test("strips whitespace from a new account number before validating and saving", async () => {

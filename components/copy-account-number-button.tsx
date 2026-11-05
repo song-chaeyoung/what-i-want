@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 
 export function CopyAccountNumberButton({
   bankName,
@@ -16,10 +17,10 @@ export function CopyAccountNumberButton({
     try {
       await navigator.clipboard.writeText(`${bankName} ${accountNumber}`);
       setCopied(true);
-      toast.success("은행과 계좌번호를 복사했어요.");
+      toast.success(PUBLIC_WISHLIST_COPY.accountCopySuccess);
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("계좌번호 복사에 실패했어요.");
+      toast.error(PUBLIC_WISHLIST_COPY.accountCopyError);
     }
   }
 
@@ -30,7 +31,9 @@ export function CopyAccountNumberButton({
       onClick={handleCopy}
       className="pub-btn h-11 px-4 text-sm"
     >
-      {copied ? "복사 완료" : "계좌번호 복사"}
+      {copied
+        ? PUBLIC_WISHLIST_COPY.accountCopyCopied
+        : PUBLIC_WISHLIST_COPY.accountCopyLabel}
     </button>
   );
 }

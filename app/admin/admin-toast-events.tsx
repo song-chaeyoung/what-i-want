@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast, type ExternalToast } from "sonner";
-import { INVALID_ACCOUNT_NUMBER_MESSAGE } from "@/src/lib/settings/account-number";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 
 const adminToastParams = {
   saved: { type: "success", message: "설정을 저장했어요." },
@@ -25,8 +25,8 @@ const adminToastParams = {
 } as const;
 
 const adminErrorMessages: Record<string, string> = {
-  reserved_slug: "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
-  invalid_account_number: INVALID_ACCOUNT_NUMBER_MESSAGE,
+  reserved_slug: ADMIN_COPY.reservedSlug,
+  invalid_account_number: ADMIN_COPY.invalidAccountNumber,
 };
 
 type AdminToastParam = keyof typeof adminToastParams;

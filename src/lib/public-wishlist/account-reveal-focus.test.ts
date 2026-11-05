@@ -133,7 +133,10 @@ describe("account reveal focus", () => {
     );
 
     expect(copySource).toContain("data-account-copy");
-    expect(copySource).toContain("계좌번호 복사");
+    expect(copySource).toContain("PUBLIC_WISHLIST_COPY.accountCopyLabel");
+    expect(copySource).toContain("PUBLIC_WISHLIST_COPY.accountCopyCopied");
+    expect(copySource).toContain("PUBLIC_WISHLIST_COPY.accountCopySuccess");
+    expect(copySource).toContain("PUBLIC_WISHLIST_COPY.accountCopyError");
     expect(dialogSource).toContain('querySelector<HTMLButtonElement>("[data-account-copy]")?.focus()');
     expect(dialogSource).toContain('event.key === "Escape"');
     expect(dialogSource).toContain('event.key !== "Tab"');

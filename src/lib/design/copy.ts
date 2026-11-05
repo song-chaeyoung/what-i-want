@@ -86,6 +86,10 @@ export const PUBLIC_WISHLIST_COPY = {
   accountModalClose: "닫기",
   accountSectionTitle: "계좌 안내",
   accountSectionNote: "마음은 이 계좌로 전할 수 있어요.",
+  accountCopyLabel: "계좌번호 복사",
+  accountCopyCopied: "복사 완료",
+  accountCopySuccess: "은행과 계좌번호를 복사했어요.",
+  accountCopyError: "계좌번호 복사에 실패했어요.",
   shareCta: "공유하기",
   shareCopied: "복사 완료",
   shareSuccess: "위시리스트 링크를 복사했어요.",
@@ -115,6 +119,18 @@ export const PUBLIC_WISHLIST_COPY = {
   errorDescription: "일시적인 오류예요. 잠시 후 다시 시도해주세요.",
   homeCta: "처음으로",
   retryCta: "다시 시도",
+} as const;
+
+export const ADMIN_COPY = {
+  reservedSlug:
+    "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
+  invalidAccountVisibility: "지원하지 않는 계좌 공개 값입니다.",
+  bankNameRequired: "은행 이름을 입력해주세요.",
+  accountHolderRequired: "예금주를 입력해주세요.",
+  accountNumberRequired: "계좌번호를 입력해주세요.",
+  invalidAccountNumber: "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
+  accountFieldTooLong: "계좌 정보는 80자 이하여야 합니다.",
+  accountEncryptionUnavailable: "계좌 암호화 키가 설정되어 있지 않습니다.",
 } as const;
 
 export function formatWishCount(count: number): string {
