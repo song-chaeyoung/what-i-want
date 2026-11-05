@@ -290,8 +290,8 @@ describe("admin settings service", () => {
     ).toBe("333312-1234567");
   });
 
-  test.each(["12345678", "1".repeat(30), "1234-5678"])(
-    "accepts account number length boundary %j",
+  test.each(["1", "1234567", "1".repeat(31), "1234-5678"])(
+    "accepts an account number of any length when it includes a digit %j",
     async (accountNumber) => {
       const repository = new FakeSettingsRepository();
       repository.settings = makeSettings({ bankAccount: null });
@@ -313,8 +313,6 @@ describe("admin settings service", () => {
   test.each([
     "3333-12-AB1234",
     "3333/12/1234567",
-    "1234567",
-    "1".repeat(31),
     "--------",
     "-".repeat(30),
   ])("rejects account number %j", async (accountNumber) => {
