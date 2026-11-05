@@ -272,12 +272,16 @@ function PublicWishCard({
                   : PUBLIC_WISHLIST_COPY.noTargetAmount}
               </p>
             </div>
-            <div className="pub-progress mt-2">
-              <i style={{ width: `${item.progress}%` }} />
-            </div>
-            <p className="text-xs font-black text-[var(--pub-sub)]">
-              {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
-            </p>
+            {item.targetAmount ? (
+              <>
+                <div className="pub-progress mt-2">
+                  <i style={{ width: `${item.progress}%` }} />
+                </div>
+                <p className="text-xs font-black text-[var(--pub-sub)]">
+                  {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
+                </p>
+              </>
+            ) : null}
             {productUrl ? (
               <a
                 href={productUrl}

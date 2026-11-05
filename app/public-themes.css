@@ -391,10 +391,6 @@
     border-radius: var(--pub-progress-radius);
   }
 
-  .pub-progress-done > i {
-    background: var(--pub-ink);
-  }
-
   .pub-field {
     background: var(--pub-field-bg);
     border: var(--pub-field-border);

@@ -33,7 +33,7 @@
 | 카드·카드 제목 | `.pub-card`, `--pub-headline-color` | 카드 안 제목은 `.pub-card`가 `--pub-ink`로 재정의. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
 | 강조·상태 | `.pub-pill`, `.pub-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | `.pub-btn`, `.pub-btn-primary`, `.pub-btn-accent`, `.pub-btn-block` | 현재 공개 행동의 위계·너비를 따라 적용. primary라는 이름만으로 관리자 Button variant와 같다고 가정하지 않음 |
-| 진행률 | `.pub-progress`, `.pub-progress-done` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
+| 진행률 | `.pub-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
 | 입력 | `.pub-field`와 공개 뷰 내부 필드 | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용 |
 
 공개 토스트는 `.pub-page` 바깥의 루트 Toaster에 렌더링됩니다. 현재 CSS는 `body:has(.pub-page[data-theme=...])`로 테마 값을 전달하므로 토스트 범위를 바꿀 때 이 연결도 확인합니다. 기본 공개 경계처럼 `data-theme`가 없는 경우까지 선택 테마 토스트가 보장되는 것은 아닙니다.

@@ -46,11 +46,11 @@
 article.gift-card-shell.pub-card
 ├─ 이미지 영역: 이미지(4:3) 또는 GiftFallback "GIFT"
 ├─ 본문: .pub-pill "NO. n" · 상태 라벨 · 이름(줄 수 제한 없음) · 설명(선택)
-├─ 진행 패널: 모인 금액 / 목표 · .pub-progress · "N%" · "선물 링크 보기"(productUrl 있을 때)
+├─ 진행 패널: 모인 금액 / 목표. 목표가 있을 때만 .pub-progress와 "N%". 없으면 "목표 금액 없음". "선물 링크 보기"(productUrl 있을 때)
 └─ 참여 영역 "이 선물에 마음 보태기"(canFund일 때만)
 ```
 
-- 진행률은 `.pub-progress`, 카드·라벨·버튼은 [foundations.md](../foundations.md#공개-테마와-표현)의 공개 표현을 사용합니다.
+- 목표가 있는 카드의 진행률은 `.pub-progress`입니다. 완료 카드도 같은 채움색을 쓰고, 목표가 없으면 막대와 백분율은 표시하지 않습니다. 카드·라벨·버튼은 [foundations.md](../foundations.md#공개-테마와-표현)의 공개 표현을 사용합니다.
 - "선물 링크 보기"는 상태와 관계없이 `productUrl`이 있으면 표시됩니다.
 - 375px은 이미지, 본문, 진행 패널, 참여 영역 순의 1단, `lg` 이상은 이미지와 본문·진행 패널의 2단입니다.
 
