@@ -6,6 +6,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { PublicBankAccountCard } from "@/components/public-bank-account-card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
+import {
+  accountRevealTabTarget,
+  listDialogTabStops,
+  restoreAccountRevealTriggerFocus,
+} from "@/src/lib/public-wishlist/account-reveal-focus";
 import { buildCreateCtaHref } from "@/src/lib/share/share-url";
 import type { PublicBankAccountView } from "@/src/lib/public-wishlist/types";
 
@@ -138,8 +143,54 @@ function AccountRevealModal({
   account: PublicBankAccountView;
   onClose: () => void;
 }) {
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const onCloseRef = useRef(onClose);
+
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
+  useEffect(() => {
+    const dialog = dialogRef.current;
+
+    if (!dialog) {
+      return;
+    }
+
+    dialog.querySelector<HTMLButtonElement>("[data-account-copy]")?.focus();
+
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeAccountReveal(() => onCloseRef.current());
+        return;
+      }
+
+      if (event.key !== "Tab") {
+        return;
+      }
+
+      const next = accountRevealTabTarget(
+        listDialogTabStops(dialog),
+        document.activeElement,
+        event.shiftKey,
+      );
+
+      if (!next) {
+        return;
+      }
+
+      event.preventDefault();
+      next.focus();
+    };
+
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   return (
     <div
+      ref={dialogRef}
       role="dialog"
       aria-modal="true"
       aria-label={PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
@@ -166,11 +217,18 @@ function AccountRevealModal({
         <button
           type="button"
           className="pub-btn pub-btn-block mt-3 h-11 text-sm"
-          onClick={onClose}
+          onClick={() => closeAccountReveal(onClose)}
         >
           {PUBLIC_WISHLIST_COPY.accountModalClose}
         </button>
       </section>
     </div>
   );
+}
+
+function closeAccountReveal(onClose: () => void): void {
+  onClose();
+  window.setTimeout(() => {
+    restoreAccountRevealTriggerFocus();
+  }, 0);
 }

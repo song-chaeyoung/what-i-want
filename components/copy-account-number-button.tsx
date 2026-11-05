@@ -26,6 +26,7 @@ export function CopyAccountNumberButton({
   return (
     <button
       type="button"
+      data-account-copy=""
       onClick={handleCopy}
       className="pub-btn h-11 px-4 text-sm"
     >

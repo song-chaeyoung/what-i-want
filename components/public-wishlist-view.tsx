@@ -179,7 +179,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
   );
 }
 
-function ParticipationSubmit({ demo }: { demo: boolean }) {
+function ParticipationSubmit({
+  demo,
+  returnFocusId,
+}: {
+  demo: boolean;
+  returnFocusId?: string;
+}) {
   if (demo) {
     return (
       <div className="space-y-2">
@@ -199,6 +205,7 @@ function ParticipationSubmit({ demo }: { demo: boolean }) {
 
   return (
     <PublicParticipationSubmitButton
+      id={returnFocusId}
       label={PUBLIC_WISHLIST_COPY.participationSubmitCta}
     />
   );
@@ -367,7 +374,10 @@ function PublicWishCard({
                 : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
             </p>
 
-            <ParticipationSubmit demo={demo} />
+            <ParticipationSubmit
+              demo={demo}
+              returnFocusId={`participation-submit-${item.id}`}
+            />
           </form>
         </details>
       ) : participationNotice ? (
