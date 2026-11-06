@@ -64,6 +64,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("--color-purple: var(--brand-purple);");
     expect(source).toContain("--color-mint: var(--brand-mint);");
     expect(source).toContain("--color-paper: var(--brand-paper);");
+    expect(source).toContain("--color-orange: var(--brand-orange);");
     expect(source).toContain("--shadow-pub:");
     expect(source).toContain("--radius-pub:");
     expect(source).not.toContain("@import url(");
