@@ -1,6 +1,7 @@
 # 토큰과 컴포넌트 사용 기준
 
 코드 대조일: 2026-10-30
+토큰 이전 추가 대조일: 2026-11-06. 아래 토큰 소유와 카드 제목만 다시 봤고, 나머지 컴포넌트 지도는 2026-10-30 정적 대조입니다.
 
 [디자인 가이드](README.md)에서 영역을 고른 뒤 이 문서를 읽습니다. 실제 값·variant·props는 링크된 코드가 원본이며, 여기에는 역할과 선택 기준을 기록합니다. 문서의 예시 역할이 새로운 토큰의 생성을 뜻하지 않습니다.
 
@@ -8,14 +9,14 @@
 
 | 원본 | 담당 범위 | 사용할 때 |
 | --- | --- | --- |
-| [globals.css](../../app/globals.css)의 의미 토큰과 `--brand-*` 별칭 | 고정 브랜드 팔레트. 의미 이름이 값을 소유하고 `--brand-*`는 그 별칭 | 홈·브랜드 장식과 기존 관리자 표현의 역할을 이어갈 때. 호출부를 새 이름으로 바꾸기 전에 [매핑 초안](tokens-mapping.md)을 확인 |
+| [globals.css](../../app/globals.css)의 의미 토큰과 `--brand-*` 별칭 | 고정 브랜드 팔레트. 의미 이름이 값을 소유하고 `--brand-*`는 Tailwind와 상속된 고정색을 위한 별칭으로 남김 | 홈·브랜드 장식과 기존 관리자 표현. `text-purple` 같은 유틸은 공개 테마 안에서도 브랜드 색. 대응은 [매핑](tokens-mapping.md) |
 | 같은 파일의 `--background`, `--foreground`, `--primary`, `--border`, `--ring`, radius 등 | shadcn 기반 UI의 의미 토큰과 Tailwind 연결 | `components/ui/`의 기존 컴포넌트를 사용하는 문맥 |
-| [public-themes.css](../../app/public-themes.css)의 `--pub-*` | 공개 테마의 면·잉크·헤더·카드·버튼·진행률·필드. 매핑된 색은 그 테마의 의미 토큰 별칭 | 공개 뷰나 명시적 공개 미리보기의 시각 표현 |
+| [public-themes.css](../../app/public-themes.css)의 의미 토큰과 남은 `--pub-*` | 공개 테마의 면·잉크·헤더·카드·버튼·진행률·필드. 1단계에서 매핑된 색은 의미 토큰을 직접 쓰고, 역할이 갈리는 `--pub-*`는 그대로 | 공개 뷰나 명시적 공개 미리보기의 시각 표현 |
 | `--toast-*` | 루트 Toaster의 테마별 표현 | [기존 토스트](../../components/ui/sonner.tsx)를 사용할 때. 토스트마다 팔레트를 다시 만들지 않음 |
 
-의미 토큰 병합은 1단계(별칭)입니다. 이름과 대응은 [토큰 매핑](tokens-mapping.md) 초안이며, 컴포넌트 호출부 이전과 `--brand-*`·`--pub-*` 삭제는 아직입니다.
+의미 토큰 병합은 2단계입니다. 1단계에서 매핑된 공개 색의 사용처는 의미 이름을 직접 쓰고, 그 `--pub-*` 별칭은 제거했습니다. `--brand-*`는 지우지 않습니다. 이름·제거분·남은 별칭은 [토큰 매핑](tokens-mapping.md)이 현재 기준입니다.
 
-`--brand-*`와 `--pub-*`는 값이 비슷해도 적용 범위가 다릅니다. 공개 화면에 브랜드 색을 직접 넣으면 선택 테마가 무시될 수 있으므로 해당 역할의 공개 토큰·클래스를 먼저 확인합니다. 반대로 관리자 shell을 `.pub-page`로 감싸는 방식으로 공개 테마를 확장하지 않습니다. Tailwind 색 유틸은 `@theme inline`에서 `--brand-*`를 가리키므로, `.pub-page`가 의미 토큰을 덮어써도 `text-purple` 같은 고정 브랜드 유틸은 테마 색으로 바뀌지 않습니다. 근거: [매핑의 배선](tokens-mapping.md).
+`--brand-*`와 공개 의미 토큰은 값이 비슷해도 적용 범위가 다릅니다. 공개 화면에 브랜드 색을 직접 넣으면 선택 테마가 무시될 수 있으므로 해당 역할의 공개 토큰·클래스를 먼저 확인합니다. 반대로 관리자 shell을 `.pub-page`로 감싸는 방식으로 공개 테마를 확장하지 않습니다. Tailwind 색 유틸은 `@theme inline`에서 `--brand-*`를 가리키므로, `.pub-page`가 의미 토큰을 덮어써도 `text-purple` 같은 고정 브랜드 유틸은 테마 색으로 바뀌지 않습니다. 근거: [매핑의 배선](tokens-mapping.md).
 
 ## 공개 테마와 표현
 
@@ -32,7 +33,7 @@
 | 역할 | 기존 표현 | 선택할 때의 기준 |
 | --- | --- | --- |
 | 페이지·헤더 | `.pub-page`, `.pub-header`, `.pub-headline` | 페이지 테마와 헤더 위 제목을 함께 표현 |
-| 카드·카드 제목 | `.pub-card`, `--pub-headline-color` | 카드 안 제목은 `.pub-card`가 `--pub-ink`로 재정의. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
+| 카드·카드 제목 | `.pub-card`, `--headline` | 카드 안 제목은 `.pub-card`가 `--headline`을 `--ink`로 재정의. 헤더 `.pub-headline`은 카드 밖이라 테마 헤드라인을 유지. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
 | 강조·상태 | `.pub-pill`, `.pub-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | `.pub-btn`, `.pub-btn-primary`, `.pub-btn-accent`, `.pub-btn-block` | 현재 공개 행동의 위계·너비를 따라 적용. primary라는 이름만으로 관리자 Button variant와 같다고 가정하지 않음 |
 | 진행률 | `.pub-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |

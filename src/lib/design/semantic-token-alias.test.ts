@@ -1,4 +1,4 @@
-import { readFileSync } from "node:fs";
+import { readdirSync, readFileSync, statSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
@@ -45,7 +45,8 @@ const themeBridges = {
   "--color-orange": "--brand-orange",
 } as const;
 
-const pubAliases = {
+/** 2단계에서 사용처를 옮긴 뒤 삭제한 --pub-* 별칭. 의미 토큰이 그 값을 직접 가진다. */
+const migratedPub = {
   "--pub-bg": "--surface-page",
   "--pub-header-bg": "--surface-header",
   "--pub-surface": "--surface",
@@ -58,6 +59,9 @@ const pubAliases = {
   "--pub-fallback-bg": "--tint-mint",
   "--pub-msg-bg": "--tint-blush",
 } as const;
+
+const removedPubAliasPattern =
+  /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/g;
 
 /** 별칭 도입 전에 테마 블록에 적혀 있던 --pub-* 리터럴. */
 const previousPub = {
@@ -341,6 +345,24 @@ function mergedVars(layers: Map<string, string>[]) {
   return vars;
 }
 
+function sourceFiles(dir: string): string[] {
+  const files: string[] = [];
+
+  for (const entry of readdirSync(dir)) {
+    const path = join(dir, entry);
+    if (statSync(path).isDirectory()) {
+      files.push(...sourceFiles(path));
+      continue;
+    }
+
+    if (/\.(css|tsx|ts)$/.test(entry)) {
+      files.push(path);
+    }
+  }
+
+  return files;
+}
+
 const rootVars = parseVars(extractBlock(globalsCss, /:root\s*\{/));
 const themeBridgeVars = parseVars(extractBlock(globalsCss, /@theme inline\s*\{/));
 const themeBlocks = {
@@ -380,7 +402,7 @@ describe("semantic token aliases", () => {
     }
   });
 
-  test("resolves every previous public token inside each theme", () => {
+  test("resolves mapped colors from semantic tokens and keeps unmapped pub tokens", () => {
     expect(publicThemesCss).not.toMatch(/\.pub-page\s*\{[^}]*--brand-ink\s*:/);
 
     for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
@@ -392,23 +414,63 @@ describe("semantic token aliases", () => {
         expect(themeVars.has(brand), `${themeId} ${brand}`).toBe(false);
       }
 
-      for (const [name, literal] of Object.entries(previous)) {
-        const alias = pubAliases[name as keyof typeof pubAliases];
+      for (const [pubName, semantic] of Object.entries(migratedPub)) {
+        const literal = previous[pubName as keyof typeof previous];
 
-        expect(themeVars.get(name), `${themeId} ${name}`).toBe(
-          alias ? `var(${alias})` : literal,
-        );
+        expect(themeVars.has(pubName), `${themeId} ${pubName}`).toBe(false);
+        expect(themeVars.get(semantic), `${themeId} ${semantic}`).toBe(literal);
+        expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
+      }
+
+      for (const [name, literal] of Object.entries(previous)) {
+        if (name in migratedPub) {
+          continue;
+        }
+
+        expect(themeVars.get(name), `${themeId} ${name}`).toBe(literal);
         expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
       }
 
-      expect(resolveVar("--ink-muted", computed), themeId).toBe(previous["--pub-sub"]);
       expect(resolveVar("--line", computed), themeId).toBe(rootSemantics["--line"]);
       expect(resolveVar("--line-strong", computed), themeId).toBe(rootSemantics["--line-strong"]);
       expect(resolveVar("--tint-yellow", computed), themeId).toBe(rootSemantics["--tint-yellow"]);
+    }
+  });
 
+  test("keeps the card headline override on --headline and the header on the theme headline", () => {
+    const cardBlock = extractBlock(publicThemesCss, /\.pub-card\s*\{/);
+    const headlineBlock = extractBlock(publicThemesCss, /\.pub-headline\s*\{/);
+
+    expect(cardBlock).toContain("--headline: var(--ink);");
+    expect(headlineBlock).toContain("color: var(--headline);");
+    removedPubAliasPattern.lastIndex = 0;
+    expect(publicThemesCss.match(removedPubAliasPattern)).toBeNull();
+
+    for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
+      const previous = previousPub[themeId];
+      const computed = mergedVars([rootVars, themeBlocks[themeId]]);
       const cardVars = new Map(computed);
-      cardVars.set("--pub-headline-color", "var(--pub-ink)");
-      expect(resolveVar("--pub-headline-color", cardVars), themeId).toBe(previous["--pub-ink"]);
+      cardVars.set("--headline", "var(--ink)");
+
+      expect(resolveVar("--headline", computed), `${themeId} header`).toBe(
+        previous["--pub-headline-color"],
+      );
+      expect(resolveVar("--headline", cardVars), `${themeId} card`).toBe(previous["--pub-ink"]);
+    }
+  });
+
+  test("has no remaining mapped pub alias dependency in app or component sources", () => {
+    const files = [
+      ...sourceFiles(join(root, "app")),
+      ...sourceFiles(join(root, "components")),
+    ];
+
+    expect(files.length).toBeGreaterThan(0);
+
+    for (const file of files) {
+      const source = readFileSync(file, "utf8");
+      removedPubAliasPattern.lastIndex = 0;
+      expect(source.match(removedPubAliasPattern), file).toBeNull();
     }
   });
 });

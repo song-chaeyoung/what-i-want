@@ -76,7 +76,7 @@ describe("public theme contract", () => {
     const cssSource = readFileSync(publicThemesCssPath, "utf8");
 
     expect(cssSource).toMatch(
-      /\.pub-card\s*\{[\s\S]*?--pub-headline-color:\s*var\(--pub-ink\);/,
+      /\.pub-card\s*\{[\s\S]*?--headline:\s*var\(--ink\);/,
     );
   });
 
@@ -110,7 +110,7 @@ describe("public theme contract", () => {
     expect(source).toContain("PUBLIC_WISHLIST_COPY.noTargetAmount");
     expect(source).not.toContain("pub-progress-done");
     expect(source).toContain(
-      'className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]"',
+      'className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
     );
     expect(source).not.toContain("statusFilter");
   });

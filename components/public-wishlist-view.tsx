@@ -109,10 +109,10 @@ export function PublicWishlistView({
           ))
         ) : (
           <div className="pub-card p-6">
-            <h2 className="text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+            <h2 className="text-2xl font-black tracking-normal text-[var(--headline)]">
               {PUBLIC_WISHLIST_COPY.emptyTitle}
             </h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+            <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
               {PUBLIC_WISHLIST_COPY.emptyDescription}
             </p>
           </div>
@@ -137,10 +137,10 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
     <details className="send-heart-section pub-card">
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
         <span className="pub-pill pub-pill-alt">gift note</span>
-        <span className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
+        <span className="text-lg font-black tracking-normal text-[var(--headline)]">
           {PUBLIC_WISHLIST_COPY.messageFormTitle}
         </span>
-        <span className="w-full text-sm font-semibold text-[var(--pub-sub)] sm:w-auto">
+        <span className="w-full text-sm font-semibold text-[var(--ink-muted)] sm:w-auto">
           {PUBLIC_WISHLIST_COPY.messageFormNote}
         </span>
       </summary>
@@ -200,7 +200,7 @@ function ParticipationSubmit({
         >
           {PUBLIC_WISHLIST_COPY.participationSubmitCta}
         </button>
-        <p className="text-xs font-semibold text-[var(--pub-sub)]">
+        <p className="text-xs font-semibold text-[var(--ink-muted)]">
           샘플 페이지에서는 마음을 보낼 수 없어요.
         </p>
       </div>
@@ -263,13 +263,13 @@ function PublicWishCard({
             <h2
               id={wishTitleId(item.id)}
               tabIndex={-1}
-              className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--pub-headline-color)] sm:text-3xl"
+              className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--headline)] sm:text-3xl"
             >
               {item.title}
             </h2>
 
             {item.description ? (
-              <p className="mt-4 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+              <p className="mt-4 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
                 {item.description}
               </p>
             ) : null}
@@ -278,10 +278,10 @@ function PublicWishCard({
           <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--pub-divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
             <p className="pub-label text-xs">gift progress</p>
             <div>
-              <p className="text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+              <p className="text-2xl font-black tracking-normal text-[var(--headline)]">
                 {formatCurrency(item.fundedAmount)}
               </p>
-              <p className="mt-1 text-xs font-black text-[var(--pub-sub)]">
+              <p className="mt-1 text-xs font-black text-[var(--ink-muted)]">
                 {item.targetAmount
                   ? `${formatCurrency(item.targetAmount)} 중`
                   : PUBLIC_WISHLIST_COPY.noTargetAmount}
@@ -292,7 +292,7 @@ function PublicWishCard({
                 <div className="pub-progress mt-2">
                   <i style={{ width: `${item.progress}%` }} />
                 </div>
-                <p className="text-xs font-black text-[var(--pub-sub)]">
+                <p className="text-xs font-black text-[var(--ink-muted)]">
                   {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
                 </p>
               </>
@@ -313,7 +313,7 @@ function PublicWishCard({
 
       {canFund ? (
         <details className="send-heart-section border-t-2 border-[var(--pub-divider-color)]">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--pub-accent)] [&::-webkit-details-marker]:hidden">
+          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--accent-main)] [&::-webkit-details-marker]:hidden">
             {PUBLIC_WISHLIST_COPY.fundCta}
           </summary>
           <form
@@ -322,7 +322,7 @@ function PublicWishCard({
             }
             className="space-y-4 border-t-2 border-[var(--pub-divider-color)] p-5"
           >
-            <p className="text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
+            <p className="text-lg font-black tracking-normal text-[var(--headline)]">
               {PUBLIC_WISHLIST_COPY.participationTitle}
             </p>
             <input type="hidden" name="wishItemId" value={item.id} />
@@ -376,7 +376,7 @@ function PublicWishCard({
               />
             </PublicField>
 
-            <p className="text-xs font-semibold text-[var(--pub-sub)]">
+            <p className="text-xs font-semibold text-[var(--ink-muted)]">
               {hasAccount
                 ? PUBLIC_WISHLIST_COPY.participationTransferNote
                 : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
@@ -389,7 +389,7 @@ function PublicWishCard({
           </form>
         </details>
       ) : participationNotice ? (
-        <p className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]">
+        <p className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
           {participationNotice}
         </p>
       ) : null}
@@ -435,7 +435,7 @@ function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
     <div className="pub-stat p-4">
       <dt className="pub-label text-xs">{label}</dt>
-      <dd className="mt-1 text-lg font-black tracking-normal text-[var(--pub-headline-color)]">
+      <dd className="mt-1 text-lg font-black tracking-normal text-[var(--headline)]">
         {value}
       </dd>
     </div>
