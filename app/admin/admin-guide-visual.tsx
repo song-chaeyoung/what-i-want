@@ -67,19 +67,19 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
           <span className="pub-pill">NO. 1</span>
           <span className="pub-label">받고 싶은 선물</span>
         </div>
-        <p className="mt-3 text-lg font-black text-[var(--pub-headline-color)] sm:mt-4 sm:text-xl">
+        <p className="mt-3 text-lg font-black text-[var(--headline)] sm:mt-4 sm:text-xl">
           무선 헤드폰
         </p>
         <div className="mt-3 flex items-end justify-between gap-4 sm:mt-4">
           <div>
-            <p className="text-base font-black text-[var(--pub-ink)]">
+            <p className="text-base font-black text-[var(--ink)]">
               63,000원
             </p>
-            <p className="mt-1 text-[10px] font-bold text-[var(--pub-sub)]">
+            <p className="mt-1 text-[10px] font-bold text-[var(--ink-muted)]">
               189,000원 중
             </p>
           </div>
-          <p className="text-xs font-black text-[var(--pub-accent)]">33%</p>
+          <p className="text-xs font-black text-[var(--accent-main)]">33%</p>
         </div>
         <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--pub-divider-color)] bg-white sm:mt-3">
           <div className="h-full w-1/3 bg-[var(--pub-progress-fill)]" />

@@ -11,17 +11,10 @@
     --point: #f97316;
     --tint-mint: #ccfbf1;
     --tint-blush: #ffe4e6;
-    --pub-bg: var(--surface-page);
     --pub-bg-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --pub-dot-size: 18px;
-    --pub-header-bg: var(--surface-header);
     --pub-header-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --pub-header-border: 2px solid #171717;
-    --pub-surface: var(--surface);
-    --pub-ink: var(--ink);
-    --pub-sub: var(--ink-muted);
-    --pub-headline-color: var(--headline);
-    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-mona, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 700;
     --pub-headline-size: 36px;
@@ -33,9 +26,7 @@
     --pub-label-ls: 0;
     --pub-label-transform: none;
     --pub-label-weight: 700;
-    --pub-accent: var(--accent-main);
     --pub-stat-accent: #0f766e;
-    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: 2px solid #171717;
     --pub-divider-color: #171717;
@@ -43,7 +34,6 @@
     --pub-shadow-lg: 8px 8px 0 #111827;
     --pub-shadow-sm: 3px 3px 0 #111827;
     --pub-radius: 4px;
-    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: #f97316;
     --pub-pill-color: #fff;
     --pub-pill-alt-bg: #ccfbf1;
@@ -71,7 +61,6 @@
     --pub-field-bg: #fff;
     --pub-bank-bg: #ccfbf1;
     --pub-bank-ink: #134e4a;
-    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #171717;
     --pub-msg-sub: #9d174d;
   }
@@ -87,17 +76,10 @@
     --point: #111;
     --tint-mint: #f3f3f3;
     --tint-blush: #fafafa;
-    --pub-bg: var(--surface-page);
     --pub-bg-dots: none;
     --pub-dot-size: 0;
-    --pub-header-bg: var(--surface-header);
     --pub-header-dots: none;
     --pub-header-border: 1.5px solid #111;
-    --pub-surface: var(--surface);
-    --pub-ink: var(--ink);
-    --pub-sub: var(--ink-muted);
-    --pub-headline-color: var(--headline);
-    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 900;
     --pub-headline-size: 30px;
@@ -109,9 +91,7 @@
     --pub-label-ls: 1.6px;
     --pub-label-transform: uppercase;
     --pub-label-weight: 700;
-    --pub-accent: var(--accent-main);
     --pub-stat-accent: #fff;
-    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: 1.5px solid #111;
     --pub-divider-color: #111;
@@ -119,7 +99,6 @@
     --pub-shadow-lg: none;
     --pub-shadow-sm: none;
     --pub-radius: 0;
-    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: transparent;
     --pub-pill-color: #111;
     --pub-pill-alt-bg: #111;
@@ -147,7 +126,6 @@
     --pub-field-bg: #fff;
     --pub-bank-bg: #f6f6f6;
     --pub-bank-ink: #333;
-    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #111;
     --pub-msg-sub: #6b6b6b;
   }
@@ -163,17 +141,10 @@
     --point: #f79f97;
     --tint-mint: #fdeef5;
     --tint-blush: #fdeef5;
-    --pub-bg: var(--surface-page);
     --pub-bg-dots: none;
     --pub-dot-size: 0;
-    --pub-header-bg: var(--surface-header);
     --pub-header-dots: none;
     --pub-header-border: none;
-    --pub-surface: var(--surface);
-    --pub-ink: var(--ink);
-    --pub-sub: var(--ink-muted);
-    --pub-headline-color: var(--headline);
-    --pub-headline-on-header: var(--headline);
     --pub-headline-font: var(--font-sans, Arial, Helvetica, sans-serif);
     --pub-headline-weight: 800;
     --pub-headline-size: 30px;
@@ -185,9 +156,7 @@
     --pub-label-ls: 0.4px;
     --pub-label-transform: none;
     --pub-label-weight: 700;
-    --pub-accent: var(--accent-main);
     --pub-stat-accent: #7fb8ab;
-    --pub-point: var(--point);
     --pub-on-point: #fff;
     --pub-border: none;
     --pub-divider-color: #f0dfe9;
@@ -195,7 +164,6 @@
     --pub-shadow-lg: 0 14px 32px rgba(150, 120, 160, 0.18);
     --pub-shadow-sm: 0 6px 16px rgba(150, 120, 160, 0.2);
     --pub-radius: 22px;
-    --pub-fallback-bg: var(--tint-mint);
     --pub-pill-bg: #ffe1ec;
     --pub-pill-color: #bd6595;
     --pub-pill-alt-bg: #dff1ec;
@@ -223,7 +191,6 @@
     --pub-field-bg: #fffafc;
     --pub-bank-bg: #dff1ec;
     --pub-bank-ink: #3f7a6e;
-    --pub-msg-bg: var(--tint-blush);
     --pub-msg-title: #bd6595;
     --pub-msg-sub: #c77ba0;
   }
@@ -271,16 +238,16 @@
 
 @layer components {
   .pub-page {
-    background-color: var(--pub-bg);
+    background-color: var(--surface-page);
     background-image: var(--pub-bg-dots);
     background-position: -2px -2px;
     background-size: var(--pub-dot-size) var(--pub-dot-size);
-    color: var(--pub-ink);
+    color: var(--ink);
     font-family: var(--font-sans, Arial, Helvetica, sans-serif);
   }
 
   .pub-header {
-    background-color: var(--pub-header-bg);
+    background-color: var(--surface-header);
     background-image: var(--pub-header-dots);
     background-position: -2px -2px;
     background-size: var(--pub-dot-size) var(--pub-dot-size);
@@ -289,7 +256,7 @@
 
   .pub-headline {
     margin: 0;
-    color: var(--pub-headline-on-header);
+    color: var(--headline);
     font-family: var(--pub-headline-font);
     font-size: var(--pub-headline-size);
     font-weight: var(--pub-headline-weight);
@@ -315,15 +282,16 @@
   }
 
   .pub-card {
-    --pub-headline-color: var(--pub-ink);
-    background: var(--pub-surface);
+    /* 카드 안 제목만 테마 헤드라인 대신 잉크. 헤더 .pub-headline 은 카드 밖이라 테마 헤드라인을 유지한다. */
+    --headline: var(--ink);
+    background: var(--surface);
     border: var(--pub-border);
     border-radius: var(--pub-radius);
     box-shadow: var(--pub-shadow);
   }
 
   .pub-card.pub-header {
-    background-color: var(--pub-header-bg);
+    background-color: var(--surface-header);
     background-image: var(--pub-header-dots);
     background-position: -2px -2px;
     background-size: var(--pub-dot-size) var(--pub-dot-size);
@@ -335,7 +303,7 @@
   }
 
   .pub-fallback {
-    background: var(--pub-fallback-bg);
+    background: var(--tint-mint);
   }
 
   .pub-pill {
@@ -367,11 +335,11 @@
     justify-content: center;
     gap: 8px;
     padding: 15px 18px;
-    background: var(--pub-surface);
+    background: var(--surface);
     border: var(--pub-btn-border);
     border-radius: var(--pub-btn-radius);
     box-shadow: var(--pub-btn-shadow);
-    color: var(--pub-ink);
+    color: var(--ink);
     cursor: pointer;
     font-family: var(--pub-btn-font);
     font-size: var(--pub-btn-size);
@@ -382,12 +350,12 @@
   }
 
   .pub-btn-primary {
-    background: var(--pub-point);
+    background: var(--point);
     color: var(--pub-on-point);
   }
 
   .pub-btn-accent {
-    background: var(--pub-accent);
+    background: var(--accent-main);
     color: var(--pub-on-point);
   }
 
@@ -432,7 +400,7 @@
   }
 
   .pub-msg {
-    background: var(--pub-msg-bg);
+    background: var(--tint-blush);
   }
 
   .pub-cta {
@@ -446,7 +414,7 @@
   }
 
   .pub-stat {
-    background: var(--pub-surface);
+    background: var(--surface);
     border: var(--pub-border);
     border-radius: var(--pub-radius);
     box-shadow: var(--pub-shadow);

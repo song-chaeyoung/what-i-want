@@ -1,5 +1,7 @@
 @import "tailwindcss";
 @import "./public-themes.css";
+/* 과거 계획 문서의 옛 클래스 문자열이 삭제된 토큰 유틸을 다시 만들지 않게 한다. */
+@source not "../docs";
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
@@ -8,7 +10,7 @@
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
-  /* 의미 토큰이 값의 원본입니다. --brand-* 는 별칭입니다. docs/design/tokens-mapping.md */
+  /* 의미 토큰이 값의 원본입니다. --brand-* 는 @theme inline 과 상속된 고정 브랜드 색용 별칭으로 남깁니다. docs/design/tokens-mapping.md */
   --ink: #171717;
   --ink-muted: #3f3f46;
   --surface: #fffdf7;

@@ -198,14 +198,14 @@ function AccountRevealModal({
     >
       <section className="pub-card w-full max-w-sm p-6">
         <p className="pub-pill pub-pill-alt">thank you</p>
-        <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--pub-headline-color)]">
+        <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--headline)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
         </h2>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--pub-sub)]">
+        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
         </p>
         <PublicBankAccountCard account={account} className="mt-5" />
-        <p className="mt-3 text-xs font-semibold text-[var(--pub-sub)]">
+        <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
         </p>
         <Link

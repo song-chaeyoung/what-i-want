@@ -110,7 +110,7 @@ describe("public wish card progress", () => {
     expect(html).not.toContain("pub-progress-done");
     expect(html).toContain(PUBLIC_WISHLIST_COPY.participationClosedComplete);
     expect(html).toContain(
-      'class="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--pub-sub)]"',
+      'class="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
     );
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.fundCta);
     expect(html).not.toContain('id="participation-submit-wish-1"');
