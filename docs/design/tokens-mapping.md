@@ -38,17 +38,17 @@
 
 `--surface-header`와 `--tint-yellow`는 `:root`와 `pixel_y2k`에서 둘 다 `#fef3c7`입니다. 역할은 다릅니다. `--brand-yellow`는 `--tint-yellow`를 가리킵니다. `mono_bw` 헤더는 `#111111`, `soft_pastel` 헤더는 `#ffeaf3`이므로 테마가 덮어쓰는 이름은 `--surface-header`입니다.
 
-Tailwind 색 다리는 `@theme inline`에서 의미 토큰을 가리킵니다. `:root`만 적용된 화면의 계산 값은 이전 `--brand-*`와 같습니다.
+`@theme inline`은 다리에 적은 값을 유틸 클래스에 그대로 넣습니다. `--color-purple: var(--headline)`이면 Tailwind 4.3이 `.text-purple { color: var(--headline); }`를 만들고, `mono_bw`가 `--headline`을 `#fff`로 덮으면 고정 브랜드 보라 `#4c1d95`가 아닙니다. 그래서 다리는 의미 토큰이 아니라 기존 `--brand-*`를 가리킵니다.
 
-| 다리 | 별칭 | `:root`에서 풀린 값 |
-| --- | --- | --- |
-| `--color-ink` | `var(--ink)` | `#171717` |
-| `--color-paper` | `var(--surface)` | `#fffdf7` |
-| `--color-line` | `var(--line)` | `#d1d5db` |
-| `--color-teal` | `var(--accent-main)` | `#0f766e` |
-| `--color-purple` | `var(--headline)` | `#4c1d95` |
-| `--color-mint` | `var(--tint-mint)` | `#ccfbf1` |
-| `--color-orange` | `var(--point)` | `#f97316` |
+| 다리 | `@theme inline` 값 | 생성 유틸이 참조하는 값 | `:root`에서 풀린 색 |
+| --- | --- | --- | --- |
+| `--color-ink` | `var(--brand-ink)` | `var(--brand-ink)` | `#171717` |
+| `--color-paper` | `var(--brand-paper)` | `var(--brand-paper)` | `#fffdf7` |
+| `--color-line` | `var(--brand-line)` | `var(--brand-line)` | `#d1d5db` |
+| `--color-teal` | `var(--brand-teal)` | `var(--brand-teal)` | `#0f766e` |
+| `--color-purple` | `var(--brand-purple)` | `var(--brand-purple)` | `#4c1d95` |
+| `--color-mint` | `var(--brand-mint)` | `var(--brand-mint)` | `#ccfbf1` |
+| `--color-orange` | `var(--brand-orange)` | `var(--brand-orange)` | `#f97316` |
 
 ## 테마별 핵심 매핑
 
@@ -101,12 +101,14 @@ Tailwind 색 다리는 `@theme inline`에서 의미 토큰을 가리킵니다. `
 
 ## `.pub-page` 안의 브랜드 색
 
-`:root`의 `--brand-ink: var(--ink)`는 그 요소의 `--ink`를 계산합니다. `.pub-page`가 `--ink`를 테마 값으로 덮어쓰면, 브랜드 별칭을 그대로 두면 `mono_bw` 안의 `var(--brand-ink)`가 `#111`이 됩니다. 이전 `--brand-ink`는 리터럴 `#171717`이라 테마와 무관했습니다.
+`:root`에서 `--brand-purple: var(--headline)`은 그 요소에서 `#4c1d95`로 계산됩니다. 커스텀 속성은 이 계산값을 자식에게 상속합니다. `.pub-page`가 `--headline`만 `#fff`로 덮어써도, 상속된 `--brand-purple`은 `#4c1d95`로 남습니다. `.pub-page`에 `--brand-*` 리터럴을 다시 적지 않습니다. 그 재선언은 `@theme inline`이 유틸에 `--headline`을 직접 넣은 경우를 막지 못합니다.
 
-그래서 `.pub-page`는 `--brand-*`를 기존 `:root` 리터럴로 다시 선언합니다. 같은 블록에서 Tailwind `--color-ink` 등도 `var(--brand-*)`로 다시 고정합니다. `@theme inline`의 다리는 여전히 의미 토큰을 가리키므로, `.pub-page` 밖(`text-ink`, `border-line` 등)의 계산 값은 이전과 같습니다. 공개 화면의 색은 `--pub-*` 별칭이 담당합니다.
+공개 테마의 색은 테마 블록의 의미 토큰과 `--pub-*` 별칭이 담당합니다. `text-purple`, `text-ink`, `bg-paper`, `border-line`, `text-teal`, `bg-mint`, `bg-orange` 같은 기존 브랜드 유틸은 세 테마 안에서도 `:root` 브랜드 색을 유지합니다.
 
-호출부는 아직 `--brand-*`와 `--pub-*`를 사용합니다. 2단계에서 `.pub-page` 안으로 의미 토큰을 가져올 때는 브랜드 고정과 테마 덮어쓰기를 다시 확인합니다.
+호출부는 아직 `--brand-*`와 `--pub-*`를 사용합니다. 2단계에서 `.pub-page` 안으로 의미 토큰을 직접 쓸 때는 유틸이 그 이름을 참조하지 않는지 다시 확인합니다.
 
 ## 확인 방법
 
-[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)이 `:root` 브랜드 별칭, Tailwind 다리, 세 테마의 기존 `--pub-*` 계산 값을 소스의 `var()` 체인으로 비교합니다. [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 의미 토큰을 가리키는지 확인합니다. 이번 대조에서 브라우저로 세 테마를 다시 열지는 않았습니다.
+[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭과 세 테마의 기존 `--pub-*`를 소스의 `var()` 체인으로 비교합니다. 이 비교는 `@theme inline`이 유틸에 값을 넣는 방식과, 브라우저가 브랜드 별칭의 계산값을 상속하는 방식을 대신하지 않습니다.
+
+[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 컴파일해 `.text-purple` 등이 `var(--brand-*)`를 참조하는지 확인합니다. Chrome이 있으면 그 CSS를 세 테마에 적용한 계산색도 확인합니다. [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 앱 화면을 브라우저로 다시 연 검증은 이 문서의 범위에 없습니다.

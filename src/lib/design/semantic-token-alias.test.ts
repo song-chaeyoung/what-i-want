@@ -36,13 +36,13 @@ const rootSemantics = {
 } as const;
 
 const themeBridges = {
-  "--color-ink": "--ink",
-  "--color-paper": "--surface",
-  "--color-line": "--line",
-  "--color-teal": "--accent-main",
-  "--color-purple": "--headline",
-  "--color-mint": "--tint-mint",
-  "--color-orange": "--point",
+  "--color-ink": "--brand-ink",
+  "--color-paper": "--brand-paper",
+  "--color-line": "--brand-line",
+  "--color-teal": "--brand-teal",
+  "--color-purple": "--brand-purple",
+  "--color-mint": "--brand-mint",
+  "--color-orange": "--brand-orange",
 } as const;
 
 const pubAliases = {
@@ -354,9 +354,6 @@ const themeBlocks = {
     extractBlock(publicThemesCss, /\.pub-page\[data-theme="soft_pastel"\]\s*\{/),
   ),
 } as const;
-const pubPageGuard = parseVars(
-  extractBlock(publicThemesCss, /\.pub-page \{\s*--brand-ink:/),
-);
 
 describe("semantic token aliases", () => {
   test("keeps :root semantics as the brand source of truth", () => {
@@ -372,22 +369,28 @@ describe("semantic token aliases", () => {
     }
   });
 
-  test("points Tailwind color bridges at the same root values", () => {
+  test("points Tailwind color bridges at brand aliases", () => {
     const documentVars = mergedVars([rootVars, themeBridgeVars]);
 
-    for (const [bridge, semantic] of Object.entries(themeBridges)) {
-      expect(themeBridgeVars.get(bridge), bridge).toBe(`var(${semantic})`);
+    for (const [bridge, brand] of Object.entries(themeBridges)) {
+      expect(themeBridgeVars.get(bridge), bridge).toBe(`var(${brand})`);
       expect(resolveVar(bridge, documentVars), bridge).toBe(
-        rootSemantics[semantic as keyof typeof rootSemantics],
+        previousBrand[brand as keyof typeof previousBrand],
       );
     }
   });
 
-  test("resolves every previous public token and brand token inside each theme", () => {
+  test("resolves every previous public token inside each theme", () => {
+    expect(publicThemesCss).not.toMatch(/\.pub-page\s*\{[^}]*--brand-ink\s*:/);
+
     for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
       const themeVars = themeBlocks[themeId];
-      const computed = mergedVars([rootVars, themeBridgeVars, themeVars, pubPageGuard]);
+      const computed = mergedVars([rootVars, themeVars]);
       const previous = previousPub[themeId];
+
+      for (const brand of Object.keys(previousBrand)) {
+        expect(themeVars.has(brand), `${themeId} ${brand}`).toBe(false);
+      }
 
       for (const [name, literal] of Object.entries(previous)) {
         const alias = pubAliases[name as keyof typeof pubAliases];
@@ -396,10 +399,6 @@ describe("semantic token aliases", () => {
           alias ? `var(${alias})` : literal,
         );
         expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
-      }
-
-      for (const [brand, literal] of Object.entries(previousBrand)) {
-        expect(resolveVar(brand, computed), `${themeId} ${brand}`).toBe(literal);
       }
 
       expect(resolveVar("--ink-muted", computed), themeId).toBe(previous["--pub-sub"]);

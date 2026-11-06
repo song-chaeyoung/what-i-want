@@ -58,13 +58,13 @@ describe("admin calm theme contract", () => {
   test("exposes admin calm Tailwind theme tokens from global CSS", () => {
     const source = readFileSync(globalsCssPath, "utf8");
 
-    expect(source).toContain("--color-ink: var(--ink);");
-    expect(source).toContain("--color-line: var(--line);");
-    expect(source).toContain("--color-teal: var(--accent-main);");
-    expect(source).toContain("--color-purple: var(--headline);");
-    expect(source).toContain("--color-mint: var(--tint-mint);");
-    expect(source).toContain("--color-paper: var(--surface);");
-    expect(source).toContain("--color-orange: var(--point);");
+    expect(source).toContain("--color-ink: var(--brand-ink);");
+    expect(source).toContain("--color-line: var(--brand-line);");
+    expect(source).toContain("--color-teal: var(--brand-teal);");
+    expect(source).toContain("--color-purple: var(--brand-purple);");
+    expect(source).toContain("--color-mint: var(--brand-mint);");
+    expect(source).toContain("--color-paper: var(--brand-paper);");
+    expect(source).toContain("--color-orange: var(--brand-orange);");
     expect(source).toContain("--shadow-pub:");
     expect(source).toContain("--radius-pub:");
     expect(source).not.toContain("@import url(");

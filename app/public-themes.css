@@ -228,27 +228,6 @@
     --pub-msg-sub: #c77ba0;
   }
 
-  /* 테마가 의미 토큰을 덮어써도 고정 브랜드 색과 Tailwind 색 유틸은 기존 :root 값으로 유지 */
-  .pub-page {
-    --brand-ink: #171717;
-    --brand-paper: #fffdf7;
-    --brand-cream: #fff7ed;
-    --brand-yellow: #fef3c7;
-    --brand-mint: #ccfbf1;
-    --brand-blush: #ffe4e6;
-    --brand-orange: #f97316;
-    --brand-teal: #0f766e;
-    --brand-purple: #4c1d95;
-    --brand-line: #d1d5db;
-    --color-ink: var(--brand-ink);
-    --color-paper: var(--brand-paper);
-    --color-line: var(--brand-line);
-    --color-teal: var(--brand-teal);
-    --color-purple: var(--brand-purple);
-    --color-mint: var(--brand-mint);
-    --color-orange: var(--brand-orange);
-  }
-
   /* 토스트는 .pub-page 바깥(루트 Toaster)에 렌더링되므로 body:has()로 테마 변수를 전달 */
   body:has(.pub-page[data-theme="pixel_y2k"]) {
     --toast-bg: #fffdf7;
