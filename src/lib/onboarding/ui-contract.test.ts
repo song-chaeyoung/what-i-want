@@ -40,7 +40,7 @@ describe("onboarding UI contract", () => {
     expect(textLogoSource).toContain('src="/logo.png"');
     expect(source).toContain("font-pixel");
     expect(source).toContain("border-2 border-[#171717] bg-[#fffdf7]");
-    expect(source).toContain("shadow-[6px_6px_0_#111827]");
+    expect(source).toContain("shadow-pixel-lg");
     expect(source).toContain("text-zinc-600");
     expect(source).toContain("focus:border-zinc-400");
     expect(source).toContain("placeholder:text-zinc-400");

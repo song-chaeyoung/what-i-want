@@ -12,7 +12,7 @@ export function PublicBankAccountCard({
 
   return (
     <div
-      className={`soft-bank-card pub-bank flex flex-wrap items-center justify-between gap-3 rounded-[var(--pub-radius)] p-4${
+      className={`soft-bank-card pub-bank flex flex-wrap items-center justify-between gap-3 rounded-[var(--card-radius)] p-4${
         className ? ` ${className}` : ""
       }`}
     >

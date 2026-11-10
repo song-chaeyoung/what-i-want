@@ -34,6 +34,15 @@
   --brand-teal: var(--accent-main);
   --brand-purple: var(--headline);
   --brand-line: var(--line);
+  /* 글꼴 패밀리. next/font가 넣는 --font-mona / --font-sans 는 유지하고, 역할 이름만 가리킨다. */
+  --font-display: var(--font-mona);
+  --font-body: var(--font-sans);
+  /* 고정 픽셀 그림자. 유틸은 @theme 의 같은 리터럴을 넣고, 이 변수는 CSS 규칙이 그대로 쓴다. */
+  --shadow-pixel-sm: 3px 3px 0 #111827;
+  --shadow-pixel-md: 4px 4px 0 #111827;
+  --shadow-pixel-lg: 6px 6px 0 #111827;
+  --shadow-pixel-xl: 8px 8px 0 #111827;
+  --shadow-header-line: 0 1px 0 rgba(24, 24, 27, 0.02);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -72,6 +81,11 @@
   --font-sans: var(--font-sans);
   --font-mono: "Courier New", Courier, monospace;
   --font-heading: var(--font-sans);
+  /* 기존 text-[Npx]. line-height 는 붙이지 않는다. text-xs–text-6xl 기본 스케일은 그대로. */
+  --text-micro: 10px;
+  --text-caption: 11px;
+  --text-tab: 13px;
+  --text-nav: 13.5px;
   --color-ink: var(--brand-ink);
   --color-paper: var(--brand-paper);
   --color-line: var(--brand-line);
@@ -80,7 +94,14 @@
   --color-mint: var(--brand-mint);
   --color-orange: var(--brand-orange);
   --shadow-pub: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-pixel-sm: 3px 3px 0 #111827;
+  --shadow-pixel-md: 4px 4px 0 #111827;
+  --shadow-pixel-lg: 6px 6px 0 #111827;
+  --shadow-pixel-xl: 8px 8px 0 #111827;
+  --shadow-header-line: 0 1px 0 rgba(24, 24, 27, 0.02);
   --radius-pub: 0.375rem;
+  --width-admin-sidebar: 220px;
+  --spacing-admin-sidebar: 22px;
   --color-sidebar-ring: var(--sidebar-ring);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
@@ -130,7 +151,7 @@ body {
 }
 
 .font-pixel {
-  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display), Arial, Helvetica, sans-serif;
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -143,12 +164,12 @@ body {
 
 .pixel-board {
   border: 2px solid var(--brand-ink);
-  box-shadow: 8px 8px 0 #111827;
+  box-shadow: var(--shadow-pixel-xl);
 }
 
 .pixel-card {
   border: 2px solid var(--brand-ink);
-  box-shadow: 6px 6px 0 #111827;
+  box-shadow: var(--shadow-pixel-lg);
 }
 
 .sticker-label {
@@ -157,12 +178,12 @@ body {
   border: 2px solid var(--brand-ink);
   background: var(--brand-yellow);
   padding: 0.25rem 0.625rem;
-  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display), Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   font-weight: 900;
   line-height: 1;
   color: var(--brand-purple);
-  box-shadow: 3px 3px 0 #111827;
+  box-shadow: var(--shadow-pixel-sm);
 }
 
 /* sonner 토스트 기본(어드민) 스타일 — 공개 테마는 public-themes.css에서 --toast-* 변수로 오버라이드 */
@@ -172,7 +193,7 @@ body {
   border: var(--toast-border, 1px solid var(--brand-line));
   border-radius: var(--toast-radius, 1rem);
   box-shadow: var(--toast-shadow, 0 4px 12px rgba(0, 0, 0, 0.08));
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
 

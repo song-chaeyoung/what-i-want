@@ -79,7 +79,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("sticky top-0 z-10 flex min-h-12");
     expect(source).toContain("border-b border-line bg-white/90");
     expect(source).toContain("backdrop-blur");
-    expect(source).toContain("shadow-[0_1px_0_rgba(24,24,27,0.02)]");
+    expect(source).toContain("shadow-header-line");
     expect(source).toContain("px-4 py-2");
     expect(source).toContain("border-t border-line px-1.5 pt-4");
     expect(source).toContain("<AdminPageTitle />");

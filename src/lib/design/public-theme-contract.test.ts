@@ -43,7 +43,8 @@ describe("public theme contract", () => {
     expect(source).toContain(".pub-progress > i");
     expect(source).not.toContain("pub-progress-done");
     expect(source).not.toContain("@import url(");
-    expect(source).toContain("var(--font-mona");
+    expect(source).toContain("var(--font-display");
+    expect(readFileSync(globalsCssPath, "utf8")).toContain("--font-display: var(--font-mona)");
   });
 
   test("binds the selected public theme to the public wishlist page", () => {

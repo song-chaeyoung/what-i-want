@@ -27,6 +27,20 @@ const semanticUtilities = [
   [String.raw`.text-\[var\(--accent-main\)\]`, "color:var(--accent-main)"],
 ] as const;
 
+const fixedFontSizes = [
+  ["text-micro", "font-size:10px"],
+  ["text-caption", "font-size:11px"],
+  ["text-tab", "font-size:13px"],
+  ["text-nav", "font-size:13.5px"],
+] as const;
+
+const defaultFontScale = [
+  ["text-xs", "font-size:var(--text-xs)", "line-height:var(--tw-leading,var(--text-xs--line-height))"],
+  ["text-sm", "font-size:var(--text-sm)", "line-height:var(--tw-leading,var(--text-sm--line-height))"],
+  ["text-base", "font-size:var(--text-base)", "line-height:var(--tw-leading,var(--text-base--line-height))"],
+  ["text-6xl", "font-size:var(--text-6xl)", "line-height:var(--tw-leading,var(--text-6xl--line-height))"],
+] as const;
+
 const removedPubAliasPattern =
   /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/;
 
@@ -203,8 +217,86 @@ describe("compiled Tailwind brand utilities", () => {
 
       expect(minified).toMatch(/\.pub-card\{[^}]*--headline:var\(--ink\)/);
       expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
+      expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
+      expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*font-size:var\(--pill-size\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
+      expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
       expect(minified).not.toMatch(removedPubAliasPattern);
+      expect(minified).not.toMatch(/var\(--pub-headline-(?:font|weight|size|lh|ls)\)/);
+      expect(minified).not.toMatch(/var\(--pub-btn-(?:font|weight|size)\)/);
+
+      for (const [className, declaration] of fixedFontSizes) {
+        expect(minified, className).toMatch(
+          new RegExp(`\\.${className}\\{${escapeRegExp(declaration)};?\\}`),
+        );
+      }
+
+      for (const [className, fontSize, lineHeight] of defaultFontScale) {
+        expect(minified, className).toContain(`.${className}{${fontSize};${lineHeight}`);
+      }
+
+      expect(minified).not.toContain(".text-\\[10px\\]");
+      expect(minified).not.toContain(".text-\\[11px\\]");
+      expect(minified).not.toContain(".text-\\[13px\\]");
+      expect(minified).not.toContain(".text-\\[13\\.5px\\]");
+      expect(minified).not.toContain(".text-\\[14px\\]");
+      expect(minified).not.toContain(".text-\\[16px\\]");
+      expect(minified).toContain(".text-\\[0\\.8rem\\]{font-size:");
+      expect(minified).toContain("letter-spacing:1.6px");
+
+      for (const [className, shadow] of [
+        ["shadow-pixel-sm", "3px3px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-md", "4px4px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-lg", "6px6px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-xl", "8px8px0var(--tw-shadow-color,#111827)"],
+      ] as const) {
+        expect(minified, className).toContain(
+          `.${className}{--tw-shadow:${shadow};box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)`,
+        );
+      }
+
+      const headerLine = [
+        "01px0var(--tw-shadow-color,rgba(24,24,27,0.02))",
+        "01px0var(--tw-shadow-color,#18181b05)",
+      ].find((shadow) =>
+        minified.includes(
+          `.shadow-header-line{--tw-shadow:${shadow};box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)`,
+        ),
+      );
+
+      expect(headerLine, "shadow-header-line").toBeTruthy();
+
+      expect(
+        [
+          ".shadow-md{--tw-shadow:04px6px-1pxvar(--tw-shadow-color,rgb(000/0.1)),02px4px-2pxvar(--tw-shadow-color,rgb(000/0.1));",
+          ".shadow-md{--tw-shadow:04px6px-1pxvar(--tw-shadow-color,#0000001a),02px4px-2pxvar(--tw-shadow-color,#0000001a);",
+        ].some((value) => minified.includes(value)),
+        "shadow-md",
+      ).toBe(true);
+      expect(
+        [
+          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,rgba(0,0,0,0.05));",
+          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,#0000000d);",
+        ].some((value) => minified.includes(value)),
+        "shadow-pub",
+      ).toBe(true);
+      expect(minified).toMatch(/\.pub-card\{[^}]*border:var\(--card-border\)/);
+      expect(minified).toMatch(/\.pub-card\{[^}]*border-radius:var\(--card-radius\)/);
+      expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--pub-progress-h\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*gap:var\(--pill-gap\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*padding:var\(--pill-pad\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*gap:var\(--btn-gap\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*padding:var\(--btn-pad\)/);
+      expect(minified).toContain(".w-admin-sidebar{width:220px");
+      expect(minified).toContain(".py-admin-sidebar{padding-block:22px");
+      expect(minified).not.toContain(".w-\\[220px\\]");
+      expect(minified).not.toContain(".py-\\[22px\\]");
+      expect(minified).toContain(".shadow-\\[5px_5px_0");
+      expect(minified).toContain("shadow-\\[7px_7px_0");
     }
   });
 
@@ -259,7 +351,31 @@ function themeMarkup(themeId?: string) {
       <button class="pub-btn" data-probe="btn" type="button">버튼</button>
       <button class="pub-btn pub-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="pub-btn pub-btn-accent" data-probe="btn-accent" type="button">강조</button>
+      <p class="pub-label" data-probe="label">라벨</p>
+      <span class="pub-pill" data-probe="pill">필</span>
+      <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
+      <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
+      <div class="pub-field" data-probe="field"></div>
     </article>
+    <div class="pixel-card" data-probe="pixel-card"></div>
+    <div class="pixel-board" data-probe="pixel-board"></div>
+    <div class="shadow-pixel-sm" data-probe="util-sm"></div>
+    <div class="shadow-header-line" data-probe="util-line"></div>
+    <div style="box-shadow:3px 3px 0 #111827" data-probe="raw-sm"></div>
+    <div style="border:2px solid #171717" data-probe="raw-border-2"></div>
+    <div style="border:1.5px solid #111" data-probe="raw-border-15"></div>
+    <div style="border:1.5px solid #f0dfe9" data-probe="raw-border-pastel"></div>
+    <p class="font-pixel" data-probe="pixel">픽셀</p>
+    <p class="sticker-label" data-probe="sticker">스티커</p>
+    <p class="text-micro" data-probe="micro">m</p>
+    <p class="text-caption" data-probe="caption">c</p>
+    <p class="text-tab" data-probe="tab">t</p>
+    <p class="text-nav" data-probe="nav">n</p>
+    <p class="text-sm" data-probe="text-sm">s</p>
+    <p class="text-base" data-probe="text-base">b</p>
+    <p style="font-size:10px" data-probe="px-10">10</p>
+    <p style="font-size:14px" data-probe="px-14">14</p>
+    <p style="font-size:16px" data-probe="px-16">16</p>
   </section>`;
 }
 
@@ -284,7 +400,7 @@ async function readProbes(
   css: string,
   body: string,
 ) {
-  const html = `<!doctype html><html><head><style>${css}</style></head><body>${body}</body></html>`;
+  const html = `<!doctype html><html style="--font-mona:cursive;--font-sans:serif"><head><style>${css}</style></head><body>${body}</body></html>`;
   const dir = mkdtempSync(join(tmpdir(), "theme-colors-"));
   const file = join(dir, "index.html");
   writeFileSync(file, html);
@@ -300,6 +416,24 @@ async function readProbes(
         backgroundColor: style.backgroundColor,
         borderTopColor: style.borderTopColor,
         brandPurple: style.getPropertyValue("--brand-purple").trim(),
+        fontFamily: style.fontFamily,
+        fontSize: style.fontSize,
+        fontWeight: style.fontWeight,
+        lineHeight: style.lineHeight,
+        letterSpacing: style.letterSpacing,
+        textTransform: style.textTransform,
+        borderTopWidth: style.borderTopWidth,
+        borderTopStyle: style.borderTopStyle,
+        borderBottomWidth: style.borderBottomWidth,
+        borderBottomStyle: style.borderBottomStyle,
+        borderBottomColor: style.borderBottomColor,
+        borderRadius: style.borderRadius,
+        boxShadow: style.boxShadow,
+        paddingTop: style.paddingTop,
+        paddingRight: style.paddingRight,
+        paddingBottom: style.paddingBottom,
+        paddingLeft: style.paddingLeft,
+        columnGap: style.columnGap,
       };
     }),
   );
@@ -329,6 +463,8 @@ async function expectDefaultComputedColors(
 
   expectThemeSurface(byProbe, colors, `${label} default`);
   expectBrandUtilities(byProbe, `${label} default`);
+  expectTypography(byProbe, "pixel_y2k", `${label} default`);
+  expectShape(byProbe, "pixel_y2k", `${label} default`);
   for (const [className, [property, hex]] of Object.entries(fixedColors)) {
     const probe = byProbe.get(`root-${className}`);
     expect(probe, className).toBeTruthy();
@@ -353,7 +489,319 @@ async function expectThemeComputedColors(
 
   expectThemeSurface(byProbe, colors, prefix);
   expectBrandUtilities(byProbe, prefix);
+  expectTypography(byProbe, themeId, prefix);
+  expectShape(byProbe, themeId, prefix);
   expectToast(byProbe, toastColors[themeId], `${prefix} toast`);
+}
+
+const themeType = {
+  pixel_y2k: {
+    headlineSize: "36px",
+    headlineWeight: "700",
+    headlineLineHeight: "50.4px",
+    headlineTracking: "0px",
+    roleFamily: "cursive",
+    labelTracking: "0px",
+    labelTransform: "none",
+    pillTransform: "none",
+    buttonSize: "15px",
+  },
+  mono_bw: {
+    headlineSize: "30px",
+    headlineWeight: "900",
+    headlineLineHeight: "35.4px",
+    headlineTracking: "-1px",
+    roleFamily: "serif",
+    labelTracking: "1.6px",
+    labelTransform: "uppercase",
+    pillTransform: "uppercase",
+    buttonSize: "14px",
+  },
+  soft_pastel: {
+    headlineSize: "30px",
+    headlineWeight: "800",
+    headlineLineHeight: "39px",
+    headlineTracking: "-0.4px",
+    roleFamily: "serif",
+    labelTracking: "0.4px",
+    labelTransform: "none",
+    pillTransform: "none",
+    buttonSize: "15px",
+  },
+} as const;
+
+type TypeProbe = {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+  textTransform: string;
+};
+
+function expectPx(actual: string, expected: string, label: string) {
+  const measured = Number.parseFloat(actual);
+  const target = Number.parseFloat(expected);
+
+  expect(Number.isFinite(measured), `${label} ${actual}`).toBe(true);
+  expect(Math.abs(measured - target), `${label} ${actual} vs ${expected}`).toBeLessThan(0.05);
+}
+
+function expectTracking(actual: string, expected: string, label: string) {
+  if (expected === "0px" && (actual === "0px" || actual === "normal")) {
+    return;
+  }
+
+  expectPx(actual, expected, label);
+}
+
+function expectFamily(actual: string, expected: string, label: string) {
+  expect(actual.replace(/["']/g, "").replace(/\s+/g, "").toLowerCase(), label).toBe(
+    expected.replace(/\s+/g, "").toLowerCase(),
+  );
+}
+
+function expectTypography(
+  probes: Map<string, TypeProbe>,
+  themeId: keyof typeof themeType,
+  label: string,
+) {
+  const expected = themeType[themeId];
+  const page = probes.get("page");
+  const headline = probes.get("header-title");
+  const labelProbe = probes.get("label");
+  const pill = probes.get("pill");
+  const eyebrow = probes.get("eyebrow");
+  const button = probes.get("btn");
+  const pixel = probes.get("pixel");
+  const sticker = probes.get("sticker");
+  const micro = probes.get("micro");
+  const caption = probes.get("caption");
+  const tab = probes.get("tab");
+  const nav = probes.get("nav");
+  const small = probes.get("text-sm");
+  const base = probes.get("text-base");
+  const px10 = probes.get("px-10");
+  const px14 = probes.get("px-14");
+  const px16 = probes.get("px-16");
+
+  expectFamily(page!.fontFamily, "serif", `${label} page family`);
+  expectFamily(headline!.fontFamily, expected.roleFamily, `${label} headline family`);
+  expectPx(headline!.fontSize, expected.headlineSize, `${label} headline size`);
+  expect(headline!.fontWeight, `${label} headline weight`).toBe(expected.headlineWeight);
+  expectPx(headline!.lineHeight, expected.headlineLineHeight, `${label} headline line-height`);
+  expectTracking(headline!.letterSpacing, expected.headlineTracking, `${label} headline tracking`);
+
+  expectFamily(labelProbe!.fontFamily, expected.roleFamily, `${label} label family`);
+  expectPx(labelProbe!.fontSize, "12px", `${label} label size`);
+  expect(labelProbe!.fontWeight, `${label} label weight`).toBe("700");
+  expectTracking(labelProbe!.letterSpacing, expected.labelTracking, `${label} label tracking`);
+  expect(labelProbe!.textTransform, `${label} label transform`).toBe(expected.labelTransform);
+
+  expectFamily(pill!.fontFamily, expected.roleFamily, `${label} pill family`);
+  expectPx(pill!.fontSize, "12px", `${label} pill size`);
+  expect(pill!.fontWeight, `${label} pill weight`).toBe("700");
+  expectPx(pill!.lineHeight, "12px", `${label} pill line-height`);
+  expect(pill!.textTransform, `${label} pill transform`).toBe(expected.pillTransform);
+
+  expectFamily(eyebrow!.fontFamily, expected.roleFamily, `${label} eyebrow family`);
+  expectPx(eyebrow!.fontSize, "12px", `${label} eyebrow size`);
+  expect(eyebrow!.textTransform, `${label} eyebrow transform`).toBe("uppercase");
+
+  expectFamily(button!.fontFamily, expected.roleFamily, `${label} button family`);
+  expectPx(button!.fontSize, expected.buttonSize, `${label} button size`);
+  expect(button!.fontWeight, `${label} button weight`).toBe("700");
+  expectPx(button!.lineHeight, expected.buttonSize, `${label} button line-height`);
+
+  expectFamily(pixel!.fontFamily, "cursive, Arial, Helvetica, sans-serif", `${label} pixel family`);
+  expect(pixel!.fontWeight, `${label} pixel weight`).toBe("700");
+  expectFamily(
+    sticker!.fontFamily,
+    "cursive, Arial, Helvetica, sans-serif",
+    `${label} sticker family`,
+  );
+  expectPx(sticker!.fontSize, "12px", `${label} sticker size`);
+  expect(sticker!.fontWeight, `${label} sticker weight`).toBe("900");
+
+  expectPx(micro!.fontSize, "10px", `${label} micro`);
+  expectPx(caption!.fontSize, "11px", `${label} caption`);
+  expectPx(tab!.fontSize, "13px", `${label} tab`);
+  expectPx(nav!.fontSize, "13.5px", `${label} nav`);
+  expectPx(micro!.lineHeight, px10!.lineHeight, `${label} micro line-height`);
+  expectPx(base!.fontSize, px16!.fontSize, `${label} text-base size`);
+  expectPx(base!.lineHeight, px16!.lineHeight, `${label} text-base line-height`);
+  expectPx(small!.fontSize, px14!.fontSize, `${label} text-sm size`);
+  expect(small!.lineHeight, `${label} text-sm keeps its own line-height`).not.toBe(px14!.lineHeight);
+}
+
+const themeShape = {
+  pixel_y2k: {
+    cardBorder: "2px solid #171717",
+    cardRadius: "4px",
+    cardShadow: "rgb(17, 24, 39) 6px 6px 0px 0px",
+    headerBorder: "2px solid #171717",
+    pillBorder: "2px solid #171717",
+    pillRadius: "0px",
+    pillShadow: "rgb(17, 24, 39) 3px 3px 0px 0px",
+    buttonBorder: "2px solid #171717",
+    buttonRadius: "4px",
+    buttonShadow: "rgb(17, 24, 39) 3px 3px 0px 0px",
+    progressBorder: "2px solid #171717",
+    progressRadius: "2px",
+    fieldBorder: "2px solid #171717",
+    fieldRadius: "4px",
+  },
+  mono_bw: {
+    cardBorder: "1.5px solid #111111",
+    cardRadius: "0px",
+    cardShadow: "none",
+    headerBorder: "1.5px solid #111111",
+    pillBorder: "1.5px solid #111111",
+    pillRadius: "0px",
+    pillShadow: "none",
+    buttonBorder: "1.5px solid #111111",
+    buttonRadius: "0px",
+    buttonShadow: "none",
+    progressBorder: "1.5px solid #111111",
+    progressRadius: "0px",
+    fieldBorder: "1.5px solid #111111",
+    fieldRadius: "0px",
+  },
+  soft_pastel: {
+    cardBorder: "none",
+    cardRadius: "22px",
+    cardShadow: "rgba(150, 120, 160, 0.16) 0px 10px 28px 0px",
+    headerBorder: "none",
+    pillBorder: "none",
+    pillRadius: "999px",
+    pillShadow: "none",
+    buttonBorder: "none",
+    buttonRadius: "16px",
+    buttonShadow: "rgba(150, 120, 160, 0.2) 0px 6px 16px 0px",
+    progressBorder: "none",
+    progressRadius: "999px",
+    fieldBorder: "1.5px solid #f0dfe9",
+    fieldRadius: "14px",
+  },
+} as const;
+
+type ShapeProbe = {
+  borderTopWidth: string;
+  borderTopStyle: string;
+  borderTopColor: string;
+  borderBottomWidth: string;
+  borderBottomStyle: string;
+  borderBottomColor: string;
+  borderRadius: string;
+  boxShadow: string;
+  paddingTop: string;
+  paddingRight: string;
+  paddingBottom: string;
+  paddingLeft: string;
+  columnGap: string;
+};
+
+const themeSpacing = {
+  pixel_y2k: ["7px", "10px", "6px", "10px"],
+  mono_bw: ["6px", "10px", "6px", "10px"],
+  soft_pastel: ["7px", "12px", "7px", "12px"],
+} as const;
+
+function expectBox(actual: string, expected: string, label: string) {
+  const normalize = (value: string) =>
+    value.replace(/\s+/g, "").replace(/rgba\((\d+),(\d+),(\d+),1\)/, "rgb($1,$2,$3)");
+
+  expect(normalize(actual), label).toBe(normalize(expected));
+}
+
+function expectEdge(
+  probe: ShapeProbe,
+  expected: string,
+  label: string,
+  references: Map<string, ShapeProbe>,
+  side: "top" | "bottom" = "top",
+) {
+  const width = side === "top" ? probe.borderTopWidth : probe.borderBottomWidth;
+  const styleName = side === "top" ? probe.borderTopStyle : probe.borderBottomStyle;
+  const color = side === "top" ? probe.borderTopColor : probe.borderBottomColor;
+
+  if (expected === "none") {
+    expect(styleName, label).toBe("none");
+    return;
+  }
+
+  const match = expected.match(/^([\d.]+)px solid (#[0-9a-fA-F]{6})$/);
+  expect(match, `${label} ${expected}`).not.toBeNull();
+  const referenceName =
+    match![1] === "1.5"
+      ? match![2].toLowerCase() === "#f0dfe9"
+        ? "raw-border-pastel"
+        : "raw-border-15"
+      : match![1] === "2"
+        ? "raw-border-2"
+        : "";
+  const reference = referenceName ? references.get(referenceName) : undefined;
+
+  expect(width, `${label} width`).toBe(reference ? reference.borderTopWidth : `${match![1]}px`);
+  expect(styleName, label).toBe("solid");
+  expectRgb(color, match![2], `${label} color`);
+}
+
+function expectShape(
+  probes: Map<string, ShapeProbe>,
+  themeId: keyof typeof themeShape,
+  label: string,
+) {
+  const expected = themeShape[themeId];
+  const card = probes.get("card");
+  const header = probes.get("header");
+  const pill = probes.get("pill");
+  const button = probes.get("btn");
+  const progress = probes.get("progress");
+  const field = probes.get("field");
+  const pixelCard = probes.get("pixel-card");
+  const pixelBoard = probes.get("pixel-board");
+  const sticker = probes.get("sticker");
+  const rawSm = probes.get("raw-sm");
+  const primary = probes.get("btn-primary");
+
+  expectEdge(card!, expected.cardBorder, `${label} card border`, probes);
+  expectPx(card!.borderRadius, expected.cardRadius, `${label} card radius`);
+  expectBox(card!.boxShadow, expected.cardShadow, `${label} card shadow`);
+  expectEdge(header!, expected.headerBorder, `${label} header border`, probes, "bottom");
+  expectEdge(pill!, expected.pillBorder, `${label} pill border`, probes);
+  expectPx(pill!.borderRadius, expected.pillRadius, `${label} pill radius`);
+  expectBox(pill!.boxShadow, expected.pillShadow, `${label} pill shadow`);
+  if (themeId === "soft_pastel") {
+    expectEdge(button!, "1.5px solid #f0dfe9", `${label} plain button border`, probes);
+    expectBox(button!.boxShadow, "none", `${label} plain button shadow`);
+    expectEdge(primary!, "none", `${label} primary border`, probes);
+    expectBox(primary!.boxShadow, expected.buttonShadow, `${label} primary shadow`);
+  } else {
+    expectEdge(button!, expected.buttonBorder, `${label} button border`, probes);
+    expectBox(button!.boxShadow, expected.buttonShadow, `${label} button shadow`);
+  }
+  expectPx(button!.borderRadius, expected.buttonRadius, `${label} button radius`);
+  const [padTop, padRight, padBottom, padLeft] = themeSpacing[themeId];
+  expectPx(pill!.paddingTop, padTop, `${label} pill pad top`);
+  expectPx(pill!.paddingRight, padRight, `${label} pill pad right`);
+  expectPx(pill!.paddingBottom, padBottom, `${label} pill pad bottom`);
+  expectPx(pill!.paddingLeft, padLeft, `${label} pill pad left`);
+  expectPx(pill!.columnGap, "6px", `${label} pill gap`);
+  expectPx(button!.paddingTop, "15px", `${label} button pad`);
+  expectPx(button!.paddingRight, "18px", `${label} button pad inline`);
+  expectPx(button!.paddingBottom, "15px", `${label} button pad bottom`);
+  expectPx(button!.paddingLeft, "18px", `${label} button pad left`);
+  expectPx(button!.columnGap, "8px", `${label} button gap`);
+  expectEdge(progress!, expected.progressBorder, `${label} progress border`, probes);
+  expectPx(progress!.borderRadius, expected.progressRadius, `${label} progress radius`);
+  expectEdge(field!, expected.fieldBorder, `${label} field border`, probes);
+  expectPx(field!.borderRadius, expected.fieldRadius, `${label} field radius`);
+  expectBox(pixelCard!.boxShadow, "rgb(17, 24, 39) 6px 6px 0px 0px", `${label} pixel card`);
+  expectBox(pixelBoard!.boxShadow, "rgb(17, 24, 39) 8px 8px 0px 0px", `${label} pixel board`);
+  expectBox(sticker!.boxShadow, rawSm!.boxShadow, `${label} sticker`);
+  expect(probes.get("util-sm")!.boxShadow, `${label} pixel sm utility`).toContain("3px");
+  expect(probes.get("util-line")!.boxShadow, `${label} header line utility`).not.toBe("none");
 }
 
 function expectThemeSurface(

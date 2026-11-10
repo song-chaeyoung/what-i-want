@@ -49,7 +49,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"
@@ -79,7 +79,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
         />
 
         <div className="mt-6 border-t border-line px-1.5 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500">계정</div>
+          <div className="text-caption font-semibold text-zinc-500">계정</div>
           <p className="mt-1.5 break-all text-xs font-medium text-zinc-600">
             {user.email}
           </p>
@@ -87,7 +87,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-header-line backdrop-blur sm:px-7 sm:py-3">
           <Link
             href="/"
             aria-label={`${BRAND_NAME} 홈`}
@@ -106,7 +106,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
+            <div className="hidden truncate text-sm font-extrabold tracking-normal text-ink sm:text-base md:block">
               <AdminPageTitle />
             </div>
           </div>
@@ -142,7 +142,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
 function AdminShellSkeleton() {
   return (
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"
@@ -169,13 +169,13 @@ function AdminShellSkeleton() {
         <AdminShellNav variant="desktop" />
 
         <div className="mt-6 border-t border-line px-1.5 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500">계정</div>
+          <div className="text-caption font-semibold text-zinc-500">계정</div>
           <div className="mt-1.5 h-3 w-32 animate-pulse rounded bg-zinc-200" />
         </div>
       </aside>
 
       <main className="flex min-w-0 flex-1 flex-col">
-        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-[0_1px_0_rgba(24,24,27,0.02)] backdrop-blur sm:px-7 sm:py-3">
+        <header className="sticky top-0 z-10 flex min-h-12 items-center gap-3 border-b border-line bg-white/90 px-4 py-2 shadow-header-line backdrop-blur sm:px-7 sm:py-3">
           <Link
             href="/"
             aria-label={`${BRAND_NAME} 홈`}
@@ -194,7 +194,7 @@ function AdminShellSkeleton() {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
+            <div className="hidden truncate text-sm font-extrabold tracking-normal text-ink sm:text-base md:block">
               <AdminPageTitle />
             </div>
           </div>

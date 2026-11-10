@@ -136,9 +136,9 @@ export default async function Home() {
             {homeSteps.map((step) => (
               <div
                 key={step.number}
-                className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-[3px_3px_0_#111827]"
+                className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-pixel-sm"
               >
-                <p className="font-pixel text-[10px] leading-none text-[#0f766e]">
+                <p className="font-pixel text-micro leading-none text-[#0f766e]">
                   {step.number}
                 </p>
                 <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
@@ -152,7 +152,7 @@ export default async function Home() {
           </div>
         </div>
 
-        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-[6px_6px_0_#111827] sm:p-5">
+        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-lg sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#171717] pb-4">
             <div className="min-w-0">
               <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95] sm:text-3xl">
@@ -179,7 +179,7 @@ export default async function Home() {
           {HOME_FAQ.map((item) => (
             <details
               key={item.question}
-              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-[4px_4px_0_#111827]"
+              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-pixel-md"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
                 <span className="break-keep text-base font-black text-[#171717] sm:text-lg">
@@ -233,7 +233,7 @@ function PreviewWish({
         </div>
         <GiftProgress progress={progress} color="#0f766e" />
         <span
-          className="mt-3 inline-flex max-w-full rounded-md border-2 border-[#171717] px-2 py-1 text-[11px] font-black"
+          className="mt-3 inline-flex max-w-full rounded-md border-2 border-[#171717] px-2 py-1 text-caption font-black"
           style={{ backgroundColor: color }}
         >
           <span className="truncate">받고 싶은 선물</span>
@@ -260,7 +260,7 @@ function SampleGiftImage({
       className="relative grid min-h-32 place-items-center border-r-2 border-[#171717]"
       style={{ backgroundColor: background }}
     >
-      <div className="relative h-16 w-16 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827]">
+      <div className="relative h-16 w-16 border-2 border-[#171717] bg-white shadow-pixel-md">
         <span
           className="absolute left-1/2 top-0 h-full w-3 -translate-x-1/2 border-x-2 border-[#171717]"
           style={{ backgroundColor: ribbon }}
@@ -287,7 +287,7 @@ function GiftProgress({ progress, color }: { progress: string; color: string }) 
 function SignalSticker({ text, color }: { text: string; color: string }) {
   return (
     <span
-      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-[#171717] px-2 py-1 text-[10px] tracking-normal"
+      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-[#171717] px-2 py-1 text-micro tracking-normal"
       style={{ backgroundColor: color }}
     >
       <span className="truncate">{text}</span>

@@ -112,7 +112,7 @@ export default async function AdminWishesPage({
         <div className="flex gap-4 overflow-x-auto">
           <Link
             href="/admin/wishes"
-            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+            className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-tab font-semibold transition-colors ${
               selectedStatus
                 ? "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"
                 : "border-ink text-ink"
@@ -127,7 +127,7 @@ export default async function AdminWishesPage({
             <Link
               key={status}
               href={`/admin/wishes?status=${status}`}
-              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+              className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-tab font-semibold transition-colors ${
                 selectedStatus === status
                   ? "border-ink text-ink"
                   : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"
@@ -402,7 +402,7 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
   return (
     <div
       aria-hidden="true"
-      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#f4f4f3] bg-cover bg-center text-[11px] font-bold text-teal"
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#f4f4f3] bg-cover bg-center text-caption font-bold text-teal"
       style={
         item.imageUrl
           ? { backgroundImage: `url(${JSON.stringify(item.imageUrl)})` }
