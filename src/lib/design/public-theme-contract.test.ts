@@ -111,7 +111,7 @@ describe("public theme contract", () => {
     expect(source).toContain("PUBLIC_WISHLIST_COPY.noTargetAmount");
     expect(source).not.toContain("pub-progress-done");
     expect(source).toContain(
-      'className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
+      'className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
     );
     expect(source).not.toContain("statusFilter");
   });

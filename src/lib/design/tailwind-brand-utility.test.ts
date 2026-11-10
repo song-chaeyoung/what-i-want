@@ -41,8 +41,7 @@ const defaultFontScale = [
   ["text-6xl", "font-size:var(--text-6xl)", "line-height:var(--tw-leading,var(--text-6xl--line-height))"],
 ] as const;
 
-const removedPubAliasPattern =
-  /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/;
+const removedPubPrefix = "--" + "pub-";
 
 const fixedColors = {
   "text-ink": ["color", "#171717"],
@@ -222,10 +221,15 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-pill\{[^}]*font-size:var\(--pill-size\)/);
       expect(minified).toMatch(/\.pub-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
+      expect(minified).toMatch(/\.pub-page\{[^}]*background-image:var\(--bg-dots\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
-      expect(minified).not.toMatch(removedPubAliasPattern);
-      expect(minified).not.toMatch(/var\(--pub-headline-(?:font|weight|size|lh|ls)\)/);
-      expect(minified).not.toMatch(/var\(--pub-btn-(?:font|weight|size)\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*background:var\(--pill-bg\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*color:var\(--pill-color\)/);
+      expect(minified).toMatch(/\.pub-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
+      expect(minified).toMatch(/\.pub-field\{[^}]*background:var\(--field-bg\)/);
+      expect(minified).toMatch(/\.pub-bank\{[^}]*background:var\(--bank-bg\)/);
+      expect(minified).toMatch(/\.pub-btn-primary\{[^}]*color:var\(--on-point\)/);
+      expect(minified).not.toContain(removedPubPrefix);
 
       for (const [className, declaration] of fixedFontSizes) {
         expect(minified, className).toMatch(
@@ -286,7 +290,9 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-card\{[^}]*border-radius:var\(--card-radius\)/);
       expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--pub-progress-h\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--progress-h\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*background:var\(--progress-track\)/);
+      expect(minified).toMatch(/\.pub-progress>i\{[^}]*background:var\(--progress-fill\)/);
       expect(minified).toMatch(/\.pub-pill\{[^}]*gap:var\(--pill-gap\)/);
       expect(minified).toMatch(/\.pub-pill\{[^}]*padding:var\(--pill-pad\)/);
       expect(minified).toMatch(/\.pub-btn\{[^}]*gap:var\(--btn-gap\)/);
@@ -353,9 +359,15 @@ function themeMarkup(themeId?: string) {
       <button class="pub-btn pub-btn-accent" data-probe="btn-accent" type="button">강조</button>
       <p class="pub-label" data-probe="label">라벨</p>
       <span class="pub-pill" data-probe="pill">필</span>
+      <span class="pub-pill pub-pill-alt" data-probe="pill-alt">대체</span>
       <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
       <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
       <div class="pub-field" data-probe="field"></div>
+      <div class="pub-bank" data-probe="bank">
+        <p class="text-[var(--bank-ink)]" data-probe="bank-ink">계좌</p>
+      </div>
+      <p class="pub-msg-title" data-probe="msg-title">안내</p>
+      <div class="border-t-2 border-[var(--divider-color)]" data-probe="divider"></div>
     </article>
     <div class="pixel-card" data-probe="pixel-card"></div>
     <div class="pixel-board" data-probe="pixel-board"></div>
@@ -434,6 +446,13 @@ async function readProbes(
         paddingBottom: style.paddingBottom,
         paddingLeft: style.paddingLeft,
         columnGap: style.columnGap,
+        height: style.height,
+        backgroundImage: style.backgroundImage,
+        bgDots: style.getPropertyValue("--bg-dots").trim(),
+        dotSize: style.getPropertyValue("--dot-size").trim(),
+        headerDots: style.getPropertyValue("--header-dots").trim(),
+        statAccent: style.getPropertyValue("--stat-accent").trim(),
+        msgSub: style.getPropertyValue("--msg-sub").trim(),
       };
     }),
   );
@@ -465,6 +484,7 @@ async function expectDefaultComputedColors(
   expectBrandUtilities(byProbe, `${label} default`);
   expectTypography(byProbe, "pixel_y2k", `${label} default`);
   expectShape(byProbe, "pixel_y2k", `${label} default`);
+  expectRoleTokens(byProbe, "pixel_y2k", `${label} default`);
   for (const [className, [property, hex]] of Object.entries(fixedColors)) {
     const probe = byProbe.get(`root-${className}`);
     expect(probe, className).toBeTruthy();
@@ -491,6 +511,7 @@ async function expectThemeComputedColors(
   expectBrandUtilities(byProbe, prefix);
   expectTypography(byProbe, themeId, prefix);
   expectShape(byProbe, themeId, prefix);
+  expectRoleTokens(byProbe, themeId, prefix);
   expectToast(byProbe, toastColors[themeId], `${prefix} toast`);
 }
 
@@ -802,6 +823,162 @@ function expectShape(
   expectBox(sticker!.boxShadow, rawSm!.boxShadow, `${label} sticker`);
   expect(probes.get("util-sm")!.boxShadow, `${label} pixel sm utility`).toContain("3px");
   expect(probes.get("util-line")!.boxShadow, `${label} header line utility`).not.toBe("none");
+}
+
+const themeRole = {
+  pixel_y2k: {
+    pillBg: "#f97316",
+    pillColor: "#ffffff",
+    pillAltBg: "#ccfbf1",
+    pillAltColor: "#171717",
+    fieldBg: "#ffffff",
+    bankBg: "#ccfbf1",
+    bankInk: "#134e4a",
+    progressHeight: "18px",
+    progressTrack: "#ffffff",
+    progressFill: "#0f766e",
+    labelColor: "#0f766e",
+    headerSub: "#0f766e",
+    msgTitle: "#171717",
+    divider: "#171717",
+    dots: "dots",
+    dotSize: "18px",
+    statAccent: "#0f766e",
+    msgSub: "#9d174d",
+  },
+  mono_bw: {
+    pillBg: "transparent",
+    pillColor: "#111111",
+    pillAltBg: "#111111",
+    pillAltColor: "#ffffff",
+    fieldBg: "#ffffff",
+    bankBg: "#f6f6f6",
+    bankInk: "#333333",
+    progressHeight: "12px",
+    progressTrack: "#ededed",
+    progressFill: "#111111",
+    labelColor: "#9a9a9a",
+    headerSub: "rgba(255, 255, 255, 0.6)",
+    msgTitle: "#111111",
+    divider: "#111111",
+    dots: "none",
+    dotSize: "0",
+    statAccent: "#fff",
+    msgSub: "#6b6b6b",
+  },
+  soft_pastel: {
+    pillBg: "#ffe1ec",
+    pillColor: "#bd6595",
+    pillAltBg: "#dff1ec",
+    pillAltColor: "#3f7a6e",
+    fieldBg: "#fffafc",
+    bankBg: "#dff1ec",
+    bankInk: "#3f7a6e",
+    progressHeight: "10px",
+    progressTrack: "#f1eaf6",
+    progressFill: "#7fb8ab",
+    labelColor: "#bd6595",
+    headerSub: "#7fb8ab",
+    msgTitle: "#bd6595",
+    divider: "#f0dfe9",
+    dots: "none",
+    dotSize: "0",
+    statAccent: "#7fb8ab",
+    msgSub: "#c77ba0",
+  },
+} as const;
+
+type RoleProbe = {
+  color: string;
+  backgroundColor: string;
+  borderTopColor: string;
+  height: string;
+  backgroundImage: string;
+  bgDots: string;
+  dotSize: string;
+  headerDots: string;
+  statAccent: string;
+  msgSub: string;
+};
+
+function expectPaint(actual: string, expected: string, label: string) {
+  if (expected === "transparent") {
+    expect(normalizeColor(actual), label).toBe("rgba(0,0,0,0)");
+    return;
+  }
+
+  if (expected.startsWith("rgba") || expected.startsWith("rgb")) {
+    expect(normalizeColor(actual), label).toBe(normalizeColor(expected));
+    return;
+  }
+
+  expectRgb(actual, expected, label);
+}
+
+function expectDots(actual: string, kind: "dots" | "none", label: string) {
+  const compact = actual.replace(/\s+/g, "").toLowerCase();
+
+  if (kind === "none") {
+    expect(compact, label).toBe("none");
+    return;
+  }
+
+  expect(
+    [
+      "radial-gradient(rgba(23,23,23,0.1)1.4px,transparent1.4px)",
+      "radial-gradient(#1717171a1.4px,transparent1.4px)",
+      "radial-gradient(rgba(23,23,23,0.1)1.4px,rgba(0,0,0,0)1.4px)",
+      "radial-gradient(#1717171a1.4px,rgba(0,0,0,0)1.4px)",
+    ],
+    `${label}: ${actual}`,
+  ).toContain(compact);
+}
+
+function expectRoleTokens(
+  probes: Map<string, RoleProbe>,
+  themeId: keyof typeof themeRole,
+  label: string,
+) {
+  const expected = themeRole[themeId];
+  const page = probes.get("page");
+  const header = probes.get("header");
+  const pill = probes.get("pill");
+  const pillAlt = probes.get("pill-alt");
+  const field = probes.get("field");
+  const bank = probes.get("bank");
+  const bankInk = probes.get("bank-ink");
+  const progress = probes.get("progress");
+  const progressFill = probes.get("progress-fill");
+  const labelProbe = probes.get("label");
+  const eyebrow = probes.get("eyebrow");
+  const messageTitle = probes.get("msg-title");
+  const divider = probes.get("divider");
+
+  expectPaint(pill!.backgroundColor, expected.pillBg, `${label} pill bg`);
+  expectPaint(pill!.color, expected.pillColor, `${label} pill color`);
+  expectPaint(pillAlt!.backgroundColor, expected.pillAltBg, `${label} pill alt bg`);
+  expectPaint(pillAlt!.color, expected.pillAltColor, `${label} pill alt color`);
+  expectPaint(field!.backgroundColor, expected.fieldBg, `${label} field bg`);
+  expectPaint(bank!.backgroundColor, expected.bankBg, `${label} bank bg`);
+  expectPaint(bankInk!.color, expected.bankInk, `${label} bank ink`);
+  expectPx(progress!.height, expected.progressHeight, `${label} progress height`);
+  expectPaint(progress!.backgroundColor, expected.progressTrack, `${label} progress track`);
+  expectPaint(progressFill!.backgroundColor, expected.progressFill, `${label} progress fill`);
+  expectPaint(labelProbe!.color, expected.labelColor, `${label} label color`);
+  expectPaint(eyebrow!.color, expected.headerSub, `${label} header sub`);
+  expectPaint(messageTitle!.color, expected.msgTitle, `${label} message title`);
+  expectPaint(divider!.borderTopColor, expected.divider, `${label} divider`);
+  expectDots(page!.bgDots, expected.dots, `${label} bg dots`);
+  expectDots(page!.backgroundImage, expected.dots, `${label} page image`);
+  expect(page!.dotSize, `${label} dot size`).toBe(expected.dotSize);
+  expectDots(header!.headerDots, expected.dots, `${label} header dots`);
+  expectDots(header!.backgroundImage, expected.dots, `${label} header image`);
+  expect(page!.statAccent.replace(/\s+/g, "").toLowerCase(), `${label} stat accent`).toBe(
+    expected.statAccent.replace(/\s+/g, "").toLowerCase(),
+  );
+  expect(page!.msgSub.replace(/\s+/g, "").toLowerCase(), `${label} message sub`).toBe(
+    expected.msgSub.replace(/\s+/g, "").toLowerCase(),
+  );
 }
 
 function expectThemeSurface(
