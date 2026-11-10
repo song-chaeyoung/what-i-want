@@ -72,7 +72,7 @@ export function AdminShellNav({
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={[
-                "flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-[13.5px] font-semibold transition-colors",
+                "flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-nav font-semibold transition-colors",
                 isActive
                   ? "bg-white text-ink shadow-sm ring-1 ring-line"
                   : "text-zinc-600 hover:bg-white/70 hover:text-ink",
@@ -104,7 +104,7 @@ export function AdminShellNav({
               href={item.href}
               aria-current={isActive ? "page" : undefined}
               className={[
-                "flex shrink-0 whitespace-nowrap border-b-2 px-0 py-2.5 text-[13px] font-semibold transition-colors",
+                "flex shrink-0 whitespace-nowrap border-b-2 px-0 py-2.5 text-tab font-semibold transition-colors",
                 "items-center gap-1.5",
                 isActive
                   ? "border-ink text-ink"
@@ -138,7 +138,7 @@ function AdminGuideLink({ variant }: { variant: "mobile" | "desktop" }) {
       <Link
         href={href}
         scroll={false}
-        className="flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-[13.5px] font-semibold text-zinc-600 transition-colors hover:bg-white/70 hover:text-ink"
+        className="flex items-center gap-2.5 rounded-md px-2.5 py-2.5 text-left text-nav font-semibold text-zinc-600 transition-colors hover:bg-white/70 hover:text-ink"
       >
         <Icon aria-hidden="true" className="size-4 shrink-0" />
         {adminGuideItem.label}
@@ -150,7 +150,7 @@ function AdminGuideLink({ variant }: { variant: "mobile" | "desktop" }) {
     <Link
       href={href}
       scroll={false}
-      className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-0 py-2.5 text-[13px] font-semibold text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-800"
+      className="flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 border-transparent px-0 py-2.5 text-tab font-semibold text-zinc-500 transition-colors hover:border-zinc-300 hover:text-zinc-800"
     >
       <Icon aria-hidden="true" className="size-3.5 shrink-0" />
       {adminGuideItem.label}
@@ -166,7 +166,7 @@ function UnreadBadge({ count }: { count: number }) {
   return (
     <span
       aria-label={`새 메시지 ${count}개`}
-      className="inline-flex h-4.5 min-w-4.5 shrink-0 items-center justify-center rounded-full bg-[#f97316] px-1 text-[10px] font-bold leading-none text-white"
+      className="inline-flex h-4.5 min-w-4.5 shrink-0 items-center justify-center rounded-full bg-[#f97316] px-1 text-micro font-bold leading-none text-white"
     >
       {count > 99 ? "99+" : count}
     </span>

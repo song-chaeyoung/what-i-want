@@ -137,7 +137,7 @@ function MessageFilterTab({
   return (
     <Link
       href={href}
-      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-[13px] font-semibold transition-colors ${
+      className={`flex shrink-0 items-center gap-1.5 whitespace-nowrap border-b-2 py-2.5 text-tab font-semibold transition-colors ${
         active
           ? "border-ink text-ink"
           : "border-transparent text-zinc-500 hover:border-zinc-300 hover:text-zinc-800"

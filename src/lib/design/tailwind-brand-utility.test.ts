@@ -27,6 +27,20 @@ const semanticUtilities = [
   [String.raw`.text-\[var\(--accent-main\)\]`, "color:var(--accent-main)"],
 ] as const;
 
+const fixedFontSizes = [
+  ["text-micro", "font-size:10px"],
+  ["text-caption", "font-size:11px"],
+  ["text-tab", "font-size:13px"],
+  ["text-nav", "font-size:13.5px"],
+] as const;
+
+const defaultFontScale = [
+  ["text-xs", "font-size:var(--text-xs)", "line-height:var(--tw-leading,var(--text-xs--line-height))"],
+  ["text-sm", "font-size:var(--text-sm)", "line-height:var(--tw-leading,var(--text-sm--line-height))"],
+  ["text-base", "font-size:var(--text-base)", "line-height:var(--tw-leading,var(--text-base--line-height))"],
+  ["text-6xl", "font-size:var(--text-6xl)", "line-height:var(--tw-leading,var(--text-6xl--line-height))"],
+] as const;
+
 const removedPubAliasPattern =
   /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/;
 
@@ -203,8 +217,34 @@ describe("compiled Tailwind brand utilities", () => {
 
       expect(minified).toMatch(/\.pub-card\{[^}]*--headline:var\(--ink\)/);
       expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
+      expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
+      expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*font-size:var\(--pill-size\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
+      expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
       expect(minified).not.toMatch(removedPubAliasPattern);
+      expect(minified).not.toMatch(/var\(--pub-headline-(?:font|weight|size|lh|ls)\)/);
+      expect(minified).not.toMatch(/var\(--pub-btn-(?:font|weight|size)\)/);
+
+      for (const [className, declaration] of fixedFontSizes) {
+        expect(minified, className).toMatch(
+          new RegExp(`\\.${className}\\{${escapeRegExp(declaration)};?\\}`),
+        );
+      }
+
+      for (const [className, fontSize, lineHeight] of defaultFontScale) {
+        expect(minified, className).toContain(`.${className}{${fontSize};${lineHeight}`);
+      }
+
+      expect(minified).not.toContain(".text-\\[10px\\]");
+      expect(minified).not.toContain(".text-\\[11px\\]");
+      expect(minified).not.toContain(".text-\\[13px\\]");
+      expect(minified).not.toContain(".text-\\[13\\.5px\\]");
+      expect(minified).not.toContain(".text-\\[14px\\]");
+      expect(minified).not.toContain(".text-\\[16px\\]");
+      expect(minified).toContain(".text-\\[0\\.8rem\\]{font-size:");
+      expect(minified).toContain("letter-spacing:1.6px");
     }
   });
 
@@ -259,7 +299,21 @@ function themeMarkup(themeId?: string) {
       <button class="pub-btn" data-probe="btn" type="button">버튼</button>
       <button class="pub-btn pub-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="pub-btn pub-btn-accent" data-probe="btn-accent" type="button">강조</button>
+      <p class="pub-label" data-probe="label">라벨</p>
+      <span class="pub-pill" data-probe="pill">필</span>
+      <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
     </article>
+    <p class="font-pixel" data-probe="pixel">픽셀</p>
+    <p class="sticker-label" data-probe="sticker">스티커</p>
+    <p class="text-micro" data-probe="micro">m</p>
+    <p class="text-caption" data-probe="caption">c</p>
+    <p class="text-tab" data-probe="tab">t</p>
+    <p class="text-nav" data-probe="nav">n</p>
+    <p class="text-sm" data-probe="text-sm">s</p>
+    <p class="text-base" data-probe="text-base">b</p>
+    <p style="font-size:10px" data-probe="px-10">10</p>
+    <p style="font-size:14px" data-probe="px-14">14</p>
+    <p style="font-size:16px" data-probe="px-16">16</p>
   </section>`;
 }
 
@@ -284,7 +338,7 @@ async function readProbes(
   css: string,
   body: string,
 ) {
-  const html = `<!doctype html><html><head><style>${css}</style></head><body>${body}</body></html>`;
+  const html = `<!doctype html><html style="--font-mona:cursive;--font-sans:serif"><head><style>${css}</style></head><body>${body}</body></html>`;
   const dir = mkdtempSync(join(tmpdir(), "theme-colors-"));
   const file = join(dir, "index.html");
   writeFileSync(file, html);
@@ -300,6 +354,12 @@ async function readProbes(
         backgroundColor: style.backgroundColor,
         borderTopColor: style.borderTopColor,
         brandPurple: style.getPropertyValue("--brand-purple").trim(),
+        fontFamily: style.fontFamily,
+        fontSize: style.fontSize,
+        fontWeight: style.fontWeight,
+        lineHeight: style.lineHeight,
+        letterSpacing: style.letterSpacing,
+        textTransform: style.textTransform,
       };
     }),
   );
@@ -329,6 +389,7 @@ async function expectDefaultComputedColors(
 
   expectThemeSurface(byProbe, colors, `${label} default`);
   expectBrandUtilities(byProbe, `${label} default`);
+  expectTypography(byProbe, "pixel_y2k", `${label} default`);
   for (const [className, [property, hex]] of Object.entries(fixedColors)) {
     const probe = byProbe.get(`root-${className}`);
     expect(probe, className).toBeTruthy();
@@ -353,7 +414,148 @@ async function expectThemeComputedColors(
 
   expectThemeSurface(byProbe, colors, prefix);
   expectBrandUtilities(byProbe, prefix);
+  expectTypography(byProbe, themeId, prefix);
   expectToast(byProbe, toastColors[themeId], `${prefix} toast`);
+}
+
+const themeType = {
+  pixel_y2k: {
+    headlineSize: "36px",
+    headlineWeight: "700",
+    headlineLineHeight: "50.4px",
+    headlineTracking: "0px",
+    roleFamily: "cursive",
+    labelTracking: "0px",
+    labelTransform: "none",
+    pillTransform: "none",
+    buttonSize: "15px",
+  },
+  mono_bw: {
+    headlineSize: "30px",
+    headlineWeight: "900",
+    headlineLineHeight: "35.4px",
+    headlineTracking: "-1px",
+    roleFamily: "serif",
+    labelTracking: "1.6px",
+    labelTransform: "uppercase",
+    pillTransform: "uppercase",
+    buttonSize: "14px",
+  },
+  soft_pastel: {
+    headlineSize: "30px",
+    headlineWeight: "800",
+    headlineLineHeight: "39px",
+    headlineTracking: "-0.4px",
+    roleFamily: "serif",
+    labelTracking: "0.4px",
+    labelTransform: "none",
+    pillTransform: "none",
+    buttonSize: "15px",
+  },
+} as const;
+
+type TypeProbe = {
+  fontFamily: string;
+  fontSize: string;
+  fontWeight: string;
+  lineHeight: string;
+  letterSpacing: string;
+  textTransform: string;
+};
+
+function expectPx(actual: string, expected: string, label: string) {
+  const measured = Number.parseFloat(actual);
+  const target = Number.parseFloat(expected);
+
+  expect(Number.isFinite(measured), `${label} ${actual}`).toBe(true);
+  expect(Math.abs(measured - target), `${label} ${actual} vs ${expected}`).toBeLessThan(0.05);
+}
+
+function expectTracking(actual: string, expected: string, label: string) {
+  if (expected === "0px" && (actual === "0px" || actual === "normal")) {
+    return;
+  }
+
+  expectPx(actual, expected, label);
+}
+
+function expectFamily(actual: string, expected: string, label: string) {
+  expect(actual.replace(/["']/g, "").replace(/\s+/g, "").toLowerCase(), label).toBe(
+    expected.replace(/\s+/g, "").toLowerCase(),
+  );
+}
+
+function expectTypography(
+  probes: Map<string, TypeProbe>,
+  themeId: keyof typeof themeType,
+  label: string,
+) {
+  const expected = themeType[themeId];
+  const page = probes.get("page");
+  const headline = probes.get("header-title");
+  const labelProbe = probes.get("label");
+  const pill = probes.get("pill");
+  const eyebrow = probes.get("eyebrow");
+  const button = probes.get("btn");
+  const pixel = probes.get("pixel");
+  const sticker = probes.get("sticker");
+  const micro = probes.get("micro");
+  const caption = probes.get("caption");
+  const tab = probes.get("tab");
+  const nav = probes.get("nav");
+  const small = probes.get("text-sm");
+  const base = probes.get("text-base");
+  const px10 = probes.get("px-10");
+  const px14 = probes.get("px-14");
+  const px16 = probes.get("px-16");
+
+  expectFamily(page!.fontFamily, "serif", `${label} page family`);
+  expectFamily(headline!.fontFamily, expected.roleFamily, `${label} headline family`);
+  expectPx(headline!.fontSize, expected.headlineSize, `${label} headline size`);
+  expect(headline!.fontWeight, `${label} headline weight`).toBe(expected.headlineWeight);
+  expectPx(headline!.lineHeight, expected.headlineLineHeight, `${label} headline line-height`);
+  expectTracking(headline!.letterSpacing, expected.headlineTracking, `${label} headline tracking`);
+
+  expectFamily(labelProbe!.fontFamily, expected.roleFamily, `${label} label family`);
+  expectPx(labelProbe!.fontSize, "12px", `${label} label size`);
+  expect(labelProbe!.fontWeight, `${label} label weight`).toBe("700");
+  expectTracking(labelProbe!.letterSpacing, expected.labelTracking, `${label} label tracking`);
+  expect(labelProbe!.textTransform, `${label} label transform`).toBe(expected.labelTransform);
+
+  expectFamily(pill!.fontFamily, expected.roleFamily, `${label} pill family`);
+  expectPx(pill!.fontSize, "12px", `${label} pill size`);
+  expect(pill!.fontWeight, `${label} pill weight`).toBe("700");
+  expectPx(pill!.lineHeight, "12px", `${label} pill line-height`);
+  expect(pill!.textTransform, `${label} pill transform`).toBe(expected.pillTransform);
+
+  expectFamily(eyebrow!.fontFamily, expected.roleFamily, `${label} eyebrow family`);
+  expectPx(eyebrow!.fontSize, "12px", `${label} eyebrow size`);
+  expect(eyebrow!.textTransform, `${label} eyebrow transform`).toBe("uppercase");
+
+  expectFamily(button!.fontFamily, expected.roleFamily, `${label} button family`);
+  expectPx(button!.fontSize, expected.buttonSize, `${label} button size`);
+  expect(button!.fontWeight, `${label} button weight`).toBe("700");
+  expectPx(button!.lineHeight, expected.buttonSize, `${label} button line-height`);
+
+  expectFamily(pixel!.fontFamily, "cursive, Arial, Helvetica, sans-serif", `${label} pixel family`);
+  expect(pixel!.fontWeight, `${label} pixel weight`).toBe("700");
+  expectFamily(
+    sticker!.fontFamily,
+    "cursive, Arial, Helvetica, sans-serif",
+    `${label} sticker family`,
+  );
+  expectPx(sticker!.fontSize, "12px", `${label} sticker size`);
+  expect(sticker!.fontWeight, `${label} sticker weight`).toBe("900");
+
+  expectPx(micro!.fontSize, "10px", `${label} micro`);
+  expectPx(caption!.fontSize, "11px", `${label} caption`);
+  expectPx(tab!.fontSize, "13px", `${label} tab`);
+  expectPx(nav!.fontSize, "13.5px", `${label} nav`);
+  expectPx(micro!.lineHeight, px10!.lineHeight, `${label} micro line-height`);
+  expectPx(base!.fontSize, px16!.fontSize, `${label} text-base size`);
+  expectPx(base!.lineHeight, px16!.lineHeight, `${label} text-base line-height`);
+  expectPx(small!.fontSize, px14!.fontSize, `${label} text-sm size`);
+  expect(small!.lineHeight, `${label} text-sm keeps its own line-height`).not.toBe(px14!.lineHeight);
 }
 
 function expectThemeSurface(

@@ -79,7 +79,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
         />
 
         <div className="mt-6 border-t border-line px-1.5 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500">계정</div>
+          <div className="text-caption font-semibold text-zinc-500">계정</div>
           <p className="mt-1.5 break-all text-xs font-medium text-zinc-600">
             {user.email}
           </p>
@@ -106,7 +106,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
+            <div className="hidden truncate text-sm font-extrabold tracking-normal text-ink sm:text-base md:block">
               <AdminPageTitle />
             </div>
           </div>
@@ -169,7 +169,7 @@ function AdminShellSkeleton() {
         <AdminShellNav variant="desktop" />
 
         <div className="mt-6 border-t border-line px-1.5 pt-4">
-          <div className="text-[11px] font-semibold text-zinc-500">계정</div>
+          <div className="text-caption font-semibold text-zinc-500">계정</div>
           <div className="mt-1.5 h-3 w-32 animate-pulse rounded bg-zinc-200" />
         </div>
       </aside>
@@ -194,7 +194,7 @@ function AdminShellSkeleton() {
             </span>
           </Link>
           <div className="min-w-0 flex-1">
-            <div className="hidden truncate text-[14px] font-extrabold tracking-normal text-ink sm:text-[16px] md:block">
+            <div className="hidden truncate text-sm font-extrabold tracking-normal text-ink sm:text-base md:block">
               <AdminPageTitle />
             </div>
           </div>

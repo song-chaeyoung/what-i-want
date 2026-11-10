@@ -138,7 +138,7 @@ export default async function Home() {
                 key={step.number}
                 className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-[3px_3px_0_#111827]"
               >
-                <p className="font-pixel text-[10px] leading-none text-[#0f766e]">
+                <p className="font-pixel text-micro leading-none text-[#0f766e]">
                   {step.number}
                 </p>
                 <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
@@ -233,7 +233,7 @@ function PreviewWish({
         </div>
         <GiftProgress progress={progress} color="#0f766e" />
         <span
-          className="mt-3 inline-flex max-w-full rounded-md border-2 border-[#171717] px-2 py-1 text-[11px] font-black"
+          className="mt-3 inline-flex max-w-full rounded-md border-2 border-[#171717] px-2 py-1 text-caption font-black"
           style={{ backgroundColor: color }}
         >
           <span className="truncate">받고 싶은 선물</span>
@@ -287,7 +287,7 @@ function GiftProgress({ progress, color }: { progress: string; color: string }) 
 function SignalSticker({ text, color }: { text: string; color: string }) {
   return (
     <span
-      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-[#171717] px-2 py-1 text-[10px] tracking-normal"
+      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-[#171717] px-2 py-1 text-micro tracking-normal"
       style={{ backgroundColor: color }}
     >
       <span className="truncate">{text}</span>

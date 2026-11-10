@@ -63,6 +63,37 @@ const migratedPub = {
 const removedPubAliasPattern =
   /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/g;
 
+/** 타이포 별칭. 값은 의미 토큰이 가지고, --pub-* 는 색 1단계처럼 잠시 남긴다. */
+const typographyAliases = {
+  "--pub-headline-font": "--headline-font",
+  "--pub-headline-weight": "--headline-weight",
+  "--pub-headline-size": "--headline-size",
+  "--pub-headline-lh": "--headline-lh",
+  "--pub-headline-ls": "--headline-ls",
+  "--pub-label-font": "--label-font",
+  "--pub-label-ls": "--label-ls",
+  "--pub-label-transform": "--label-transform",
+  "--pub-label-weight": "--label-weight",
+  "--pub-pill-font": "--pill-font",
+  "--pub-pill-weight": "--pill-weight",
+  "--pub-pill-transform": "--pill-transform",
+  "--pub-btn-font": "--btn-font",
+  "--pub-btn-weight": "--btn-weight",
+  "--pub-btn-size": "--btn-size",
+} as const;
+
+const rootFonts = {
+  "--font-display": "var(--font-mona)",
+  "--font-body": "var(--font-sans)",
+} as const;
+
+const themeFontSizes = {
+  "--text-micro": "10px",
+  "--text-caption": "11px",
+  "--text-tab": "13px",
+  "--text-nav": "13.5px",
+} as const;
+
 /** 별칭 도입 전에 테마 블록에 적혀 있던 --pub-* 리터럴. */
 const previousPub = {
   pixel_y2k: {
@@ -312,6 +343,13 @@ function parseVars(block: string) {
   return vars;
 }
 
+/** --font-display / --font-body 는 next/font 변수의 별칭이다. 예전 리터럴과 맞출 때 한 단계만 되돌린다. */
+function expandFontPurpose(value: string) {
+  return value
+    .replaceAll("var(--font-display,", "var(--font-mona,")
+    .replaceAll("var(--font-body,", "var(--font-sans,");
+}
+
 function resolveVar(name: string, vars: Map<string, string>, seen = new Set<string>()): string {
   const value = vars.get(name);
 
@@ -389,6 +427,23 @@ describe("semantic token aliases", () => {
         previousBrand[brand as keyof typeof previousBrand],
       );
     }
+
+    for (const [name, value] of Object.entries(rootFonts)) {
+      expect(rootVars.get(name), name).toBe(value);
+    }
+  });
+
+  test("registers fixed arbitrary font sizes without replacing the default scale", () => {
+    for (const [name, value] of Object.entries(themeFontSizes)) {
+      expect(themeBridgeVars.get(name), name).toBe(value);
+    }
+
+    expect(themeBridgeVars.has("--text-sm")).toBe(false);
+    expect(themeBridgeVars.has("--text-base")).toBe(false);
+    expect(themeBridgeVars.has("--text-xs")).toBe(false);
+    expect(themeBridgeVars.has("--font-display")).toBe(false);
+    expect(themeBridgeVars.has("--font-body")).toBe(false);
+    expect(themeBridgeVars.get("--font-sans")).toBe("var(--font-sans)");
   });
 
   test("points Tailwind color bridges at brand aliases", () => {
@@ -405,9 +460,11 @@ describe("semantic token aliases", () => {
   test("resolves mapped colors from semantic tokens and keeps unmapped pub tokens", () => {
     expect(publicThemesCss).not.toMatch(/\.pub-page\s*\{[^}]*--brand-ink\s*:/);
 
+    const basePubVars = themeBlocks.pixel_y2k;
+
     for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
       const themeVars = themeBlocks[themeId];
-      const computed = mergedVars([rootVars, themeVars]);
+      const computed = mergedVars([rootVars, basePubVars, themeVars]);
       const previous = previousPub[themeId];
 
       for (const brand of Object.keys(previousBrand)) {
@@ -422,8 +479,23 @@ describe("semantic token aliases", () => {
         expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
       }
 
+      for (const [pubName, semantic] of Object.entries(typographyAliases)) {
+        const literal = previous[pubName as keyof typeof previous];
+
+        expect(computed.get(pubName), `${themeId} ${pubName}`).toBe(`var(${semantic})`);
+        expect(expandFontPurpose(resolveVar(semantic, computed)), `${themeId} ${semantic}`).toBe(
+          literal,
+        );
+        expect(expandFontPurpose(resolveVar(pubName, computed)), `${themeId} ${pubName}`).toBe(
+          literal,
+        );
+      }
+
+      expect(resolveVar("--label-size", computed), themeId).toBe("12px");
+      expect(resolveVar("--pill-size", computed), themeId).toBe("12px");
+
       for (const [name, literal] of Object.entries(previous)) {
-        if (name in migratedPub) {
+        if (name in migratedPub || name in typographyAliases) {
           continue;
         }
 
@@ -443,6 +515,16 @@ describe("semantic token aliases", () => {
 
     expect(cardBlock).toContain("--headline: var(--ink);");
     expect(headlineBlock).toContain("color: var(--headline);");
+    expect(headlineBlock).toContain("font-family: var(--headline-font);");
+    expect(headlineBlock).toContain("font-size: var(--headline-size);");
+    expect(publicThemesCss).toContain("font-size: var(--label-size);");
+    expect(publicThemesCss).toContain("font-size: var(--pill-size);");
+    expect(publicThemesCss).toContain("font-size: var(--btn-size);");
+    expect(publicThemesCss).toMatch(/\.pub-eyebrow\s*\{[^}]*font-size:\s*12px;/);
+    expect(publicThemesCss).not.toMatch(/var\(--pub-headline-(?:font|weight|size|lh|ls)\)/);
+    expect(publicThemesCss).not.toMatch(/var\(--pub-label-(?:font|ls|transform|weight)\)/);
+    expect(publicThemesCss).not.toMatch(/var\(--pub-pill-(?:font|weight|transform)\)/);
+    expect(publicThemesCss).not.toMatch(/var\(--pub-btn-(?:font|weight|size)\)/);
     removedPubAliasPattern.lastIndex = 0;
     expect(publicThemesCss.match(removedPubAliasPattern)).toBeNull();
 

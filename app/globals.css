@@ -34,6 +34,9 @@
   --brand-teal: var(--accent-main);
   --brand-purple: var(--headline);
   --brand-line: var(--line);
+  /* 글꼴 패밀리. next/font가 넣는 --font-mona / --font-sans 는 유지하고, 역할 이름만 가리킨다. */
+  --font-display: var(--font-mona);
+  --font-body: var(--font-sans);
   --card: oklch(1 0 0);
   --card-foreground: oklch(0.145 0 0);
   --popover: oklch(1 0 0);
@@ -72,6 +75,11 @@
   --font-sans: var(--font-sans);
   --font-mono: "Courier New", Courier, monospace;
   --font-heading: var(--font-sans);
+  /* 기존 text-[Npx]. line-height 는 붙이지 않는다. text-xs–text-6xl 기본 스케일은 그대로. */
+  --text-micro: 10px;
+  --text-caption: 11px;
+  --text-tab: 13px;
+  --text-nav: 13.5px;
   --color-ink: var(--brand-ink);
   --color-paper: var(--brand-paper);
   --color-line: var(--brand-line);
@@ -130,7 +138,7 @@ body {
 }
 
 .font-pixel {
-  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display), Arial, Helvetica, sans-serif;
   font-weight: 700;
   letter-spacing: 0;
 }
@@ -157,7 +165,7 @@ body {
   border: 2px solid var(--brand-ink);
   background: var(--brand-yellow);
   padding: 0.25rem 0.625rem;
-  font-family: var(--font-mona), Arial, Helvetica, sans-serif;
+  font-family: var(--font-display), Arial, Helvetica, sans-serif;
   font-size: 0.75rem;
   font-weight: 900;
   line-height: 1;
@@ -172,7 +180,7 @@ body {
   border: var(--toast-border, 1px solid var(--brand-line));
   border-radius: var(--toast-radius, 1rem);
   box-shadow: var(--toast-shadow, 0 4px 12px rgba(0, 0, 0, 0.08));
-  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), Arial, Helvetica, sans-serif;
   font-size: 14px;
 }
 

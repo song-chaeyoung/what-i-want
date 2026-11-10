@@ -404,7 +404,7 @@ function GiftFallback() {
         <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827] lg:h-28 lg:w-28">
           <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
           <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
-          <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-[10px] font-black text-[#4c1d95] lg:text-sm">
+          <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-micro font-black text-[#4c1d95] lg:text-sm">
             GIFT
           </div>
           <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />
@@ -414,7 +414,7 @@ function GiftFallback() {
         <div className="grid h-16 w-16 grid-cols-4 grid-rows-4 border-[1.5px] border-[#111] bg-white lg:h-28 lg:w-28">
           <div className="col-span-4 border-b-[1.5px] border-[#111]" />
           <div className="col-span-1 row-span-3 border-r-[1.5px] border-[#111]" />
-          <div className="col-span-2 row-span-3 grid place-items-center text-[10px] font-black tracking-[1.6px] text-[#111] lg:text-sm">
+          <div className="col-span-2 row-span-3 grid place-items-center text-micro font-black tracking-[1.6px] text-[#111] lg:text-sm">
             GIFT
           </div>
           <div className="col-span-1 row-span-3 border-l-[1.5px] border-[#111]" />
@@ -422,7 +422,7 @@ function GiftFallback() {
       </div>
       <div className="gm gm-soft">
         <div className="grid h-16 w-16 place-items-center rounded-3xl bg-[#ffe1ec] lg:h-28 lg:w-28">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/70 text-[10px] font-black text-[#bd6595] lg:h-16 lg:w-16 lg:text-sm">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/70 text-micro font-black text-[#bd6595] lg:h-16 lg:w-16 lg:text-sm">
             GIFT
           </span>
         </div>

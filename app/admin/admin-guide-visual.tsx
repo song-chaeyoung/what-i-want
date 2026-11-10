@@ -29,12 +29,12 @@ function GiftFormVisual() {
   return (
     <div className="grid h-full content-center gap-3 bg-[#ffe4e6] p-4 sm:p-7">
       <div className="rounded-md border-2 border-ink bg-white p-3 shadow-[3px_3px_0_#111827]">
-        <p className="text-[10px] font-bold text-zinc-500">상품 링크</p>
+        <p className="text-micro font-bold text-zinc-500">상품 링크</p>
         <div className="mt-2 flex items-center gap-2">
-          <div className="min-w-0 flex-1 truncate rounded border border-line bg-[#fafafa] px-2.5 py-2 text-[11px] font-semibold text-zinc-500">
+          <div className="min-w-0 flex-1 truncate rounded border border-line bg-[#fafafa] px-2.5 py-2 text-caption font-semibold text-zinc-500">
             https://shop.example/gift
           </div>
-          <div className="shrink-0 rounded border border-ink bg-yellow-200 px-2.5 py-2 text-[10px] font-black text-ink">
+          <div className="shrink-0 rounded border border-ink bg-yellow-200 px-2.5 py-2 text-micro font-black text-ink">
             정보 불러오기
           </div>
         </div>
@@ -47,7 +47,7 @@ function GiftFormVisual() {
           <p className="truncate text-sm font-black text-ink">무선 헤드폰</p>
           <p className="mt-1 text-xs font-bold text-purple">189,000원</p>
         </div>
-        <div className="flex shrink-0 items-center gap-1 text-[10px] font-bold text-teal">
+        <div className="flex shrink-0 items-center gap-1 text-micro font-bold text-teal">
           <Check className="size-3.5" />
           자동 입력
         </div>
@@ -75,7 +75,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
             <p className="text-base font-black text-[var(--ink)]">
               63,000원
             </p>
-            <p className="mt-1 text-[10px] font-bold text-[var(--ink-muted)]">
+            <p className="mt-1 text-micro font-bold text-[var(--ink-muted)]">
               189,000원 중
             </p>
           </div>
@@ -97,7 +97,7 @@ function ShareVisual({ wishlistSlug }: { wishlistSlug: string }) {
         <p className="min-w-0 flex-1 truncate text-xs font-bold text-zinc-600">
           /wishlist/{wishlistSlug}
         </p>
-        <div className="flex shrink-0 items-center gap-1 rounded border border-ink bg-mint px-2.5 py-2 text-[10px] font-black text-teal">
+        <div className="flex shrink-0 items-center gap-1 rounded border border-ink bg-mint px-2.5 py-2 text-micro font-black text-teal">
           <Check className="size-3.5" />
           링크 복사
         </div>
@@ -108,7 +108,7 @@ function ShareVisual({ wishlistSlug }: { wishlistSlug: string }) {
         </div>
         <div>
           <p className="text-xs font-black text-ink">새로운 마음이 도착했어요</p>
-          <p className="mt-1 text-[11px] font-semibold text-zinc-600">
+          <p className="mt-1 text-caption font-semibold text-zinc-600">
             생일 진심으로 축하해!
           </p>
         </div>

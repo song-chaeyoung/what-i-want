@@ -22,7 +22,11 @@ describe("Mona pixel font integration", () => {
     const globalCss = readFileSync(join(root, "app/globals.css"), "utf8");
 
     expect(globalCss).toContain(".font-pixel");
-    expect(globalCss).toContain("font-family: var(--font-mona)");
+    expect(globalCss).toContain("--font-display: var(--font-mona)");
+    expect(globalCss).toContain("--font-body: var(--font-sans)");
+    expect(globalCss).toContain(
+      "font-family: var(--font-display), Arial, Helvetica, sans-serif;",
+    );
     expect(globalCss).toContain("font-family: Arial, Helvetica, sans-serif;");
   });
 
