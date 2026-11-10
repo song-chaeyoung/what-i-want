@@ -95,7 +95,7 @@ export function BirthdayPicker({
         </PopoverTrigger>
         <PopoverContent
           align="start"
-          className="w-auto rounded-md border border-line bg-white p-3 shadow-pub"
+          className="w-auto rounded-md border border-line bg-white p-3 shadow-xs"
         >
           <Calendar
             mode="single"

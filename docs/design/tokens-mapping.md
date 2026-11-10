@@ -175,6 +175,8 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 픽셀 테마의 `--card-shadow-lg`·`--card-shadow-sm`·`--pill-shadow`·`--btn-shadow`는 위 고정 그림자와 픽셀이 같아도 별도 토큰입니다. `mono_bw`는 `none`이고 `soft_pastel`은 흐린 그림자입니다.
 
+`@theme`의 `--shadow-pub`와 `--radius-pub`는 지웠습니다. `--shadow-pub`는 [생일 선택](../../app/onboarding/birthday-picker.tsx)의 `shadow-pub` 한 곳뿐이었습니다. Tailwind 기본 `shadow-xs` 생성 문자열은 `0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05))`라 퍼짐 `0`과 색 문법이 다르지만, Chrome 계산 `box-shadow`는 dev·production 모두 마지막 층이 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`로 같았습니다. 그래서 `shadow-xs`로 바꿨습니다. `--radius-pub`(`0.375rem`)와 `rounded-pub`는 사용처가 없습니다. `rounded-md`는 `--radius` `0.625rem`의 0.8배라 그 값과 다릅니다.
+
 그대로 둔 모양:
 
 | 현재 | 그대로 둔 이유 |
@@ -182,7 +184,6 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | 안내 창의 `shadow-[5px_5px_0_#111827]`, `sm:shadow-[7px_7px_0_#111827]` | 한 곳씩인 5px·7px |
 | Tailwind 기본 `rounded-md`, `border-2`, `shadow-md` | 기본 스케일 |
 | shadcn `rounded-[min(var(--radius-md),...)]` | 컴포넌트 기본 모서리 상한 |
-| `--radius-pub`, `--shadow-pub` | 기존 공개 유틸. 테마 `--card-radius`·`--card-shadow`와 값이 다름 |
 | `--toast-*` | `.pub-page` 밖 토스트. 그림자에 `4px 4px 0 #111827`가 있어도 `shadow-pixel-md`로 합치지 않음 |
 | `soft_pastel`의 `.pub-btn:not(.pub-btn-primary):not(.pub-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
 | `mono_bw` 헤더 필 `1.5px solid rgba(255,255,255,0.6)`, 지표 `1.5px solid rgba(255,255,255,0.5)` | 테마 `--pill-border`·`--card-border`와 다른 반투명 선 |
@@ -261,6 +262,6 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 [별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 고정 픽셀 그림자와 관리자 사이드바 테마 키, 그리고 `app/`·`components/`·`src/`와 공개 테마 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 봅니다. `--stat-accent`와 `--msg-sub`는 선언만 있는지도 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
 
-[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`·`shadow-pub`는 그대로인지도 봅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
+[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`는 그대로인지도 봅니다. `shadow-xs`의 Chrome 계산 `box-shadow`는 지운 `--shadow-pub`와 같은 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`입니다. `--radius-pub`는 사용처가 없어 지웠고, `rounded-md`는 `--radius` `0.625rem`의 0.8배라 `0.375rem`과 다릅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.

@@ -417,8 +417,8 @@ describe("semantic token aliases", () => {
       expect(themeBridgeVars.get(name), name).toBe(value);
     }
 
-    expect(themeBridgeVars.get("--shadow-pub")).toBe("0 1px 2px rgba(0, 0, 0, 0.05)");
-    expect(themeBridgeVars.get("--radius-pub")).toBe("0.375rem");
+    expect(themeBridgeVars.has("--shadow-pub")).toBe(false);
+    expect(themeBridgeVars.has("--radius-pub")).toBe(false);
     expect(themeBridgeVars.get("--width-admin-sidebar")).toBe("220px");
     expect(themeBridgeVars.get("--spacing-admin-sidebar")).toBe("22px");
     expect(themeBridgeVars.has("--shadow-md")).toBe(false);

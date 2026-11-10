@@ -281,11 +281,13 @@ describe("compiled Tailwind brand utilities", () => {
       ).toBe(true);
       expect(
         [
-          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,rgba(0,0,0,0.05));",
-          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,#0000000d);",
+          ".shadow-xs{--tw-shadow:01px2px0var(--tw-shadow-color,rgb(000/0.05));",
+          ".shadow-xs{--tw-shadow:01px2px0var(--tw-shadow-color,#0000000d);",
         ].some((value) => minified.includes(value)),
-        "shadow-pub",
+        "shadow-xs",
       ).toBe(true);
+      expect(minified).not.toContain(".shadow-pub{");
+      expect(minified).not.toContain("--radius-pub");
       expect(minified).toMatch(/\.pub-card\{[^}]*border:var\(--card-border\)/);
       expect(minified).toMatch(/\.pub-card\{[^}]*border-radius:var\(--card-radius\)/);
       expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
@@ -371,6 +373,7 @@ function themeMarkup(themeId?: string) {
     </article>
     <div class="pixel-card" data-probe="pixel-card"></div>
     <div class="pixel-board" data-probe="pixel-board"></div>
+    <div class="shadow-xs" data-probe="shadow-xs"></div>
     <div class="shadow-pixel-sm" data-probe="util-sm"></div>
     <div class="shadow-header-line" data-probe="util-line"></div>
     <div style="box-shadow:3px 3px 0 #111827" data-probe="raw-sm"></div>
@@ -821,6 +824,9 @@ function expectShape(
   expectBox(pixelCard!.boxShadow, "rgb(17, 24, 39) 6px 6px 0px 0px", `${label} pixel card`);
   expectBox(pixelBoard!.boxShadow, "rgb(17, 24, 39) 8px 8px 0px 0px", `${label} pixel board`);
   expectBox(sticker!.boxShadow, rawSm!.boxShadow, `${label} sticker`);
+  expect(probes.get("shadow-xs")!.boxShadow, `${label} shadow-xs`).toBe(
+    "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
+  );
   expect(probes.get("util-sm")!.boxShadow, `${label} pixel sm utility`).toContain("3px");
   expect(probes.get("util-line")!.boxShadow, `${label} header line utility`).not.toBe("none");
 }

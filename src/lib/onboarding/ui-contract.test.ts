@@ -74,7 +74,7 @@ describe("onboarding UI contract", () => {
     );
     expect(source).toContain('!selected && "text-zinc-500"');
     expect(source).toContain(
-      'className="w-auto rounded-md border border-line bg-white p-3 shadow-pub"',
+      'className="w-auto rounded-md border border-line bg-white p-3 shadow-xs"',
     );
     expect(source).toContain("startMonth={new Date(1900, 0)}");
     expect(source).toContain("endMonth={kstToday}");
