@@ -28,7 +28,7 @@ export function AdminGuideVisual({
 function GiftFormVisual() {
   return (
     <div className="grid h-full content-center gap-3 bg-[#ffe4e6] p-4 sm:p-7">
-      <div className="rounded-md border-2 border-ink bg-white p-3 shadow-[3px_3px_0_#111827]">
+      <div className="rounded-md border-2 border-ink bg-white p-3 shadow-pixel-sm">
         <p className="text-micro font-bold text-zinc-500">상품 링크</p>
         <div className="mt-2 flex items-center gap-2">
           <div className="min-w-0 flex-1 truncate rounded border border-line bg-[#fafafa] px-2.5 py-2 text-caption font-semibold text-zinc-500">
@@ -39,7 +39,7 @@ function GiftFormVisual() {
           </div>
         </div>
       </div>
-      <div className="flex items-center gap-3 rounded-md border-2 border-ink bg-paper p-3 shadow-[3px_3px_0_#111827]">
+      <div className="flex items-center gap-3 rounded-md border-2 border-ink bg-paper p-3 shadow-pixel-sm">
         <div className="grid size-12 shrink-0 place-items-center rounded border border-ink bg-mint sm:size-14">
           <Gift className="size-6 text-teal" />
         </div>
@@ -92,7 +92,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
 function ShareVisual({ wishlistSlug }: { wishlistSlug: string }) {
   return (
     <div className="grid h-full content-center gap-3 bg-[#fef3c7] p-4 sm:p-7">
-      <div className="flex min-w-0 items-center gap-2 rounded-md border-2 border-ink bg-white p-3 shadow-[3px_3px_0_#111827]">
+      <div className="flex min-w-0 items-center gap-2 rounded-md border-2 border-ink bg-white p-3 shadow-pixel-sm">
         <Link2 className="size-4 shrink-0 text-purple" />
         <p className="min-w-0 flex-1 truncate text-xs font-bold text-zinc-600">
           /wishlist/{wishlistSlug}
@@ -102,7 +102,7 @@ function ShareVisual({ wishlistSlug }: { wishlistSlug: string }) {
           링크 복사
         </div>
       </div>
-      <div className="ml-auto flex w-[85%] items-start gap-3 rounded-md border-2 border-ink bg-[#ffe4e6] p-3 shadow-[3px_3px_0_#111827]">
+      <div className="ml-auto flex w-[85%] items-start gap-3 rounded-md border-2 border-ink bg-[#ffe4e6] p-3 shadow-pixel-sm">
         <div className="grid size-9 shrink-0 place-items-center rounded border border-ink bg-white">
           <Heart className="size-4 fill-rose-400 text-rose-500" />
         </div>

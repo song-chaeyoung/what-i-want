@@ -47,7 +47,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
     <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-md flex-col justify-center">
         <TextLogo href="/" className="mb-6 self-center" />
-        <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-[6px_6px_0_#111827]">
+        <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-lg">
           <div className="space-y-2">
             <h1 className="font-pixel text-3xl tracking-normal text-[#4c1d95]">
               로그인

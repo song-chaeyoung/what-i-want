@@ -245,6 +245,50 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).not.toContain(".text-\\[16px\\]");
       expect(minified).toContain(".text-\\[0\\.8rem\\]{font-size:");
       expect(minified).toContain("letter-spacing:1.6px");
+
+      for (const [className, shadow] of [
+        ["shadow-pixel-sm", "3px3px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-md", "4px4px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-lg", "6px6px0var(--tw-shadow-color,#111827)"],
+        ["shadow-pixel-xl", "8px8px0var(--tw-shadow-color,#111827)"],
+      ] as const) {
+        expect(minified, className).toContain(
+          `.${className}{--tw-shadow:${shadow};box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)`,
+        );
+      }
+
+      const headerLine = [
+        "01px0var(--tw-shadow-color,rgba(24,24,27,0.02))",
+        "01px0var(--tw-shadow-color,#18181b05)",
+      ].find((shadow) =>
+        minified.includes(
+          `.shadow-header-line{--tw-shadow:${shadow};box-shadow:var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow)`,
+        ),
+      );
+
+      expect(headerLine, "shadow-header-line").toBeTruthy();
+
+      expect(
+        [
+          ".shadow-md{--tw-shadow:04px6px-1pxvar(--tw-shadow-color,rgb(000/0.1)),02px4px-2pxvar(--tw-shadow-color,rgb(000/0.1));",
+          ".shadow-md{--tw-shadow:04px6px-1pxvar(--tw-shadow-color,#0000001a),02px4px-2pxvar(--tw-shadow-color,#0000001a);",
+        ].some((value) => minified.includes(value)),
+        "shadow-md",
+      ).toBe(true);
+      expect(
+        [
+          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,rgba(0,0,0,0.05));",
+          ".shadow-pub{--tw-shadow:01px2pxvar(--tw-shadow-color,#0000000d);",
+        ].some((value) => minified.includes(value)),
+        "shadow-pub",
+      ).toBe(true);
+      expect(minified).toMatch(/\.pub-card\{[^}]*border:var\(--card-border\)/);
+      expect(minified).toMatch(/\.pub-card\{[^}]*border-radius:var\(--card-radius\)/);
+      expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
+      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--pub-progress-h\)/);
+      expect(minified).toContain(".shadow-\\[5px_5px_0");
+      expect(minified).toContain("shadow-\\[7px_7px_0");
     }
   });
 
@@ -302,7 +346,17 @@ function themeMarkup(themeId?: string) {
       <p class="pub-label" data-probe="label">라벨</p>
       <span class="pub-pill" data-probe="pill">필</span>
       <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
+      <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
+      <div class="pub-field" data-probe="field"></div>
     </article>
+    <div class="pixel-card" data-probe="pixel-card"></div>
+    <div class="pixel-board" data-probe="pixel-board"></div>
+    <div class="shadow-pixel-sm" data-probe="util-sm"></div>
+    <div class="shadow-header-line" data-probe="util-line"></div>
+    <div style="box-shadow:3px 3px 0 #111827" data-probe="raw-sm"></div>
+    <div style="border:2px solid #171717" data-probe="raw-border-2"></div>
+    <div style="border:1.5px solid #111" data-probe="raw-border-15"></div>
+    <div style="border:1.5px solid #f0dfe9" data-probe="raw-border-pastel"></div>
     <p class="font-pixel" data-probe="pixel">픽셀</p>
     <p class="sticker-label" data-probe="sticker">스티커</p>
     <p class="text-micro" data-probe="micro">m</p>
@@ -360,6 +414,13 @@ async function readProbes(
         lineHeight: style.lineHeight,
         letterSpacing: style.letterSpacing,
         textTransform: style.textTransform,
+        borderTopWidth: style.borderTopWidth,
+        borderTopStyle: style.borderTopStyle,
+        borderBottomWidth: style.borderBottomWidth,
+        borderBottomStyle: style.borderBottomStyle,
+        borderBottomColor: style.borderBottomColor,
+        borderRadius: style.borderRadius,
+        boxShadow: style.boxShadow,
       };
     }),
   );
@@ -390,6 +451,7 @@ async function expectDefaultComputedColors(
   expectThemeSurface(byProbe, colors, `${label} default`);
   expectBrandUtilities(byProbe, `${label} default`);
   expectTypography(byProbe, "pixel_y2k", `${label} default`);
+  expectShape(byProbe, "pixel_y2k", `${label} default`);
   for (const [className, [property, hex]] of Object.entries(fixedColors)) {
     const probe = byProbe.get(`root-${className}`);
     expect(probe, className).toBeTruthy();
@@ -415,6 +477,7 @@ async function expectThemeComputedColors(
   expectThemeSurface(byProbe, colors, prefix);
   expectBrandUtilities(byProbe, prefix);
   expectTypography(byProbe, themeId, prefix);
+  expectShape(byProbe, themeId, prefix);
   expectToast(byProbe, toastColors[themeId], `${prefix} toast`);
 }
 
@@ -556,6 +619,154 @@ function expectTypography(
   expectPx(base!.lineHeight, px16!.lineHeight, `${label} text-base line-height`);
   expectPx(small!.fontSize, px14!.fontSize, `${label} text-sm size`);
   expect(small!.lineHeight, `${label} text-sm keeps its own line-height`).not.toBe(px14!.lineHeight);
+}
+
+const themeShape = {
+  pixel_y2k: {
+    cardBorder: "2px solid #171717",
+    cardRadius: "4px",
+    cardShadow: "rgb(17, 24, 39) 6px 6px 0px 0px",
+    headerBorder: "2px solid #171717",
+    pillBorder: "2px solid #171717",
+    pillRadius: "0px",
+    pillShadow: "rgb(17, 24, 39) 3px 3px 0px 0px",
+    buttonBorder: "2px solid #171717",
+    buttonRadius: "4px",
+    buttonShadow: "rgb(17, 24, 39) 3px 3px 0px 0px",
+    progressBorder: "2px solid #171717",
+    progressRadius: "2px",
+    fieldBorder: "2px solid #171717",
+    fieldRadius: "4px",
+  },
+  mono_bw: {
+    cardBorder: "1.5px solid #111111",
+    cardRadius: "0px",
+    cardShadow: "none",
+    headerBorder: "1.5px solid #111111",
+    pillBorder: "1.5px solid #111111",
+    pillRadius: "0px",
+    pillShadow: "none",
+    buttonBorder: "1.5px solid #111111",
+    buttonRadius: "0px",
+    buttonShadow: "none",
+    progressBorder: "1.5px solid #111111",
+    progressRadius: "0px",
+    fieldBorder: "1.5px solid #111111",
+    fieldRadius: "0px",
+  },
+  soft_pastel: {
+    cardBorder: "none",
+    cardRadius: "22px",
+    cardShadow: "rgba(150, 120, 160, 0.16) 0px 10px 28px 0px",
+    headerBorder: "none",
+    pillBorder: "none",
+    pillRadius: "999px",
+    pillShadow: "none",
+    buttonBorder: "none",
+    buttonRadius: "16px",
+    buttonShadow: "rgba(150, 120, 160, 0.2) 0px 6px 16px 0px",
+    progressBorder: "none",
+    progressRadius: "999px",
+    fieldBorder: "1.5px solid #f0dfe9",
+    fieldRadius: "14px",
+  },
+} as const;
+
+type ShapeProbe = {
+  borderTopWidth: string;
+  borderTopStyle: string;
+  borderTopColor: string;
+  borderBottomWidth: string;
+  borderBottomStyle: string;
+  borderBottomColor: string;
+  borderRadius: string;
+  boxShadow: string;
+};
+
+function expectBox(actual: string, expected: string, label: string) {
+  const normalize = (value: string) =>
+    value.replace(/\s+/g, "").replace(/rgba\((\d+),(\d+),(\d+),1\)/, "rgb($1,$2,$3)");
+
+  expect(normalize(actual), label).toBe(normalize(expected));
+}
+
+function expectEdge(
+  probe: ShapeProbe,
+  expected: string,
+  label: string,
+  references: Map<string, ShapeProbe>,
+  side: "top" | "bottom" = "top",
+) {
+  const width = side === "top" ? probe.borderTopWidth : probe.borderBottomWidth;
+  const styleName = side === "top" ? probe.borderTopStyle : probe.borderBottomStyle;
+  const color = side === "top" ? probe.borderTopColor : probe.borderBottomColor;
+
+  if (expected === "none") {
+    expect(styleName, label).toBe("none");
+    return;
+  }
+
+  const match = expected.match(/^([\d.]+)px solid (#[0-9a-fA-F]{6})$/);
+  expect(match, `${label} ${expected}`).not.toBeNull();
+  const referenceName =
+    match![1] === "1.5"
+      ? match![2].toLowerCase() === "#f0dfe9"
+        ? "raw-border-pastel"
+        : "raw-border-15"
+      : match![1] === "2"
+        ? "raw-border-2"
+        : "";
+  const reference = referenceName ? references.get(referenceName) : undefined;
+
+  expect(width, `${label} width`).toBe(reference ? reference.borderTopWidth : `${match![1]}px`);
+  expect(styleName, label).toBe("solid");
+  expectRgb(color, match![2], `${label} color`);
+}
+
+function expectShape(
+  probes: Map<string, ShapeProbe>,
+  themeId: keyof typeof themeShape,
+  label: string,
+) {
+  const expected = themeShape[themeId];
+  const card = probes.get("card");
+  const header = probes.get("header");
+  const pill = probes.get("pill");
+  const button = probes.get("btn");
+  const progress = probes.get("progress");
+  const field = probes.get("field");
+  const pixelCard = probes.get("pixel-card");
+  const pixelBoard = probes.get("pixel-board");
+  const sticker = probes.get("sticker");
+  const rawSm = probes.get("raw-sm");
+  const primary = probes.get("btn-primary");
+
+  expectEdge(card!, expected.cardBorder, `${label} card border`, probes);
+  expectPx(card!.borderRadius, expected.cardRadius, `${label} card radius`);
+  expectBox(card!.boxShadow, expected.cardShadow, `${label} card shadow`);
+  expectEdge(header!, expected.headerBorder, `${label} header border`, probes, "bottom");
+  expectEdge(pill!, expected.pillBorder, `${label} pill border`, probes);
+  expectPx(pill!.borderRadius, expected.pillRadius, `${label} pill radius`);
+  expectBox(pill!.boxShadow, expected.pillShadow, `${label} pill shadow`);
+  if (themeId === "soft_pastel") {
+    expectEdge(button!, "1.5px solid #f0dfe9", `${label} plain button border`, probes);
+    expectBox(button!.boxShadow, "none", `${label} plain button shadow`);
+    expectEdge(primary!, "none", `${label} primary border`, probes);
+    expectBox(primary!.boxShadow, expected.buttonShadow, `${label} primary shadow`);
+  } else {
+    expectEdge(button!, expected.buttonBorder, `${label} button border`, probes);
+    expectBox(button!.boxShadow, expected.buttonShadow, `${label} button shadow`);
+  }
+  expectPx(button!.borderRadius, expected.buttonRadius, `${label} button radius`);
+  expectEdge(progress!, expected.progressBorder, `${label} progress border`, probes);
+  expectPx(progress!.borderRadius, expected.progressRadius, `${label} progress radius`);
+  expectEdge(field!, expected.fieldBorder, `${label} field border`, probes);
+  expectPx(field!.borderRadius, expected.fieldRadius, `${label} field radius`);
+  expectBox(pixelCard!.boxShadow, "rgb(17, 24, 39) 6px 6px 0px 0px", `${label} pixel card`);
+  expectBox(pixelBoard!.boxShadow, "rgb(17, 24, 39) 8px 8px 0px 0px", `${label} pixel board`);
+  expectBox(sticker!.boxShadow, rawSm!.boxShadow, `${label} sticker`);
+  expect(probes.get("util-sm")!.boxShadow, `${label} pixel sm utility`).toContain("3px");
+  expect(probes.get("util-line")!.boxShadow, `${label} header line utility`).not.toBe("none");
 }
 
 function expectThemeSurface(

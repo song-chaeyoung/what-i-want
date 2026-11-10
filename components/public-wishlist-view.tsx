@@ -401,7 +401,7 @@ function GiftFallback() {
   return (
     <>
       <div className="gm gm-pixel">
-        <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-[4px_4px_0_#111827] lg:h-28 lg:w-28">
+        <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-pixel-md lg:h-28 lg:w-28">
           <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
           <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
           <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-micro font-black text-[#4c1d95] lg:text-sm">

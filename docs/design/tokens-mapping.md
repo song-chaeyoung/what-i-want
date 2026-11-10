@@ -2,7 +2,7 @@
 
 코드 대조일: 2026-11-10
 
-상태: 코어 색은 의미 이름으로 옮기고 그 `--pub-*` 별칭을 제거했습니다. 타이포(글꼴 패밀리, 글자 크기, 그 역할에 붙어 있던 굵기·행간·자간·대문자 변환)는 의미 이름이 값을 갖고, 기존 `--pub-*` 타이포 별칭은 색 1단계처럼 남겨 두었습니다. 반지름·그림자·테두리·간격·진행률 형태·역할이 갈리는 색은 바꾸지 않았습니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
+상태: 코어 색은 의미 이름으로 옮기고 그 `--pub-*` 별칭을 제거했습니다. 타이포와 모서리·테두리·그림자는 의미 이름이 값을 갖고, 기존 `--pub-*` 별칭은 색 1단계처럼 남겨 두었습니다. 간격·진행률 트랙·역할이 갈리는 색은 바꾸지 않았습니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
 ## 결정
 
@@ -136,19 +136,63 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | 빈 선물 자리의 `tracking-[1.6px]` | 한 곳의 자간. `--label-ls`의 모노 값 `1.6px`와 숫자가 같아도 역할이 다름 |
 | OG `fontSize` | 이미지 생성용 인라인 숫자. CSS 토큰이 아님 |
 
+## 모서리·테두리·그림자
+
+공개 테마의 모양 값은 의미 이름이 갖고, `--pub-*`는 별칭입니다. 테마별 값은 그대로입니다. 진행률은 반지름·테두리만 이름을 바꿨고, 트랙·높이·채움은 `--pub-progress-*`로 남습니다.
+
+| 의미 토큰 | `pixel_y2k` | `mono_bw` | `soft_pastel` | 별칭 |
+| --- | --- | --- | --- | --- |
+| `--card-border` | `2px solid #171717` | `1.5px solid #111` | `none` | `--pub-border` |
+| `--card-radius` | `4px` | `0` | `22px` | `--pub-radius` |
+| `--card-shadow` | `6px 6px 0 #111827` | `none` | `0 10px 28px rgba(150, 120, 160, 0.16)` | `--pub-shadow` |
+| `--card-shadow-lg` | `8px 8px 0 #111827` | `none` | `0 14px 32px rgba(150, 120, 160, 0.18)` | `--pub-shadow-lg` |
+| `--card-shadow-sm` | `3px 3px 0 #111827` | `none` | `0 6px 16px rgba(150, 120, 160, 0.2)` | `--pub-shadow-sm` |
+| `--header-border` | `2px solid #171717` | `1.5px solid #111` | `none` | `--pub-header-border` |
+| `--pill-border` | `2px solid #171717` | `1.5px solid #111` | `none` | `--pub-pill-border` |
+| `--pill-radius` | `0` | `0` | `999px` | `--pub-pill-radius` |
+| `--pill-shadow` | `3px 3px 0 #111827` | `none` | `none` | `--pub-pill-shadow` |
+| `--btn-radius` | `4px` | `0` | `16px` | `--pub-btn-radius` |
+| `--btn-border` | `2px solid #171717` | `1.5px solid #111` | `none` | `--pub-btn-border` |
+| `--btn-shadow` | `3px 3px 0 #111827` | `none` | `0 6px 16px rgba(150, 120, 160, 0.2)` | `--pub-btn-shadow` |
+| `--progress-border` | `2px solid #171717` | `1.5px solid #111` | `none` | `--pub-progress-border` |
+| `--progress-radius` | `2px` | `0` | `999px` | `--pub-progress-radius` |
+| `--field-border` | `2px solid #171717` | `1.5px solid #111` | `1.5px solid #f0dfe9` | `--pub-field-border` |
+| `--field-radius` | `4px` | `0` | `14px` | `--pub-field-radius` |
+
+고정 픽셀 그림자는 [globals.css](../../app/globals.css)의 `:root`와 `@theme inline`에 같은 리터럴로 있습니다. 유틸은 `@theme` 리터럴을 Tailwind 그림자 래퍼에 넣고, `.pixel-board`·`.pixel-card`·`.sticker-label`은 `:root` 변수를 `box-shadow`에 그대로 씁니다.
+
+| 유틸·변수 | 값 | 바꾼 사용처 |
+| --- | --- | --- |
+| `shadow-pixel-sm` / `--shadow-pixel-sm` | `3px 3px 0 #111827` | 임의 유틸 5곳, 스티커 라벨 |
+| `shadow-pixel-md` / `--shadow-pixel-md` | `4px 4px 0 #111827` | 임의 유틸 4곳 |
+| `shadow-pixel-lg` / `--shadow-pixel-lg` | `6px 6px 0 #111827` | 임의 유틸 4곳, `.pixel-card` |
+| `shadow-pixel-xl` / `--shadow-pixel-xl` | `8px 8px 0 #111827` | `.pixel-board` |
+| `shadow-header-line` / `--shadow-header-line` | `0 1px 0 rgba(24, 24, 27, 0.02)` | 관리자 헤더와 로딩 헤더 |
+
+픽셀 테마의 `--card-shadow-lg`·`--card-shadow-sm`·`--pill-shadow`·`--btn-shadow`는 위 고정 그림자와 픽셀이 같아도 별도 토큰입니다. `mono_bw`는 `none`이고 `soft_pastel`은 흐린 그림자입니다.
+
+그대로 둔 모양:
+
+| 현재 | 그대로 둔 이유 |
+| --- | --- |
+| 안내 창의 `shadow-[5px_5px_0_#111827]`, `sm:shadow-[7px_7px_0_#111827]` | 한 곳씩인 5px·7px |
+| Tailwind 기본 `rounded-md`, `border-2`, `shadow-md` | 기본 스케일 |
+| shadcn `rounded-[min(var(--radius-md),...)]` | 컴포넌트 기본 모서리 상한 |
+| `--radius-pub`, `--shadow-pub` | 기존 공개 유틸. 테마 `--card-radius`·`--card-shadow`와 값이 다름 |
+| `--toast-*` | `.pub-page` 밖 토스트. 그림자에 `4px 4px 0 #111827`가 있어도 `shadow-pixel-md`로 합치지 않음 |
+| `soft_pastel`의 `.pub-btn:not(.pub-btn-primary):not(.pub-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
+| `mono_bw` 헤더 필 `1.5px solid rgba(255,255,255,0.6)`, 지표 `1.5px solid rgba(255,255,255,0.5)` | 테마 `--pill-border`·`--card-border`와 다른 반투명 선 |
+
 ## 아직 의미 이름으로 바꾸지 않는 `--pub-*`
 
-아래는 역할 전용으로 두거나, 대응이 분명해지면 따로 매핑합니다. 타이포로 옮긴 `--pub-*`는 위 표의 별칭으로만 남아 있고, 이 목록에는 없습니다.
+아래는 역할 전용으로 두거나, 대응이 분명해지면 따로 매핑합니다. 타이포와 모양으로 옮긴 `--pub-*`는 위 표의 별칭으로만 남아 있고, 이 목록에는 없습니다.
 
 | 묶음 | 토큰 |
 | --- | --- |
 | 배경 패턴 | `--pub-bg-dots`, `--pub-dot-size`, `--pub-header-dots` |
-| 반지름 | `--pub-radius`, `--pub-pill-radius`, `--pub-btn-radius`, `--pub-field-radius`, `--pub-progress-radius` |
-| 그림자 | `--pub-shadow`, `--pub-shadow-lg`, `--pub-shadow-sm`, `--pub-pill-shadow`, `--pub-btn-shadow` |
-| 테두리 | `--pub-header-border`, `--pub-border`, `--pub-pill-border`, `--pub-btn-border`, `--pub-progress-border`, `--pub-field-border` |
 | 진행률 형태 | `--pub-progress-track`, `--pub-progress-h`, `--pub-progress-fill` |
 | 필드 | `--pub-field-bg` |
-| 필·버튼 | `--pub-pill-bg`, `--pub-pill-color`, `--pub-pill-alt-bg`, `--pub-pill-alt-color`, `--pub-pill-pad`, `--pub-btn-radius`, `--pub-btn-border`, `--pub-btn-shadow` |
+| 필 | `--pub-pill-bg`, `--pub-pill-color`, `--pub-pill-alt-bg`, `--pub-pill-alt-color`, `--pub-pill-pad` |
 | 역할 색 | `--pub-header-sub`, `--pub-label-color`, `--pub-stat-accent`, `--pub-on-point`, `--pub-divider-color`, `--pub-bank-bg`, `--pub-bank-ink`, `--pub-msg-title`, `--pub-msg-sub` |
 
 `--toast-*`도 의미 토큰으로 바꾸지 않습니다. 토스트는 `.pub-page` 밖이라 `body:has(...)`의 리터럴을 유지합니다. `soft_pastel`은 warning·info를 적지 않아 브랜드 폴백(`--brand-orange`, `--brand-purple`)을 씁니다.
@@ -167,8 +211,8 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 ## 확인 방법
 
-[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 의미 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 타이포 의미 토큰이 예전 `--pub-*` 리터럴로 풀리는지, 그리고 `app/`·`components/`에 제거한 색 `--pub-*`가 없는지를 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
+[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 의미 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 타이포·모양 의미 토큰이 예전 `--pub-*` 리터럴로 풀리는지, 고정 픽셀 그림자 리터럴, 그리고 `app/`·`components/`에 제거한 색 `--pub-*`가 없는지를 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
 
-[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 제거한 색 `--pub-*`가 생성 CSS에 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색과 글꼴·글자 크기·굵기·행간·자간을 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
+[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 제거한 색 `--pub-*`가 생성 CSS에 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`·`shadow-pub`는 그대로인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.

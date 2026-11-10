@@ -14,7 +14,7 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
           {BRAND_NAME}
         </Link>
 
-        <header className="mt-4 border-2 border-[#171717] bg-[#fffdf7] p-5 shadow-[6px_6px_0_#111827] sm:p-6">
+        <header className="mt-4 border-2 border-[#171717] bg-[#fffdf7] p-5 shadow-pixel-lg sm:p-6">
           <h1 className="font-pixel text-3xl tracking-normal text-[#4c1d95] sm:text-4xl">
             {document.title}
           </h1>
@@ -30,7 +30,7 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
           {document.sections.map((section) => (
             <section
               key={section.heading}
-              className="border-2 border-[#171717] bg-white p-5 shadow-[4px_4px_0_#111827] sm:p-6"
+              className="border-2 border-[#171717] bg-white p-5 shadow-pixel-md sm:p-6"
             >
               <h2 className="text-base font-black text-[#171717] sm:text-lg">
                 {section.heading}
