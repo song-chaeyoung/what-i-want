@@ -287,6 +287,14 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--pub-progress-h\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*gap:var\(--pill-gap\)/);
+      expect(minified).toMatch(/\.pub-pill\{[^}]*padding:var\(--pill-pad\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*gap:var\(--btn-gap\)/);
+      expect(minified).toMatch(/\.pub-btn\{[^}]*padding:var\(--btn-pad\)/);
+      expect(minified).toContain(".w-admin-sidebar{width:220px");
+      expect(minified).toContain(".py-admin-sidebar{padding-block:22px");
+      expect(minified).not.toContain(".w-\\[220px\\]");
+      expect(minified).not.toContain(".py-\\[22px\\]");
       expect(minified).toContain(".shadow-\\[5px_5px_0");
       expect(minified).toContain("shadow-\\[7px_7px_0");
     }
@@ -421,6 +429,11 @@ async function readProbes(
         borderBottomColor: style.borderBottomColor,
         borderRadius: style.borderRadius,
         boxShadow: style.boxShadow,
+        paddingTop: style.paddingTop,
+        paddingRight: style.paddingRight,
+        paddingBottom: style.paddingBottom,
+        paddingLeft: style.paddingLeft,
+        columnGap: style.columnGap,
       };
     }),
   );
@@ -681,7 +694,18 @@ type ShapeProbe = {
   borderBottomColor: string;
   borderRadius: string;
   boxShadow: string;
+  paddingTop: string;
+  paddingRight: string;
+  paddingBottom: string;
+  paddingLeft: string;
+  columnGap: string;
 };
+
+const themeSpacing = {
+  pixel_y2k: ["7px", "10px", "6px", "10px"],
+  mono_bw: ["6px", "10px", "6px", "10px"],
+  soft_pastel: ["7px", "12px", "7px", "12px"],
+} as const;
 
 function expectBox(actual: string, expected: string, label: string) {
   const normalize = (value: string) =>
@@ -758,6 +782,17 @@ function expectShape(
     expectBox(button!.boxShadow, expected.buttonShadow, `${label} button shadow`);
   }
   expectPx(button!.borderRadius, expected.buttonRadius, `${label} button radius`);
+  const [padTop, padRight, padBottom, padLeft] = themeSpacing[themeId];
+  expectPx(pill!.paddingTop, padTop, `${label} pill pad top`);
+  expectPx(pill!.paddingRight, padRight, `${label} pill pad right`);
+  expectPx(pill!.paddingBottom, padBottom, `${label} pill pad bottom`);
+  expectPx(pill!.paddingLeft, padLeft, `${label} pill pad left`);
+  expectPx(pill!.columnGap, "6px", `${label} pill gap`);
+  expectPx(button!.paddingTop, "15px", `${label} button pad`);
+  expectPx(button!.paddingRight, "18px", `${label} button pad inline`);
+  expectPx(button!.paddingBottom, "15px", `${label} button pad bottom`);
+  expectPx(button!.paddingLeft, "18px", `${label} button pad left`);
+  expectPx(button!.columnGap, "8px", `${label} button gap`);
   expectEdge(progress!, expected.progressBorder, `${label} progress border`, probes);
   expectPx(progress!.borderRadius, expected.progressRadius, `${label} progress radius`);
   expectEdge(field!, expected.fieldBorder, `${label} field border`, probes);

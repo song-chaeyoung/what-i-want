@@ -2,7 +2,7 @@
 
 코드 대조일: 2026-11-10
 
-상태: 코어 색은 의미 이름으로 옮기고 그 `--pub-*` 별칭을 제거했습니다. 타이포와 모서리·테두리·그림자는 의미 이름이 값을 갖고, 기존 `--pub-*` 별칭은 색 1단계처럼 남겨 두었습니다. 간격·진행률 트랙·역할이 갈리는 색은 바꾸지 않았습니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
+상태: 코어 색은 의미 이름으로 옮기고 그 `--pub-*` 별칭을 제거했습니다. 타이포, 모서리·테두리·그림자, 그리고 반복되는 간격은 의미 이름이 값을 갖고, 기존 `--pub-*` 별칭은 색 1단계처럼 남겨 두었습니다. 진행률 트랙·역할이 갈리는 색·한 곳짜리 간격은 바꾸지 않았습니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
 ## 결정
 
@@ -183,16 +183,43 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `soft_pastel`의 `.pub-btn:not(.pub-btn-primary):not(.pub-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
 | `mono_bw` 헤더 필 `1.5px solid rgba(255,255,255,0.6)`, 지표 `1.5px solid rgba(255,255,255,0.5)` | 테마 `--pill-border`·`--card-border`와 다른 반투명 선 |
 
+## 간격
+
+필 안쪽 여백은 테마마다 다르고, 버튼 여백·필 간격·버튼 간격은 세 테마가 같은 공유 블록에 있습니다. `--pub-pill-pad`는 별칭입니다.
+
+| 의미 토큰 | `pixel_y2k` | `mono_bw` | `soft_pastel` | 별칭 |
+| --- | --- | --- | --- | --- |
+| `--pill-pad` | `7px 10px 6px` | `6px 10px` | `7px 12px` | `--pub-pill-pad` |
+| `--btn-pad` | `15px 18px` | 같은 값 | 같은 값 | 없음. 원래 `.pub-btn`의 `15px 18px` |
+| `--btn-gap` | `8px` | 같은 값 | 같은 값 | 없음. 원래 `.pub-btn`의 `8px` |
+| `--pill-gap` | `6px` | 같은 값 | 같은 값 | 없음. 원래 `.pub-pill`의 `6px` |
+
+관리자 사이드바는 [layout.tsx](../../app/admin/layout.tsx)의 본문과 로딩 화면 `aside` 두 곳입니다. `@theme inline`에 너비와 간격을 따로 등록합니다. 값이 달라 하나의 spacing 키로 합치지 않습니다. `--spacing-admin-sidebar`는 `py-admin-sidebar` 외의 간격 유틸(`p-admin-sidebar` 등)도 만들 수 있지만, 지금 소스는 `py-admin-sidebar`만 써서 생성 CSS에는 그 클래스만 있습니다.
+
+| 유틸 | 테마 키 | 값 |
+| --- | --- | --- |
+| `w-admin-sidebar` | `--width-admin-sidebar` | `220px` |
+| `py-admin-sidebar` | `--spacing-admin-sidebar` | `22px` |
+
+그대로 둔 간격:
+
+| 현재 | 그대로 둔 이유 |
+| --- | --- |
+| Tailwind 기본 `p-4`, `gap-2` 등 | 기본 spacing 스케일 |
+| `.sticker-label`의 `padding: 0.25rem 0.625rem` | 한 곳의 rem 여백 |
+| `max-w-[760px]`, `max-w-[430px]`, `h-[260px]`, `h-[190px]` | 안내 창·비네트의 한 곳짜리 크기 |
+| `min-h-[calc(...)]`, `max-h-[calc(100dvh-16px)]`, `w-[calc(100%-16px)]`, `min-h-[50vh]`, `w-[85%]` | 한 곳짜리 임의 값. 이름을 만들지 않음 |
+
 ## 아직 의미 이름으로 바꾸지 않는 `--pub-*`
 
-아래는 역할 전용으로 두거나, 대응이 분명해지면 따로 매핑합니다. 타이포와 모양으로 옮긴 `--pub-*`는 위 표의 별칭으로만 남아 있고, 이 목록에는 없습니다.
+아래는 역할 전용으로 두거나, 대응이 분명해지면 따로 매핑합니다. 타이포·모양·필 여백으로 옮긴 `--pub-*`는 위 표의 별칭으로만 남아 있고, 이 목록에는 없습니다.
 
 | 묶음 | 토큰 |
 | --- | --- |
 | 배경 패턴 | `--pub-bg-dots`, `--pub-dot-size`, `--pub-header-dots` |
 | 진행률 형태 | `--pub-progress-track`, `--pub-progress-h`, `--pub-progress-fill` |
 | 필드 | `--pub-field-bg` |
-| 필 | `--pub-pill-bg`, `--pub-pill-color`, `--pub-pill-alt-bg`, `--pub-pill-alt-color`, `--pub-pill-pad` |
+| 필 색 | `--pub-pill-bg`, `--pub-pill-color`, `--pub-pill-alt-bg`, `--pub-pill-alt-color` |
 | 역할 색 | `--pub-header-sub`, `--pub-label-color`, `--pub-stat-accent`, `--pub-on-point`, `--pub-divider-color`, `--pub-bank-bg`, `--pub-bank-ink`, `--pub-msg-title`, `--pub-msg-sub` |
 
 `--toast-*`도 의미 토큰으로 바꾸지 않습니다. 토스트는 `.pub-page` 밖이라 `body:has(...)`의 리터럴을 유지합니다. `soft_pastel`은 warning·info를 적지 않아 브랜드 폴백(`--brand-orange`, `--brand-purple`)을 씁니다.
@@ -211,8 +238,8 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 ## 확인 방법
 
-[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 의미 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 타이포·모양 의미 토큰이 예전 `--pub-*` 리터럴로 풀리는지, 고정 픽셀 그림자 리터럴, 그리고 `app/`·`components/`에 제거한 색 `--pub-*`가 없는지를 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
+[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 의미 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 타이포·모양·간격 의미 토큰이 예전 `--pub-*` 리터럴로 풀리는지, 고정 픽셀 그림자와 관리자 사이드바 테마 키, 그리고 `app/`·`components/`에 제거한 색 `--pub-*`가 없는지를 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
 
-[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 제거한 색 `--pub-*`가 생성 CSS에 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`·`shadow-pub`는 그대로인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
+[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 제거한 색 `--pub-*`가 생성 CSS에 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`·`shadow-pub`는 그대로인지도 봅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격을 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.

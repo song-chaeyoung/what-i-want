@@ -114,6 +114,16 @@ const shapeAliases = {
   "--pub-field-radius": "--field-radius",
 } as const;
 
+const spacingAliases = {
+  "--pub-pill-pad": "--pill-pad",
+} as const;
+
+const sharedSpacing = {
+  "--btn-pad": "15px 18px",
+  "--btn-gap": "8px",
+  "--pill-gap": "6px",
+} as const;
+
 const pixelShadows = {
   "--shadow-pixel-sm": "3px 3px 0 #111827",
   "--shadow-pixel-md": "4px 4px 0 #111827",
@@ -480,6 +490,8 @@ describe("semantic token aliases", () => {
 
     expect(themeBridgeVars.get("--shadow-pub")).toBe("0 1px 2px rgba(0, 0, 0, 0.05)");
     expect(themeBridgeVars.get("--radius-pub")).toBe("0.375rem");
+    expect(themeBridgeVars.get("--width-admin-sidebar")).toBe("220px");
+    expect(themeBridgeVars.get("--spacing-admin-sidebar")).toBe("22px");
     expect(themeBridgeVars.has("--shadow-md")).toBe(false);
     expect(themeBridgeVars.get("--radius-md")).toBe("calc(var(--radius) * 0.8)");
   });
@@ -532,6 +544,22 @@ describe("semantic token aliases", () => {
       expect(resolveVar("--label-size", computed), themeId).toBe("12px");
       expect(resolveVar("--pill-size", computed), themeId).toBe("12px");
 
+      for (const [name, literal] of Object.entries(sharedSpacing)) {
+        expect(basePubVars.get(name), name).toBe(literal);
+        expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
+        if (themeId !== "pixel_y2k") {
+          expect(themeVars.has(name), `${themeId} ${name}`).toBe(false);
+        }
+      }
+
+      for (const [pubName, semantic] of Object.entries(spacingAliases)) {
+        const literal = previous[pubName as keyof typeof previous];
+
+        expect(computed.get(pubName), `${themeId} ${pubName}`).toBe(`var(${semantic})`);
+        expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
+        expect(resolveVar(pubName, computed), `${themeId} ${pubName}`).toBe(literal);
+      }
+
       for (const [pubName, semantic] of Object.entries(shapeAliases)) {
         const literal = previous[pubName as keyof typeof previous];
 
@@ -541,7 +569,12 @@ describe("semantic token aliases", () => {
       }
 
       for (const [name, literal] of Object.entries(previous)) {
-        if (name in migratedPub || name in typographyAliases || name in shapeAliases) {
+        if (
+          name in migratedPub ||
+          name in typographyAliases ||
+          name in shapeAliases ||
+          name in spacingAliases
+        ) {
           continue;
         }
 
@@ -577,6 +610,10 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("border: var(--progress-border);");
     expect(publicThemesCss).toContain("background: var(--pub-progress-track);");
     expect(publicThemesCss).toContain("height: var(--pub-progress-h);");
+    expect(publicThemesCss).toContain("gap: var(--pill-gap);");
+    expect(publicThemesCss).toContain("padding: var(--pill-pad);");
+    expect(publicThemesCss).toContain("gap: var(--btn-gap);");
+    expect(publicThemesCss).toContain("padding: var(--btn-pad);");
     expect(publicThemesCss).toContain("border: 1.5px solid #f0dfe9;");
     expect(publicThemesCss).not.toMatch(
       /var\(--pub-(?:border|radius|shadow|shadow-lg|shadow-sm|header-border|pill-border|pill-radius|pill-shadow|btn-border|btn-radius|btn-shadow|progress-border|progress-radius|field-border|field-radius)\)/,

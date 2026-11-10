@@ -49,7 +49,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
 
   return (
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"
@@ -142,7 +142,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
 function AdminShellSkeleton() {
   return (
     <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-[220px] flex-none border-r border-line bg-[#fbfbfa] px-4 py-[22px] md:block">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"

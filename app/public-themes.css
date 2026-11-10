@@ -67,7 +67,11 @@
     --pub-pill-font: var(--pill-font);
     --pub-pill-weight: var(--pill-weight);
     --pub-pill-transform: var(--pill-transform);
-    --pub-pill-pad: 7px 10px 6px;
+    --pill-pad: 7px 10px 6px;
+    --pub-pill-pad: var(--pill-pad);
+    --btn-pad: 15px 18px;
+    --btn-gap: 8px;
+    --pill-gap: 6px;
     --btn-font: var(--font-display, Arial, Helvetica, sans-serif);
     --btn-weight: 700;
     --btn-size: 15px;
@@ -142,7 +146,7 @@
     --pill-font: var(--font-body, Arial, Helvetica, sans-serif);
     --pill-weight: 700;
     --pill-transform: uppercase;
-    --pub-pill-pad: 6px 10px;
+    --pill-pad: 6px 10px;
     --btn-font: var(--font-body, Arial, Helvetica, sans-serif);
     --btn-weight: 700;
     --btn-size: 14px;
@@ -207,7 +211,7 @@
     --pill-font: var(--font-body, Arial, Helvetica, sans-serif);
     --pill-weight: 700;
     --pill-transform: none;
-    --pub-pill-pad: 7px 12px;
+    --pill-pad: 7px 12px;
     --btn-font: var(--font-body, Arial, Helvetica, sans-serif);
     --btn-weight: 700;
     --btn-size: 15px;
@@ -342,8 +346,8 @@
   .pub-pill {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
-    padding: var(--pub-pill-pad);
+    gap: var(--pill-gap);
+    padding: var(--pill-pad);
     background: var(--pub-pill-bg);
     border: var(--pill-border);
     border-radius: var(--pill-radius);
@@ -366,8 +370,8 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: 8px;
-    padding: 15px 18px;
+    gap: var(--btn-gap);
+    padding: var(--btn-pad);
     background: var(--surface);
     border: var(--btn-border);
     border-radius: var(--btn-radius);
