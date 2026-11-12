@@ -64,6 +64,7 @@ const sharedSpacing = {
 } as const;
 
 const pixelShadows = {
+  "--shadow-pixel-xs": "2px 2px 0 #111827",
   "--shadow-pixel-sm": "3px 3px 0 #111827",
   "--shadow-pixel-md": "4px 4px 0 #111827",
   "--shadow-pixel-lg": "6px 6px 0 #111827",

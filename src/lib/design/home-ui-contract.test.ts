@@ -3,6 +3,11 @@ import { join } from "node:path";
 import { describe, expect, test } from "vitest";
 
 const homePagePath = join(process.cwd(), "app/page.tsx");
+const notFoundPath = join(process.cwd(), "app/not-found.tsx");
+const errorPath = join(process.cwd(), "app/error.tsx");
+const globalsPath = join(process.cwd(), "app/globals.css");
+const squareCardClass =
+  "w-full max-w-md space-y-4 border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-xs";
 
 describe("home UI contract", () => {
   test("keeps the home page centered on a public wishlist preview", () => {
@@ -54,6 +59,67 @@ describe("home UI contract", () => {
     );
     expect(source).toContain(
       'label: "내 위시리스트 관리하기", href: "/admin"',
+    );
+  });
+
+  test("uses the 2px pixel shadow on home surfaces", () => {
+    const source = readFileSync(homePagePath, "utf8");
+
+    expect(source).toContain("shadow-pixel-xs");
+    expect(source).toContain(
+      'className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-xs sm:p-5"',
+    );
+    expect(source).not.toContain("shadow-pixel-sm");
+    expect(source).not.toContain("shadow-pixel-md");
+    expect(source).not.toContain("shadow-pixel-lg");
+    expect(source).not.toContain("pixel-board");
+    expect(source).not.toContain("pixel-card");
+  });
+
+  test("shows home steps as a non-interactive sequence with a dotted connector", () => {
+    const source = readFileSync(homePagePath, "utf8");
+    const listStart = source.indexOf("<ol");
+    const listTag = source.slice(listStart, source.indexOf(">", listStart));
+    const steps = source.slice(
+      source.indexOf("homeSteps.map"),
+      source.indexOf("</ol>"),
+    );
+
+    expect(listTag).toContain('role="list"');
+    expect(listTag).toContain("list-none");
+    expect(steps).toContain("rounded-full");
+    expect(steps).toContain("border-2 border-[#171717]");
+    expect(steps).toContain("bg-[var(--tint-yellow)]");
+    expect(steps).toContain("border-dotted");
+    expect(steps).toContain("sm:border-t-2");
+    expect(steps).toContain("border-l-2");
+    expect(steps).not.toContain("shadow-");
+    expect(steps).not.toContain("bg-white");
+    expect(steps).not.toContain("<Link");
+    expect(steps).not.toContain("<button");
+    expect(steps).not.toContain("hover:");
+    expect(steps).not.toContain("cursor-pointer");
+  });
+
+  test("squares the root 404 and error cards and gives them the 2px shadow", () => {
+    for (const filePath of [notFoundPath, errorPath]) {
+      const source = readFileSync(filePath, "utf8");
+
+      const sectionStart = source.indexOf("<section");
+      const sectionTag = source.slice(sectionStart, source.indexOf(">", sectionStart));
+
+      expect(sectionTag, filePath).toContain(squareCardClass);
+      expect(sectionTag, filePath).not.toContain("rounded-md");
+      expect(source, filePath).not.toContain("bg-white p-6");
+    }
+  });
+
+  test("keeps the sticker label on the 2px pixel shadow", () => {
+    const globalsCss = readFileSync(globalsPath, "utf8");
+    const sticker = globalsCss.slice(globalsCss.indexOf(".sticker-label"));
+
+    expect(sticker.slice(0, sticker.indexOf("}"))).toContain(
+      "box-shadow: var(--shadow-pixel-xs);",
     );
   });
 });

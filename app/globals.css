@@ -38,6 +38,7 @@
   --font-display: var(--font-mona);
   --font-body: var(--font-sans);
   /* 고정 픽셀 그림자. 유틸은 @theme 의 같은 리터럴을 넣고, 이 변수는 CSS 규칙이 그대로 쓴다. */
+  --shadow-pixel-xs: 2px 2px 0 #111827;
   --shadow-pixel-sm: 3px 3px 0 #111827;
   --shadow-pixel-md: 4px 4px 0 #111827;
   --shadow-pixel-lg: 6px 6px 0 #111827;
@@ -93,6 +94,7 @@
   --color-purple: var(--brand-purple);
   --color-mint: var(--brand-mint);
   --color-orange: var(--brand-orange);
+  --shadow-pixel-xs: 2px 2px 0 #111827;
   --shadow-pixel-sm: 3px 3px 0 #111827;
   --shadow-pixel-md: 4px 4px 0 #111827;
   --shadow-pixel-lg: 6px 6px 0 #111827;
@@ -181,7 +183,7 @@ body {
   font-weight: 900;
   line-height: 1;
   color: var(--brand-purple);
-  box-shadow: var(--shadow-pixel-sm);
+  box-shadow: var(--shadow-pixel-xs);
 }
 
 /* sonner 토스트 기본(어드민) 스타일 — 공개 테마는 public-themes.css에서 --toast-* 변수로 오버라이드 */

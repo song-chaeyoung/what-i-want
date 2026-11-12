@@ -132,27 +132,38 @@ export default async function Home() {
             </Link>
           </div>
 
-          <div className="grid grid-cols-3 gap-2">
-            {homeSteps.map((step) => (
-              <div
+          <ol
+            role="list"
+            className="m-0 flex list-none flex-col gap-5 p-0 sm:flex-row sm:gap-4"
+          >
+            {homeSteps.map((step, index) => (
+              <li
                 key={step.number}
-                className="min-w-0 border-2 border-[#171717] bg-white/80 p-3 shadow-pixel-sm"
+                className="relative flex min-w-0 flex-1 items-start gap-3 sm:flex-col sm:items-center sm:gap-2 sm:text-center"
               >
-                <p className="font-pixel text-micro leading-none text-[#0f766e]">
+                {index < homeSteps.length - 1 ? (
+                  <span
+                    aria-hidden="true"
+                    className="pointer-events-none absolute top-8 left-4 h-[calc(100%-0.75rem)] w-0 border-l-2 border-dotted border-[#171717] sm:top-4 sm:left-[calc(50%+1rem)] sm:h-0 sm:w-[calc(100%-1rem)] sm:border-t-2 sm:border-l-0"
+                  />
+                ) : null}
+                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-[#171717] bg-[var(--tint-yellow)] font-pixel text-micro leading-none text-[#0f766e]">
                   {step.number}
-                </p>
-                <h2 className="font-pixel mt-2 truncate text-sm tracking-normal text-[#4c1d95]">
-                  {step.title}
-                </h2>
-                <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
-                  {step.label}
-                </p>
-              </div>
+                </span>
+                <div className="min-w-0 pt-1 sm:pt-0">
+                  <h2 className="font-pixel truncate text-sm tracking-normal text-[#4c1d95]">
+                    {step.title}
+                  </h2>
+                  <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
+                    {step.label}
+                  </p>
+                </div>
+              </li>
             ))}
-          </div>
+          </ol>
         </div>
 
-        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-lg sm:p-5">
+        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-xs sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#171717] pb-4">
             <div className="min-w-0">
               <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95] sm:text-3xl">
@@ -179,7 +190,7 @@ export default async function Home() {
           {HOME_FAQ.map((item) => (
             <details
               key={item.question}
-              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-pixel-md"
+              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-pixel-xs"
             >
               <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
                 <span className="break-keep text-base font-black text-[#171717] sm:text-lg">
@@ -260,7 +271,7 @@ function SampleGiftImage({
       className="relative grid min-h-32 place-items-center border-r-2 border-[#171717]"
       style={{ backgroundColor: background }}
     >
-      <div className="relative h-16 w-16 border-2 border-[#171717] bg-white shadow-pixel-md">
+      <div className="relative h-16 w-16 border-2 border-[#171717] bg-white shadow-pixel-xs">
         <span
           className="absolute left-1/2 top-0 h-full w-3 -translate-x-1/2 border-x-2 border-[#171717]"
           style={{ backgroundColor: ribbon }}

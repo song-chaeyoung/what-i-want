@@ -108,15 +108,19 @@ describe("admin calm theme contract", () => {
       'import { usePathname, useSearchParams } from "next/navigation";',
     );
     expect(navSource).toContain(
-      'import { BookOpen, Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";',
+      'import { BookOpen, Gift, Home, Inbox, Settings } from "lucide-react";',
     );
     expect(navSource).toContain("const adminNavItems");
     expect(navSource).toContain('aria-current={isActive ? "page" : undefined}');
     expect(navSource).toContain('href: "/admin"');
+    expect(navSource).toContain('label: "홈"');
     expect(navSource).toContain('href: "/admin/wishes"');
     expect(navSource).toContain('href: "/admin/messages"');
     expect(navSource).toContain('href: "/admin/settings"');
-    expect(navSource).toContain("icon: LayoutDashboard");
+    expect(navSource).toContain("icon: Home");
+    expect(navSource).not.toContain("LayoutDashboard");
+    expect(navSource).not.toContain("대시보드");
+    expect(navSource).toContain("{activeItem?.label ?? \"위시리스트 관리\"}");
     expect(navSource).toContain("icon: BookOpen");
     expect(navSource).toContain("icon: Gift");
     expect(navSource).toContain("icon: Inbox");

@@ -1,12 +1,12 @@
 "use client";
 
 import { useState } from "react";
-import { BookOpen, Gift, Inbox, LayoutDashboard, Settings } from "lucide-react";
+import { BookOpen, Gift, Home, Inbox, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
 
 const adminNavItems = [
-  { href: "/admin", label: "대시보드", icon: LayoutDashboard },
+  { href: "/admin", label: "홈", icon: Home },
   { href: "/admin/wishes", label: "선물 관리", icon: Gift },
   { href: "/admin/messages", label: "메시지함", icon: Inbox },
   { href: "/admin/settings", label: "설정", icon: Settings },
