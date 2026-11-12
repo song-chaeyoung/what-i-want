@@ -18,11 +18,11 @@ export function PublicBankAccountCard({
     >
       <div>
         <p className="pub-label text-xs">예금주</p>
-        <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
+        <p className="mt-1 text-sm font-black text-[var(--bank-ink)]">
           {account.accountHolder}
         </p>
         {showAccountNumber ? (
-          <p className="mt-1 text-sm font-black text-[var(--pub-bank-ink)]">
+          <p className="mt-1 text-sm font-black text-[var(--bank-ink)]">
             {account.bankName} {account.accountNumber}
           </p>
         ) : null}

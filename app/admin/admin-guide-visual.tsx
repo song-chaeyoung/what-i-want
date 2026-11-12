@@ -81,8 +81,8 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
           </div>
           <p className="text-xs font-black text-[var(--accent-main)]">33%</p>
         </div>
-        <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--pub-divider-color)] bg-white sm:mt-3">
-          <div className="h-full w-1/3 bg-[var(--pub-progress-fill)]" />
+        <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--divider-color)] bg-white sm:mt-3">
+          <div className="h-full w-1/3 bg-[var(--progress-fill)]" />
         </div>
       </div>
     </div>

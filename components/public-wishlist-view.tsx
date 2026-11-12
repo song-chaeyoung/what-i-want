@@ -74,7 +74,7 @@ export function PublicWishlistView({
             </div>
           </div>
           <h1 className="pub-headline mt-5 sm:text-5xl">{wishlist.title}</h1>
-          <p className="mt-5 text-base font-semibold leading-7 text-[var(--pub-header-sub)]">
+          <p className="mt-5 text-base font-semibold leading-7 text-[var(--header-sub)]">
             {description}
           </p>
 
@@ -240,7 +240,7 @@ function PublicWishCard({
     <article className="gift-card-shell pub-card overflow-hidden">
       <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
         <div
-          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--pub-divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
+          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
             imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
           }`}
           style={
@@ -275,7 +275,7 @@ function PublicWishCard({
             ) : null}
           </div>
 
-          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--pub-divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
+          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
             <p className="pub-label text-xs">gift progress</p>
             <div>
               <p className="text-2xl font-black tracking-normal text-[var(--headline)]">
@@ -312,7 +312,7 @@ function PublicWishCard({
       </div>
 
       {canFund ? (
-        <details className="send-heart-section border-t-2 border-[var(--pub-divider-color)]">
+        <details className="send-heart-section border-t-2 border-[var(--divider-color)]">
           <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--accent-main)] [&::-webkit-details-marker]:hidden">
             {PUBLIC_WISHLIST_COPY.fundCta}
           </summary>
@@ -320,7 +320,7 @@ function PublicWishCard({
             action={
               demo ? undefined : submitParticipationAction.bind(null, slug)
             }
-            className="space-y-4 border-t-2 border-[var(--pub-divider-color)] p-5"
+            className="space-y-4 border-t-2 border-[var(--divider-color)] p-5"
           >
             <p className="text-lg font-black tracking-normal text-[var(--headline)]">
               {PUBLIC_WISHLIST_COPY.participationTitle}
@@ -389,7 +389,7 @@ function PublicWishCard({
           </form>
         </details>
       ) : participationNotice ? (
-        <p className="border-t-2 border-[var(--pub-divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
+        <p className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
           {participationNotice}
         </p>
       ) : null}

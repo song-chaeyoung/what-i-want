@@ -45,43 +45,6 @@ const themeBridges = {
   "--color-orange": "--brand-orange",
 } as const;
 
-/** 2단계에서 사용처를 옮긴 뒤 삭제한 --pub-* 별칭. 의미 토큰이 그 값을 직접 가진다. */
-const migratedPub = {
-  "--pub-bg": "--surface-page",
-  "--pub-header-bg": "--surface-header",
-  "--pub-surface": "--surface",
-  "--pub-ink": "--ink",
-  "--pub-sub": "--ink-muted",
-  "--pub-headline-color": "--headline",
-  "--pub-headline-on-header": "--headline",
-  "--pub-accent": "--accent-main",
-  "--pub-point": "--point",
-  "--pub-fallback-bg": "--tint-mint",
-  "--pub-msg-bg": "--tint-blush",
-} as const;
-
-const removedPubAliasPattern =
-  /--pub-(?:bg|header-bg|surface|ink|sub|headline-color|headline-on-header|accent|point|fallback-bg|msg-bg)(?![\w-])/g;
-
-/** 타이포 별칭. 값은 의미 토큰이 가지고, --pub-* 는 색 1단계처럼 잠시 남긴다. */
-const typographyAliases = {
-  "--pub-headline-font": "--headline-font",
-  "--pub-headline-weight": "--headline-weight",
-  "--pub-headline-size": "--headline-size",
-  "--pub-headline-lh": "--headline-lh",
-  "--pub-headline-ls": "--headline-ls",
-  "--pub-label-font": "--label-font",
-  "--pub-label-ls": "--label-ls",
-  "--pub-label-transform": "--label-transform",
-  "--pub-label-weight": "--label-weight",
-  "--pub-pill-font": "--pill-font",
-  "--pub-pill-weight": "--pill-weight",
-  "--pub-pill-transform": "--pill-transform",
-  "--pub-btn-font": "--btn-font",
-  "--pub-btn-weight": "--btn-weight",
-  "--pub-btn-size": "--btn-size",
-} as const;
-
 const rootFonts = {
   "--font-display": "var(--font-mona)",
   "--font-body": "var(--font-sans)",
@@ -92,30 +55,6 @@ const themeFontSizes = {
   "--text-caption": "11px",
   "--text-tab": "13px",
   "--text-nav": "13.5px",
-} as const;
-
-/** 모서리·테두리·그림자. 값은 의미 토큰이 가지고 --pub-* 는 별칭으로 남긴다. */
-const shapeAliases = {
-  "--pub-header-border": "--header-border",
-  "--pub-border": "--card-border",
-  "--pub-radius": "--card-radius",
-  "--pub-shadow": "--card-shadow",
-  "--pub-shadow-lg": "--card-shadow-lg",
-  "--pub-shadow-sm": "--card-shadow-sm",
-  "--pub-pill-border": "--pill-border",
-  "--pub-pill-radius": "--pill-radius",
-  "--pub-pill-shadow": "--pill-shadow",
-  "--pub-btn-radius": "--btn-radius",
-  "--pub-btn-border": "--btn-border",
-  "--pub-btn-shadow": "--btn-shadow",
-  "--pub-progress-border": "--progress-border",
-  "--pub-progress-radius": "--progress-radius",
-  "--pub-field-border": "--field-border",
-  "--pub-field-radius": "--field-radius",
-} as const;
-
-const spacingAliases = {
-  "--pub-pill-pad": "--pill-pad",
 } as const;
 
 const sharedSpacing = {
@@ -132,202 +71,199 @@ const pixelShadows = {
   "--shadow-header-line": "0 1px 0 rgba(24, 24, 27, 0.02)",
 } as const;
 
-/** 별칭 도입 전에 테마 블록에 적혀 있던 --pub-* 리터럴. */
+/** 세 테마 블록이 직접 가진 커스텀 속성 리터럴. */
 const previousPub = {
   pixel_y2k: {
-    "--pub-bg": "#fff7ed",
-    "--pub-bg-dots": "radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px)",
-    "--pub-dot-size": "18px",
-    "--pub-header-bg": "#fef3c7",
-    "--pub-header-dots": "radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px)",
-    "--pub-header-border": "2px solid #171717",
-    "--pub-surface": "#fffdf7",
-    "--pub-ink": "#171717",
-    "--pub-sub": "#3f3f46",
-    "--pub-headline-color": "#4c1d95",
-    "--pub-headline-on-header": "#4c1d95",
-    "--pub-headline-font": "var(--font-mona, Arial, Helvetica, sans-serif)",
-    "--pub-headline-weight": "700",
-    "--pub-headline-size": "36px",
-    "--pub-headline-lh": "1.4",
-    "--pub-headline-ls": "0",
-    "--pub-header-sub": "#0f766e",
-    "--pub-label-font": "var(--font-mona, Arial, Helvetica, sans-serif)",
-    "--pub-label-color": "#0f766e",
-    "--pub-label-ls": "0",
-    "--pub-label-transform": "none",
-    "--pub-label-weight": "700",
-    "--pub-accent": "#0f766e",
-    "--pub-stat-accent": "#0f766e",
-    "--pub-point": "#f97316",
-    "--pub-on-point": "#fff",
-    "--pub-border": "2px solid #171717",
-    "--pub-divider-color": "#171717",
-    "--pub-shadow": "6px 6px 0 #111827",
-    "--pub-shadow-lg": "8px 8px 0 #111827",
-    "--pub-shadow-sm": "3px 3px 0 #111827",
-    "--pub-radius": "4px",
-    "--pub-fallback-bg": "#ccfbf1",
-    "--pub-pill-bg": "#f97316",
-    "--pub-pill-color": "#fff",
-    "--pub-pill-alt-bg": "#ccfbf1",
-    "--pub-pill-alt-color": "#171717",
-    "--pub-pill-border": "2px solid #171717",
-    "--pub-pill-radius": "0",
-    "--pub-pill-shadow": "3px 3px 0 #111827",
-    "--pub-pill-font": "var(--font-mona, Arial, Helvetica, sans-serif)",
-    "--pub-pill-weight": "700",
-    "--pub-pill-transform": "none",
-    "--pub-pill-pad": "7px 10px 6px",
-    "--pub-btn-font": "var(--font-mona, Arial, Helvetica, sans-serif)",
-    "--pub-btn-weight": "700",
-    "--pub-btn-size": "15px",
-    "--pub-btn-radius": "4px",
-    "--pub-btn-border": "2px solid #171717",
-    "--pub-btn-shadow": "3px 3px 0 #111827",
-    "--pub-progress-track": "#fff",
-    "--pub-progress-border": "2px solid #171717",
-    "--pub-progress-radius": "2px",
-    "--pub-progress-h": "18px",
-    "--pub-progress-fill": "#0f766e",
-    "--pub-field-border": "2px solid #171717",
-    "--pub-field-radius": "4px",
-    "--pub-field-bg": "#fff",
-    "--pub-bank-bg": "#ccfbf1",
-    "--pub-bank-ink": "#134e4a",
-    "--pub-msg-bg": "#ffe4e6",
-    "--pub-msg-title": "#171717",
-    "--pub-msg-sub": "#9d174d",
+    "--surface-page": "#fff7ed",
+    "--bg-dots": "radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px)",
+    "--dot-size": "18px",
+    "--surface-header": "#fef3c7",
+    "--header-dots": "radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px)",
+    "--header-border": "2px solid #171717",
+    "--surface": "#fffdf7",
+    "--ink": "#171717",
+    "--ink-muted": "#3f3f46",
+    "--headline": "#4c1d95",
+    "--headline-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--headline-weight": "700",
+    "--headline-size": "36px",
+    "--headline-lh": "1.4",
+    "--headline-ls": "0",
+    "--header-sub": "#0f766e",
+    "--label-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--label-color": "#0f766e",
+    "--label-ls": "0",
+    "--label-transform": "none",
+    "--label-weight": "700",
+    "--accent-main": "#0f766e",
+    "--stat-accent": "#0f766e",
+    "--point": "#f97316",
+    "--on-point": "#fff",
+    "--card-border": "2px solid #171717",
+    "--divider-color": "#171717",
+    "--card-shadow": "6px 6px 0 #111827",
+    "--card-shadow-lg": "8px 8px 0 #111827",
+    "--card-shadow-sm": "3px 3px 0 #111827",
+    "--card-radius": "4px",
+    "--tint-mint": "#ccfbf1",
+    "--pill-bg": "#f97316",
+    "--pill-color": "#fff",
+    "--pill-alt-bg": "#ccfbf1",
+    "--pill-alt-color": "#171717",
+    "--pill-border": "2px solid #171717",
+    "--pill-radius": "0",
+    "--pill-shadow": "3px 3px 0 #111827",
+    "--pill-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--pill-weight": "700",
+    "--pill-transform": "none",
+    "--pill-pad": "7px 10px 6px",
+    "--btn-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--btn-weight": "700",
+    "--btn-size": "15px",
+    "--btn-radius": "4px",
+    "--btn-border": "2px solid #171717",
+    "--btn-shadow": "3px 3px 0 #111827",
+    "--progress-track": "#fff",
+    "--progress-border": "2px solid #171717",
+    "--progress-radius": "2px",
+    "--progress-h": "18px",
+    "--progress-fill": "#0f766e",
+    "--field-border": "2px solid #171717",
+    "--field-radius": "4px",
+    "--field-bg": "#fff",
+    "--bank-bg": "#ccfbf1",
+    "--bank-ink": "#134e4a",
+    "--tint-blush": "#ffe4e6",
+    "--msg-title": "#171717",
+    "--msg-sub": "#9d174d",
   },
   mono_bw: {
-    "--pub-bg": "#ffffff",
-    "--pub-bg-dots": "none",
-    "--pub-dot-size": "0",
-    "--pub-header-bg": "#111111",
-    "--pub-header-dots": "none",
-    "--pub-header-border": "1.5px solid #111",
-    "--pub-surface": "#fff",
-    "--pub-ink": "#111",
-    "--pub-sub": "#6b6b6b",
-    "--pub-headline-color": "#fff",
-    "--pub-headline-on-header": "#fff",
-    "--pub-headline-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-headline-weight": "900",
-    "--pub-headline-size": "30px",
-    "--pub-headline-lh": "1.18",
-    "--pub-headline-ls": "-1px",
-    "--pub-header-sub": "rgba(255, 255, 255, 0.6)",
-    "--pub-label-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-label-color": "#9a9a9a",
-    "--pub-label-ls": "1.6px",
-    "--pub-label-transform": "uppercase",
-    "--pub-label-weight": "700",
-    "--pub-accent": "#111",
-    "--pub-stat-accent": "#fff",
-    "--pub-point": "#111",
-    "--pub-on-point": "#fff",
-    "--pub-border": "1.5px solid #111",
-    "--pub-divider-color": "#111",
-    "--pub-shadow": "none",
-    "--pub-shadow-lg": "none",
-    "--pub-shadow-sm": "none",
-    "--pub-radius": "0",
-    "--pub-fallback-bg": "#f3f3f3",
-    "--pub-pill-bg": "transparent",
-    "--pub-pill-color": "#111",
-    "--pub-pill-alt-bg": "#111",
-    "--pub-pill-alt-color": "#fff",
-    "--pub-pill-border": "1.5px solid #111",
-    "--pub-pill-radius": "0",
-    "--pub-pill-shadow": "none",
-    "--pub-pill-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-pill-weight": "700",
-    "--pub-pill-transform": "uppercase",
-    "--pub-pill-pad": "6px 10px",
-    "--pub-btn-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-btn-weight": "700",
-    "--pub-btn-size": "14px",
-    "--pub-btn-radius": "0",
-    "--pub-btn-border": "1.5px solid #111",
-    "--pub-btn-shadow": "none",
-    "--pub-progress-track": "#ededed",
-    "--pub-progress-border": "1.5px solid #111",
-    "--pub-progress-radius": "0",
-    "--pub-progress-h": "12px",
-    "--pub-progress-fill": "#111",
-    "--pub-field-border": "1.5px solid #111",
-    "--pub-field-radius": "0",
-    "--pub-field-bg": "#fff",
-    "--pub-bank-bg": "#f6f6f6",
-    "--pub-bank-ink": "#333",
-    "--pub-msg-bg": "#fafafa",
-    "--pub-msg-title": "#111",
-    "--pub-msg-sub": "#6b6b6b",
+    "--surface-page": "#ffffff",
+    "--bg-dots": "none",
+    "--dot-size": "0",
+    "--surface-header": "#111111",
+    "--header-dots": "none",
+    "--header-border": "1.5px solid #111",
+    "--surface": "#fff",
+    "--ink": "#111",
+    "--ink-muted": "#6b6b6b",
+    "--headline": "#fff",
+    "--headline-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--headline-weight": "900",
+    "--headline-size": "30px",
+    "--headline-lh": "1.18",
+    "--headline-ls": "-1px",
+    "--header-sub": "rgba(255, 255, 255, 0.6)",
+    "--label-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--label-color": "#9a9a9a",
+    "--label-ls": "1.6px",
+    "--label-transform": "uppercase",
+    "--label-weight": "700",
+    "--accent-main": "#111",
+    "--stat-accent": "#fff",
+    "--point": "#111",
+    "--on-point": "#fff",
+    "--card-border": "1.5px solid #111",
+    "--divider-color": "#111",
+    "--card-shadow": "none",
+    "--card-shadow-lg": "none",
+    "--card-shadow-sm": "none",
+    "--card-radius": "0",
+    "--tint-mint": "#f3f3f3",
+    "--pill-bg": "transparent",
+    "--pill-color": "#111",
+    "--pill-alt-bg": "#111",
+    "--pill-alt-color": "#fff",
+    "--pill-border": "1.5px solid #111",
+    "--pill-radius": "0",
+    "--pill-shadow": "none",
+    "--pill-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--pill-weight": "700",
+    "--pill-transform": "uppercase",
+    "--pill-pad": "6px 10px",
+    "--btn-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--btn-weight": "700",
+    "--btn-size": "14px",
+    "--btn-radius": "0",
+    "--btn-border": "1.5px solid #111",
+    "--btn-shadow": "none",
+    "--progress-track": "#ededed",
+    "--progress-border": "1.5px solid #111",
+    "--progress-radius": "0",
+    "--progress-h": "12px",
+    "--progress-fill": "#111",
+    "--field-border": "1.5px solid #111",
+    "--field-radius": "0",
+    "--field-bg": "#fff",
+    "--bank-bg": "#f6f6f6",
+    "--bank-ink": "#333",
+    "--tint-blush": "#fafafa",
+    "--msg-title": "#111",
+    "--msg-sub": "#6b6b6b",
   },
   soft_pastel: {
-    "--pub-bg": "#fbf5ff",
-    "--pub-bg-dots": "none",
-    "--pub-dot-size": "0",
-    "--pub-header-bg": "#ffeaf3",
-    "--pub-header-dots": "none",
-    "--pub-header-border": "none",
-    "--pub-surface": "#ffffff",
-    "--pub-ink": "#5b5566",
-    "--pub-sub": "#8b8398",
-    "--pub-headline-color": "#bd6595",
-    "--pub-headline-on-header": "#bd6595",
-    "--pub-headline-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-headline-weight": "800",
-    "--pub-headline-size": "30px",
-    "--pub-headline-lh": "1.3",
-    "--pub-headline-ls": "-0.4px",
-    "--pub-header-sub": "#7fb8ab",
-    "--pub-label-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-label-color": "#bd6595",
-    "--pub-label-ls": "0.4px",
-    "--pub-label-transform": "none",
-    "--pub-label-weight": "700",
-    "--pub-accent": "#7fb8ab",
-    "--pub-stat-accent": "#7fb8ab",
-    "--pub-point": "#f79f97",
-    "--pub-on-point": "#fff",
-    "--pub-border": "none",
-    "--pub-divider-color": "#f0dfe9",
-    "--pub-shadow": "0 10px 28px rgba(150, 120, 160, 0.16)",
-    "--pub-shadow-lg": "0 14px 32px rgba(150, 120, 160, 0.18)",
-    "--pub-shadow-sm": "0 6px 16px rgba(150, 120, 160, 0.2)",
-    "--pub-radius": "22px",
-    "--pub-fallback-bg": "#fdeef5",
-    "--pub-pill-bg": "#ffe1ec",
-    "--pub-pill-color": "#bd6595",
-    "--pub-pill-alt-bg": "#dff1ec",
-    "--pub-pill-alt-color": "#3f7a6e",
-    "--pub-pill-border": "none",
-    "--pub-pill-radius": "999px",
-    "--pub-pill-shadow": "none",
-    "--pub-pill-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-pill-weight": "700",
-    "--pub-pill-transform": "none",
-    "--pub-pill-pad": "7px 12px",
-    "--pub-btn-font": "var(--font-sans, Arial, Helvetica, sans-serif)",
-    "--pub-btn-weight": "700",
-    "--pub-btn-size": "15px",
-    "--pub-btn-radius": "16px",
-    "--pub-btn-border": "none",
-    "--pub-btn-shadow": "0 6px 16px rgba(150, 120, 160, 0.2)",
-    "--pub-progress-track": "#f1eaf6",
-    "--pub-progress-border": "none",
-    "--pub-progress-radius": "999px",
-    "--pub-progress-h": "10px",
-    "--pub-progress-fill": "#7fb8ab",
-    "--pub-field-border": "1.5px solid #f0dfe9",
-    "--pub-field-radius": "14px",
-    "--pub-field-bg": "#fffafc",
-    "--pub-bank-bg": "#dff1ec",
-    "--pub-bank-ink": "#3f7a6e",
-    "--pub-msg-bg": "#fdeef5",
-    "--pub-msg-title": "#bd6595",
-    "--pub-msg-sub": "#c77ba0",
+    "--surface-page": "#fbf5ff",
+    "--bg-dots": "none",
+    "--dot-size": "0",
+    "--surface-header": "#ffeaf3",
+    "--header-dots": "none",
+    "--header-border": "none",
+    "--surface": "#ffffff",
+    "--ink": "#5b5566",
+    "--ink-muted": "#8b8398",
+    "--headline": "#bd6595",
+    "--headline-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--headline-weight": "800",
+    "--headline-size": "30px",
+    "--headline-lh": "1.3",
+    "--headline-ls": "-0.4px",
+    "--header-sub": "#7fb8ab",
+    "--label-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--label-color": "#bd6595",
+    "--label-ls": "0.4px",
+    "--label-transform": "none",
+    "--label-weight": "700",
+    "--accent-main": "#7fb8ab",
+    "--stat-accent": "#7fb8ab",
+    "--point": "#f79f97",
+    "--on-point": "#fff",
+    "--card-border": "none",
+    "--divider-color": "#f0dfe9",
+    "--card-shadow": "0 10px 28px rgba(150, 120, 160, 0.16)",
+    "--card-shadow-lg": "0 14px 32px rgba(150, 120, 160, 0.18)",
+    "--card-shadow-sm": "0 6px 16px rgba(150, 120, 160, 0.2)",
+    "--card-radius": "22px",
+    "--tint-mint": "#fdeef5",
+    "--pill-bg": "#ffe1ec",
+    "--pill-color": "#bd6595",
+    "--pill-alt-bg": "#dff1ec",
+    "--pill-alt-color": "#3f7a6e",
+    "--pill-border": "none",
+    "--pill-radius": "999px",
+    "--pill-shadow": "none",
+    "--pill-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--pill-weight": "700",
+    "--pill-transform": "none",
+    "--pill-pad": "7px 12px",
+    "--btn-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--btn-weight": "700",
+    "--btn-size": "15px",
+    "--btn-radius": "16px",
+    "--btn-border": "none",
+    "--btn-shadow": "0 6px 16px rgba(150, 120, 160, 0.2)",
+    "--progress-track": "#f1eaf6",
+    "--progress-border": "none",
+    "--progress-radius": "999px",
+    "--progress-h": "10px",
+    "--progress-fill": "#7fb8ab",
+    "--field-border": "1.5px solid #f0dfe9",
+    "--field-radius": "14px",
+    "--field-bg": "#fffafc",
+    "--bank-bg": "#dff1ec",
+    "--bank-ink": "#3f7a6e",
+    "--tint-blush": "#fdeef5",
+    "--msg-title": "#bd6595",
+    "--msg-sub": "#c77ba0",
   },
 } as const;
 
@@ -379,13 +315,6 @@ function parseVars(block: string) {
   }
 
   return vars;
-}
-
-/** --font-display / --font-body 는 next/font 변수의 별칭이다. 예전 리터럴과 맞출 때 한 단계만 되돌린다. */
-function expandFontPurpose(value: string) {
-  return value
-    .replaceAll("var(--font-display,", "var(--font-mona,")
-    .replaceAll("var(--font-body,", "var(--font-sans,");
 }
 
 function resolveVar(name: string, vars: Map<string, string>, seen = new Set<string>()): string {
@@ -488,8 +417,8 @@ describe("semantic token aliases", () => {
       expect(themeBridgeVars.get(name), name).toBe(value);
     }
 
-    expect(themeBridgeVars.get("--shadow-pub")).toBe("0 1px 2px rgba(0, 0, 0, 0.05)");
-    expect(themeBridgeVars.get("--radius-pub")).toBe("0.375rem");
+    expect(themeBridgeVars.has("--shadow-pub")).toBe(false);
+    expect(themeBridgeVars.has("--radius-pub")).toBe(false);
     expect(themeBridgeVars.get("--width-admin-sidebar")).toBe("220px");
     expect(themeBridgeVars.get("--spacing-admin-sidebar")).toBe("22px");
     expect(themeBridgeVars.has("--shadow-md")).toBe(false);
@@ -507,7 +436,7 @@ describe("semantic token aliases", () => {
     }
   });
 
-  test("resolves mapped colors from semantic tokens and keeps unmapped pub tokens", () => {
+  test("keeps each theme token literal on its current name", () => {
     expect(publicThemesCss).not.toMatch(/\.pub-page\s*\{[^}]*--brand-ink\s*:/);
 
     const basePubVars = themeBlocks.pixel_y2k;
@@ -521,24 +450,9 @@ describe("semantic token aliases", () => {
         expect(themeVars.has(brand), `${themeId} ${brand}`).toBe(false);
       }
 
-      for (const [pubName, semantic] of Object.entries(migratedPub)) {
-        const literal = previous[pubName as keyof typeof previous];
-
-        expect(themeVars.has(pubName), `${themeId} ${pubName}`).toBe(false);
-        expect(themeVars.get(semantic), `${themeId} ${semantic}`).toBe(literal);
-        expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
-      }
-
-      for (const [pubName, semantic] of Object.entries(typographyAliases)) {
-        const literal = previous[pubName as keyof typeof previous];
-
-        expect(computed.get(pubName), `${themeId} ${pubName}`).toBe(`var(${semantic})`);
-        expect(expandFontPurpose(resolveVar(semantic, computed)), `${themeId} ${semantic}`).toBe(
-          literal,
-        );
-        expect(expandFontPurpose(resolveVar(pubName, computed)), `${themeId} ${pubName}`).toBe(
-          literal,
-        );
+      for (const [name, literal] of Object.entries(previous)) {
+        expect(themeVars.get(name), `${themeId} ${name}`).toBe(literal);
+        expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
       }
 
       expect(resolveVar("--label-size", computed), themeId).toBe("12px");
@@ -552,36 +466,6 @@ describe("semantic token aliases", () => {
         }
       }
 
-      for (const [pubName, semantic] of Object.entries(spacingAliases)) {
-        const literal = previous[pubName as keyof typeof previous];
-
-        expect(computed.get(pubName), `${themeId} ${pubName}`).toBe(`var(${semantic})`);
-        expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
-        expect(resolveVar(pubName, computed), `${themeId} ${pubName}`).toBe(literal);
-      }
-
-      for (const [pubName, semantic] of Object.entries(shapeAliases)) {
-        const literal = previous[pubName as keyof typeof previous];
-
-        expect(computed.get(pubName), `${themeId} ${pubName}`).toBe(`var(${semantic})`);
-        expect(resolveVar(semantic, computed), `${themeId} ${semantic}`).toBe(literal);
-        expect(resolveVar(pubName, computed), `${themeId} ${pubName}`).toBe(literal);
-      }
-
-      for (const [name, literal] of Object.entries(previous)) {
-        if (
-          name in migratedPub ||
-          name in typographyAliases ||
-          name in shapeAliases ||
-          name in spacingAliases
-        ) {
-          continue;
-        }
-
-        expect(themeVars.get(name), `${themeId} ${name}`).toBe(literal);
-        expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
-      }
-
       expect(resolveVar("--line", computed), themeId).toBe(rootSemantics["--line"]);
       expect(resolveVar("--line-strong", computed), themeId).toBe(rootSemantics["--line-strong"]);
       expect(resolveVar("--tint-yellow", computed), themeId).toBe(rootSemantics["--tint-yellow"]);
@@ -591,6 +475,7 @@ describe("semantic token aliases", () => {
   test("keeps the card headline override on --headline and the header on the theme headline", () => {
     const cardBlock = extractBlock(publicThemesCss, /\.pub-card\s*\{/);
     const headlineBlock = extractBlock(publicThemesCss, /\.pub-headline\s*\{/);
+    const removedPrefix = "--" + "pub-";
 
     expect(cardBlock).toContain("--headline: var(--ink);");
     expect(headlineBlock).toContain("color: var(--headline);");
@@ -600,26 +485,31 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("font-size: var(--pill-size);");
     expect(publicThemesCss).toContain("font-size: var(--btn-size);");
     expect(publicThemesCss).toMatch(/\.pub-eyebrow\s*\{[^}]*font-size:\s*12px;/);
-    expect(publicThemesCss).not.toMatch(/var\(--pub-headline-(?:font|weight|size|lh|ls)\)/);
-    expect(publicThemesCss).not.toMatch(/var\(--pub-label-(?:font|ls|transform|weight)\)/);
-    expect(publicThemesCss).not.toMatch(/var\(--pub-pill-(?:font|weight|transform)\)/);
-    expect(publicThemesCss).not.toMatch(/var\(--pub-btn-(?:font|weight|size)\)/);
+    expect(publicThemesCss).toContain("background: var(--pill-bg);");
+    expect(publicThemesCss).toContain("color: var(--pill-color);");
+    expect(publicThemesCss).toContain("background: var(--pill-alt-bg);");
+    expect(publicThemesCss).toContain("color: var(--pill-alt-color);");
+    expect(publicThemesCss).toContain("color: var(--on-point);");
     expect(publicThemesCss).toContain("border: var(--card-border);");
     expect(publicThemesCss).toContain("border-radius: var(--card-radius);");
     expect(publicThemesCss).toContain("box-shadow: var(--card-shadow);");
     expect(publicThemesCss).toContain("border: var(--progress-border);");
-    expect(publicThemesCss).toContain("background: var(--pub-progress-track);");
-    expect(publicThemesCss).toContain("height: var(--pub-progress-h);");
+    expect(publicThemesCss).toContain("background: var(--progress-track);");
+    expect(publicThemesCss).toContain("height: var(--progress-h);");
+    expect(publicThemesCss).toContain("background: var(--progress-fill);");
+    expect(publicThemesCss).toContain("background: var(--field-bg);");
+    expect(publicThemesCss).toContain("background: var(--bank-bg);");
+    expect(publicThemesCss).toContain("color: var(--header-sub);");
+    expect(publicThemesCss).toContain("color: var(--label-color);");
+    expect(publicThemesCss).toContain("color: var(--msg-title);");
     expect(publicThemesCss).toContain("gap: var(--pill-gap);");
     expect(publicThemesCss).toContain("padding: var(--pill-pad);");
     expect(publicThemesCss).toContain("gap: var(--btn-gap);");
     expect(publicThemesCss).toContain("padding: var(--btn-pad);");
     expect(publicThemesCss).toContain("border: 1.5px solid #f0dfe9;");
-    expect(publicThemesCss).not.toMatch(
-      /var\(--pub-(?:border|radius|shadow|shadow-lg|shadow-sm|header-border|pill-border|pill-radius|pill-shadow|btn-border|btn-radius|btn-shadow|progress-border|progress-radius|field-border|field-radius)\)/,
-    );
-    removedPubAliasPattern.lastIndex = 0;
-    expect(publicThemesCss.match(removedPubAliasPattern)).toBeNull();
+    expect(publicThemesCss).not.toMatch(/var\(--stat-accent\)/);
+    expect(publicThemesCss).not.toMatch(/var\(--msg-sub\)/);
+    expect(publicThemesCss.includes(removedPrefix)).toBe(false);
 
     for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
       const previous = previousPub[themeId];
@@ -627,25 +517,26 @@ describe("semantic token aliases", () => {
       const cardVars = new Map(computed);
       cardVars.set("--headline", "var(--ink)");
 
-      expect(resolveVar("--headline", computed), `${themeId} header`).toBe(
-        previous["--pub-headline-color"],
-      );
-      expect(resolveVar("--headline", cardVars), `${themeId} card`).toBe(previous["--pub-ink"]);
+      expect(resolveVar("--headline", computed), `${themeId} header`).toBe(previous["--headline"]);
+      expect(resolveVar("--headline", cardVars), `${themeId} card`).toBe(previous["--ink"]);
     }
   });
 
-  test("has no remaining mapped pub alias dependency in app or component sources", () => {
+  test("has no pub-prefixed custom property in app, components, or src", () => {
+    const needle = "--" + "pub-";
     const files = [
       ...sourceFiles(join(root, "app")),
       ...sourceFiles(join(root, "components")),
+      ...sourceFiles(join(root, "src")),
     ];
 
     expect(files.length).toBeGreaterThan(0);
+    expect(publicThemesCss.includes(needle)).toBe(false);
+    expect(globalsCss.includes(needle)).toBe(false);
 
     for (const file of files) {
       const source = readFileSync(file, "utf8");
-      removedPubAliasPattern.lastIndex = 0;
-      expect(source.match(removedPubAliasPattern), file).toBeNull();
+      expect(source.includes(needle), file).toBe(false);
     }
   });
 });
