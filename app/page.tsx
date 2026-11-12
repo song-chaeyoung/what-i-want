@@ -132,7 +132,10 @@ export default async function Home() {
             </Link>
           </div>
 
-          <ol className="m-0 flex list-none flex-col gap-5 p-0 sm:flex-row sm:gap-4">
+          <ol
+            role="list"
+            className="m-0 flex list-none flex-col gap-5 p-0 sm:flex-row sm:gap-4"
+          >
             {homeSteps.map((step, index) => (
               <li
                 key={step.number}

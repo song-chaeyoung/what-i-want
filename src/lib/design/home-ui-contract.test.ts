@@ -78,11 +78,15 @@ describe("home UI contract", () => {
 
   test("shows home steps as a non-interactive sequence with a dotted connector", () => {
     const source = readFileSync(homePagePath, "utf8");
+    const listStart = source.indexOf("<ol");
+    const listTag = source.slice(listStart, source.indexOf(">", listStart));
     const steps = source.slice(
       source.indexOf("homeSteps.map"),
       source.indexOf("</ol>"),
     );
 
+    expect(listTag).toContain('role="list"');
+    expect(listTag).toContain("list-none");
     expect(steps).toContain("rounded-full");
     expect(steps).toContain("border-2 border-[#171717]");
     expect(steps).toContain("bg-[var(--tint-yellow)]");
