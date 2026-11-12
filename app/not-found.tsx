@@ -3,7 +3,7 @@ import Link from "next/link";
 export default function RootNotFound() {
   return (
     <main className="pixel-dot-bg grid min-h-dvh place-items-center px-5 text-[#171717]">
-      <section className="w-full max-w-md space-y-4 rounded-md border-2 border-[#171717] bg-white p-6">
+      <section className="w-full max-w-md space-y-4 border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-xs">
         <p className="sticker-label">404</p>
         <h1 className="font-pixel text-2xl leading-tight text-[#4c1d95]">
           페이지를 찾을 수 없어요

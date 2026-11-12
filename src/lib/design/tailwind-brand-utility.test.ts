@@ -251,6 +251,7 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toContain("letter-spacing:1.6px");
 
       for (const [className, shadow] of [
+        ["shadow-pixel-xs", "2px2px0var(--tw-shadow-color,#111827)"],
         ["shadow-pixel-sm", "3px3px0var(--tw-shadow-color,#111827)"],
         ["shadow-pixel-md", "4px4px0var(--tw-shadow-color,#111827)"],
         ["shadow-pixel-lg", "6px6px0var(--tw-shadow-color,#111827)"],
@@ -374,8 +375,10 @@ function themeMarkup(themeId?: string) {
     <div class="pixel-card" data-probe="pixel-card"></div>
     <div class="pixel-board" data-probe="pixel-board"></div>
     <div class="shadow-xs" data-probe="shadow-xs"></div>
+    <div class="shadow-pixel-xs" data-probe="util-xs"></div>
     <div class="shadow-pixel-sm" data-probe="util-sm"></div>
     <div class="shadow-header-line" data-probe="util-line"></div>
+    <div style="box-shadow:2px 2px 0 #111827" data-probe="raw-xs"></div>
     <div style="box-shadow:3px 3px 0 #111827" data-probe="raw-sm"></div>
     <div style="border:2px solid #171717" data-probe="raw-border-2"></div>
     <div style="border:1.5px solid #111" data-probe="raw-border-15"></div>
@@ -786,7 +789,7 @@ function expectShape(
   const pixelCard = probes.get("pixel-card");
   const pixelBoard = probes.get("pixel-board");
   const sticker = probes.get("sticker");
-  const rawSm = probes.get("raw-sm");
+  const rawXs = probes.get("raw-xs");
   const primary = probes.get("btn-primary");
 
   expectEdge(card!, expected.cardBorder, `${label} card border`, probes);
@@ -823,10 +826,11 @@ function expectShape(
   expectPx(field!.borderRadius, expected.fieldRadius, `${label} field radius`);
   expectBox(pixelCard!.boxShadow, "rgb(17, 24, 39) 6px 6px 0px 0px", `${label} pixel card`);
   expectBox(pixelBoard!.boxShadow, "rgb(17, 24, 39) 8px 8px 0px 0px", `${label} pixel board`);
-  expectBox(sticker!.boxShadow, rawSm!.boxShadow, `${label} sticker`);
+  expectBox(sticker!.boxShadow, rawXs!.boxShadow, `${label} sticker`);
   expect(probes.get("shadow-xs")!.boxShadow, `${label} shadow-xs`).toBe(
     "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
   );
+  expect(probes.get("util-xs")!.boxShadow, `${label} pixel xs utility`).toContain("2px 2px");
   expect(probes.get("util-sm")!.boxShadow, `${label} pixel sm utility`).toContain("3px");
   expect(probes.get("util-line")!.boxShadow, `${label} header line utility`).not.toBe("none");
 }

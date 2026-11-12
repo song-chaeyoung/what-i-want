@@ -165,11 +165,14 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 고정 픽셀 그림자는 [globals.css](../../app/globals.css)의 `:root`와 `@theme inline`에 같은 리터럴로 있습니다. 유틸은 `@theme` 리터럴을 Tailwind 그림자 래퍼에 넣고, `.pixel-board`·`.pixel-card`·`.sticker-label`은 `:root` 변수를 `box-shadow`에 그대로 씁니다.
 
-| 유틸·변수 | 값 | 바꾼 사용처 |
+2026-11-12에 `--shadow-pixel-xs`(`2px 2px 0 #111827`)를 추가했습니다. 홈의 픽셀 그림자와 `.sticker-label`이 이 값을 씁니다. 404·오류 카드의 `shadow-pixel-xs`도 같은 토큰입니다. 로그인·온보딩·관리자·공개 위시리스트의 기존 그림자는 그대로입니다.
+
+| 유틸·변수 | 값 | 현재 사용 |
 | --- | --- | --- |
-| `shadow-pixel-sm` / `--shadow-pixel-sm` | `3px 3px 0 #111827` | 임의 유틸 5곳, 스티커 라벨 |
-| `shadow-pixel-md` / `--shadow-pixel-md` | `4px 4px 0 #111827` | 임의 유틸 4곳 |
-| `shadow-pixel-lg` / `--shadow-pixel-lg` | `6px 6px 0 #111827` | 임의 유틸 4곳, `.pixel-card` |
+| `shadow-pixel-xs` / `--shadow-pixel-xs` | `2px 2px 0 #111827` | 홈 미리보기·FAQ·선물 상자, 404·오류 카드, `.sticker-label` |
+| `shadow-pixel-sm` / `--shadow-pixel-sm` | `3px 3px 0 #111827` | 관리자 첫 진입 안내 비네트 |
+| `shadow-pixel-md` / `--shadow-pixel-md` | `4px 4px 0 #111827` | 공개 위시 헤더 장식, 약관 본문 |
+| `shadow-pixel-lg` / `--shadow-pixel-lg` | `6px 6px 0 #111827` | 로그인·온보딩·약관 헤더, `.pixel-card` |
 | `shadow-pixel-xl` / `--shadow-pixel-xl` | `8px 8px 0 #111827` | `.pixel-board` |
 | `shadow-header-line` / `--shadow-header-line` | `0 1px 0 rgba(24, 24, 27, 0.02)` | 관리자 헤더와 로딩 헤더 |
 
