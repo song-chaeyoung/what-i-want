@@ -8,13 +8,12 @@ import {
   markAdminMessagesRead,
 } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
+import { Button } from "@/components/ui/button";
 import { AdminToastMessage } from "../admin-toast-message";
 import { HideMessageForm } from "./hide-message-form";
 import {
   AdminMetric,
   AdminMetricGroup,
-  adminPrimaryButtonClassName,
-  adminSecondaryButtonClassName,
   formatCurrency,
 } from "../admin-ui";
 
@@ -109,15 +108,12 @@ export default async function AdminMessagesPage({
             공개 페이지에서 친구가 마음을 보내면 여기에 표시됩니다.
           </p>
           <div className="mt-4 flex flex-col gap-2 sm:flex-row">
-            <Link
-              href={`/wishlist/${result.wishlist.slug}`}
-              className={adminPrimaryButtonClassName}
-            >
-              공개 페이지 보기
-            </Link>
-            <Link href="/admin/wishes" className={adminSecondaryButtonClassName}>
-              선물 관리하기
-            </Link>
+            <Button asChild variant="admin">
+              <Link href={`/wishlist/${result.wishlist.slug}`}>공개 페이지 보기</Link>
+            </Button>
+            <Button asChild variant="admin-outline">
+              <Link href="/admin/wishes">선물 관리하기</Link>
+            </Button>
           </div>
         </div>
       )}
@@ -180,12 +176,9 @@ function MessageRow({
         {hidden ? (
           <form action={`/api/admin/messages/${message.id}`} method="post">
             <input type="hidden" name="intent" value="unhide" />
-            <button
-              type="submit"
-              className="h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
-            >
+            <Button type="submit" variant="subtle">
               숨김 해제
-            </button>
+            </Button>
           </form>
         ) : (
           <HideMessageForm

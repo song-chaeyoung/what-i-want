@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
+import { Button } from "@/components/ui/button";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 
 export default function PublicWishlistError({
@@ -24,13 +25,14 @@ export default function PublicWishlistError({
         <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
           {PUBLIC_WISHLIST_COPY.errorDescription}
         </p>
-        <button
+        <Button
           type="button"
           onClick={() => unstable_retry()}
-          className="pub-btn mt-6 h-10 px-4 text-sm"
+          variant="theme"
+          className="mt-6 h-10 px-4 text-sm"
         >
           {PUBLIC_WISHLIST_COPY.retryCta}
-        </button>
+        </Button>
       </section>
     </main>
   );

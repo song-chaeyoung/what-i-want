@@ -5,11 +5,8 @@ import type { TouchEvent } from "react";
 import { ArrowLeft, ArrowRight, X } from "lucide-react";
 import { Dialog as DialogPrimitive } from "radix-ui";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { Button } from "@/components/ui/button";
 import type { PublicThemeId } from "@/src/lib/wishlist/theme";
-import {
-  adminPrimaryButtonClassName,
-  adminSecondaryButtonClassName,
-} from "./admin-ui";
 import {
   getAdminGuideQueryTransition,
   getAdminGuideStepAfterSwipe,
@@ -202,14 +199,16 @@ export function AdminGuideDialog({
                 이제 위시리스트를 만들어볼까요?
               </DialogPrimitive.Title>
             </div>
-            <button
+            <Button
               type="button"
               aria-label="안내 닫기"
               onClick={() => completeGuide("dismiss")}
-              className="absolute top-4 right-4 grid size-9 place-items-center rounded-md border border-line bg-white text-zinc-600 transition-colors hover:bg-zinc-100 sm:top-6 sm:right-6"
+              variant="admin-outline"
+              size="icon-admin"
+              className="absolute top-4 right-4 px-0 text-zinc-600 sm:top-6 sm:right-6"
             >
               <X aria-hidden="true" className="size-4" />
-            </button>
+            </Button>
           </div>
 
           <div
@@ -261,45 +260,44 @@ export function AdminGuideDialog({
           </div>
 
           <div className="flex flex-col-reverse gap-3 border-t border-line pt-4 sm:flex-row sm:items-center sm:justify-between">
-            <button
-              type="button"
-              onClick={() => completeGuide("dismiss")}
-              className="h-9 text-sm font-semibold text-zinc-500 underline-offset-4 hover:text-ink hover:underline"
-            >
+            <Button type="button" variant="link" onClick={() => completeGuide("dismiss")}>
               관리 화면 먼저 둘러보기
-            </button>
+            </Button>
 
             <div className="flex gap-2 sm:justify-end">
               {step > 0 ? (
-                <button
+                <Button
                   type="button"
                   onClick={goPrevious}
-                  className={`${adminSecondaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
+                  variant="admin-outline"
+                  className="min-w-0 flex-1 sm:flex-none"
                 >
                   <ArrowLeft aria-hidden="true" className="size-4" />
                   이전
-                </button>
+                </Button>
               ) : null}
 
               {step < 2 ? (
-                <button
+                <Button
                   ref={primaryActionRef}
                   type="button"
                   onClick={goNext}
-                  className={`${adminPrimaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
+                  variant="admin"
+                  className="min-w-0 flex-1 sm:flex-none"
                 >
                   다음
                   <ArrowRight aria-hidden="true" className="size-4" />
-                </button>
+                </Button>
               ) : (
-                <button
+                <Button
                   ref={primaryActionRef}
                   type="button"
                   onClick={() => completeGuide("first-gift")}
-                  className={`${adminPrimaryButtonClassName} min-w-0 flex-1 sm:flex-none`}
+                  variant="admin"
+                  className="min-w-0 flex-1 sm:flex-none"
                 >
                   첫 선물 담기
-                </button>
+                </Button>
               )}
             </div>
           </div>

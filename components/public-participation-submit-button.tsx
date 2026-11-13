@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { useFormStatus } from "react-dom";
+import { Button } from "@/components/ui/button";
 import { rememberAccountRevealTrigger } from "@/src/lib/public-wishlist/account-reveal-focus";
 
 type PublicParticipationSubmitButtonProps = {
@@ -35,15 +36,17 @@ export function PublicParticipationSubmitButton({
   }, [id]);
 
   return (
-    <button
+    <Button
       ref={ref}
       id={id}
       type="submit"
       disabled={pending}
       aria-disabled={pending}
-      className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm disabled:cursor-not-allowed disabled:opacity-60"
+      variant="theme-accent"
+      size="block"
+      className="h-12 text-sm disabled:cursor-not-allowed disabled:opacity-60"
     >
       {pending ? "보내는 중..." : label}
-    </button>
+    </Button>
   );
 }

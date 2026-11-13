@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 type LinkPreview = {
   title: string | null;
@@ -54,14 +55,15 @@ export function LinkAutofillButton() {
   }
 
   return (
-    <button
+    <Button
       type="button"
       onClick={handleClick}
       disabled={loading}
-      className="h-10 shrink-0 rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-700 transition-colors hover:bg-zinc-100 disabled:opacity-60"
+      variant="admin-outline"
+      className="h-10 shrink-0 text-zinc-700"
     >
       {loading ? "불러오는 중…" : "정보 불러오기"}
-    </button>
+    </Button>
   );
 }
 

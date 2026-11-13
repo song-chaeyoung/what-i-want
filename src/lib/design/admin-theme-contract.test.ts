@@ -32,8 +32,16 @@ describe("admin calm theme contract", () => {
     expect(adminUiSource).toContain("export function AdminField");
     expect(adminUiSource).toContain("export const adminInputClassName");
     expect(adminUiSource).toContain("export const adminTextareaClassName");
-    expect(adminUiSource).toContain("export const adminPrimaryButtonClassName");
-    expect(adminUiSource).toContain("export const adminSecondaryButtonClassName");
+    expect(adminUiSource).not.toContain("adminPrimaryButtonClassName");
+    expect(adminUiSource).not.toContain("adminSecondaryButtonClassName");
+    expect(adminWishesSource).toContain('variant="admin"');
+    expect(adminWishesSource).toContain('variant="admin-outline"');
+    expect(adminWishesSource).toContain('variant="danger"');
+    expect(adminMessagesSource).toContain('variant="admin"');
+    expect(adminMessagesSource).toContain('variant="subtle"');
+    expect(adminSettingsSource).toContain('variant="admin"');
+    expect(adminSettingsSource).toContain('variant="admin-outline"');
+    expect(adminPageSource).toContain('variant="admin-outline"');
     expect(adminUiSource).not.toContain("/b/{slug}");
 
     expect(adminPageSource).toContain('from "./admin-ui"');

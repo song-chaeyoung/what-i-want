@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { Button } from "@/components/ui/button";
 import { TextLogo } from "@/components/text-logo";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { signInWithGoogle, signInWithKakao } from "./actions";
@@ -68,20 +69,18 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
           <div className="mt-8 space-y-3">
             <form action={signInWithGoogle}>
-              <button
+              <Button
                 type="submit"
-                className="h-12 w-full rounded-md border-2 border-[#171717] bg-white px-4 text-sm font-black transition-colors hover:bg-[#f3f4f6]"
+                variant="kakao"
+                className="w-full bg-white hover:bg-zinc-100"
               >
                 Google로 계속하기
-              </button>
+              </Button>
             </form>
             <form action={signInWithKakao}>
-              <button
-                type="submit"
-                className="h-12 w-full rounded-md border-2 border-[#171717] bg-[#fee500] px-4 text-sm font-black text-[#171717] transition-colors hover:bg-[#f6dc00]"
-              >
+              <Button type="submit" variant="kakao" className="w-full">
                 Kakao로 계속하기
-              </button>
+              </Button>
             </form>
           </div>
         </section>

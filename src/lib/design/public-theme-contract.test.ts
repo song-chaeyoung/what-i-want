@@ -39,7 +39,10 @@ describe("public theme contract", () => {
 
     expect(source).toContain(".pub-page");
     expect(source).toContain(".pub-card");
-    expect(source).toContain(".pub-btn");
+    expect(source).toContain(".theme-btn");
+    expect(source).toContain(".theme-btn-primary");
+    expect(source).toContain(".theme-btn-accent");
+    expect(source).not.toContain(".pub-btn");
     expect(source).toContain(".pub-progress > i");
     expect(source).not.toContain("pub-progress-done");
     expect(source).not.toContain("@import url(");

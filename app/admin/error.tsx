@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { adminSecondaryButtonClassName } from "./admin-ui";
+import { Button } from "@/components/ui/button";
 
 export default function AdminError({
   error,
@@ -24,13 +24,14 @@ export default function AdminError({
         <p className="mt-2 text-sm font-semibold text-zinc-500">
           일시적인 오류예요. 잠시 후 다시 시도해주세요.
         </p>
-        <button
+        <Button
           type="button"
+          variant="admin-outline"
           onClick={() => unstable_retry()}
-          className={`${adminSecondaryButtonClassName} mt-4`}
+          className="mt-4"
         >
           다시 시도
-        </button>
+        </Button>
       </div>
     </section>
   );

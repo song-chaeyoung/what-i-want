@@ -10,6 +10,7 @@ import {
   getWishStatusLabel,
   type WishStatus,
 } from "@/src/lib/wish-item/status";
+import { Button } from "@/components/ui/button";
 import { AdminToastMessage } from "../admin-toast-message";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
@@ -17,8 +18,6 @@ import {
   AdminMetric,
   AdminMetricGroup,
   adminInputClassName,
-  adminPrimaryButtonClassName,
-  adminSecondaryButtonClassName,
   adminTextareaClassName,
   formatCurrency,
 } from "../admin-ui";
@@ -226,9 +225,9 @@ export default async function AdminWishesPage({
           </div>
 
           <div className="md:col-span-2">
-            <button type="submit" className={adminPrimaryButtonClassName}>
+            <Button type="submit" variant="admin">
               추가하기
-            </button>
+            </Button>
           </div>
         </form>
       </details>
@@ -244,12 +243,9 @@ export default async function AdminWishesPage({
                 ? "다른 상태 탭으로 전환하거나 전체 목록에서 선물을 확인해주세요."
                 : "위의 선물 추가 패널에서 첫 선물을 등록해주세요."}
             </p>
-            <Link
-              href={emptyStateHref}
-              className={`${adminSecondaryButtonClassName} mt-4`}
-            >
-              {emptyStateCta}
-            </Link>
+            <Button asChild variant="admin-outline" className="mt-4">
+              <Link href={emptyStateHref}>{emptyStateCta}</Link>
+            </Button>
           </div>
         )}
       </section>
@@ -378,20 +374,17 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           </div>
 
           <div className="md:col-span-2">
-            <button type="submit" className={adminPrimaryButtonClassName}>
+            <Button type="submit" variant="admin">
               저장
-            </button>
+            </Button>
           </div>
         </form>
 
         <form action={`/api/admin/wishes/${item.id}`} method="post" className="mt-3">
           <input type="hidden" name="_method" value="delete" />
-          <button
-            type="submit"
-            className="h-9 rounded-md border border-[#b91c1c] bg-white px-3 text-sm font-semibold text-[#b91c1c] transition-colors hover:bg-[#fef2f2]"
-          >
+          <Button type="submit" variant="danger">
             삭제
-          </button>
+          </Button>
         </form>
       </div>
     </details>

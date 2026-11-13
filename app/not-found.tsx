@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function RootNotFound() {
   return (
@@ -11,12 +12,9 @@ export default function RootNotFound() {
         <p className="text-sm font-semibold leading-6 text-[#4b5563]">
           주소가 잘못되었거나 더 이상 존재하지 않는 페이지예요.
         </p>
-        <Link
-          href="/"
-          className="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-5 py-3 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
-        >
-          처음으로
-        </Link>
+        <Button asChild variant="cta">
+          <Link href="/">처음으로</Link>
+        </Button>
       </section>
     </main>
   );

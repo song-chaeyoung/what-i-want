@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 
 export default function PublicWishlistNotFound() {
@@ -12,12 +13,9 @@ export default function PublicWishlistNotFound() {
         <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
           {PUBLIC_WISHLIST_COPY.notFoundDescription}
         </p>
-        <Link
-          href="/"
-          className="pub-btn mt-6 h-10 px-4 text-sm"
-        >
-          {PUBLIC_WISHLIST_COPY.homeCta}
-        </Link>
+        <Button asChild variant="theme" className="mt-6 h-10 px-4 text-sm">
+          <Link href="/">{PUBLIC_WISHLIST_COPY.homeCta}</Link>
+        </Button>
       </section>
     </main>
   );

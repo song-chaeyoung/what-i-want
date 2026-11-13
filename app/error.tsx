@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import Link from "next/link";
+import { Button } from "@/components/ui/button";
 
 export default function RootError({
   error,
@@ -25,19 +26,12 @@ export default function RootError({
           일시적인 오류예요. 잠시 후 다시 시도해주세요.
         </p>
         <div className="flex flex-wrap gap-3">
-          <button
-            type="button"
-            onClick={() => unstable_retry()}
-            className="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-5 py-3 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
-          >
+          <Button type="button" variant="cta" onClick={() => unstable_retry()}>
             다시 시도
-          </button>
-          <Link
-            href="/"
-            className="inline-flex min-h-12 items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 py-3 text-sm font-black transition-colors hover:bg-[#ccfbf1]"
-          >
-            처음으로
-          </Link>
+          </Button>
+          <Button asChild variant="cta" className="bg-white text-ink hover:bg-mint">
+            <Link href="/">처음으로</Link>
+          </Button>
         </div>
       </section>
     </main>

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TextLogo } from "@/components/text-logo";
+import { Button } from "@/components/ui/button";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
@@ -110,12 +111,13 @@ export default async function OnboardingPage({
               </span>
             </label>
 
-            <button
+            <Button
               type="submit"
-              className="h-12 w-full rounded-md border-2 border-[#171717] bg-[#111827] px-4 text-sm font-black text-white transition-colors hover:bg-[#0f766e]"
+              variant="cta"
+              className="h-12 w-full px-4 py-0"
             >
               위시리스트 만들기
-            </button>
+            </Button>
           </form>
         </section>
       </div>

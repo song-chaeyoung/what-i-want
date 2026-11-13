@@ -1,5 +1,7 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
+
 export function HideMessageForm({
   messageId,
   hasAmount,
@@ -22,12 +24,9 @@ export function HideMessageForm({
       }}
     >
       <input type="hidden" name="intent" value="hide" />
-      <button
-        type="submit"
-        className="h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700"
-      >
+      <Button type="submit" variant="subtle">
         숨기기
-      </button>
+      </Button>
     </form>
   );
 }

@@ -4,6 +4,7 @@ import { PublicAccountSection } from "@/components/public-account-section";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
+import { Button } from "@/components/ui/button";
 import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
@@ -53,12 +54,13 @@ export function PublicWishlistView({
         <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
-              <Link
-                href="/"
-                className="pub-btn h-9 px-4 text-xs font-black sm:text-sm"
+              <Button
+                asChild
+                variant="theme"
+                className="h-9 px-4 text-xs font-black sm:text-sm"
               >
-                {BRAND_NAME}
-              </Link>
+                <Link href="/">{BRAND_NAME}</Link>
+              </Button>
               <p className="pub-pill">birthday wishlist</p>
               {birthdayBadge ? (
                 <p className="pub-pill pub-pill-alt">{birthdayBadge}</p>
@@ -120,9 +122,9 @@ export function PublicWishlistView({
 
         <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
           <p className="pub-label text-xs">make your own</p>
-          <Link href="/login" className="pub-btn h-12 px-6 text-sm">
-            {PUBLIC_WISHLIST_COPY.createMineCta}
-          </Link>
+          <Button asChild variant="theme" className="h-12 px-6 text-sm">
+            <Link href="/login">{PUBLIC_WISHLIST_COPY.createMineCta}</Link>
+          </Button>
         </div>
       </section>
 
@@ -193,13 +195,15 @@ function ParticipationSubmit({
   if (demo) {
     return (
       <div className="space-y-2">
-        <button
+        <Button
           type="submit"
           disabled
-          className="pub-btn pub-btn-accent pub-btn-block h-12 text-sm opacity-60"
+          variant="theme-accent"
+          size="block"
+          className="h-12 text-sm opacity-60"
         >
           {PUBLIC_WISHLIST_COPY.participationSubmitCta}
-        </button>
+        </Button>
         <p className="text-xs font-semibold text-[var(--ink-muted)]">
           샘플 페이지에서는 마음을 보낼 수 없어요.
         </p>
@@ -298,14 +302,15 @@ function PublicWishCard({
               </>
             ) : null}
             {productUrl ? (
-              <a
-                href={productUrl}
-                target="_blank"
-                rel="noreferrer"
-                className="pub-btn pub-btn-primary mt-2 h-11 px-4 text-sm"
+              <Button
+                asChild
+                variant="theme-primary"
+                className="mt-2 h-11 px-4 text-sm"
               >
-                선물 링크 보기
-              </a>
+                <a href={productUrl} target="_blank" rel="noreferrer">
+                  선물 링크 보기
+                </a>
+              </Button>
             ) : null}
           </div>
         </div>

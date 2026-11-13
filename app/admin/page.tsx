@@ -16,12 +16,12 @@ import {
   getWishFundingProgress,
   getWishStatusLabel,
 } from "@/src/lib/wish-item/status";
+import { Button } from "@/components/ui/button";
 import { BirthdayConfetti } from "./birthday-confetti";
 import { AdminToastMessage } from "./admin-toast-message";
 import {
   AdminMetric,
   AdminMetricGroup,
-  adminSecondaryButtonClassName,
   formatCurrency,
 } from "./admin-ui";
 import {
@@ -115,12 +115,9 @@ export default async function AdminPage() {
         </div>
         <div className="flex shrink-0 gap-2">
           <SharePublicLinkButton slug={wishesResult.wishlist.slug} />
-          <Link
-            href={`/wishlist/${wishesResult.wishlist.slug}`}
-            className={adminSecondaryButtonClassName}
-          >
-            열어 보기
-          </Link>
+          <Button asChild variant="admin-outline">
+            <Link href={`/wishlist/${wishesResult.wishlist.slug}`}>열어 보기</Link>
+          </Button>
         </div>
       </div>
 
