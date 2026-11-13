@@ -219,7 +219,7 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
       expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
       expect(minified).toMatch(/\.pub-pill\{[^}]*font-size:var\(--pill-size\)/);
-      expect(minified).toMatch(/\.pub-btn\{[^}]*font-size:var\(--btn-size\)/);
+      expect(minified).toMatch(/\.theme-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-image:var\(--bg-dots\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
@@ -228,7 +228,7 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
       expect(minified).toMatch(/\.pub-field\{[^}]*background:var\(--field-bg\)/);
       expect(minified).toMatch(/\.pub-bank\{[^}]*background:var\(--bank-bg\)/);
-      expect(minified).toMatch(/\.pub-btn-primary\{[^}]*color:var\(--on-point\)/);
+      expect(minified).toMatch(/\.theme-btn-primary\{[^}]*color:var\(--on-point\)/);
       expect(minified).not.toContain(removedPubPrefix);
 
       for (const [className, declaration] of fixedFontSizes) {
@@ -298,8 +298,17 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-progress>i\{[^}]*background:var\(--progress-fill\)/);
       expect(minified).toMatch(/\.pub-pill\{[^}]*gap:var\(--pill-gap\)/);
       expect(minified).toMatch(/\.pub-pill\{[^}]*padding:var\(--pill-pad\)/);
-      expect(minified).toMatch(/\.pub-btn\{[^}]*gap:var\(--btn-gap\)/);
-      expect(minified).toMatch(/\.pub-btn\{[^}]*padding:var\(--btn-pad\)/);
+      expect(minified).toMatch(/\.theme-btn\{[^}]*gap:var\(--btn-gap\)/);
+      expect(minified).toMatch(/\.theme-btn\{[^}]*padding:var\(--btn-pad\)/);
+      expect(minified).toContain(".bg-ink-deep{background-color:var(--ink-deep)");
+      expect(minified).toContain(".text-danger{color:var(--danger)");
+      expect(minified).toContain(".bg-danger-tint{background-color:var(--danger-tint)");
+      expect(minified).toContain(".bg-kakao{background-color:var(--kakao)");
+      expect(minified).toContain("background-color:var(--kakao-hover)");
+      expect(minified).toContain(".border-line-strong{border-color:var(--line-strong)");
+      expect(minified).toContain(".bg-accent-main{background-color:var(--accent-main)");
+      expect(minified).not.toContain(".pub-btn{");
+      expect(minified).not.toContain(".pub-btn-primary{");
       expect(minified).toContain(".w-admin-sidebar{width:220px");
       expect(minified).toContain(".py-admin-sidebar{padding-block:22px");
       expect(minified).not.toContain(".w-\\[220px\\]");
@@ -357,9 +366,9 @@ function themeMarkup(themeId?: string) {
       <p class="text-[var(--ink-muted)]" data-probe="muted">설명</p>
       <div class="pub-fallback" data-probe="fallback"></div>
       <div class="pub-msg" data-probe="msg"></div>
-      <button class="pub-btn" data-probe="btn" type="button">버튼</button>
-      <button class="pub-btn pub-btn-primary" data-probe="btn-primary" type="button">주요</button>
-      <button class="pub-btn pub-btn-accent" data-probe="btn-accent" type="button">강조</button>
+      <button class="theme-btn" data-probe="btn" type="button">버튼</button>
+      <button class="theme-btn theme-btn-primary" data-probe="btn-primary" type="button">주요</button>
+      <button class="theme-btn theme-btn-accent" data-probe="btn-accent" type="button">강조</button>
       <p class="pub-label" data-probe="label">라벨</p>
       <span class="pub-pill" data-probe="pill">필</span>
       <span class="pub-pill pub-pill-alt" data-probe="pill-alt">대체</span>

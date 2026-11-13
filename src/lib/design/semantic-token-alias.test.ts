@@ -30,9 +30,24 @@ const rootSemantics = {
   "--point": "#f97316",
   "--line": "#d1d5db",
   "--line-strong": "#171717",
+  "--ink-deep": "#111827",
+  "--danger": "#b91c1c",
+  "--danger-tint": "#fef2f2",
+  "--kakao": "#fee500",
+  "--kakao-hover": "#f6dc00",
   "--tint-mint": "#ccfbf1",
   "--tint-blush": "#ffe4e6",
   "--tint-yellow": "#fef3c7",
+} as const;
+
+const buttonColorBridges = {
+  "--color-ink-deep": "--ink-deep",
+  "--color-danger": "--danger",
+  "--color-danger-tint": "--danger-tint",
+  "--color-kakao": "--kakao",
+  "--color-kakao-hover": "--kakao-hover",
+  "--color-line-strong": "--line-strong",
+  "--color-accent-main": "--accent-main",
 } as const;
 
 const themeBridges = {
@@ -424,6 +439,15 @@ describe("semantic token aliases", () => {
     expect(themeBridgeVars.get("--spacing-admin-sidebar")).toBe("22px");
     expect(themeBridgeVars.has("--shadow-md")).toBe(false);
     expect(themeBridgeVars.get("--radius-md")).toBe("calc(var(--radius) * 0.8)");
+  });
+
+  test("points button color utilities at the new :root tokens", () => {
+    const documentVars = mergedVars([rootVars, themeBridgeVars]);
+
+    for (const [bridge, token] of Object.entries(buttonColorBridges)) {
+      expect(themeBridgeVars.get(bridge), bridge).toBe(`var(${token})`);
+      expect(resolveVar(bridge, documentVars), bridge).toBe(rootSemantics[token]);
+    }
   });
 
   test("points Tailwind color bridges at brand aliases", () => {

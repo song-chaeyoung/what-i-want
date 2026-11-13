@@ -1,11 +1,5 @@
 import type { ReactNode } from "react";
 
-export const adminPrimaryButtonClassName =
-  "inline-flex h-9 items-center justify-center rounded-md border border-ink bg-ink px-3.5 text-sm font-semibold text-white transition-colors hover:bg-black";
-
-export const adminSecondaryButtonClassName =
-  "inline-flex h-9 items-center justify-center rounded-md border border-line bg-white px-3 text-sm font-semibold text-zinc-800 transition-colors hover:bg-zinc-100";
-
 export function AdminMetricGroup({ children }: { children: ReactNode }) {
   return (
     <div className="grid divide-y divide-line overflow-hidden rounded-md border border-line bg-white sm:auto-cols-fr sm:grid-flow-col sm:divide-x sm:divide-y-0">

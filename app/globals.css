@@ -21,6 +21,11 @@
   --point: #f97316;
   --line: #d1d5db;
   --line-strong: #171717;
+  --ink-deep: #111827;
+  --danger: #b91c1c;
+  --danger-tint: #fef2f2;
+  --kakao: #fee500;
+  --kakao-hover: #f6dc00;
   --tint-mint: #ccfbf1;
   --tint-blush: #ffe4e6;
   --tint-yellow: #fef3c7;
@@ -94,6 +99,13 @@
   --color-purple: var(--brand-purple);
   --color-mint: var(--brand-mint);
   --color-orange: var(--brand-orange);
+  --color-ink-deep: var(--ink-deep);
+  --color-danger: var(--danger);
+  --color-danger-tint: var(--danger-tint);
+  --color-kakao: var(--kakao);
+  --color-kakao-hover: var(--kakao-hover);
+  --color-line-strong: var(--line-strong);
+  --color-accent-main: var(--accent-main);
   --shadow-pixel-xs: 2px 2px 0 #111827;
   --shadow-pixel-sm: 3px 3px 0 #111827;
   --shadow-pixel-md: 4px 4px 0 #111827;

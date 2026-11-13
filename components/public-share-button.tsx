@@ -1,5 +1,6 @@
 "use client";
 
+import { Button } from "@/components/ui/button";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import { useWishlistShare } from "@/components/use-wishlist-share";
 import type { PublicThemeId } from "@/src/lib/wishlist/theme";
@@ -21,8 +22,8 @@ export function PublicShareButton({
   });
 
   return (
-    <button type="button" onClick={share} className="pub-btn h-9 px-4 text-xs">
+    <Button type="button" onClick={share} variant="theme" className="h-9 px-4 text-xs">
       {copied ? PUBLIC_WISHLIST_COPY.shareCopied : PUBLIC_WISHLIST_COPY.shareCta}
-    </button>
+    </Button>
   );
 }

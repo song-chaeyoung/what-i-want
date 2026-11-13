@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
+import { Button } from "@/components/ui/button";
 import { auth } from "@/auth";
 import { HOME_COPY, HOME_FAQ } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -116,20 +117,22 @@ export default async function Home() {
             </p>
           </div>
           <div className="flex flex-wrap gap-3">
-            <Link
-              href={homeAccountCta.href}
-              className="inline-flex min-h-12 max-w-full items-center justify-center rounded-md border-2 border-[#171717] bg-[#111827] px-5 py-3 text-center text-sm font-black text-white transition-colors hover:bg-[#0f766e] sm:px-6"
+            <Button asChild variant="cta" className="sm:px-6">
+              <Link href={homeAccountCta.href}>
+                <span className="whitespace-normal break-keep">
+                  {homeAccountCta.label}
+                </span>
+              </Link>
+            </Button>
+            <Button
+              asChild
+              variant="cta"
+              className="bg-white text-ink hover:bg-mint sm:px-6"
             >
-              <span className="whitespace-normal break-keep">
-                {homeAccountCta.label}
-              </span>
-            </Link>
-            <Link
-              href="/sample"
-              className="inline-flex min-h-12 max-w-full items-center justify-center rounded-md border-2 border-[#171717] bg-white px-5 py-3 text-center text-sm font-black transition-colors hover:bg-[#ccfbf1] sm:px-6"
-            >
-              <span className="whitespace-normal break-keep">펀딩 예시 보기</span>
-            </Link>
+              <Link href="/sample">
+                <span className="whitespace-normal break-keep">펀딩 예시 보기</span>
+              </Link>
+            </Button>
           </div>
 
           <ol

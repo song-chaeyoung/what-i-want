@@ -10,14 +10,13 @@ import {
   WISHLIST_VISIBILITIES,
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
+import { Button } from "@/components/ui/button";
 import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
 import { ResetWishlistForm } from "./reset-wishlist-form";
 import {
   AdminField,
   adminInputClassName,
-  adminPrimaryButtonClassName,
-  adminSecondaryButtonClassName,
   adminTextareaClassName,
 } from "../admin-ui";
 
@@ -265,9 +264,9 @@ export default async function AdminSettingsPage() {
         </SettingsSection>
 
         <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-[#fafaf9]/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
-          <button type="submit" className={adminPrimaryButtonClassName}>
+          <Button type="submit" variant="admin">
             저장하기
-          </button>
+          </Button>
         </div>
       </form>
 
@@ -286,9 +285,9 @@ export default async function AdminSettingsPage() {
       >
         <SettingsRow>
           <form action={signOutAction}>
-            <button type="submit" className={adminSecondaryButtonClassName}>
+            <Button type="submit" variant="admin-outline">
               로그아웃
-            </button>
+            </Button>
           </form>
         </SettingsRow>
       </SettingsSection>

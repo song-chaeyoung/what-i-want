@@ -1,6 +1,6 @@
 # 의미 토큰 병합 매핑
 
-코드 대조일: 2026-11-10
+코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13.
 
 상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 세 테마의 리터럴은 그대로입니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
@@ -73,6 +73,20 @@
 | `--color-orange` | `var(--brand-orange)` | `var(--brand-orange)` | `#f97316` |
 
 `text-purple`, `text-ink`, `bg-paper`, `border-line`, `text-teal`, `bg-mint`, `bg-orange` 같은 기존 브랜드 유틸은 세 테마 안에서도 `:root` 브랜드 색을 유지합니다. 공개 테마 색은 `.pub-page`의 의미 토큰과 컴포넌트 토큰이 담당합니다.
+
+## 버튼 색
+
+2026-11-13에 버튼에 직접 적혀 있던 색을 `:root` 토큰으로 옮겼습니다. 값은 그때의 하드코드와 같습니다. `@theme inline`의 `--color-*` 다리는 그 변수를 가리켜 `bg-ink-deep`, `text-danger`, `bg-kakao` 같은 유틸이 나오게 합니다. 공개 테마는 이 다섯 값을 덮어쓰지 않습니다.
+
+| 의미 토큰 | `:root` 값 | 유틸 다리 | 바꾸기 전 |
+| --- | --- | --- | --- |
+| `--ink-deep` | `#111827` | `--color-ink-deep` | 홈·온보딩·404·오류의 진한 버튼 면 |
+| `--danger` | `#b91c1c` | `--color-danger` | 관리자 삭제·초기화 글자와 테두리 |
+| `--danger-tint` | `#fef2f2` | `--color-danger-tint` | 그 버튼의 호버 면 |
+| `--kakao` | `#fee500` | `--color-kakao` | 로그인 Kakao 버튼 면 |
+| `--kakao-hover` | `#f6dc00` | `--color-kakao-hover` | 그 버튼의 호버 면 |
+
+`--line-strong`(`#171717`)와 `--accent-main`(`#0f766e`)는 새 값이 아닙니다. 버튼 유틸 `border-line-strong`, `bg-accent-main`이 나오게 `--color-line-strong`, `--color-accent-main` 다리만 추가했습니다. `--color-accent-main`은 `var(--accent-main)`이라 공개 테마 안에서는 그 테마 색을 따릅니다. 홈 CTA는 `.pub-page` 밖입니다.
 
 Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [globals.css](../../app/globals.css)는 `@source not "../docs"`로 문서 경로를 스캔에서 빼, 지운 토큰 이름이 생성된 CSS에 다시 들어가지 않게 합니다. 앱과 컴포넌트 소스 탐지는 그대로입니다.
 
@@ -188,7 +202,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | Tailwind 기본 `rounded-md`, `border-2`, `shadow-md` | 기본 스케일 |
 | shadcn `rounded-[min(var(--radius-md),...)]` | 컴포넌트 기본 모서리 상한 |
 | `--toast-*` | `.pub-page` 밖 토스트. 그림자에 `4px 4px 0 #111827`가 있어도 `shadow-pixel-md`로 합치지 않음 |
-| `soft_pastel`의 `.pub-btn:not(.pub-btn-primary):not(.pub-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
+| `soft_pastel`의 `.theme-btn:not(.theme-btn-primary):not(.theme-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
 | `mono_bw` 헤더 필 `1.5px solid rgba(255,255,255,0.6)`, 지표 `1.5px solid rgba(255,255,255,0.5)` | 테마 `--pill-border`·`--card-border`와 다른 반투명 선 |
 
 ## 간격
@@ -202,7 +216,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--btn-gap` | `8px` | 같은 값 | 같은 값 |
 | `--pill-gap` | `6px` | 같은 값 | 같은 값 |
 
-`--btn-pad`, `--btn-gap`, `--pill-gap`는 원래 별도 토큰이 아니라 `.pub-btn`·`.pub-pill`의 값입니다.
+`--btn-pad`, `--btn-gap`, `--pill-gap`는 원래 별도 토큰이 아니라 `.theme-btn`·`.pub-pill`의 값입니다. 공개 버튼 클래스는 `.theme-btn`, `.theme-btn-primary`, `.theme-btn-accent`이고, 호출은 [Button](../../components/ui/button.tsx) variant입니다. 너비 100%는 `size="block"`(`w-full`)입니다.
 
 관리자 사이드바는 [layout.tsx](../../app/admin/layout.tsx)의 본문과 로딩 화면 `aside` 두 곳입니다. `@theme inline`에 너비와 간격을 따로 등록합니다. 값이 달라 하나의 spacing 키로 합치지 않습니다. `--spacing-admin-sidebar`는 `py-admin-sidebar` 외의 간격 유틸(`p-admin-sidebar` 등)도 만들 수 있지만, 지금 소스는 `py-admin-sidebar`만 써서 생성 CSS에는 그 클래스만 있습니다.
 

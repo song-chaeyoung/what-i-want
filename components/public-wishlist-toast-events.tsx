@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { PublicBankAccountCard } from "@/components/public-bank-account-card";
+import { Button } from "@/components/ui/button";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import {
   accountRevealTabTarget,
@@ -208,19 +209,25 @@ function AccountRevealModal({
         <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)]">
           {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
         </p>
-        <Link
-          href={POST_PARTICIPATION_CTA_HREF}
-          className="pub-btn pub-btn-accent pub-btn-block mt-5 h-11 text-sm"
+        <Button
+          asChild
+          variant="theme-accent"
+          size="block"
+          className="mt-5 h-11 text-sm"
         >
-          {PUBLIC_WISHLIST_COPY.postCreateCtaLabel}
-        </Link>
-        <button
+          <Link href={POST_PARTICIPATION_CTA_HREF}>
+            {PUBLIC_WISHLIST_COPY.postCreateCtaLabel}
+          </Link>
+        </Button>
+        <Button
           type="button"
-          className="pub-btn pub-btn-block mt-3 h-11 text-sm"
+          variant="theme"
+          size="block"
+          className="mt-3 h-11 text-sm"
           onClick={() => closeAccountReveal(onClose)}
         >
           {PUBLIC_WISHLIST_COPY.accountModalClose}
-        </button>
+        </Button>
       </section>
     </div>
   );

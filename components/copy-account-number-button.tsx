@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 
 export function CopyAccountNumberButton({
@@ -25,15 +26,16 @@ export function CopyAccountNumberButton({
   }
 
   return (
-    <button
+    <Button
       type="button"
       data-account-copy=""
       onClick={handleCopy}
-      className="pub-btn h-11 px-4 text-sm"
+      variant="theme"
+      className="h-11 px-4 text-sm"
     >
       {copied
         ? PUBLIC_WISHLIST_COPY.accountCopyCopied
         : PUBLIC_WISHLIST_COPY.accountCopyLabel}
-    </button>
+    </Button>
   );
 }
