@@ -46,32 +46,32 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
               className="p-5 sm:p-6"
             >
               <section>
-              <h2 className="text-base font-black text-ink sm:text-lg">
-                {section.heading}
-              </h2>
-              {section.paragraphs?.map((paragraph, index) => (
-                <p
-                  key={index}
-                  className="mt-3 text-sm font-semibold leading-7 text-ink-soft"
-                >
-                  {paragraph}
-                </p>
-              ))}
-              {section.items ? (
-                <ul className="mt-3 space-y-2">
-                  {section.items.map((item, index) => (
-                    <li
-                      key={index}
-                      className="flex gap-2 text-sm font-semibold leading-7 text-ink-soft"
-                    >
-                      <span aria-hidden="true" className="text-accent-main">
-                        •
-                      </span>
-                      <span className="break-keep">{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              ) : null}
+                <h2 className="text-base font-black text-ink sm:text-lg">
+                  {section.heading}
+                </h2>
+                {section.paragraphs?.map((paragraph, index) => (
+                  <p
+                    key={index}
+                    className="mt-3 text-sm font-semibold leading-7 text-ink-soft"
+                  >
+                    {paragraph}
+                  </p>
+                ))}
+                {section.items ? (
+                  <ul className="mt-3 space-y-2">
+                    {section.items.map((item, index) => (
+                      <li
+                        key={index}
+                        className="flex gap-2 text-sm font-semibold leading-7 text-ink-soft"
+                      >
+                        <span aria-hidden="true" className="text-accent-main">
+                          •
+                        </span>
+                        <span className="break-keep">{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                ) : null}
               </section>
             </Card>
           ))}

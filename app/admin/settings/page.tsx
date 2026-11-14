@@ -310,11 +310,11 @@ function SettingsSection({
   return (
     <Card asChild variant="admin">
       <section id={id}>
-      <div className="border-b border-line px-4 py-3">
-        <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
-        <p className="mt-1 text-sm leading-6 text-zinc-600">{description}</p>
-      </div>
-      <div className="divide-y divide-line">{children}</div>
+        <div className="border-b border-line px-4 py-3">
+          <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
+          <p className="mt-1 text-sm leading-6 text-zinc-600">{description}</p>
+        </div>
+        <div className="divide-y divide-line">{children}</div>
       </section>
     </Card>
   );

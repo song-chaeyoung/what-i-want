@@ -200,36 +200,36 @@ function AccountRevealModal({
     >
       <Card asChild variant="theme" className="w-full max-w-sm p-6">
         <section>
-        <p className="pub-pill pub-pill-alt">thank you</p>
-        <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--headline)]">
-          {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
-        </h2>
-        <p className="mt-2 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
-          {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
-        </p>
-        <PublicBankAccountCard account={account} className="mt-5" />
-        <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)]">
-          {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
-        </p>
-        <Button
-          asChild
-          variant="theme-accent"
-          size="block"
-          className="mt-5 h-11 text-sm"
-        >
-          <Link href={POST_PARTICIPATION_CTA_HREF}>
-            {PUBLIC_WISHLIST_COPY.postCreateCtaLabel}
-          </Link>
-        </Button>
-        <Button
-          type="button"
-          variant="theme"
-          size="block"
-          className="mt-3 h-11 text-sm"
-          onClick={() => closeAccountReveal(onClose)}
-        >
-          {PUBLIC_WISHLIST_COPY.accountModalClose}
-        </Button>
+          <p className="pub-pill pub-pill-alt">thank you</p>
+          <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--headline)]">
+            {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
+          </h2>
+          <p className="mt-2 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
+            {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
+          </p>
+          <PublicBankAccountCard account={account} className="mt-5" />
+          <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)]">
+            {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
+          </p>
+          <Button
+            asChild
+            variant="theme-accent"
+            size="block"
+            className="mt-5 h-11 text-sm"
+          >
+            <Link href={POST_PARTICIPATION_CTA_HREF}>
+              {PUBLIC_WISHLIST_COPY.postCreateCtaLabel}
+            </Link>
+          </Button>
+          <Button
+            type="button"
+            variant="theme"
+            size="block"
+            className="mt-3 h-11 text-sm"
+            onClick={() => closeAccountReveal(onClose)}
+          >
+            {PUBLIC_WISHLIST_COPY.accountModalClose}
+          </Button>
         </section>
       </Card>
     </div>

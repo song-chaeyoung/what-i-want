@@ -51,40 +51,40 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
         <TextLogo href="/" className="mb-6 self-center" />
         <Card asChild variant="pixel" surface="paper" shadow="lg" className="p-6">
           <section>
-          <div className="space-y-2">
-            <h1 className="font-pixel text-3xl tracking-normal text-purple">
-              로그인
-            </h1>
-            <p className="text-sm leading-6 text-ink-soft">
-              위시리스트를 만들고 공유하려면 소셜 계정으로 로그인해주세요.
-            </p>
-            <p className="text-sm leading-6 text-ink-soft">
-              만 14세 이상만 가입할 수 있어요.
-            </p>
-          </div>
+            <div className="space-y-2">
+              <h1 className="font-pixel text-3xl tracking-normal text-purple">
+                로그인
+              </h1>
+              <p className="text-sm leading-6 text-ink-soft">
+                위시리스트를 만들고 공유하려면 소셜 계정으로 로그인해주세요.
+              </p>
+              <p className="text-sm leading-6 text-ink-soft">
+                만 14세 이상만 가입할 수 있어요.
+              </p>
+            </div>
 
-          {noticeMessage ? (
-            <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
-              {noticeMessage}
-            </p>
-          ) : null}
+            {noticeMessage ? (
+              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+                {noticeMessage}
+              </p>
+            ) : null}
 
-          <div className="mt-8 space-y-3">
-            <form action={signInWithGoogle}>
-              <Button
-                type="submit"
-                variant="kakao"
-                className="w-full bg-white hover:bg-zinc-100"
-              >
-                Google로 계속하기
-              </Button>
-            </form>
-            <form action={signInWithKakao}>
-              <Button type="submit" variant="kakao" className="w-full">
-                Kakao로 계속하기
-              </Button>
-            </form>
-          </div>
+            <div className="mt-8 space-y-3">
+              <form action={signInWithGoogle}>
+                <Button
+                  type="submit"
+                  variant="kakao"
+                  className="w-full bg-white hover:bg-zinc-100"
+                >
+                  Google로 계속하기
+                </Button>
+              </form>
+              <form action={signInWithKakao}>
+                <Button type="submit" variant="kakao" className="w-full">
+                  Kakao로 계속하기
+                </Button>
+              </form>
+            </div>
           </section>
         </Card>
       </div>

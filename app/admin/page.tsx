@@ -193,29 +193,29 @@ function DashboardQueue({
   return (
     <Card asChild variant="admin">
       <section>
-      <div className="flex items-center justify-between gap-3 border-b border-line px-3.5 py-3">
-        <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
-        <Link
-          href={actionHref}
-          className="text-xs font-semibold text-teal transition-colors hover:text-accent-main"
-        >
-          {actionLabel}
-        </Link>
-      </div>
-      {hasRows ? (
-        <div className="divide-y divide-line">{children}</div>
-      ) : (
-        <div className="p-4">
-          <p className="text-sm font-semibold text-ink">{emptyTitle}</p>
-          <p className="mt-1 text-sm leading-6 text-zinc-600">{emptyDescription}</p>
+        <div className="flex items-center justify-between gap-3 border-b border-line px-3.5 py-3">
+          <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
           <Link
-            href={emptyActionHref}
-            className="mt-3 inline-flex h-8 items-center rounded-md border border-line bg-admin-subtle px-3 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100"
+            href={actionHref}
+            className="text-xs font-semibold text-teal transition-colors hover:text-accent-main"
           >
-            {emptyActionLabel}
+            {actionLabel}
           </Link>
         </div>
-      )}
+        {hasRows ? (
+          <div className="divide-y divide-line">{children}</div>
+        ) : (
+          <div className="p-4">
+            <p className="text-sm font-semibold text-ink">{emptyTitle}</p>
+            <p className="mt-1 text-sm leading-6 text-zinc-600">{emptyDescription}</p>
+            <Link
+              href={emptyActionHref}
+              className="mt-3 inline-flex h-8 items-center rounded-md border border-line bg-admin-subtle px-3 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100"
+            >
+              {emptyActionLabel}
+            </Link>
+          </div>
+        )}
       </section>
     </Card>
   );

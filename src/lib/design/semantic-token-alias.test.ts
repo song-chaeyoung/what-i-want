@@ -118,7 +118,6 @@ const previousPub = {
     "--card-border": "2px solid #171717",
     "--divider-color": "#171717",
     "--card-shadow": "6px 6px 0 #111827",
-    "--card-shadow-lg": "8px 8px 0 #111827",
     "--card-shadow-sm": "3px 3px 0 #111827",
     "--card-radius": "4px",
     "--tint-mint": "#ccfbf1",
@@ -150,7 +149,6 @@ const previousPub = {
     "--bank-bg": "#ccfbf1",
     "--bank-ink": "#134e4a",
     "--tint-blush": "#ffe4e6",
-    "--msg-title": "#171717",
     "--msg-sub": "#9d174d",
   },
   mono_bw: {
@@ -182,7 +180,6 @@ const previousPub = {
     "--card-border": "1.5px solid #111",
     "--divider-color": "#111",
     "--card-shadow": "none",
-    "--card-shadow-lg": "none",
     "--card-shadow-sm": "none",
     "--card-radius": "0",
     "--tint-mint": "#f3f3f3",
@@ -214,7 +211,6 @@ const previousPub = {
     "--bank-bg": "#f6f6f6",
     "--bank-ink": "#333",
     "--tint-blush": "#fafafa",
-    "--msg-title": "#111",
     "--msg-sub": "#6b6b6b",
   },
   soft_pastel: {
@@ -246,7 +242,6 @@ const previousPub = {
     "--card-border": "none",
     "--divider-color": "#f0dfe9",
     "--card-shadow": "0 10px 28px rgba(150, 120, 160, 0.16)",
-    "--card-shadow-lg": "0 14px 32px rgba(150, 120, 160, 0.18)",
     "--card-shadow-sm": "0 6px 16px rgba(150, 120, 160, 0.2)",
     "--card-radius": "22px",
     "--tint-mint": "#fdeef5",
@@ -278,7 +273,6 @@ const previousPub = {
     "--bank-bg": "#dff1ec",
     "--bank-ink": "#3f7a6e",
     "--tint-blush": "#fdeef5",
-    "--msg-title": "#bd6595",
     "--msg-sub": "#c77ba0",
   },
 } as const;
@@ -526,7 +520,8 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("background: var(--bank-bg);");
     expect(publicThemesCss).toContain("color: var(--header-sub);");
     expect(publicThemesCss).toContain("color: var(--label-color);");
-    expect(publicThemesCss).not.toMatch(/var\(--msg-title\)/);
+    expect(publicThemesCss).not.toContain("--" + "card-shadow-lg");
+    expect(publicThemesCss).not.toContain("--" + "msg-title");
     expect(publicThemesCss).toContain("gap: var(--pill-gap);");
     expect(publicThemesCss).toContain("padding: var(--pill-pad);");
     expect(publicThemesCss).toContain("gap: var(--btn-gap);");
