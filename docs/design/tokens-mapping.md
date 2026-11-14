@@ -1,6 +1,6 @@
 # 의미 토큰 병합 매핑
 
-코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13.
+코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14.
 
 상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 세 테마의 리터럴은 그대로입니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
@@ -33,9 +33,11 @@
 | `--pub-fallback-bg` | `--tint-mint` | `#ccfbf1` | `#f3f3f3` | `#fdeef5` |
 | `--pub-msg-bg` | `--tint-blush` | `#ffe4e6` | `#fafafa` | `#fdeef5` |
 
-`--pub-headline-color`와 `--pub-headline-on-header`는 테마 값만 같았습니다. 카드 안 제목은 `.pub-card`가 `--headline: var(--ink)`로 덮어씁니다. 헤더의 `.pub-headline`은 카드 밖이라 테마 `--headline`을 그대로 씁니다. `mono_bw` 헤더 제목은 `#fff`, 카드 제목은 `#111`입니다. 헤더용 흰색을 카드에 복사하지 않습니다.
+`--pub-headline-color`와 `--pub-headline-on-header`는 테마 값만 같았습니다. 카드 안 제목은 `.theme-card`가 `--headline: var(--ink)`로 덮어씁니다. 헤더의 `.pub-headline`은 카드 밖이라 테마 `--headline`을 그대로 씁니다. `mono_bw` 헤더 제목은 `#fff`, 카드 제목은 `#111`입니다. 헤더용 흰색을 카드에 복사하지 않습니다.
 
-현재 마크업은 `.pub-headline`을 `.pub-card` 안에 넣지 않습니다. 둘을 같이 쓰면 카드의 `--headline` 덮어쓰기가 그 제목에도 적용됩니다. 이전에는 헤더 전용 별칭이 카드 덮어쓰기를 받지 않았습니다. 그 조합은 화면에 없고, 새 토큰을 만들지 않았습니다.
+지표(`.pub-stat`)는 카드와 같은 면·테두리·모서리·그림자를 `.theme-card`에서 받습니다. 값 색은 테마 헤드라인을 유지해야 해서 `.theme-card.pub-stat`이 `--headline: inherit`로 카드의 잉크 덮어쓰기를 되돌립니다. `mono_bw`와 `soft_pastel`의 `.pub-stat` 전용 규칙은 그대로입니다.
+
+현재 마크업은 `.pub-headline`을 `.theme-card` 안에 넣지 않습니다. 둘을 같이 쓰면 카드의 `--headline` 덮어쓰기가 그 제목에도 적용됩니다. 이전에는 헤더 전용 별칭이 카드 덮어쓰기를 받지 않았습니다. 그 조합은 화면에 없고, 새 토큰을 만들지 않았습니다.
 
 `soft_pastel`에서는 `--tint-mint`와 `--tint-blush`가 둘 다 `#fdeef5`입니다. 같은 값으로 만나도 토큰은 나눕니다. `pixel_y2k`에서는 민트와 블러시가 다릅니다.
 
@@ -45,7 +47,7 @@
 
 `:root`에서 `--brand-purple: var(--headline)`은 그 요소에서 `#4c1d95`로 계산됩니다. 커스텀 속성은 이 계산값을 자식에게 상속합니다. `.pub-page`가 `--headline`만 `#fff`로 덮어써도, 상속된 `--brand-purple`은 `#4c1d95`로 남습니다. `.pub-page`에 `--brand-*` 리터럴을 다시 적지 않습니다. 그 재선언은 `@theme inline`이 유틸에 `--headline`을 직접 넣은 경우를 막지 못합니다.
 
-이 때문에 `--brand-*`는 호환층으로 남깁니다. 홈의 `.pixel-dot-bg`, `.pixel-board`, `.sticker-label`과 토스트 기본 폴백(`--brand-line`, `--brand-teal`, `--brand-orange`, `--brand-purple`)도 이 별칭을 그대로 씁니다. 토스트는 `.pub-page` 밖이고, 테마별 `--toast-*` 리터럴은 `body:has(...)`에 남아 있습니다.
+이 때문에 `--brand-*`는 호환층으로 남깁니다. 홈의 `.pixel-dot-bg`, `.sticker-label`과 토스트 기본 폴백(`--brand-line`, `--brand-teal`, `--brand-orange`, `--brand-purple`)도 이 별칭을 그대로 씁니다. 쓰이지 않던 `.pixel-board`와 `.pixel-card`는 2026-11-14에 지웠습니다. 토스트는 `.pub-page` 밖이고, 테마별 `--toast-*` 리터럴은 `body:has(...)`에 남아 있습니다.
 
 | 의미 토큰 | `:root` 값 | 남긴 브랜드 별칭 | 쓰는 곳 |
 | --- | --- | --- | --- |
@@ -87,6 +89,21 @@
 | `--kakao-hover` | `#f6dc00` | `--color-kakao-hover` | 그 버튼의 호버 면 |
 
 `--line-strong`(`#171717`)와 `--accent-main`(`#0f766e`)는 새 값이 아닙니다. 버튼 유틸 `border-line-strong`, `bg-accent-main`이 나오게 `--color-line-strong`, `--color-accent-main` 다리만 추가했습니다. `--color-accent-main`은 `var(--accent-main)`이라 공개 테마 안에서는 그 테마 색을 따릅니다. 홈 CTA는 `.pub-page` 밖입니다.
+
+## 카드 글자와 관리자 면
+
+2026-11-14에 카드와 본문 글자에 직접 적혀 있던 색을 `:root` 토큰으로 옮겼습니다. `@theme inline`의 `--color-*` 다리는 그 변수를 가리켜 `text-ink-soft`, `bg-admin-bg` 같은 유틸이 나오게 합니다. 공개 테마는 이 네 값을 덮어쓰지 않습니다.
+
+| 의미 토큰 | `:root` 값 | 유틸 다리 | 바꾸기 전 |
+| --- | --- | --- | --- |
+| `--ink-soft` | `#4b5563` | `--color-ink-soft` | 본문 회색 글자 |
+| `--ink-faint` | `#6b7280` | `--color-ink-faint` | 보조 글자 |
+| `--admin-bg` | `#fafaf9` | `--color-admin-bg` | 관리자 페이지 배경, 카드 hover |
+| `--admin-subtle` | `#fbfbfa` | `--color-admin-subtle` | 사이드바, 모바일 탭, 카드 아래칸 |
+
+`#171717`는 기존 `ink`, `#fffdf7`는 `paper`, `#4c1d95`는 `purple`입니다. 이 유틸은 `--brand-*`를 가리키므로 `.pub-page` 안에서도 `:root` 색을 유지합니다. `#0f766e`를 `accent-main`으로 바꾼 곳은 `.pub-page` 밖입니다. `--color-accent-main`은 `var(--accent-main)`이라 공개 테마 안에서는 테마 색이 됩니다.
+
+카드 껍데기는 [Card](../../components/ui/card.tsx) variant입니다. `pixel`은 `border-2 border-ink`에 `paper` 또는 `white`, 그림자는 `shadow-pixel-xs`·`md`·`lg` 또는 없음입니다. `theme`은 `.theme-card`를 감쌉니다. `admin`은 `rounded-md border border-line bg-white`이고, 아래칸은 `border-t border-line bg-admin-subtle`, hover는 `bg-admin-bg`입니다. shadcn 기본 `default` variant는 그대로입니다.
 
 Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [globals.css](../../app/globals.css)는 `@source not "../docs"`로 문서 경로를 스캔에서 빼, 지운 토큰 이름이 생성된 CSS에 다시 들어가지 않게 합니다. 앱과 컴포넌트 소스 탐지는 그대로입니다.
 
@@ -161,7 +178,6 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--card-border` | `2px solid #171717` | `1.5px solid #111` | `none` |
 | `--card-radius` | `4px` | `0` | `22px` |
 | `--card-shadow` | `6px 6px 0 #111827` | `none` | `0 10px 28px rgba(150, 120, 160, 0.16)` |
-| `--card-shadow-lg` | `8px 8px 0 #111827` | `none` | `0 14px 32px rgba(150, 120, 160, 0.18)` |
 | `--card-shadow-sm` | `3px 3px 0 #111827` | `none` | `0 6px 16px rgba(150, 120, 160, 0.2)` |
 | `--header-border` | `2px solid #171717` | `1.5px solid #111` | `none` |
 | `--pill-border` | `2px solid #171717` | `1.5px solid #111` | `none` |
@@ -177,7 +193,9 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 지운 모양·간격 별칭: `--pub-border`, `--pub-radius`, `--pub-shadow`, `--pub-shadow-lg`, `--pub-shadow-sm`, `--pub-header-border`, `--pub-pill-border`, `--pub-pill-radius`, `--pub-pill-shadow`, `--pub-btn-radius`, `--pub-btn-border`, `--pub-btn-shadow`, `--pub-progress-border`, `--pub-progress-radius`, `--pub-field-border`, `--pub-field-radius`, `--pub-pill-pad`.
 
-고정 픽셀 그림자는 [globals.css](../../app/globals.css)의 `:root`와 `@theme inline`에 같은 리터럴로 있습니다. 유틸은 `@theme` 리터럴을 Tailwind 그림자 래퍼에 넣고, `.pixel-board`·`.pixel-card`·`.sticker-label`은 `:root` 변수를 `box-shadow`에 그대로 씁니다.
+2026-11-14에 지운 토큰: `--card-shadow-lg`. `.pub-card-hero`를 지우면서 `var()`로 읽는 곳이 없어졌습니다.
+
+고정 픽셀 그림자는 [globals.css](../../app/globals.css)의 `:root`와 `@theme inline`에 같은 리터럴로 있습니다. 유틸은 `@theme` 리터럴을 Tailwind 그림자 래퍼에 넣고, `.sticker-label`은 `:root` 변수를 `box-shadow`에 그대로 씁니다. `.pixel-board`와 `.pixel-card`는 호출부가 없어 2026-11-14에 지웠습니다.
 
 2026-11-12에 `--shadow-pixel-xs`(`2px 2px 0 #111827`)를 추가했습니다. 홈의 픽셀 그림자와 `.sticker-label`이 이 값을 씁니다. 404·오류 카드의 `shadow-pixel-xs`도 같은 토큰입니다. 로그인·온보딩·관리자·공개 위시리스트의 기존 그림자는 그대로입니다.
 
@@ -186,11 +204,11 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `shadow-pixel-xs` / `--shadow-pixel-xs` | `2px 2px 0 #111827` | 홈 미리보기·FAQ·선물 상자, 404·오류 카드, `.sticker-label` |
 | `shadow-pixel-sm` / `--shadow-pixel-sm` | `3px 3px 0 #111827` | 관리자 첫 진입 안내 비네트 |
 | `shadow-pixel-md` / `--shadow-pixel-md` | `4px 4px 0 #111827` | 공개 위시 헤더 장식, 약관 본문 |
-| `shadow-pixel-lg` / `--shadow-pixel-lg` | `6px 6px 0 #111827` | 로그인·온보딩·약관 헤더, `.pixel-card` |
-| `shadow-pixel-xl` / `--shadow-pixel-xl` | `8px 8px 0 #111827` | `.pixel-board` |
+| `shadow-pixel-lg` / `--shadow-pixel-lg` | `6px 6px 0 #111827` | 로그인·온보딩·약관 헤더 |
+| `shadow-pixel-xl` / `--shadow-pixel-xl` | `8px 8px 0 #111827` | 현재 호출부는 없음. 토큰은 남겨 둠 |
 | `shadow-header-line` / `--shadow-header-line` | `0 1px 0 rgba(24, 24, 27, 0.02)` | 관리자 헤더와 로딩 헤더 |
 
-픽셀 테마의 `--card-shadow-lg`·`--card-shadow-sm`·`--pill-shadow`·`--btn-shadow`는 위 고정 그림자와 픽셀이 같아도 별도 토큰입니다. `mono_bw`는 `none`이고 `soft_pastel`은 흐린 그림자입니다.
+픽셀 테마의 `--card-shadow-sm`·`--pill-shadow`·`--btn-shadow`는 위 고정 그림자와 픽셀이 같아도 별도 토큰입니다. `mono_bw`는 `none`이고 `soft_pastel`은 흐린 그림자입니다.
 
 `@theme`의 `--shadow-pub`와 `--radius-pub`는 지웠습니다. `--shadow-pub`는 [생일 선택](../../app/onboarding/birthday-picker.tsx)의 `shadow-pub` 한 곳뿐이었습니다. Tailwind 기본 `shadow-xs` 생성 문자열은 `0 1px 2px 0 var(--tw-shadow-color, rgb(0 0 0 / 0.05))`라 퍼짐 `0`과 색 문법이 다르지만, Chrome 계산 `box-shadow`는 dev·production 모두 마지막 층이 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`로 같았습니다. 그래서 `shadow-xs`로 바꿨습니다. `--radius-pub`(`0.375rem`)와 `rounded-pub`는 사용처가 없습니다. `rounded-md`는 `--radius` `0.625rem`의 0.8배라 그 값과 다릅니다.
 
@@ -258,8 +276,9 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--pub-field-bg` | `--field-bg` | `#fff` | `#fff` | `#fffafc` |
 | `--pub-bank-bg` | `--bank-bg` | `#ccfbf1` | `#f6f6f6` | `#dff1ec` |
 | `--pub-bank-ink` | `--bank-ink` | `#134e4a` | `#333` | `#3f7a6e` |
-| `--pub-msg-title` | `--msg-title` | `#171717` | `#111` | `#bd6595` |
 | `--pub-msg-sub` | `--msg-sub` | `#9d174d` | `#6b6b6b` | `#c77ba0` |
+
+2026-11-14에 지운 토큰: `--msg-title`(이전 `--pub-msg-title`). `.pub-msg-title`을 지우면서 `var()`로 읽는 곳이 없어졌습니다.
 
 `--toast-*`는 의미 토큰으로 바꾸지 않습니다. 토스트는 `.pub-page` 밖이라 `body:has(...)`의 리터럴을 유지합니다. `soft_pastel`은 warning·info를 적지 않아 브랜드 폴백(`--brand-orange`, `--brand-purple`)을 씁니다.
 
@@ -277,7 +296,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 ## 확인 방법
 
-[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 고정 픽셀 그림자와 관리자 사이드바 테마 키, 그리고 `app/`·`components/`·`src/`와 공개 테마 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 봅니다. `--stat-accent`와 `--msg-sub`는 선언만 있는지도 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
+[별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 고정 픽셀 그림자와 관리자 사이드바 테마 키, 그리고 `app/`·`components/`·`src/`와 공개 테마 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 봅니다. `--stat-accent`와 `--msg-sub`는 선언만 있는지도 봅니다. 2026-11-14에 지운 `--card-shadow-lg`와 `--msg-title`은 공개 테마 CSS에 선언이 없는지도 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
 
 [Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`는 그대로인지도 봅니다. `shadow-xs`의 Chrome 계산 `box-shadow`는 지운 `--shadow-pub`와 같은 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`입니다. `--radius-pub`는 사용처가 없어 지웠고, `rounded-md`는 `--radius` `0.625rem`의 0.8배라 `0.375rem`과 다릅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 

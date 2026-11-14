@@ -43,7 +43,7 @@
 ### 공개 카드 구성
 
 ```
-article.gift-card-shell.pub-card
+article.gift-card-shell.theme-card
 ├─ 이미지 영역: 이미지(4:3) 또는 GiftFallback "GIFT"
 ├─ 본문: .pub-pill "NO. n" · 상태 라벨 · 이름(줄 수 제한 없음) · 설명(선택)
 ├─ 진행 패널: 모인 금액 / 목표. 목표가 있을 때만 .pub-progress와 "N%". 없으면 "목표 금액 없음". "선물 링크 보기"(productUrl 있을 때)

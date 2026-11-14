@@ -48,8 +48,8 @@ async function AdminShell({ children }: AdminLayoutProps) {
   const unreadMessageCount = unreadResult.ok ? unreadResult.count : 0;
 
   return (
-    <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
+    <div className="flex min-h-dvh bg-admin-bg font-sans text-zinc-800">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-admin-subtle px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"
@@ -113,7 +113,7 @@ async function AdminShell({ children }: AdminLayoutProps) {
           {state.wishlistSlug ? (
             <Link
               href={`/wishlist/${state.wishlistSlug}`}
-              className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-line bg-[#fbfbfa] px-3 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100 sm:h-9 sm:text-sm"
+              className="inline-flex h-8 shrink-0 items-center justify-center rounded-md border border-line bg-admin-subtle px-3 text-xs font-semibold text-zinc-800 transition-colors hover:bg-zinc-100 sm:h-9 sm:text-sm"
             >
               공개 페이지 보기
             </Link>
@@ -141,8 +141,8 @@ async function AdminShell({ children }: AdminLayoutProps) {
 
 function AdminShellSkeleton() {
   return (
-    <div className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800">
-      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-[#fbfbfa] px-4 py-admin-sidebar md:block">
+    <div className="flex min-h-dvh bg-admin-bg font-sans text-zinc-800">
+      <aside className="hidden w-admin-sidebar flex-none border-r border-line bg-admin-subtle px-4 py-admin-sidebar md:block">
         <div className="px-1.5 pb-5">
           <Link
             href="/"

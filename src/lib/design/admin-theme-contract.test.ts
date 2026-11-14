@@ -82,8 +82,8 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminLayoutPath, "utf8");
 
     expect(source).toContain('import Link from "next/link";');
-    expect(source).toContain('className="flex min-h-dvh bg-[#fafaf9] font-sans text-zinc-800"');
-    expect(source).toContain("border-r border-line bg-[#fbfbfa]");
+    expect(source).toContain('className="flex min-h-dvh bg-admin-bg font-sans text-zinc-800"');
+    expect(source).toContain("border-r border-line bg-admin-subtle");
     expect(source).toContain("sticky top-0 z-10 flex min-h-12");
     expect(source).toContain("border-b border-line bg-white/90");
     expect(source).toContain("backdrop-blur");
@@ -135,7 +135,7 @@ describe("admin calm theme contract", () => {
     expect(navSource).toContain("icon: Settings");
     expect(navSource).toContain("const Icon = item.icon;");
     expect(navSource).toContain('<Icon aria-hidden="true"');
-    expect(navSource).toContain('className="border-b border-line bg-[#fbfbfa] px-4 md:hidden"');
+    expect(navSource).toContain('className="border-b border-line bg-admin-subtle px-4 md:hidden"');
     expect(navSource).not.toContain("rounded-full border border-line bg-[#f4f4f3] p-1");
     expect(navSource).toContain("flex gap-3 overflow-x-auto");
     expect(navSource).toContain("shrink-0 whitespace-nowrap");
@@ -160,16 +160,12 @@ describe("admin calm theme contract", () => {
       expect(source).not.toContain("border-[#171717]");
     }
 
-    expect(readFileSync(adminPagePath, "utf8")).toContain("rounded-md border border-line bg-white");
-    expect(readFileSync(adminWishesPagePath, "utf8")).toContain(
-      "rounded-md border border-line bg-white",
-    );
+    expect(readFileSync(adminPagePath, "utf8")).toContain('variant="admin"');
+    expect(readFileSync(adminWishesPagePath, "utf8")).toContain('variant="admin"');
     expect(readFileSync(adminMessagesPagePath, "utf8")).toContain(
-      "divide-y divide-line rounded-md border border-line bg-white",
+      'variant="admin" className="divide-y divide-line"',
     );
-    expect(readFileSync(adminSettingsPagePath, "utf8")).toContain(
-      "rounded-md border border-line bg-white",
-    );
+    expect(readFileSync(adminSettingsPagePath, "utf8")).toContain('variant="admin"');
   });
 
   test("preserves admin wishes form and public link contracts", () => {
@@ -228,8 +224,9 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("const totalFundedAmount = result.items.reduce(");
     expect(source).toContain("const statusCounts: Record<WishStatus, number>");
     expect(source).toContain("<AdminMetricGroup");
+    expect(adminUiSource).toContain('variant="admin"');
     expect(adminUiSource).toContain(
-      "divide-y divide-line overflow-hidden rounded-md border border-line bg-white",
+      "divide-y divide-line overflow-hidden",
     );
     expect(source).toContain("<AdminMetric");
     expect(source).toContain('label="총 선물"');
@@ -260,8 +257,10 @@ describe("admin calm theme contract", () => {
   test("renders admin wishes as list rows with thumbnails and collapsed edits", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
 
-    expect(source).toContain('<details className="group rounded-md border border-line bg-white">');
-    expect(source).toContain('className="flex cursor-pointer list-none items-start gap-3 p-3');
+    expect(source).toContain('<Card asChild variant="admin" className="group">');
+    expect(source).toContain("<details");
+    expect(source).toContain("flex cursor-pointer list-none items-start gap-3 p-3");
+    expect(source).toContain("adminCardHoverClassName");
     expect(source).toContain("<WishThumbnail item={item} />");
     expect(source).toContain("function WishThumbnail");
     expect(source).toContain('item.imageUrl ? null : "GIFT"');
@@ -383,7 +382,7 @@ describe("admin calm theme contract", () => {
 
     expect(source).toContain("<AdminMetricGroup");
     expect(source).toContain('label="받은 메시지"');
-    expect(source).toContain('className="divide-y divide-line rounded-md border border-line bg-white"');
+    expect(source).toContain('<Card variant="admin" className="divide-y divide-line">');
     expect(source).toContain("function MessageRow");
     expect(source).toContain(
       "<MessageRow key={message.id} message={message} hidden={hiddenView} />",

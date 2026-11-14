@@ -39,8 +39,9 @@ describe("onboarding UI contract", () => {
     expect(source).toContain("<TextLogo");
     expect(textLogoSource).toContain('src="/logo.png"');
     expect(source).toContain("font-pixel");
-    expect(source).toContain("border-2 border-[#171717] bg-[#fffdf7]");
-    expect(source).toContain("shadow-pixel-lg");
+    expect(source).toContain('variant="pixel"');
+    expect(source).toContain('surface="paper"');
+    expect(source).toContain('shadow="lg"');
     expect(source).toContain("text-zinc-600");
     expect(source).toContain("focus:border-zinc-400");
     expect(source).toContain("placeholder:text-zinc-400");

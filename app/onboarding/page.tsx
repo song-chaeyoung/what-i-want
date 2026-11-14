@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TextLogo } from "@/components/text-logo";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
@@ -44,82 +45,84 @@ export default async function OnboardingPage({
     error && Object.hasOwn(errorMessages, error) ? errorMessages[error] : null;
 
   return (
-    <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
+    <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-ink">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
         <TextLogo className="mb-6 self-center" />
-        <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-lg">
-          <div className="space-y-2">
-            <p className="font-pixel text-sm tracking-normal text-[#0f766e]">
-              온보딩
-            </p>
-            <h1 className="font-pixel break-keep text-3xl tracking-normal text-[#4c1d95]">
-              기본 위시리스트 만들기
-            </h1>
-            <p className="text-sm leading-6 text-zinc-600">
-              처음 공유할 공개 위시리스트의 기본 정보를 정합니다.
-            </p>
-          </div>
+        <Card asChild variant="pixel" surface="paper" shadow="lg" className="p-6">
+          <section>
+            <div className="space-y-2">
+              <p className="font-pixel text-sm tracking-normal text-accent-main">
+                온보딩
+              </p>
+              <h1 className="font-pixel break-keep text-3xl tracking-normal text-purple">
+                기본 위시리스트 만들기
+              </h1>
+              <p className="text-sm leading-6 text-zinc-600">
+                처음 공유할 공개 위시리스트의 기본 정보를 정합니다.
+              </p>
+            </div>
 
-          {errorMessage ? (
-            <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
-              {errorMessage}
-            </p>
-          ) : null}
+            {errorMessage ? (
+              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+                {errorMessage}
+              </p>
+            ) : null}
 
-          <form
-            action="/api/onboarding"
-            method="post"
-            className="mt-8 space-y-5"
-          >
-            <Field label="표시 이름" htmlFor="displayName">
-              <input
-                id="displayName"
-                name="displayName"
-                type="text"
-                maxLength={80}
-                defaultValue={user.name ?? ""}
-                required
-                className={inputClassName}
-              />
-            </Field>
-
-            <Field label="생일" htmlFor="birthday">
-              <BirthdayPicker id="birthday" name="birthday" />
-            </Field>
-
-            <Field label="소개" htmlFor="description">
-              <textarea
-                id="description"
-                name="description"
-                rows={4}
-                className={textareaClassName}
-              />
-            </Field>
-
-            <label className="flex items-start gap-2 text-sm leading-6 text-zinc-700">
-              <input
-                name="ageConfirmed"
-                type="checkbox"
-                required
-                className="mt-1 size-4 shrink-0 accent-[#111827]"
-              />
-              <span>
-                만 14세 이상입니다.{" "}
-                <span className="text-zinc-500">
-                  (만 14세 미만은 가입할 수 없어요)
-                </span>
-              </span>
-            </label>
-
-            <Button
-              type="submit"
-              variant="cta"
-              className="h-12 w-full px-4 py-0"
+            <form
+              action="/api/onboarding"
+              method="post"
+              className="mt-8 space-y-5"
             >
-              위시리스트 만들기
-            </Button>
-          </form>
-        </section>
+              <Field label="표시 이름" htmlFor="displayName">
+                <input
+                  id="displayName"
+                  name="displayName"
+                  type="text"
+                  maxLength={80}
+                  defaultValue={user.name ?? ""}
+                  required
+                  className={inputClassName}
+                />
+              </Field>
+
+              <Field label="생일" htmlFor="birthday">
+                <BirthdayPicker id="birthday" name="birthday" />
+              </Field>
+
+              <Field label="소개" htmlFor="description">
+                <textarea
+                  id="description"
+                  name="description"
+                  rows={4}
+                  className={textareaClassName}
+                />
+              </Field>
+
+              <label className="flex items-start gap-2 text-sm leading-6 text-zinc-700">
+                <input
+                  name="ageConfirmed"
+                  type="checkbox"
+                  required
+                  className="mt-1 size-4 shrink-0 accent-[#111827]"
+                />
+                <span>
+                  만 14세 이상입니다.{" "}
+                  <span className="text-zinc-500">
+                    (만 14세 미만은 가입할 수 없어요)
+                  </span>
+                </span>
+              </label>
+
+              <Button
+                type="submit"
+                variant="cta"
+                className="h-12 w-full px-4 py-0"
+              >
+                위시리스트 만들기
+              </Button>
+            </form>
+          </section>
+        </Card>
       </div>
     </main>
   );

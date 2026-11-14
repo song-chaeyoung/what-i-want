@@ -5,6 +5,7 @@ import { PublicParticipationSubmitButton } from "@/components/public-participati
 import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
@@ -110,14 +111,14 @@ export function PublicWishlistView({
             />
           ))
         ) : (
-          <div className="pub-card p-6">
+          <Card variant="theme" className="p-6">
             <h2 className="text-2xl font-black tracking-normal text-[var(--headline)]">
               {PUBLIC_WISHLIST_COPY.emptyTitle}
             </h2>
             <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
               {PUBLIC_WISHLIST_COPY.emptyDescription}
             </p>
-          </div>
+          </Card>
         )}
 
         <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
@@ -136,52 +137,54 @@ export function PublicWishlistView({
 
 function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
   return (
-    <details className="send-heart-section pub-card">
-      <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
-        <span className="pub-pill pub-pill-alt">gift note</span>
-        <span className="text-lg font-black tracking-normal text-[var(--headline)]">
-          {PUBLIC_WISHLIST_COPY.messageFormTitle}
-        </span>
-        <span className="w-full text-sm font-semibold text-[var(--ink-muted)] sm:w-auto">
-          {PUBLIC_WISHLIST_COPY.messageFormNote}
-        </span>
-      </summary>
-      <form
-        action={demo ? undefined : submitParticipationAction.bind(null, slug)}
-        className="space-y-4 px-5 pb-5"
-      >
-        <input type="hidden" name="clientRequestId" value={crypto.randomUUID()} />
-        <PublicField
-          label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
-          htmlFor="message-sender"
+    <Card asChild variant="theme" className="send-heart-section">
+      <details>
+        <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
+          <span className="pub-pill pub-pill-alt">gift note</span>
+          <span className="text-lg font-black tracking-normal text-[var(--headline)]">
+            {PUBLIC_WISHLIST_COPY.messageFormTitle}
+          </span>
+          <span className="w-full text-sm font-semibold text-[var(--ink-muted)] sm:w-auto">
+            {PUBLIC_WISHLIST_COPY.messageFormNote}
+          </span>
+        </summary>
+        <form
+          action={demo ? undefined : submitParticipationAction.bind(null, slug)}
+          className="space-y-4 px-5 pb-5"
         >
-          <input
-            id="message-sender"
-            name="senderName"
-            type="text"
-            maxLength={80}
-            placeholder="이름"
-            className={publicInputClassName}
-          />
-        </PublicField>
+          <input type="hidden" name="clientRequestId" value={crypto.randomUUID()} />
+          <PublicField
+            label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
+            htmlFor="message-sender"
+          >
+            <input
+              id="message-sender"
+              name="senderName"
+              type="text"
+              maxLength={80}
+              placeholder="이름"
+              className={publicInputClassName}
+            />
+          </PublicField>
 
-        <PublicField
-          label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
-          htmlFor="message-body"
-        >
-          <textarea
-            id="message-body"
-            name="body"
-            rows={4}
-            maxLength={500}
-            required
-            className={publicTextareaClassName}
-          />
-        </PublicField>
+          <PublicField
+            label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
+            htmlFor="message-body"
+          >
+            <textarea
+              id="message-body"
+              name="body"
+              rows={4}
+              maxLength={500}
+              required
+              className={publicTextareaClassName}
+            />
+          </PublicField>
 
-        <ParticipationSubmit demo={demo} />
-      </form>
-    </details>
+          <ParticipationSubmit demo={demo} />
+        </form>
+      </details>
+    </Card>
   );
 }
 
@@ -241,164 +244,166 @@ function PublicWishCard({
   );
 
   return (
-    <article className="gift-card-shell pub-card overflow-hidden">
-      <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
-        <div
-          className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
-            imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
-          }`}
-          style={
-            imageUrl
-              ? { backgroundImage: `url(${JSON.stringify(imageUrl)})` }
-              : undefined
-          }
-        >
-          {!imageUrl ? <GiftFallback /> : null}
-        </div>
-
-        <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_220px]">
-          <div className="min-w-0">
-            <div className="flex flex-wrap items-center gap-2">
-              <p className="pub-pill">NO. {index + 1}</p>
-              <p className="pub-label text-xs">
-                {getWishStatusLabel(item.status, item.progress)}
-              </p>
-            </div>
-            <h2
-              id={wishTitleId(item.id)}
-              tabIndex={-1}
-              className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--headline)] sm:text-3xl"
-            >
-              {item.title}
-            </h2>
-
-            {item.description ? (
-              <p className="mt-4 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
-                {item.description}
-              </p>
-            ) : null}
-          </div>
-
-          <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
-            <p className="pub-label text-xs">gift progress</p>
-            <div>
-              <p className="text-2xl font-black tracking-normal text-[var(--headline)]">
-                {formatCurrency(item.fundedAmount)}
-              </p>
-              <p className="mt-1 text-xs font-black text-[var(--ink-muted)]">
-                {item.targetAmount
-                  ? `${formatCurrency(item.targetAmount)} 중`
-                  : PUBLIC_WISHLIST_COPY.noTargetAmount}
-              </p>
-            </div>
-            {item.targetAmount ? (
-              <>
-                <div className="pub-progress mt-2">
-                  <i style={{ width: `${item.progress}%` }} />
-                </div>
-                <p className="text-xs font-black text-[var(--ink-muted)]">
-                  {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
-                </p>
-              </>
-            ) : null}
-            {productUrl ? (
-              <Button
-                asChild
-                variant="theme-primary"
-                className="mt-2 h-11 px-4 text-sm"
-              >
-                <a href={productUrl} target="_blank" rel="noreferrer">
-                  선물 링크 보기
-                </a>
-              </Button>
-            ) : null}
-          </div>
-        </div>
-      </div>
-
-      {canFund ? (
-        <details className="send-heart-section border-t-2 border-[var(--divider-color)]">
-          <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--accent-main)] [&::-webkit-details-marker]:hidden">
-            {PUBLIC_WISHLIST_COPY.fundCta}
-          </summary>
-          <form
-            action={
-              demo ? undefined : submitParticipationAction.bind(null, slug)
+    <Card asChild variant="theme" className="gift-card-shell overflow-hidden">
+      <article>
+        <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
+          <div
+            className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
+              imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
+            }`}
+            style={
+              imageUrl
+                ? { backgroundImage: `url(${JSON.stringify(imageUrl)})` }
+                : undefined
             }
-            className="space-y-4 border-t-2 border-[var(--divider-color)] p-5"
           >
-            <p className="text-lg font-black tracking-normal text-[var(--headline)]">
-              {PUBLIC_WISHLIST_COPY.participationTitle}
-            </p>
-            <input type="hidden" name="wishItemId" value={item.id} />
-            <input
-              type="hidden"
-              name="clientRequestId"
-              value={crypto.randomUUID()}
-            />
+            {!imageUrl ? <GiftFallback /> : null}
+          </div>
 
-            <PublicField
-              label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
-              htmlFor={`participation-amount-${item.id}`}
+          <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_220px]">
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="pub-pill">NO. {index + 1}</p>
+                <p className="pub-label text-xs">
+                  {getWishStatusLabel(item.status, item.progress)}
+                </p>
+              </div>
+              <h2
+                id={wishTitleId(item.id)}
+                tabIndex={-1}
+                className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--headline)] sm:text-3xl"
+              >
+                {item.title}
+              </h2>
+
+              {item.description ? (
+                <p className="mt-4 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
+                  {item.description}
+                </p>
+              ) : null}
+            </div>
+
+            <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
+              <p className="pub-label text-xs">gift progress</p>
+              <div>
+                <p className="text-2xl font-black tracking-normal text-[var(--headline)]">
+                  {formatCurrency(item.fundedAmount)}
+                </p>
+                <p className="mt-1 text-xs font-black text-[var(--ink-muted)]">
+                  {item.targetAmount
+                    ? `${formatCurrency(item.targetAmount)} 중`
+                    : PUBLIC_WISHLIST_COPY.noTargetAmount}
+                </p>
+              </div>
+              {item.targetAmount ? (
+                <>
+                  <div className="pub-progress mt-2">
+                    <i style={{ width: `${item.progress}%` }} />
+                  </div>
+                  <p className="text-xs font-black text-[var(--ink-muted)]">
+                    {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
+                  </p>
+                </>
+              ) : null}
+              {productUrl ? (
+                <Button
+                  asChild
+                  variant="theme-primary"
+                  className="mt-2 h-11 px-4 text-sm"
+                >
+                  <a href={productUrl} target="_blank" rel="noreferrer">
+                    선물 링크 보기
+                  </a>
+                </Button>
+              ) : null}
+            </div>
+          </div>
+        </div>
+
+        {canFund ? (
+          <details className="send-heart-section border-t-2 border-[var(--divider-color)]">
+            <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--accent-main)] [&::-webkit-details-marker]:hidden">
+              {PUBLIC_WISHLIST_COPY.fundCta}
+            </summary>
+            <form
+              action={
+                demo ? undefined : submitParticipationAction.bind(null, slug)
+              }
+              className="space-y-4 border-t-2 border-[var(--divider-color)] p-5"
             >
+              <p className="text-lg font-black tracking-normal text-[var(--headline)]">
+                {PUBLIC_WISHLIST_COPY.participationTitle}
+              </p>
+              <input type="hidden" name="wishItemId" value={item.id} />
               <input
-                id={`participation-amount-${item.id}`}
-                name="amount"
-                type="number"
-                min={1}
-                step={1}
-                required
-                placeholder="10000"
-                className={publicInputClassName}
+                type="hidden"
+                name="clientRequestId"
+                value={crypto.randomUUID()}
               />
-            </PublicField>
 
-            <PublicField
-              label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
-              htmlFor={`participation-sender-${item.id}`}
-            >
-              <input
-                id={`participation-sender-${item.id}`}
-                name="senderName"
-                type="text"
-                maxLength={80}
-                placeholder="이름"
-                className={publicInputClassName}
+              <PublicField
+                label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
+                htmlFor={`participation-amount-${item.id}`}
+              >
+                <input
+                  id={`participation-amount-${item.id}`}
+                  name="amount"
+                  type="number"
+                  min={1}
+                  step={1}
+                  required
+                  placeholder="10000"
+                  className={publicInputClassName}
+                />
+              </PublicField>
+
+              <PublicField
+                label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
+                htmlFor={`participation-sender-${item.id}`}
+              >
+                <input
+                  id={`participation-sender-${item.id}`}
+                  name="senderName"
+                  type="text"
+                  maxLength={80}
+                  placeholder="이름"
+                  className={publicInputClassName}
+                />
+              </PublicField>
+
+              <PublicField
+                label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
+                htmlFor={`participation-body-${item.id}`}
+              >
+                <textarea
+                  id={`participation-body-${item.id}`}
+                  name="body"
+                  rows={3}
+                  maxLength={500}
+                  required
+                  className={publicTextareaClassName}
+                />
+              </PublicField>
+
+              <p className="text-xs font-semibold text-[var(--ink-muted)]">
+                {hasAccount
+                  ? PUBLIC_WISHLIST_COPY.participationTransferNote
+                  : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
+              </p>
+
+              <ParticipationSubmit
+                demo={demo}
+                returnFocusId={participationSubmitId(item.id)}
               />
-            </PublicField>
-
-            <PublicField
-              label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
-              htmlFor={`participation-body-${item.id}`}
-            >
-              <textarea
-                id={`participation-body-${item.id}`}
-                name="body"
-                rows={3}
-                maxLength={500}
-                required
-                className={publicTextareaClassName}
-              />
-            </PublicField>
-
-            <p className="text-xs font-semibold text-[var(--ink-muted)]">
-              {hasAccount
-                ? PUBLIC_WISHLIST_COPY.participationTransferNote
-                : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
-            </p>
-
-            <ParticipationSubmit
-              demo={demo}
-              returnFocusId={participationSubmitId(item.id)}
-            />
-          </form>
-        </details>
-      ) : participationNotice ? (
-        <p className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
-          {participationNotice}
-        </p>
-      ) : null}
-    </article>
+            </form>
+          </details>
+        ) : participationNotice ? (
+          <p className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
+            {participationNotice}
+          </p>
+        ) : null}
+      </article>
+    </Card>
   );
 }
 
@@ -438,12 +443,12 @@ function GiftFallback() {
 
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="pub-stat p-4">
+    <Card variant="theme" className="pub-stat p-4">
       <dt className="pub-label text-xs">{label}</dt>
       <dd className="mt-1 text-lg font-black tracking-normal text-[var(--headline)]">
         {value}
       </dd>
-    </div>
+    </Card>
   );
 }
 

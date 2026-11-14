@@ -17,6 +17,7 @@ import {
   getWishStatusLabel,
 } from "@/src/lib/wish-item/status";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { BirthdayConfetti } from "./birthday-confetti";
 import { AdminToastMessage } from "./admin-toast-message";
 import {
@@ -80,11 +81,11 @@ export default async function AdminPage() {
       {profileGreeting && birthdayDateKey ? (
         <>
           <BirthdayConfetti userId={user.id} dateKey={birthdayDateKey} />
-          <div className="rounded-md border border-line bg-white px-3.5 py-3">
+          <Card variant="admin" className="px-3.5 py-3">
             <p className="text-sm font-bold text-ink">
               생일 축하해요, {profileGreeting.displayName}님! 🎉
             </p>
-          </div>
+          </Card>
         </>
       ) : null}
       <AdminMetricGroup>
@@ -105,7 +106,7 @@ export default async function AdminPage() {
         />
       </AdminMetricGroup>
 
-      <div className="flex flex-col gap-2 rounded-md border border-line bg-white px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
+      <Card variant="admin" className="flex flex-col gap-2 px-3.5 py-3 sm:flex-row sm:items-center sm:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-semibold text-zinc-500">내 공개 주소</p>
           <p className="mt-1 truncate text-sm font-semibold text-ink">
@@ -119,7 +120,7 @@ export default async function AdminPage() {
             <Link href={`/wishlist/${wishesResult.wishlist.slug}`}>열어 보기</Link>
           </Button>
         </div>
-      </div>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <DashboardQueue
@@ -190,31 +191,33 @@ function DashboardQueue({
   const hasRows = Array.isArray(children) ? children.length > 0 : Boolean(children);
 
   return (
-    <section className="rounded-md border border-line bg-white">
-      <div className="flex items-center justify-between gap-3 border-b border-line px-3.5 py-3">
-        <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
-        <Link
-          href={actionHref}
-          className="text-xs font-semibold text-teal transition-colors hover:text-[#0f766e]"
-        >
-          {actionLabel}
-        </Link>
-      </div>
-      {hasRows ? (
-        <div className="divide-y divide-line">{children}</div>
-      ) : (
-        <div className="p-4">
-          <p className="text-sm font-semibold text-ink">{emptyTitle}</p>
-          <p className="mt-1 text-sm leading-6 text-zinc-600">{emptyDescription}</p>
+    <Card asChild variant="admin">
+      <section>
+        <div className="flex items-center justify-between gap-3 border-b border-line px-3.5 py-3">
+          <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
           <Link
-            href={emptyActionHref}
-            className="mt-3 inline-flex h-8 items-center rounded-md border border-line bg-[#fbfbfa] px-3 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100"
+            href={actionHref}
+            className="text-xs font-semibold text-teal transition-colors hover:text-accent-main"
           >
-            {emptyActionLabel}
+            {actionLabel}
           </Link>
         </div>
-      )}
-    </section>
+        {hasRows ? (
+          <div className="divide-y divide-line">{children}</div>
+        ) : (
+          <div className="p-4">
+            <p className="text-sm font-semibold text-ink">{emptyTitle}</p>
+            <p className="mt-1 text-sm leading-6 text-zinc-600">{emptyDescription}</p>
+            <Link
+              href={emptyActionHref}
+              className="mt-3 inline-flex h-8 items-center rounded-md border border-line bg-admin-subtle px-3 text-xs font-semibold text-zinc-700 transition-colors hover:bg-zinc-100"
+            >
+              {emptyActionLabel}
+            </Link>
+          </div>
+        )}
+      </section>
+    </Card>
   );
 }
 

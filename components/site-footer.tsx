@@ -10,9 +10,9 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
   const supportUrl = process.env.SUPPORT_URL?.trim();
 
   return (
-    <footer className="border-t-2 border-[#171717] bg-white text-[#171717]">
+    <footer className="border-t-2 border-ink bg-white text-ink">
       <div className="mx-auto flex w-full max-w-6xl flex-col gap-4 px-5 py-8 sm:flex-row sm:items-center sm:justify-between sm:px-8">
-        <p className="font-pixel text-lg leading-none tracking-normal text-[#4c1d95]">
+        <p className="font-pixel text-lg leading-none tracking-normal text-purple">
           {BRAND_NAME}
         </p>
         <nav className="flex flex-wrap items-center gap-x-5 gap-y-2">
@@ -33,7 +33,7 @@ export function SiteFooter({ variant = "full" }: SiteFooterProps) {
             <FooterLink href={supportUrl} label={FOOTER_COPY.supportLabel} />
           ) : null}
         </nav>
-        <p className="text-xs font-bold text-[#6b7280]">
+        <p className="text-xs font-bold text-ink-faint">
           © {year} {BRAND_NAME}
         </p>
       </div>

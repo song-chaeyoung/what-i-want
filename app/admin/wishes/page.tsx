@@ -11,6 +11,11 @@ import {
   type WishStatus,
 } from "@/src/lib/wish-item/status";
 import { Button } from "@/components/ui/button";
+import {
+  adminCardFooterClassName,
+  adminCardHoverClassName,
+  Card,
+} from "@/components/ui/card";
 import { AdminToastMessage } from "../admin-toast-message";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
@@ -141,102 +146,103 @@ export default async function AdminWishesPage({
         </div>
       </nav>
 
-      <details
-        id="create-wish"
-        open={result.items.length === 0 && !selectedStatus}
-        className="group rounded-md border border-line bg-white"
-      >
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
-          <span className="flex items-center gap-1.5">
-            <Plus aria-hidden="true" className="size-4" />
-            선물 추가
-          </span>
-          <span className="text-xs font-semibold text-zinc-500">
-            <span className="group-open:hidden">펼치기</span>
-            <span className="hidden group-open:inline">접기</span>
-          </span>
-        </summary>
-        <form
-          action="/api/admin/wishes"
-          method="post"
-          className="grid gap-4 border-t border-line bg-[#fbfbfa] p-4 md:grid-cols-2"
+      <Card asChild variant="admin" className="group">
+        <details
+          id="create-wish"
+          open={result.items.length === 0 && !selectedStatus}
         >
-          <AdminField label="선물 이름" htmlFor="create-title" required>
-            <input
-              id="create-title"
-              name="title"
-              type="text"
-              maxLength={120}
-              required
-              className={adminInputClassName}
-            />
-          </AdminField>
-
-          <AdminField label="목표 금액" htmlFor="create-targetAmount" required>
-            <input
-              id="create-targetAmount"
-              name="targetAmount"
-              type="number"
-              min={1}
-              max={2_147_483_647}
-              step={1}
-              required
-              placeholder="45000"
-              className={adminInputClassName}
-            />
-          </AdminField>
-
-          <AdminField
-            label="상품 링크"
-            htmlFor="create-productUrl"
-            hint="링크를 넣고 정보 불러오기를 누르면 이름, 이미지, 금액을 자동으로 채워요."
+          <summary className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors ${adminCardHoverClassName} [&::-webkit-details-marker]:hidden`}>
+            <span className="flex items-center gap-1.5">
+              <Plus aria-hidden="true" className="size-4" />
+              선물 추가
+            </span>
+            <span className="text-xs font-semibold text-zinc-500">
+              <span className="group-open:hidden">펼치기</span>
+              <span className="hidden group-open:inline">접기</span>
+            </span>
+          </summary>
+          <form
+            action="/api/admin/wishes"
+            method="post"
+            className={`grid gap-4 p-4 md:grid-cols-2 ${adminCardFooterClassName}`}
           >
-            <div className="flex gap-2">
+            <AdminField label="선물 이름" htmlFor="create-title" required>
               <input
-                id="create-productUrl"
-                name="productUrl"
+                id="create-title"
+                name="title"
+                type="text"
+                maxLength={120}
+                required
+                className={adminInputClassName}
+              />
+            </AdminField>
+
+            <AdminField label="목표 금액" htmlFor="create-targetAmount" required>
+              <input
+                id="create-targetAmount"
+                name="targetAmount"
+                type="number"
+                min={1}
+                max={2_147_483_647}
+                step={1}
+                required
+                placeholder="45000"
+                className={adminInputClassName}
+              />
+            </AdminField>
+
+            <AdminField
+              label="상품 링크"
+              htmlFor="create-productUrl"
+              hint="링크를 넣고 정보 불러오기를 누르면 이름, 이미지, 금액을 자동으로 채워요."
+            >
+              <div className="flex gap-2">
+                <input
+                  id="create-productUrl"
+                  name="productUrl"
+                  type="url"
+                  placeholder="https://..."
+                  className={adminInputClassName}
+                />
+                <LinkAutofillButton />
+              </div>
+            </AdminField>
+
+            <AdminField label="이미지 링크" htmlFor="create-imageUrl">
+              <input
+                id="create-imageUrl"
+                name="imageUrl"
                 type="url"
                 placeholder="https://..."
                 className={adminInputClassName}
               />
-              <LinkAutofillButton />
-            </div>
-          </AdminField>
-
-          <AdminField label="이미지 링크" htmlFor="create-imageUrl">
-            <input
-              id="create-imageUrl"
-              name="imageUrl"
-              type="url"
-              placeholder="https://..."
-              className={adminInputClassName}
-            />
-          </AdminField>
-
-          <div className="md:col-span-2">
-            <AdminField label="메모" htmlFor="create-description">
-              <textarea
-                id="create-description"
-                name="description"
-                rows={3}
-                className={adminTextareaClassName}
-              />
             </AdminField>
-          </div>
 
-          <div className="md:col-span-2">
-            <Button type="submit" variant="admin">
-              추가하기
-            </Button>
-          </div>
-        </form>
-      </details>
+            <div className="md:col-span-2">
+              <AdminField label="메모" htmlFor="create-description">
+                <textarea
+                  id="create-description"
+                  name="description"
+                  rows={3}
+                  className={adminTextareaClassName}
+                />
+              </AdminField>
+            </div>
+
+            <div className="md:col-span-2">
+              <Button type="submit" variant="admin">
+                추가하기
+              </Button>
+            </div>
+          </form>
+        </details>
+      </Card>
 
       <section className="space-y-2">
         {visibleItems.length > 0 ? (
           visibleItems.map((item) => <WishItemEditor key={item.id} item={item} />)
         ) : (
-          <div className="rounded-md border border-line bg-white p-4">
+          <Card variant="admin" className="p-4">
             <p className="text-sm font-semibold text-ink">{emptyStateMessage}</p>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
               {selectedStatus
@@ -246,7 +252,7 @@ export default async function AdminWishesPage({
             <Button asChild variant="admin-outline" className="mt-4">
               <Link href={emptyStateHref}>{emptyStateCta}</Link>
             </Button>
-          </div>
+          </Card>
         )}
       </section>
     </section>
@@ -258,136 +264,138 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
   const displayedStatus = getDisplayedWishStatus(item.status, progress);
 
   return (
-    <details className="group rounded-md border border-line bg-white">
-      <summary className="flex cursor-pointer list-none items-start gap-3 p-3 transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
-        <WishThumbnail item={item} />
-        <div className="min-w-0 flex-1">
-          <div className="flex min-w-0 items-center gap-2">
-            <h3 className="truncate text-sm font-bold tracking-normal text-ink">
-              {item.title}
-            </h3>
-            <span
-              className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[displayedStatus]}`}
-            >
+    <Card asChild variant="admin" className="group">
+      <details>
+        <summary className={`flex cursor-pointer list-none items-start gap-3 p-3 transition-colors ${adminCardHoverClassName} [&::-webkit-details-marker]:hidden`}>
+          <WishThumbnail item={item} />
+          <div className="min-w-0 flex-1">
+            <div className="flex min-w-0 items-center gap-2">
+              <h3 className="truncate text-sm font-bold tracking-normal text-ink">
+                {item.title}
+              </h3>
               <span
-                aria-hidden="true"
-                className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[displayedStatus]}`}
-              />
-              {getWishStatusLabel(item.status, progress)}
-            </span>
+                className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[displayedStatus]}`}
+              >
+                <span
+                  aria-hidden="true"
+                  className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[displayedStatus]}`}
+                />
+                {getWishStatusLabel(item.status, progress)}
+              </span>
+            </div>
+            <p className="mt-1 text-xs text-zinc-600">
+              {formatCurrency(item.fundedAmount)} /{" "}
+              {item.targetAmount ? formatCurrency(item.targetAmount) : "목표 금액 없음"}
+            </p>
+            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
+              <div className="h-full rounded-full bg-teal" style={{ width: `${progress}%` }} />
+            </div>
           </div>
-          <p className="mt-1 text-xs text-zinc-600">
-            {formatCurrency(item.fundedAmount)} /{" "}
-            {item.targetAmount ? formatCurrency(item.targetAmount) : "목표 금액 없음"}
-          </p>
-          <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
-            <div className="h-full rounded-full bg-teal" style={{ width: `${progress}%` }} />
-          </div>
-        </div>
-        <span className="shrink-0 py-1 text-xs font-semibold text-teal">
-          <span className="group-open:hidden">수정</span>
-          <span className="hidden group-open:inline">닫기</span>
-        </span>
-      </summary>
+          <span className="shrink-0 py-1 text-xs font-semibold text-teal">
+            <span className="group-open:hidden">수정</span>
+            <span className="hidden group-open:inline">닫기</span>
+          </span>
+        </summary>
 
-      <div className="border-t border-line bg-[#fbfbfa] p-3">
-        <form
-          action={`/api/admin/wishes/${item.id}`}
-          method="post"
-          className="grid gap-4 md:grid-cols-2"
-        >
-          <input type="hidden" name="_method" value="patch" />
-          <AdminField label="선물 이름" htmlFor={`title-${item.id}`} required>
-            <input
-              id={`title-${item.id}`}
-              name="title"
-              type="text"
-              maxLength={120}
-              required
-              defaultValue={item.title}
-              className={adminInputClassName}
-            />
-          </AdminField>
-
-          <AdminField label="상태" htmlFor={`status-${item.id}`}>
-            <select
-              id={`status-${item.id}`}
-              name="status"
-              defaultValue={item.status}
-              className={adminInputClassName}
-            >
-              {statusOptions.map((status) => (
-                <option key={status} value={status}>
-                  {getWishStatusLabel(status)}
-                </option>
-              ))}
-            </select>
-          </AdminField>
-
-          <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`} required>
-            <input
-              id={`targetAmount-${item.id}`}
-              name="targetAmount"
-              type="number"
-              min={1}
-              max={2_147_483_647}
-              step={1}
-              required
-              defaultValue={item.targetAmount ?? ""}
-              className={adminInputClassName}
-            />
-          </AdminField>
-
-          <AdminField label="상품 링크" htmlFor={`productUrl-${item.id}`}>
-            <div className="flex gap-2">
+        <div className={`p-3 ${adminCardFooterClassName}`}>
+          <form
+            action={`/api/admin/wishes/${item.id}`}
+            method="post"
+            className="grid gap-4 md:grid-cols-2"
+          >
+            <input type="hidden" name="_method" value="patch" />
+            <AdminField label="선물 이름" htmlFor={`title-${item.id}`} required>
               <input
-                id={`productUrl-${item.id}`}
-                name="productUrl"
-                type="url"
-                defaultValue={item.productUrl ?? ""}
+                id={`title-${item.id}`}
+                name="title"
+                type="text"
+                maxLength={120}
+                required
+                defaultValue={item.title}
                 className={adminInputClassName}
               />
-              <LinkAutofillButton />
-            </div>
-          </AdminField>
+            </AdminField>
 
-          <AdminField label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
-            <input
-              id={`imageUrl-${item.id}`}
-              name="imageUrl"
-              type="url"
-              defaultValue={item.imageUrl ?? ""}
-              className={adminInputClassName}
-            />
-          </AdminField>
+            <AdminField label="상태" htmlFor={`status-${item.id}`}>
+              <select
+                id={`status-${item.id}`}
+                name="status"
+                defaultValue={item.status}
+                className={adminInputClassName}
+              >
+                {statusOptions.map((status) => (
+                  <option key={status} value={status}>
+                    {getWishStatusLabel(status)}
+                  </option>
+                ))}
+              </select>
+            </AdminField>
 
-          <div className="md:col-span-2">
-            <AdminField label="메모" htmlFor={`description-${item.id}`}>
-              <textarea
-                id={`description-${item.id}`}
-                name="description"
-                rows={3}
-                defaultValue={item.description ?? ""}
-                className={adminTextareaClassName}
+            <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`} required>
+              <input
+                id={`targetAmount-${item.id}`}
+                name="targetAmount"
+                type="number"
+                min={1}
+                max={2_147_483_647}
+                step={1}
+                required
+                defaultValue={item.targetAmount ?? ""}
+                className={adminInputClassName}
               />
             </AdminField>
-          </div>
 
-          <div className="md:col-span-2">
-            <Button type="submit" variant="admin">
-              저장
+            <AdminField label="상품 링크" htmlFor={`productUrl-${item.id}`}>
+              <div className="flex gap-2">
+                <input
+                  id={`productUrl-${item.id}`}
+                  name="productUrl"
+                  type="url"
+                  defaultValue={item.productUrl ?? ""}
+                  className={adminInputClassName}
+                />
+                <LinkAutofillButton />
+              </div>
+            </AdminField>
+
+            <AdminField label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
+              <input
+                id={`imageUrl-${item.id}`}
+                name="imageUrl"
+                type="url"
+                defaultValue={item.imageUrl ?? ""}
+                className={adminInputClassName}
+              />
+            </AdminField>
+
+            <div className="md:col-span-2">
+              <AdminField label="메모" htmlFor={`description-${item.id}`}>
+                <textarea
+                  id={`description-${item.id}`}
+                  name="description"
+                  rows={3}
+                  defaultValue={item.description ?? ""}
+                  className={adminTextareaClassName}
+                />
+              </AdminField>
+            </div>
+
+            <div className="md:col-span-2">
+              <Button type="submit" variant="admin">
+                저장
+              </Button>
+            </div>
+          </form>
+
+          <form action={`/api/admin/wishes/${item.id}`} method="post" className="mt-3">
+            <input type="hidden" name="_method" value="delete" />
+            <Button type="submit" variant="danger">
+              삭제
             </Button>
-          </div>
-        </form>
-
-        <form action={`/api/admin/wishes/${item.id}`} method="post" className="mt-3">
-          <input type="hidden" name="_method" value="delete" />
-          <Button type="submit" variant="danger">
-            삭제
-          </Button>
-        </form>
-      </div>
-    </details>
+          </form>
+        </div>
+      </details>
+    </Card>
   );
 }
 

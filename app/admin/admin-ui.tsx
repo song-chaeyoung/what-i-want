@@ -1,10 +1,11 @@
 import type { ReactNode } from "react";
+import { Card } from "@/components/ui/card";
 
 export function AdminMetricGroup({ children }: { children: ReactNode }) {
   return (
-    <div className="grid divide-y divide-line overflow-hidden rounded-md border border-line bg-white sm:auto-cols-fr sm:grid-flow-col sm:divide-x sm:divide-y-0">
+    <Card variant="admin" className="grid divide-y divide-line overflow-hidden sm:auto-cols-fr sm:grid-flow-col sm:divide-x sm:divide-y-0">
       {children}
-    </div>
+    </Card>
   );
 }
 

@@ -1,3 +1,5 @@
+import { Card } from "@/components/ui/card";
+
 export default function PublicWishlistLoading() {
   return (
     <main className="pub-page min-h-dvh">
@@ -10,7 +12,7 @@ export default function PublicWishlistLoading() {
       <section className="mx-auto w-full max-w-6xl px-5 py-6 sm:px-8 lg:py-8">
         <div className="grid animate-pulse gap-4 sm:grid-cols-2 lg:grid-cols-3">
           {[0, 1, 2].map((index) => (
-            <div key={index} className="pub-card h-48" />
+            <Card key={index} variant="theme" className="h-48" />
           ))}
         </div>
       </section>

@@ -92,7 +92,7 @@ export function AdminShellNav({
   }
 
   return (
-    <nav className="border-b border-line bg-[#fbfbfa] px-4 md:hidden">
+    <nav className="border-b border-line bg-admin-subtle px-4 md:hidden">
       <div className="flex gap-3 overflow-x-auto">
         {adminNavItems.map((item) => {
           const isActive = isActivePath(pathname, item.href);

@@ -9,6 +9,7 @@ import {
 } from "@/src/lib/admin-messages/service";
 import type { AdminMessageRecord } from "@/src/lib/admin-messages/types";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { AdminToastMessage } from "../admin-toast-message";
 import { HideMessageForm } from "./hide-message-form";
 import {
@@ -89,20 +90,20 @@ export default async function AdminMessagesPage({
       </nav>
 
       {result.messages.length > 0 ? (
-        <div className="divide-y divide-line rounded-md border border-line bg-white">
+        <Card variant="admin" className="divide-y divide-line">
           {result.messages.map((message) => (
             <MessageRow key={message.id} message={message} hidden={hiddenView} />
           ))}
-        </div>
+        </Card>
       ) : hiddenView ? (
-        <div className="rounded-md border border-line bg-white p-4">
+        <Card variant="admin" className="p-4">
           <p className="text-sm font-semibold">숨긴 메시지가 없습니다.</p>
           <p className="mt-2 text-sm leading-6 text-zinc-600">
             받은 메시지에서 숨긴 참여 기록이 여기에 표시됩니다.
           </p>
-        </div>
+        </Card>
       ) : (
-        <div className="rounded-md border border-line bg-white p-4">
+        <Card variant="admin" className="p-4">
           <p className="text-sm font-semibold">아직 메시지가 없습니다.</p>
           <p className="mt-2 text-sm leading-6 text-zinc-600">
             공개 페이지에서 친구가 마음을 보내면 여기에 표시됩니다.
@@ -115,7 +116,7 @@ export default async function AdminMessagesPage({
               <Link href="/admin/wishes">선물 관리하기</Link>
             </Button>
           </div>
-        </div>
+        </Card>
       )}
     </section>
   );
