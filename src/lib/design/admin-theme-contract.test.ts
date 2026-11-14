@@ -208,11 +208,12 @@ describe("admin calm theme contract", () => {
   test("adds calm admin wish status hierarchy and a next-action empty state", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
 
-    expect(source).toContain("const statusBadgeClassNames");
-    expect(source).toContain("const statusDotClassNames");
-    expect(source).toContain("bg-[#ecfdf5] text-[#047857]");
-    expect(source).toContain("bg-[#fff7ed] text-[#9a3412]");
-    expect(source).toContain("bg-[#f4f4f5] text-zinc-600");
+    expect(source).toContain('variant="status"');
+    expect(source).toContain('variant="status-dot"');
+    expect(source).toContain("tone={displayedStatus}");
+    expect(source).not.toContain("bg-[#ecfdf5]");
+    expect(source).not.toContain("bg-[#fff7ed]");
+    expect(source).not.toContain("bg-[#f4f4f5]");
     expect(source).toContain("emptyStateMessage");
     expect(source).toContain("emptyStateCta");
   });
@@ -288,7 +289,8 @@ describe("admin calm theme contract", () => {
     const source = readFileSync(adminMessagesPagePath, "utf8");
 
     expect(source).toContain('import Link from "next/link";');
-    expect(source).toContain("bg-[#fff7ed]");
+    expect(source).toContain("bg-warn-tint");
+    expect(source).toContain("text-warn-ink");
     expect(source).toContain('href={`/wishlist/${result.wishlist.slug}`}');
     expect(source).toContain('href="/admin/wishes"');
   });
@@ -387,7 +389,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain(
       "<MessageRow key={message.id} message={message} hidden={hiddenView} />",
     );
-    expect(source).toContain("rounded-full bg-[#fff7ed]");
+    expect(source).toContain("rounded-full bg-warn-tint");
     expect(source).not.toContain("function MessageCard");
     expect(source).not.toContain("shadow-pub");
   });

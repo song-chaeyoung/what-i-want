@@ -4,6 +4,7 @@ import { PublicAccountSection } from "@/components/public-account-section";
 import { PublicParticipationSubmitButton } from "@/components/public-participation-submit-button";
 import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import {
@@ -62,13 +63,21 @@ export function PublicWishlistView({
               >
                 <Link href="/">{BRAND_NAME}</Link>
               </Button>
-              <p className="pub-pill">birthday wishlist</p>
+              <Badge asChild variant="theme">
+                <p>birthday wishlist</p>
+              </Badge>
               {birthdayBadge ? (
-                <p className="pub-pill pub-pill-alt">{birthdayBadge}</p>
+                <Badge asChild variant="theme-alt">
+                  <p>{birthdayBadge}</p>
+                </Badge>
               ) : null}
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              {demo ? <p className="pub-pill pub-pill-alt">SAMPLE</p> : null}
+              {demo ? (
+                <Badge asChild variant="theme-alt">
+                  <p>SAMPLE</p>
+                </Badge>
+              ) : null}
               <PublicShareButton
                 slug={wishlist.slug}
                 title={wishlist.title}
@@ -140,7 +149,7 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
     <Card asChild variant="theme" className="send-heart-section">
       <details>
         <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
-          <span className="pub-pill pub-pill-alt">gift note</span>
+          <Badge variant="theme-alt">gift note</Badge>
           <span className="text-lg font-black tracking-normal text-[var(--headline)]">
             {PUBLIC_WISHLIST_COPY.messageFormTitle}
           </span>
@@ -263,7 +272,9 @@ function PublicWishCard({
           <div className="grid gap-5 p-5 sm:p-6 lg:grid-cols-[1fr_220px]">
             <div className="min-w-0">
               <div className="flex flex-wrap items-center gap-2">
-                <p className="pub-pill">NO. {index + 1}</p>
+                <Badge asChild variant="theme">
+                  <p>NO. {index + 1}</p>
+                </Badge>
                 <p className="pub-label text-xs">
                   {getWishStatusLabel(item.status, item.progress)}
                 </p>
@@ -411,28 +422,28 @@ function GiftFallback() {
   return (
     <>
       <div className="gm gm-pixel">
-        <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-[#171717] bg-white shadow-pixel-md lg:h-28 lg:w-28">
-          <div className="col-span-4 border-b-2 border-[#171717] bg-[#f97316]" />
-          <div className="col-span-1 row-span-3 border-r-2 border-[#171717] bg-[#ffe4e6]" />
-          <div className="col-span-2 row-span-3 grid place-items-center bg-[#ccfbf1] text-micro font-black text-[#4c1d95] lg:text-sm">
+        <div className="font-pixel grid h-16 w-16 grid-cols-4 grid-rows-4 border-2 border-ink bg-white shadow-pixel-md lg:h-28 lg:w-28">
+          <div className="col-span-4 border-b-2 border-ink bg-point" />
+          <div className="col-span-1 row-span-3 border-r-2 border-ink bg-blush" />
+          <div className="col-span-2 row-span-3 grid place-items-center bg-mint text-micro font-black text-purple lg:text-sm">
             GIFT
           </div>
-          <div className="col-span-1 row-span-3 border-l-2 border-[#171717] bg-[#fef3c7]" />
+          <div className="col-span-1 row-span-3 border-l-2 border-ink bg-yellow" />
         </div>
       </div>
       <div className="gm gm-line">
-        <div className="grid h-16 w-16 grid-cols-4 grid-rows-4 border-[1.5px] border-[#111] bg-white lg:h-28 lg:w-28">
-          <div className="col-span-4 border-b-[1.5px] border-[#111]" />
-          <div className="col-span-1 row-span-3 border-r-[1.5px] border-[#111]" />
-          <div className="col-span-2 row-span-3 grid place-items-center text-micro font-black tracking-[1.6px] text-[#111] lg:text-sm">
+        <div className="grid h-16 w-16 grid-cols-4 grid-rows-4 border-[1.5px] border-(--ink) bg-white lg:h-28 lg:w-28">
+          <div className="col-span-4 border-b-[1.5px] border-(--ink)" />
+          <div className="col-span-1 row-span-3 border-r-[1.5px] border-(--ink)" />
+          <div className="col-span-2 row-span-3 grid place-items-center text-micro font-black tracking-[1.6px] text-(--ink) lg:text-sm">
             GIFT
           </div>
-          <div className="col-span-1 row-span-3 border-l-[1.5px] border-[#111]" />
+          <div className="col-span-1 row-span-3 border-l-[1.5px] border-(--ink)" />
         </div>
       </div>
       <div className="gm gm-soft">
-        <div className="grid h-16 w-16 place-items-center rounded-3xl bg-[#ffe1ec] lg:h-28 lg:w-28">
-          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/70 text-micro font-black text-[#bd6595] lg:h-16 lg:w-16 lg:text-sm">
+        <div className="grid h-16 w-16 place-items-center rounded-3xl bg-(--gift-soft-bg) lg:h-28 lg:w-28">
+          <span className="grid h-10 w-10 place-items-center rounded-full bg-white/70 text-micro font-black text-(--gift-soft-ink) lg:h-16 lg:w-16 lg:text-sm">
             GIFT
           </span>
         </div>

@@ -1,6 +1,6 @@
 # 위시 카드
 
-코드 대조일: 2026-11-04 (`main` @ `d26141e`, PR #20 반영)
+코드 대조일: 2026-11-04 (`main` @ `d26141e`, PR #20 반영). 관리자 배지 색 토큰 대조일: 2026-11-14.
 
 [디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [피드백](feedback.md)
 
@@ -45,7 +45,7 @@
 ```
 article.gift-card-shell.theme-card
 ├─ 이미지 영역: 이미지(4:3) 또는 GiftFallback "GIFT"
-├─ 본문: .pub-pill "NO. n" · 상태 라벨 · 이름(줄 수 제한 없음) · 설명(선택)
+├─ 본문: Badge theme "NO. n" · 상태 라벨 · 이름(줄 수 제한 없음) · 설명(선택)
 ├─ 진행 패널: 모인 금액 / 목표. 목표가 있을 때만 .pub-progress와 "N%". 없으면 "목표 금액 없음". "선물 링크 보기"(productUrl 있을 때)
 └─ 참여 영역 "이 선물에 마음 보태기"(canFund일 때만)
 ```
@@ -65,14 +65,14 @@ details > summary
 └─ 수정 / 닫기
 ```
 
-배지 색은 [관리자 선물](../../../app/admin/wishes/page.tsx)에 직접 지정돼 있습니다.
+배지 색은 [Badge](../../../components/ui/badge.tsx) `status`·`status-dot`입니다. 값은 [토큰 매핑](../tokens-mapping.md)의 상태 색과 같습니다.
 
 | 표시 상태 | 배경 | 글자 | 점 |
 | --- | --- | --- | --- |
-| 진행 중 `open` | `#ecfdf5` | `#047857` | `#10b981` |
-| 완료 `fulfilled`·100% `open` | `#eff6ff` | `#1d4ed8` | `#3b82f6` |
-| 잠시 멈춤 `paused` | `#fff7ed` | `#9a3412` | `#f97316` |
-| 숨김 `hidden` | `#f4f4f5` | `zinc-600` | `zinc-400` |
+| 진행 중 `open` | `bg-success-tint` | `text-success-ink` | `bg-success` |
+| 완료 `fulfilled`·100% `open` | `bg-info-tint` | `text-info-ink` | `bg-info` |
+| 잠시 멈춤 `paused` | `bg-warn-tint` | `text-warn-ink` | `bg-point` |
+| 숨김 `hidden` | `bg-muted-tint` | `text-zinc-600` | `bg-zinc-400` |
 
 ## 작업 시 유지할 규칙
 
@@ -94,7 +94,7 @@ details > summary
 | 공개 카드 이름 줄 수 제한 없음. 375px에서 10줄 이상 가능(`wishlist-mono_bw-375-mixed.png`), 관리자는 한 줄 말줄임 | ❌ P4 적용 안 함(2026-11-04 채영 결정, 현행 유지). 원안: P4. 375px 3줄, `lg` 2줄 말줄임과 전체 이름 `title` |
 | 이미지 없음 표시가 공개 "GIFT" 일러스트와 관리자 "선물" 텍스트로 다름 | ✅ P5: 관리자 썸네일도 "GIFT"로 통일(2026-11-04 채영 결정, 구현 전) |
 | 진행 바가 공개 `.pub-progress`, 관리자 `h-1.5 teal`, 홈 예시까지 세 가지 | P6. 토큰 단계에서 검토(추천: 미룸) |
-| 관리자 배지 색이 hex·zinc 직접 지정 | P7. 토큰 단계에서 이름 부여 검토(추천: 미룸) |
+| 숨김 배지의 글자·점만 zinc. 나머지 배지 색은 상태 토큰 | ✅ P7 적용(2026-11-14). 면·글자·점은 `success`·`info`·`warn`·`point`·`muted-tint`. 숨김 글자·점은 `zinc-600`·`zinc-400` 유지 |
 | 관리자 `WishItemEditor`가 진행률을 직접 계산(`calculateProgress`와 결과는 같음) | 별도 제안 없음 |
 | 완료 카드에도 "선물 링크 보기" 표시 | ✅ 유지(2026-11-04 채영 결정) |
 

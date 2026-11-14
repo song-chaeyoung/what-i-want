@@ -9,7 +9,13 @@ import {
 
 const CONFETTI_COUNT = 40;
 const CONFETTI_LIFETIME_MS = 2500;
-const COLORS = ["#0f766e", "#7c3aed", "#f59e0b", "#ec4899", "#10b981"];
+const COLORS = [
+  "var(--accent-main)",
+  "var(--confetti-violet)",
+  "var(--confetti-amber)",
+  "var(--confetti-pink)",
+  "var(--success)",
+];
 
 type ConfettiPiece = {
   id: number;

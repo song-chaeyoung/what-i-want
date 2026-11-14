@@ -156,7 +156,7 @@ function MessageRow({
     <article className="grid gap-3 px-3.5 py-3 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
       <div className="min-w-0">
         <div className="flex min-w-0 flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[#fff7ed] px-2 py-0.5 text-xs font-semibold text-[#9a3412]">
+          <span className="rounded-full bg-warn-tint px-2 py-0.5 text-xs font-semibold text-warn-ink">
             {message.wishTitle ?? "선물 없음"}
           </span>
           <span className="text-xs font-semibold text-zinc-500">

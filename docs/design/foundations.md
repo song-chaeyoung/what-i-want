@@ -34,7 +34,7 @@
 | --- | --- | --- |
 | 페이지·헤더 | `.pub-page`, `.pub-header`, `.pub-headline` | 페이지 테마와 헤더 위 제목을 함께 표현 |
 | 카드·카드 제목 | [Card](../../components/ui/card.tsx) `theme`, `.theme-card`, `--headline` | 카드 안 제목은 `.theme-card`가 `--headline`을 `--ink`로 재정의. 지표 `.pub-stat`은 같은 상자 스타일을 쓰되 값 색은 테마 헤드라인을 유지. 헤더 `.pub-headline`은 카드 밖이라 테마 헤드라인을 유지. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
-| 강조·상태 | `.pub-pill`, `.pub-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
+| 강조·상태 | [Badge](../../components/ui/badge.tsx) `theme`, `theme-alt`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-pill`, `.theme-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | [Button](../../components/ui/button.tsx)의 `theme`, `theme-primary`, `theme-accent`. 너비는 `size="block"`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-btn` | 공개 행동의 위계. `theme-primary`라는 이름만으로 관리자 `admin` variant와 같다고 가정하지 않음 |
 | 진행률 | `.pub-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
 | 입력 | `.pub-field`와 공개 뷰 내부 필드 | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용 |

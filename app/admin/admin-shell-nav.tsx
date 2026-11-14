@@ -4,6 +4,7 @@ import { useState } from "react";
 import { BookOpen, Gift, Home, Inbox, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useSearchParams } from "next/navigation";
+import { Badge } from "@/components/ui/badge";
 
 const adminNavItems = [
   { href: "/admin", label: "홈", icon: Home },
@@ -164,12 +165,9 @@ function UnreadBadge({ count }: { count: number }) {
   }
 
   return (
-    <span
-      aria-label={`새 메시지 ${count}개`}
-      className="inline-flex h-4.5 min-w-4.5 shrink-0 items-center justify-center rounded-full bg-[#f97316] px-1 text-micro font-bold leading-none text-white"
-    >
+    <Badge variant="count" aria-label={`새 메시지 ${count}개`}>
       {count > 99 ? "99+" : count}
-    </span>
+    </Badge>
   );
 }
 

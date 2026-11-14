@@ -41,7 +41,7 @@ const previewWishes = [
     label: "제일 갖고 싶어요",
     title: "무선 헤드폰",
     amount: "45,000원",
-    color: "#ccfbf1",
+    color: "var(--tint-mint)",
     progress: "72%",
     imageTone: "mint",
   },
@@ -49,7 +49,7 @@ const previewWishes = [
     label: "마음 모으는 중",
     title: "생일 케이크",
     amount: "28,000원",
-    color: "#ffe4e6",
+    color: "var(--tint-blush)",
     progress: "38%",
     imageTone: "rose",
   },
@@ -174,7 +174,7 @@ export default async function Home() {
                 민지님의 공개 위시리스트
               </h2>
             </div>
-            <SignalSticker text="SAMPLE" color="#f97316" />
+            <SignalSticker text="SAMPLE" color="var(--point)" />
           </div>
 
           <div className="mt-5 grid gap-4">
@@ -259,7 +259,7 @@ function PreviewWish({
             </h3>
             <p className="font-pixel shrink-0 text-sm">{amount}</p>
           </div>
-          <GiftProgress progress={progress} color="#0f766e" />
+          <GiftProgress progress={progress} color="var(--accent-main)" />
           <span
             className="mt-3 inline-flex max-w-full rounded-md border-2 border-ink px-2 py-1 text-caption font-black"
             style={{ backgroundColor: color }}
@@ -279,27 +279,27 @@ function SampleGiftImage({
   tone: "mint" | "rose";
   label: string;
 }) {
-  const background = tone === "mint" ? "#ccfbf1" : "#ffe4e6";
-  const ribbon = tone === "mint" ? "#f97316" : "#4c1d95";
+  const background = tone === "mint" ? "var(--tint-mint)" : "var(--tint-blush)";
+  const ribbon = tone === "mint" ? "var(--point)" : "var(--headline)";
 
   return (
     <div
       aria-label={`${label} 선물 이미지`}
       role="img"
-      className="relative grid min-h-32 place-items-center border-r-2 border-[#171717]"
+      className="relative grid min-h-32 place-items-center border-r-2 border-ink"
       style={{ backgroundColor: background }}
     >
-      <div className="relative h-16 w-16 border-2 border-[#171717] bg-white shadow-pixel-xs">
+      <div className="relative h-16 w-16 border-2 border-ink bg-white shadow-pixel-xs">
         <span
-          className="absolute left-1/2 top-0 h-full w-3 -translate-x-1/2 border-x-2 border-[#171717]"
+          className="absolute left-1/2 top-0 h-full w-3 -translate-x-1/2 border-x-2 border-ink"
           style={{ backgroundColor: ribbon }}
         />
         <span
-          className="absolute left-0 top-1/2 h-3 w-full -translate-y-1/2 border-y-2 border-[#171717]"
+          className="absolute left-0 top-1/2 h-3 w-full -translate-y-1/2 border-y-2 border-ink"
           style={{ backgroundColor: ribbon }}
         />
-        <span className="absolute -top-5 left-2 h-5 w-5 border-2 border-[#171717] bg-white" />
-        <span className="absolute -top-5 right-2 h-5 w-5 border-2 border-[#171717] bg-white" />
+        <span className="absolute -top-5 left-2 h-5 w-5 border-2 border-ink bg-white" />
+        <span className="absolute -top-5 right-2 h-5 w-5 border-2 border-ink bg-white" />
       </div>
     </div>
   );
@@ -307,7 +307,7 @@ function SampleGiftImage({
 
 function GiftProgress({ progress, color }: { progress: string; color: string }) {
   return (
-    <div className="mt-3 h-3 overflow-hidden border-2 border-ink bg-[#f3f4f6]">
+    <div className="mt-3 h-3 overflow-hidden border-2 border-ink bg-track">
       <div className="h-full" style={{ width: progress, backgroundColor: color }} />
     </div>
   );
@@ -316,7 +316,7 @@ function GiftProgress({ progress, color }: { progress: string; color: string }) 
 function SignalSticker({ text, color }: { text: string; color: string }) {
   return (
     <span
-      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-[#171717] px-2 py-1 text-micro tracking-normal"
+      className="font-pixel inline-flex max-w-24 shrink-0 items-center justify-center rounded-md border-2 border-ink px-2 py-1 text-micro tracking-normal"
       style={{ backgroundColor: color }}
     >
       <span className="truncate">{text}</span>
