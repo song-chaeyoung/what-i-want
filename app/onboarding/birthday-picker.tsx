@@ -132,7 +132,7 @@ export function BirthdayPicker({
       {isUnderMinimumAge ? (
         <p
           role="alert"
-          className="text-sm font-semibold leading-6 text-[#9a3412]"
+          className="text-sm font-semibold leading-6 text-warn-ink"
         >
           {birthdayValue.slice(0, 4)}년생으로 선택됐어요. 만 14세 미만은 가입할 수
           없어요. 연도를 잘못 고르셨다면 달력 위쪽에서 태어난 연도로

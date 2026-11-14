@@ -219,14 +219,14 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
       expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
       expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
-      expect(minified).toMatch(/\.pub-pill\{[^}]*font-size:var\(--pill-size\)/);
+      expect(minified).toMatch(/\.theme-pill\{[^}]*font-size:var\(--pill-size\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*background-image:var\(--bg-dots\)/);
       expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
-      expect(minified).toMatch(/\.pub-pill\{[^}]*background:var\(--pill-bg\)/);
-      expect(minified).toMatch(/\.pub-pill\{[^}]*color:var\(--pill-color\)/);
-      expect(minified).toMatch(/\.pub-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
+      expect(minified).toMatch(/\.theme-pill\{[^}]*background:var\(--pill-bg\)/);
+      expect(minified).toMatch(/\.theme-pill\{[^}]*color:var\(--pill-color\)/);
+      expect(minified).toMatch(/\.theme-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
       expect(minified).toMatch(/\.pub-field\{[^}]*background:var\(--field-bg\)/);
       expect(minified).toMatch(/\.pub-bank\{[^}]*background:var\(--bank-bg\)/);
       expect(minified).toMatch(/\.theme-btn-primary\{[^}]*color:var\(--on-point\)/);
@@ -297,8 +297,8 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--progress-h\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*background:var\(--progress-track\)/);
       expect(minified).toMatch(/\.pub-progress>i\{[^}]*background:var\(--progress-fill\)/);
-      expect(minified).toMatch(/\.pub-pill\{[^}]*gap:var\(--pill-gap\)/);
-      expect(minified).toMatch(/\.pub-pill\{[^}]*padding:var\(--pill-pad\)/);
+      expect(minified).toMatch(/\.theme-pill\{[^}]*gap:var\(--pill-gap\)/);
+      expect(minified).toMatch(/\.theme-pill\{[^}]*padding:var\(--pill-pad\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*gap:var\(--btn-gap\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*padding:var\(--btn-pad\)/);
       expect(minified).toContain(".bg-ink-deep{background-color:var(--ink-deep)");
@@ -315,6 +315,27 @@ describe("compiled Tailwind brand utilities", () => {
       );
       expect(minified).toContain("color-mix(inoklab,var(--admin-bg)95%,transparent)");
       expect(minified).toContain(".bg-admin-subtle{background-color:var(--admin-subtle)");
+      expect(minified).toContain(".bg-success{background-color:var(--success)");
+      expect(minified).toContain(".bg-success-tint{background-color:var(--success-tint)");
+      expect(minified).toContain(".text-success-ink{color:var(--success-ink)");
+      expect(minified).toContain(".bg-warn-tint{background-color:var(--warn-tint)");
+      expect(minified).toContain(".text-warn-ink{color:var(--warn-ink)");
+      expect(minified).toContain(".bg-info{background-color:var(--info)");
+      expect(minified).toContain(".bg-info-tint{background-color:var(--info-tint)");
+      expect(minified).toContain(".text-info-ink{color:var(--info-ink)");
+      expect(minified).toContain(".bg-muted-tint{background-color:var(--muted-tint)");
+      expect(minified).toContain(".bg-track{background-color:var(--track)");
+      expect(minified).toContain(".bg-point{background-color:var(--point)");
+      expect(minified).toContain(".border-point{border-color:var(--point)");
+      expect(minified).toContain(".bg-blush{background-color:var(--tint-blush)");
+      expect(minified).toContain(".bg-yellow{background-color:var(--tint-yellow)");
+      expect(minified).toContain(".accent-ink-deep{accent-color:var(--ink-deep)");
+      expect(minified).toContain("--confetti-violet:#7c3aed");
+      expect(minified).toContain("--confetti-amber:#f59e0b");
+      expect(minified).toContain("--confetti-pink:#ec4899");
+      expect(minified).not.toContain("--color-confetti");
+      expect(minified).not.toContain(".pub-pill{");
+      expect(minified).not.toContain(".pub-pill-alt{");
       expect(minified).not.toContain(".pixel-board{");
       expect(minified).not.toContain(".pixel-card{");
       expect(minified).not.toContain(".pub-msg{");
@@ -381,8 +402,14 @@ function themeMarkup(themeId?: string) {
       <button class="theme-btn theme-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="theme-btn theme-btn-accent" data-probe="btn-accent" type="button">강조</button>
       <p class="pub-label" data-probe="label">라벨</p>
-      <span class="pub-pill" data-probe="pill">필</span>
-      <span class="pub-pill pub-pill-alt" data-probe="pill-alt">대체</span>
+      <span class="theme-pill" data-probe="pill">필</span>
+      <span class="theme-pill theme-pill-alt" data-probe="pill-alt">대체</span>
+      <i class="bg-blush" data-probe="blush"></i>
+      <i class="bg-yellow" data-probe="yellow"></i>
+      <i class="bg-point" data-probe="point"></i>
+      <i class="bg-success" data-probe="success"></i>
+      <i class="bg-(--gift-soft-bg) text-(--gift-soft-ink)" data-probe="gift-soft"></i>
+      <div class="border-[1.5px] border-(--ink)" data-probe="theme-ink-border"></div>
       <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
       <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
       <div class="pub-field" data-probe="field"></div>
@@ -485,6 +512,40 @@ function expectRgb(actual: string, hex: string, label: string) {
   expect(normalizeColor(actual), label).toBe(normalizeColor(hexToRgb(hex)));
 }
 
+const rootStatusColors = [
+  ["bg-success", "backgroundColor", "#10b981"],
+  ["bg-success-tint", "backgroundColor", "#ecfdf5"],
+  ["text-success-ink", "color", "#047857"],
+  ["bg-warn-tint", "backgroundColor", "#fff7ed"],
+  ["text-warn-ink", "color", "#9a3412"],
+  ["bg-info", "backgroundColor", "#3b82f6"],
+  ["bg-info-tint", "backgroundColor", "#eff6ff"],
+  ["text-info-ink", "color", "#1d4ed8"],
+  ["bg-muted-tint", "backgroundColor", "#f4f4f5"],
+  ["bg-track", "backgroundColor", "#f3f4f6"],
+  ["bg-blush", "backgroundColor", "#ffe4e6"],
+  ["bg-yellow", "backgroundColor", "#fef3c7"],
+  ["bg-point", "backgroundColor", "#f97316"],
+  ["border-point", "borderTopColor", "#f97316"],
+] as const;
+
+function rootStatusMarkup() {
+  return rootStatusColors
+    .map(([className]) => `<i class="${className}" data-probe="root-${className}"></i>`)
+    .join("");
+}
+
+function expectRootStatusColors(
+  probes: Map<string, { color: string; backgroundColor: string; borderTopColor: string }>,
+  label: string,
+) {
+  for (const [className, property, hex] of rootStatusColors) {
+    const probe = probes.get(`root-${className}`);
+    expect(probe, className).toBeTruthy();
+    expectRgb(probe![property], hex, `${label} root ${className}`);
+  }
+}
+
 async function expectDefaultComputedColors(
   page: {
     goto: (url: string) => Promise<unknown>;
@@ -498,7 +559,7 @@ async function expectDefaultComputedColors(
     css,
     `${themeMarkup()}${toastMarkup()}<section data-probe="root">${Object.keys(fixedColors)
       .map((className) => `<i class="${className}" data-probe="root-${className}"></i>`)
-      .join("")}</section>`,
+      .join("")}${rootStatusMarkup()}</section>`,
   );
   const byProbe = new Map(probes.map((probe) => [probe.probe, probe]));
   const colors = themeColors.pixel_y2k;
@@ -514,6 +575,7 @@ async function expectDefaultComputedColors(
     expectRgb(probe![property], hex, `${label} root ${className}`);
   }
   expectToast(byProbe, toastColors.default, `${label} default toast`);
+  expectRootStatusColors(byProbe, label);
 }
 
 async function expectThemeComputedColors(
@@ -977,6 +1039,26 @@ function expectRoleTokens(
   expectPaint(pill!.color, expected.pillColor, `${label} pill color`);
   expectPaint(pillAlt!.backgroundColor, expected.pillAltBg, `${label} pill alt bg`);
   expectPaint(pillAlt!.color, expected.pillAltColor, `${label} pill alt color`);
+  expectPaint(
+    probes.get("blush")!.backgroundColor,
+    themeColors[themeId].tintBlush,
+    `${label} blush`,
+  );
+  expectPaint(probes.get("yellow")!.backgroundColor, "#fef3c7", `${label} yellow`);
+  expectPaint(probes.get("point")!.backgroundColor, themeColors[themeId].point, `${label} point`);
+  expectPaint(probes.get("success")!.backgroundColor, "#10b981", `${label} success`);
+  expectPaint(
+    probes.get("theme-ink-border")!.borderTopColor,
+    themeColors[themeId].ink,
+    `${label} theme ink border`,
+  );
+  if (themeId === "soft_pastel") {
+    expectPaint(probes.get("gift-soft")!.backgroundColor, "#ffe1ec", `${label} gift soft bg`);
+    expectPaint(probes.get("gift-soft")!.color, "#bd6595", `${label} gift soft ink`);
+  } else {
+    expectPaint(probes.get("gift-soft")!.backgroundColor, "transparent", `${label} gift soft bg`);
+    expectPaint(probes.get("gift-soft")!.color, themeColors[themeId].ink, `${label} gift soft ink`);
+  }
   expectPaint(field!.backgroundColor, expected.fieldBg, `${label} field bg`);
   expectPaint(bank!.backgroundColor, expected.bankBg, `${label} bank bg`);
   expectPaint(bankInk!.color, expected.bankInk, `${label} bank ink`);

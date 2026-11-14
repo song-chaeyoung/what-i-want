@@ -10,6 +10,7 @@ import {
   getWishStatusLabel,
   type WishStatus,
 } from "@/src/lib/wish-item/status";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   adminCardFooterClassName,
@@ -46,20 +47,6 @@ const errorMessages: Record<string, string> = {
 };
 
 const statusOptions: WishStatus[] = ["open", "paused", "fulfilled", "hidden"];
-
-const statusBadgeClassNames: Record<WishStatus, string> = {
-  open: "bg-[#ecfdf5] text-[#047857]",
-  paused: "bg-[#fff7ed] text-[#9a3412]",
-  fulfilled: "bg-[#eff6ff] text-[#1d4ed8]",
-  hidden: "bg-[#f4f4f5] text-zinc-600",
-};
-
-const statusDotClassNames: Record<WishStatus, string> = {
-  open: "bg-[#10b981]",
-  paused: "bg-[#f97316]",
-  fulfilled: "bg-[#3b82f6]",
-  hidden: "bg-zinc-400",
-};
 
 export default async function AdminWishesPage({
   searchParams,
@@ -273,15 +260,10 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               <h3 className="truncate text-sm font-bold tracking-normal text-ink">
                 {item.title}
               </h3>
-              <span
-                className={`inline-flex h-6 shrink-0 items-center gap-1.5 rounded-full px-2 text-xs font-bold ${statusBadgeClassNames[displayedStatus]}`}
-              >
-                <span
-                  aria-hidden="true"
-                  className={`h-1.5 w-1.5 rounded-full ${statusDotClassNames[displayedStatus]}`}
-                />
+              <Badge variant="status" tone={displayedStatus}>
+                <Badge variant="status-dot" tone={displayedStatus} aria-hidden="true" />
                 {getWishStatusLabel(item.status, progress)}
-              </span>
+              </Badge>
             </div>
             <p className="mt-1 text-xs text-zinc-600">
               {formatCurrency(item.fundedAmount)} /{" "}

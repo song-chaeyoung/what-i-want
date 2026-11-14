@@ -38,6 +38,35 @@ const rootSemantics = {
   "--tint-mint": "#ccfbf1",
   "--tint-blush": "#ffe4e6",
   "--tint-yellow": "#fef3c7",
+  "--success": "#10b981",
+  "--success-tint": "#ecfdf5",
+  "--success-ink": "#047857",
+  "--warn-tint": "#fff7ed",
+  "--warn-ink": "#9a3412",
+  "--info": "#3b82f6",
+  "--info-tint": "#eff6ff",
+  "--info-ink": "#1d4ed8",
+  "--muted-tint": "#f4f4f5",
+  "--track": "#f3f4f6",
+  "--confetti-violet": "#7c3aed",
+  "--confetti-amber": "#f59e0b",
+  "--confetti-pink": "#ec4899",
+} as const;
+
+const statusColorBridges = {
+  "--color-success": "--success",
+  "--color-success-tint": "--success-tint",
+  "--color-success-ink": "--success-ink",
+  "--color-warn-tint": "--warn-tint",
+  "--color-warn-ink": "--warn-ink",
+  "--color-info": "--info",
+  "--color-info-tint": "--info-tint",
+  "--color-info-ink": "--info-ink",
+  "--color-muted-tint": "--muted-tint",
+  "--color-track": "--track",
+  "--color-point": "--point",
+  "--color-blush": "--tint-blush",
+  "--color-yellow": "--tint-yellow",
 } as const;
 
 const buttonColorBridges = {
@@ -274,6 +303,8 @@ const previousPub = {
     "--bank-ink": "#3f7a6e",
     "--tint-blush": "#fdeef5",
     "--msg-sub": "#c77ba0",
+    "--gift-soft-bg": "#ffe1ec",
+    "--gift-soft-ink": "#bd6595",
   },
 } as const;
 
@@ -433,6 +464,30 @@ describe("semantic token aliases", () => {
     expect(themeBridgeVars.get("--spacing-admin-sidebar")).toBe("22px");
     expect(themeBridgeVars.has("--shadow-md")).toBe(false);
     expect(themeBridgeVars.get("--radius-md")).toBe("calc(var(--radius) * 0.8)");
+  });
+
+  test("points status and tint utilities at their source tokens", () => {
+    const documentVars = mergedVars([rootVars, themeBridgeVars]);
+
+    for (const [bridge, token] of Object.entries(statusColorBridges)) {
+      expect(themeBridgeVars.get(bridge), bridge).toBe(`var(${token})`);
+      expect(resolveVar(bridge, documentVars), bridge).toBe(
+        rootSemantics[token as keyof typeof rootSemantics],
+      );
+    }
+
+    expect(rootVars.get("--warn-tint")).toBe(rootSemantics["--surface-page"]);
+    expect(rootVars.get("--warn-tint")).not.toBe("var(--surface-page)");
+
+    for (const name of ["--color-confetti-violet", "--color-confetti-amber", "--color-confetti-pink"]) {
+      expect(themeBridgeVars.has(name), name).toBe(false);
+    }
+
+    expect(rootVars.has("--gift-soft-bg")).toBe(false);
+    expect(rootVars.has("--gift-soft-ink")).toBe(false);
+    expect(themeBlocks.pixel_y2k.has("--gift-soft-bg")).toBe(false);
+    expect(themeBlocks.mono_bw.has("--gift-soft-bg")).toBe(false);
+    expect(themeBlocks.mono_bw.has("--gift-soft-ink")).toBe(false);
   });
 
   test("points button color utilities at the new :root tokens", () => {

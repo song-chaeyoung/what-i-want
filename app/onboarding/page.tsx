@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TextLogo } from "@/components/text-logo";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { requireUser } from "@/src/lib/auth/require-user";
@@ -63,9 +64,9 @@ export default async function OnboardingPage({
             </div>
 
             {errorMessage ? (
-              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+              <Alert variant="notice" className="mt-5 px-4 py-3 text-sm font-black">
                 {errorMessage}
-              </p>
+              </Alert>
             ) : null}
 
             <form
@@ -103,7 +104,7 @@ export default async function OnboardingPage({
                   name="ageConfirmed"
                   type="checkbox"
                   required
-                  className="mt-1 size-4 shrink-0 accent-[#111827]"
+                  className="mt-1 size-4 shrink-0 accent-ink-deep"
                 />
                 <span>
                   만 14세 이상입니다.{" "}

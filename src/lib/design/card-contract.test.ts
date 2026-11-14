@@ -126,9 +126,6 @@ describe("card variant contract", () => {
     for (const file of files) {
       const source = read(file);
       for (const legacy of replaced) {
-        if (file === "app/page.tsx" && legacy === "border-[#171717]") {
-          continue;
-        }
         expect(source, `${file} ${legacy}`).not.toContain(legacy);
       }
     }

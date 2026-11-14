@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { auth } from "@/auth";
+import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { TextLogo } from "@/components/text-logo";
@@ -64,9 +65,9 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
             </div>
 
             {noticeMessage ? (
-              <p className="mt-5 border-2 border-[#f97316] bg-[#fff7ed] px-4 py-3 text-sm font-black text-[#9a3412]">
+              <Alert variant="notice" className="mt-5 px-4 py-3 text-sm font-black">
                 {noticeMessage}
-              </p>
+              </Alert>
             ) : null}
 
             <div className="mt-8 space-y-3">

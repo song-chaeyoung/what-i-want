@@ -19,7 +19,7 @@ export function TextLogo({ href, className = "" }: TextLogoProps) {
         preload
         unoptimized
       />
-      <span className="font-pixel text-2xl leading-none tracking-normal text-[#4c1d95] sm:text-3xl">
+      <span className="font-pixel text-2xl leading-none tracking-normal text-purple sm:text-3xl">
         {BRAND_NAME}
       </span>
     </>

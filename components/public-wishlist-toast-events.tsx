@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast } from "sonner";
 import { PublicBankAccountCard } from "@/components/public-bank-account-card";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
@@ -200,7 +201,9 @@ function AccountRevealModal({
     >
       <Card asChild variant="theme" className="w-full max-w-sm p-6">
         <section>
-          <p className="pub-pill pub-pill-alt">thank you</p>
+          <Badge asChild variant="theme-alt">
+            <p>thank you</p>
+          </Badge>
           <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--headline)]">
             {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
           </h2>

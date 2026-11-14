@@ -1,6 +1,6 @@
 # 의미 토큰 병합 매핑
 
-코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14.
+코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14. 필·상태 색 토큰 추가 대조일: 2026-11-14.
 
 상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 세 테마의 리터럴은 그대로입니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
@@ -107,6 +107,50 @@
 
 Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [globals.css](../../app/globals.css)는 `@source not "../docs"`로 문서 경로를 스캔에서 빼, 지운 토큰 이름이 생성된 CSS에 다시 들어가지 않게 합니다. 앱과 컴포넌트 소스 탐지는 그대로입니다.
 
+## 필·상태·알림 색
+
+2026-11-14에 상태 배지, 알림, 선물 그림, 홈 예시, 꽃가루에 직접 적혀 있던 색을 토큰으로 옮겼습니다. 값은 그때의 하드코드와 같습니다. 화면 픽셀은 바꾸지 않는 것이 목표입니다.
+
+| 의미 토큰 | 값 | 유틸 다리 | 쓰는 곳 |
+| --- | --- | --- | --- |
+| `--success` | `#10b981` | `--color-success` | 진행 중 점, 꽃가루 |
+| `--success-tint` | `#ecfdf5` | `--color-success-tint` | 진행 중 배지 면 |
+| `--success-ink` | `#047857` | `--color-success-ink` | 진행 중 배지 글자 |
+| `--warn-tint` | `#fff7ed` | `--color-warn-tint` | 멈춤 배지, 메시지 선물 이름, 주황 알림 면 |
+| `--warn-ink` | `#9a3412` | `--color-warn-ink` | 그 글자, 만 14세 경고 |
+| `--info` | `#3b82f6` | `--color-info` | 완료 점 |
+| `--info-tint` | `#eff6ff` | `--color-info-tint` | 완료 배지 면 |
+| `--info-ink` | `#1d4ed8` | `--color-info-ink` | 완료 배지 글자 |
+| `--muted-tint` | `#f4f4f5` | `--color-muted-tint` | 숨김 배지 면 |
+| `--track` | `#f3f4f6` | `--color-track` | 홈 예시 진행 트랙 |
+| `--confetti-violet` | `#7c3aed` | 없음. `:root`만 | 꽃가루 |
+| `--confetti-amber` | `#f59e0b` | 없음. `:root`만 | 꽃가루 |
+| `--confetti-pink` | `#ec4899` | 없음. `:root`만 | 꽃가루 |
+| `--gift-soft-bg` | `#ffe1ec` | 없음. `soft_pastel`만 | 둥근 선물 그림 면 |
+| `--gift-soft-ink` | `#bd6595` | 없음. `soft_pastel`만 | 둥근 선물 그림 글자 |
+
+`--warn-tint`는 `:root`의 `--surface-page`와 값이 같아도 별도 토큰입니다(2026-11-14 채영 결정). `var(--surface-page)`로 가리키지 않습니다.
+
+꽃가루 세 색은 `:root`에만 있습니다. `@theme inline`에 `--color-confetti-*`를 넣지 않습니다(2026-11-14 채영 결정). 조각은 [birthday-confetti.tsx](../../app/admin/birthday-confetti.tsx)의 `<span style>` `backgroundColor`라 `var()`가 계산됩니다. canvas가 아닙니다.
+
+`--gift-soft-*`는 `soft_pastel` 블록에만 있습니다. 다른 테마의 `.gm-soft`는 보이지 않습니다.
+
+새 색은 아니지만 `@theme inline`에 다리를 추가했습니다.
+
+| 다리 | 값 | 생성 유틸 |
+| --- | --- | --- |
+| `--color-point` | `var(--point)` | `bg-point`, `border-point`. 테마가 `--point`를 덮으면 그 색 |
+| `--color-blush` | `var(--tint-blush)` | `bg-blush`. 테마 `--tint-blush` |
+| `--color-yellow` | `var(--tint-yellow)` | `bg-yellow`. 테마는 `--tint-yellow`를 덮지 않아 `:root` `#fef3c7` |
+
+`--color-point`는 새 색이 아닙니다. `bg-point`와 `border-point`가 `--point`를 읽게 하는 다리입니다. 보이는 화면의 `--point`는 `#f97316`입니다. `mono_bw`와 `soft_pastel`의 `.gm-pixel`은 숨겨져 있고, 그 안에서 `bg-point`를 계산하면 테마 `--point`(`#111`, `#f79f97`)가 됩니다. 칠해지는 픽셀은 픽셀 테마의 `#f97316`입니다. `bg-blush`도 테마 `--tint-blush`를 따릅니다. 보이는 픽셀 그림은 픽셀 테마 안이라 `#ffe4e6`입니다.
+
+`text-purple`, `border-ink`, `bg-mint`는 기존 브랜드 유틸이라 `.pub-page` 안에서도 `:root` 색입니다. 모노 선 그림의 `#111`은 `border-ink`(`#171717`)가 아니라 `border-(--ink)`·`text-(--ink)`입니다. `mono_bw`의 `--ink`는 `#111`입니다.
+
+필 클래스는 `.pub-pill`, `.pub-pill-alt`에서 `.theme-pill`, `.theme-pill-alt`로 이름을 바꿨습니다. 선언은 같고, `mono_bw` 헤더 예외는 `.pub-page[data-theme="mono_bw"] .pub-header .theme-pill`입니다. 호출은 [Badge](../../components/ui/badge.tsx)의 `theme`, `theme-alt`입니다. 관리자 상태 배지는 `status`·`status-dot`(tone `open`, `paused`, `fulfilled`, `hidden`)이고, 안 읽은 수는 `count`(`bg-point`)입니다. 숨김 글자와 점은 `text-zinc-600`, `bg-zinc-400`로 남겼습니다. 로그인·온보딩 주황 상자는 [Alert](../../components/ui/alert.tsx) `notice`(`border-2 border-point bg-warn-tint text-warn-ink`)입니다.
+
+그대로 둔 hex: 설정 `#f9fafb`, 위시 썸네일 `#f4f4f3`, 안내 `#fafafa`, OG 이미지.
+
 ## 타이포
 
 글꼴 패밀리와 글자 크기, 그리고 같은 역할에 이미 붙어 있던 굵기·행간·자간·대문자 변환만 옮겼습니다. 테마마다 다른 값은 그대로입니다. 픽셀 제목은 36px, 모노와 파스텔 제목은 30px입니다.
@@ -155,7 +199,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--btn-weight` | `700` | `700` | `700` |
 | `--btn-size` | `15px` | `14px` | `15px` |
 
-`--label-size`와 `--pill-size`는 원래 별도 토큰이 아니라 `.pub-label`·`.pub-pill`의 `12px`였습니다. `--label-color`는 색이라 이 표에 없습니다. `.pub-eyebrow`의 `font-size: 12px`와 `text-transform: uppercase`도 토큰으로 바꾸지 않았습니다. 라벨 크기와 숫자가 같아도, 눈썹은 테마의 `--label-transform`을 쓰지 않습니다.
+`--label-size`와 `--pill-size`는 원래 별도 토큰이 아니라 당시 `.pub-label`·`.pub-pill`의 `12px`였습니다. 필 클래스는 지금 `.theme-pill`입니다. `--label-color`는 색이라 이 표에 없습니다. `.pub-eyebrow`의 `font-size: 12px`와 `text-transform: uppercase`도 토큰으로 바꾸지 않았습니다. 라벨 크기와 숫자가 같아도, 눈썹은 테마의 `--label-transform`을 쓰지 않습니다.
 
 지운 타이포 별칭: `--pub-headline-font`, `--pub-headline-weight`, `--pub-headline-size`, `--pub-headline-lh`, `--pub-headline-ls`, `--pub-label-font`, `--pub-label-ls`, `--pub-label-transform`, `--pub-label-weight`, `--pub-pill-font`, `--pub-pill-weight`, `--pub-pill-transform`, `--pub-btn-font`, `--pub-btn-weight`, `--pub-btn-size`.
 
@@ -234,7 +278,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--btn-gap` | `8px` | 같은 값 | 같은 값 |
 | `--pill-gap` | `6px` | 같은 값 | 같은 값 |
 
-`--btn-pad`, `--btn-gap`, `--pill-gap`는 원래 별도 토큰이 아니라 `.theme-btn`·`.pub-pill`의 값입니다. 공개 버튼 클래스는 `.theme-btn`, `.theme-btn-primary`, `.theme-btn-accent`이고, 호출은 [Button](../../components/ui/button.tsx) variant입니다. 너비 100%는 `size="block"`(`w-full`)입니다.
+`--btn-pad`, `--btn-gap`, `--pill-gap`는 원래 별도 토큰이 아니라 `.theme-btn`·`.theme-pill`의 값입니다. 공개 버튼 클래스는 `.theme-btn`, `.theme-btn-primary`, `.theme-btn-accent`이고, 호출은 [Button](../../components/ui/button.tsx) variant입니다. 너비 100%는 `size="block"`(`w-full`)입니다.
 
 관리자 사이드바는 [layout.tsx](../../app/admin/layout.tsx)의 본문과 로딩 화면 `aside` 두 곳입니다. `@theme inline`에 너비와 간격을 따로 등록합니다. 값이 달라 하나의 spacing 키로 합치지 않습니다. `--spacing-admin-sidebar`는 `py-admin-sidebar` 외의 간격 유틸(`p-admin-sidebar` 등)도 만들 수 있지만, 지금 소스는 `py-admin-sidebar`만 써서 생성 CSS에는 그 클래스만 있습니다.
 
@@ -292,7 +336,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 `--progress-fill`은 현재 세 테마 모두 `--accent-main`과 같은 값입니다. 진행률 전용으로 남겨 두었고, `--accent-main`으로 합치지 않았습니다.
 
-선물 없음 자리의 `GIFT` 그림은 테마별 클래스(`.gm-pixel`, `.gm-line`, `.gm-soft`) 안의 직접 색입니다. 매핑된 토큰 사용처가 아니라 이번 단계에서 바꾸지 않았습니다.
+선물 없음 자리의 `GIFT` 그림은 `.gm-pixel`, `.gm-line`, `.gm-soft`입니다. 2026-11-14에 픽셀 그림은 `border-ink`·`bg-point`·`bg-blush`·`bg-mint`·`bg-yellow`·`text-purple`, 모노 선은 `border-(--ink)`·`text-(--ink)`, 파스텔 둥근 그림은 `bg-(--gift-soft-bg)`·`text-(--gift-soft-ink)`입니다.
 
 ## 확인 방법
 
@@ -301,3 +345,5 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 [Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`는 그대로인지도 봅니다. `shadow-xs`의 Chrome 계산 `box-shadow`는 지운 `--shadow-pub`와 같은 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`입니다. `--radius-pub`는 사용처가 없어 지웠고, `rounded-md`는 `--radius` `0.625rem`의 0.8배라 `0.375rem`과 다릅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.pub-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.
+
+[필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, 설정·썸네일·안내·OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다.
