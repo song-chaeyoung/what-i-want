@@ -26,6 +26,10 @@
   --danger-tint: #fef2f2;
   --kakao: #fee500;
   --kakao-hover: #f6dc00;
+  --ink-soft: #4b5563;
+  --ink-faint: #6b7280;
+  --admin-bg: #fafaf9;
+  --admin-subtle: #fbfbfa;
   --tint-mint: #ccfbf1;
   --tint-blush: #ffe4e6;
   --tint-yellow: #fef3c7;
@@ -106,6 +110,10 @@
   --color-kakao-hover: var(--kakao-hover);
   --color-line-strong: var(--line-strong);
   --color-accent-main: var(--accent-main);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-faint: var(--ink-faint);
+  --color-admin-bg: var(--admin-bg);
+  --color-admin-subtle: var(--admin-subtle);
   --shadow-pixel-xs: 2px 2px 0 #111827;
   --shadow-pixel-sm: 3px 3px 0 #111827;
   --shadow-pixel-md: 4px 4px 0 #111827;
@@ -172,16 +180,6 @@ body {
   background-color: var(--brand-cream);
   background-image: radial-gradient(#fecdd3 1.2px, transparent 1.2px);
   background-size: 18px 18px;
-}
-
-.pixel-board {
-  border: 2px solid var(--brand-ink);
-  box-shadow: var(--shadow-pixel-xl);
-}
-
-.pixel-card {
-  border: 2px solid var(--brand-ink);
-  box-shadow: var(--shadow-pixel-lg);
 }
 
 .sticker-label {

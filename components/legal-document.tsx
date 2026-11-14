@@ -1,44 +1,58 @@
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
+import { Card } from "@/components/ui/card";
 import { BRAND_NAME } from "@/src/lib/design/copy";
 import type { LegalDocument } from "@/src/lib/legal/documents";
 
 export function LegalDocumentView({ document }: { document: LegalDocument }) {
   return (
-    <main className="pixel-dot-bg min-h-dvh text-[#171717]">
+    <main className="pixel-dot-bg min-h-dvh text-ink">
       <div className="mx-auto w-full max-w-3xl px-5 py-10 sm:px-8 lg:py-14">
         <Link
           href="/"
-          className="font-pixel text-sm tracking-normal text-[#0f766e] hover:underline"
+          className="font-pixel text-sm tracking-normal text-accent-main hover:underline"
         >
           {BRAND_NAME}
         </Link>
 
-        <header className="mt-4 border-2 border-[#171717] bg-[#fffdf7] p-5 shadow-pixel-lg sm:p-6">
-          <h1 className="font-pixel text-3xl tracking-normal text-[#4c1d95] sm:text-4xl">
-            {document.title}
-          </h1>
-          <p className="mt-3 text-xs font-black text-[#6b7280]">
-            시행일: {document.effectiveDate}
-          </p>
-          <p className="mt-3 text-sm font-semibold leading-7 text-[#4b5563]">
-            {document.intro}
-          </p>
-        </header>
+        <Card
+          asChild
+          variant="pixel"
+          surface="paper"
+          shadow="lg"
+          className="mt-4 p-5 sm:p-6"
+        >
+          <header>
+            <h1 className="font-pixel text-3xl tracking-normal text-purple sm:text-4xl">
+              {document.title}
+            </h1>
+            <p className="mt-3 text-xs font-black text-ink-faint">
+              시행일: {document.effectiveDate}
+            </p>
+            <p className="mt-3 text-sm font-semibold leading-7 text-ink-soft">
+              {document.intro}
+            </p>
+          </header>
+        </Card>
 
         <div className="mt-5 space-y-4">
           {document.sections.map((section) => (
-            <section
+            <Card
               key={section.heading}
-              className="border-2 border-[#171717] bg-white p-5 shadow-pixel-md sm:p-6"
+              asChild
+              variant="pixel"
+              surface="white"
+              shadow="md"
+              className="p-5 sm:p-6"
             >
-              <h2 className="text-base font-black text-[#171717] sm:text-lg">
+              <section>
+              <h2 className="text-base font-black text-ink sm:text-lg">
                 {section.heading}
               </h2>
               {section.paragraphs?.map((paragraph, index) => (
                 <p
                   key={index}
-                  className="mt-3 text-sm font-semibold leading-7 text-[#4b5563]"
+                  className="mt-3 text-sm font-semibold leading-7 text-ink-soft"
                 >
                   {paragraph}
                 </p>
@@ -48,9 +62,9 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
                   {section.items.map((item, index) => (
                     <li
                       key={index}
-                      className="flex gap-2 text-sm font-semibold leading-7 text-[#4b5563]"
+                      className="flex gap-2 text-sm font-semibold leading-7 text-ink-soft"
                     >
-                      <span aria-hidden="true" className="text-[#0f766e]">
+                      <span aria-hidden="true" className="text-accent-main">
                         •
                       </span>
                       <span className="break-keep">{item}</span>
@@ -58,7 +72,8 @@ export function LegalDocumentView({ document }: { document: LegalDocument }) {
                   ))}
                 </ul>
               ) : null}
-            </section>
+              </section>
+            </Card>
           ))}
         </div>
       </div>

@@ -498,7 +498,7 @@ describe("semantic token aliases", () => {
   });
 
   test("keeps the card headline override on --headline and the header on the theme headline", () => {
-    const cardBlock = extractBlock(publicThemesCss, /\.pub-card\s*\{/);
+    const cardBlock = extractBlock(publicThemesCss, /\.theme-card\s*\{/);
     const headlineBlock = extractBlock(publicThemesCss, /\.pub-headline\s*\{/);
     const removedPrefix = "--" + "pub-";
 
@@ -526,7 +526,7 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("background: var(--bank-bg);");
     expect(publicThemesCss).toContain("color: var(--header-sub);");
     expect(publicThemesCss).toContain("color: var(--label-color);");
-    expect(publicThemesCss).toContain("color: var(--msg-title);");
+    expect(publicThemesCss).not.toMatch(/var\(--msg-title\)/);
     expect(publicThemesCss).toContain("gap: var(--pill-gap);");
     expect(publicThemesCss).toContain("padding: var(--pill-pad);");
     expect(publicThemesCss).toContain("gap: var(--btn-gap);");

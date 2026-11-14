@@ -11,6 +11,7 @@ import {
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
 import { ResetWishlistForm } from "./reset-wishlist-form";
@@ -263,7 +264,7 @@ export default async function AdminSettingsPage() {
           </SettingsRow>
         </SettingsSection>
 
-        <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-[#fafaf9]/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
+        <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-admin-bg/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
           <Button type="submit" variant="admin">
             저장하기
           </Button>
@@ -307,13 +308,15 @@ function SettingsSection({
   children: React.ReactNode;
 }) {
   return (
-    <section id={id} className="rounded-md border border-line bg-white">
+    <Card asChild variant="admin">
+      <section id={id}>
       <div className="border-b border-line px-4 py-3">
         <h3 className="text-sm font-bold tracking-normal text-ink">{title}</h3>
         <p className="mt-1 text-sm leading-6 text-zinc-600">{description}</p>
       </div>
       <div className="divide-y divide-line">{children}</div>
-    </section>
+      </section>
+    </Card>
   );
 }
 

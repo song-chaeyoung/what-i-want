@@ -1,4 +1,5 @@
 import { PublicBankAccountCard } from "@/components/public-bank-account-card";
+import { Card } from "@/components/ui/card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 import type { PublicBankAccountView } from "@/src/lib/public-wishlist/types";
 
@@ -8,10 +9,8 @@ export function PublicAccountSection({
   account: PublicBankAccountView;
 }) {
   return (
-    <details
-      className="send-heart-section pub-card"
-      open={account.visibility === "always_visible"}
-    >
+    <Card asChild variant="theme" className="send-heart-section">
+      <details open={account.visibility === "always_visible"}>
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
         <span className="pub-pill pub-pill-alt">gift account</span>
         <span className="text-lg font-black tracking-normal text-[var(--headline)]">
@@ -25,6 +24,7 @@ export function PublicAccountSection({
       <div className="px-5 pb-5">
         <PublicBankAccountCard account={account} />
       </div>
-    </details>
+      </details>
+    </Card>
   );
 }

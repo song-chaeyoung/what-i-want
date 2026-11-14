@@ -6,8 +6,7 @@ const homePagePath = join(process.cwd(), "app/page.tsx");
 const notFoundPath = join(process.cwd(), "app/not-found.tsx");
 const errorPath = join(process.cwd(), "app/error.tsx");
 const globalsPath = join(process.cwd(), "app/globals.css");
-const squareCardClass =
-  "w-full max-w-md space-y-4 border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-xs";
+const squareCardProps = ['variant="pixel"', 'surface="paper"', 'shadow="xs"'] as const;
 
 describe("home UI contract", () => {
   test("keeps the home page centered on a public wishlist preview", () => {
@@ -65,10 +64,10 @@ describe("home UI contract", () => {
   test("uses the 2px pixel shadow on home surfaces", () => {
     const source = readFileSync(homePagePath, "utf8");
 
-    expect(source).toContain("shadow-pixel-xs");
-    expect(source).toContain(
-      'className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-xs sm:p-5"',
-    );
+    expect(source).toContain('shadow="xs"');
+    expect(source).toContain('className="p-4 sm:p-5"');
+    expect(source).toContain('variant="pixel"');
+    expect(source).toContain('surface="paper"');
     expect(source).not.toContain("shadow-pixel-sm");
     expect(source).not.toContain("shadow-pixel-md");
     expect(source).not.toContain("shadow-pixel-lg");
@@ -88,7 +87,7 @@ describe("home UI contract", () => {
     expect(listTag).toContain('role="list"');
     expect(listTag).toContain("list-none");
     expect(steps).toContain("rounded-full");
-    expect(steps).toContain("border-2 border-[#171717]");
+    expect(steps).toContain("border-2 border-ink");
     expect(steps).toContain("bg-[var(--tint-yellow)]");
     expect(steps).toContain("border-dotted");
     expect(steps).toContain("sm:border-t-2");
@@ -105,11 +104,14 @@ describe("home UI contract", () => {
     for (const filePath of [notFoundPath, errorPath]) {
       const source = readFileSync(filePath, "utf8");
 
-      const sectionStart = source.indexOf("<section");
-      const sectionTag = source.slice(sectionStart, source.indexOf(">", sectionStart));
+      const cardStart = source.lastIndexOf("<Card", source.indexOf("<section"));
+      const cardTag = source.slice(cardStart, source.indexOf(">", cardStart));
 
-      expect(sectionTag, filePath).toContain(squareCardClass);
-      expect(sectionTag, filePath).not.toContain("rounded-md");
+      for (const prop of squareCardProps) {
+        expect(cardTag, `${filePath} ${prop}`).toContain(prop);
+      }
+      expect(cardTag, filePath).toContain("w-full max-w-md space-y-4 p-6");
+      expect(cardTag, filePath).not.toContain("rounded-md");
       expect(source, filePath).not.toContain("bg-white p-6");
     }
   });

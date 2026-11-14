@@ -214,7 +214,8 @@ describe("compiled Tailwind brand utilities", () => {
         );
       }
 
-      expect(minified).toMatch(/\.pub-card\{[^}]*--headline:var\(--ink\)/);
+      expect(minified).toMatch(/\.theme-card\{[^}]*--headline:var\(--ink\)/);
+      expect(minified).not.toContain(".pub-card{");
       expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
       expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
       expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
@@ -289,9 +290,9 @@ describe("compiled Tailwind brand utilities", () => {
       ).toBe(true);
       expect(minified).not.toContain(".shadow-pub{");
       expect(minified).not.toContain("--radius-pub");
-      expect(minified).toMatch(/\.pub-card\{[^}]*border:var\(--card-border\)/);
-      expect(minified).toMatch(/\.pub-card\{[^}]*border-radius:var\(--card-radius\)/);
-      expect(minified).toMatch(/\.pub-card\{[^}]*box-shadow:var\(--card-shadow\)/);
+      expect(minified).toMatch(/\.theme-card\{[^}]*border:var\(--card-border\)/);
+      expect(minified).toMatch(/\.theme-card\{[^}]*border-radius:var\(--card-radius\)/);
+      expect(minified).toMatch(/\.theme-card\{[^}]*box-shadow:var\(--card-shadow\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--progress-h\)/);
       expect(minified).toMatch(/\.pub-progress\{[^}]*background:var\(--progress-track\)/);
@@ -307,6 +308,17 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toContain("background-color:var(--kakao-hover)");
       expect(minified).toContain(".border-line-strong{border-color:var(--line-strong)");
       expect(minified).toContain(".bg-accent-main{background-color:var(--accent-main)");
+      expect(minified).toContain(".text-ink-soft{color:var(--ink-soft)");
+      expect(minified).toContain(".text-ink-faint{color:var(--ink-faint)");
+      expect(minified).toMatch(
+        /\.bg-admin-bg(?:,\.bg-admin-bg\\\/95)?\{background-color:var\(--admin-bg\)/,
+      );
+      expect(minified).toContain("color-mix(inoklab,var(--admin-bg)95%,transparent)");
+      expect(minified).toContain(".bg-admin-subtle{background-color:var(--admin-subtle)");
+      expect(minified).not.toContain(".pixel-board{");
+      expect(minified).not.toContain(".pixel-card{");
+      expect(minified).not.toContain(".pub-msg{");
+      expect(minified).not.toContain(".pub-msg-title{");
       expect(minified).not.toContain(".pub-btn{");
       expect(minified).not.toContain(".pub-btn-primary{");
       expect(minified).toContain(".w-admin-sidebar{width:220px");
@@ -356,16 +368,15 @@ function themeMarkup(themeId?: string) {
   return `<section class="pub-page"${themeAttribute} data-probe="page">
     <header class="pub-header" data-probe="header">
       <h1 class="pub-headline" data-probe="header-title">제목</h1>
-      <div class="pub-stat" data-probe="stat">
+      <div class="theme-card pub-stat" data-probe="stat">
         <span class="text-[var(--headline)]" data-probe="stat-value">1</span>
       </div>
       ${utilities}
     </header>
-    <article class="pub-card" data-probe="card">
+    <article class="theme-card" data-probe="card">
       <h2 class="text-[var(--headline)]" data-probe="card-title">카드</h2>
       <p class="text-[var(--ink-muted)]" data-probe="muted">설명</p>
       <div class="pub-fallback" data-probe="fallback"></div>
-      <div class="pub-msg" data-probe="msg"></div>
       <button class="theme-btn" data-probe="btn" type="button">버튼</button>
       <button class="theme-btn theme-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="theme-btn theme-btn-accent" data-probe="btn-accent" type="button">강조</button>
@@ -378,11 +389,8 @@ function themeMarkup(themeId?: string) {
       <div class="pub-bank" data-probe="bank">
         <p class="text-[var(--bank-ink)]" data-probe="bank-ink">계좌</p>
       </div>
-      <p class="pub-msg-title" data-probe="msg-title">안내</p>
       <div class="border-t-2 border-[var(--divider-color)]" data-probe="divider"></div>
     </article>
-    <div class="pixel-card" data-probe="pixel-card"></div>
-    <div class="pixel-board" data-probe="pixel-board"></div>
     <div class="shadow-xs" data-probe="shadow-xs"></div>
     <div class="shadow-pixel-xs" data-probe="util-xs"></div>
     <div class="shadow-pixel-sm" data-probe="util-sm"></div>
@@ -795,8 +803,6 @@ function expectShape(
   const button = probes.get("btn");
   const progress = probes.get("progress");
   const field = probes.get("field");
-  const pixelCard = probes.get("pixel-card");
-  const pixelBoard = probes.get("pixel-board");
   const sticker = probes.get("sticker");
   const rawXs = probes.get("raw-xs");
   const primary = probes.get("btn-primary");
@@ -833,8 +839,6 @@ function expectShape(
   expectPx(progress!.borderRadius, expected.progressRadius, `${label} progress radius`);
   expectEdge(field!, expected.fieldBorder, `${label} field border`, probes);
   expectPx(field!.borderRadius, expected.fieldRadius, `${label} field radius`);
-  expectBox(pixelCard!.boxShadow, "rgb(17, 24, 39) 6px 6px 0px 0px", `${label} pixel card`);
-  expectBox(pixelBoard!.boxShadow, "rgb(17, 24, 39) 8px 8px 0px 0px", `${label} pixel board`);
   expectBox(sticker!.boxShadow, rawXs!.boxShadow, `${label} sticker`);
   expect(probes.get("shadow-xs")!.boxShadow, `${label} shadow-xs`).toBe(
     "rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 1px 2px 0px",
@@ -970,7 +974,6 @@ function expectRoleTokens(
   const progressFill = probes.get("progress-fill");
   const labelProbe = probes.get("label");
   const eyebrow = probes.get("eyebrow");
-  const messageTitle = probes.get("msg-title");
   const divider = probes.get("divider");
 
   expectPaint(pill!.backgroundColor, expected.pillBg, `${label} pill bg`);
@@ -985,7 +988,6 @@ function expectRoleTokens(
   expectPaint(progressFill!.backgroundColor, expected.progressFill, `${label} progress fill`);
   expectPaint(labelProbe!.color, expected.labelColor, `${label} label color`);
   expectPaint(eyebrow!.color, expected.headerSub, `${label} header sub`);
-  expectPaint(messageTitle!.color, expected.msgTitle, `${label} message title`);
   expectPaint(divider!.borderTopColor, expected.divider, `${label} divider`);
   expectDots(page!.bgDots, expected.dots, `${label} bg dots`);
   expectDots(page!.backgroundImage, expected.dots, `${label} page image`);
@@ -1013,7 +1015,6 @@ function expectThemeSurface(
   const cardTitle = probes.get("card-title");
   const muted = probes.get("muted");
   const fallback = probes.get("fallback");
-  const message = probes.get("msg");
   const button = probes.get("btn");
   const primary = probes.get("btn-primary");
   const accent = probes.get("btn-accent");
@@ -1028,7 +1029,6 @@ function expectThemeSurface(
   expectRgb(cardTitle!.color, colors.ink, `${label} card title`);
   expectRgb(muted!.color, colors.inkMuted, `${label} muted`);
   expectRgb(fallback!.backgroundColor, colors.tintMint, `${label} fallback`);
-  expectRgb(message!.backgroundColor, colors.tintBlush, `${label} message`);
   expectRgb(button!.backgroundColor, colors.surface, `${label} button`);
   expectRgb(button!.color, colors.ink, `${label} button ink`);
   expectRgb(primary!.backgroundColor, colors.point, `${label} primary`);

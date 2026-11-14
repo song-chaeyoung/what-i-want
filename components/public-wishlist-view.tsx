@@ -5,6 +5,7 @@ import { PublicParticipationSubmitButton } from "@/components/public-participati
 import { PublicShareButton } from "@/components/public-share-button";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
@@ -110,14 +111,14 @@ export function PublicWishlistView({
             />
           ))
         ) : (
-          <div className="pub-card p-6">
+          <Card variant="theme" className="p-6">
             <h2 className="text-2xl font-black tracking-normal text-[var(--headline)]">
               {PUBLIC_WISHLIST_COPY.emptyTitle}
             </h2>
             <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
               {PUBLIC_WISHLIST_COPY.emptyDescription}
             </p>
-          </div>
+          </Card>
         )}
 
         <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
@@ -136,7 +137,8 @@ export function PublicWishlistView({
 
 function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
   return (
-    <details className="send-heart-section pub-card">
+    <Card asChild variant="theme" className="send-heart-section">
+      <details>
       <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
         <span className="pub-pill pub-pill-alt">gift note</span>
         <span className="text-lg font-black tracking-normal text-[var(--headline)]">
@@ -181,7 +183,8 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
 
         <ParticipationSubmit demo={demo} />
       </form>
-    </details>
+      </details>
+    </Card>
   );
 }
 
@@ -241,7 +244,8 @@ function PublicWishCard({
   );
 
   return (
-    <article className="gift-card-shell pub-card overflow-hidden">
+    <Card asChild variant="theme" className="gift-card-shell overflow-hidden">
+      <article>
       <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
         <div
           className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
@@ -398,7 +402,8 @@ function PublicWishCard({
           {participationNotice}
         </p>
       ) : null}
-    </article>
+      </article>
+    </Card>
   );
 }
 
@@ -438,12 +443,12 @@ function GiftFallback() {
 
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
-    <div className="pub-stat p-4">
+    <Card variant="theme" className="pub-stat p-4">
       <dt className="pub-label text-xs">{label}</dt>
       <dd className="mt-1 text-lg font-black tracking-normal text-[var(--headline)]">
         {value}
       </dd>
-    </div>
+    </Card>
   );
 }
 

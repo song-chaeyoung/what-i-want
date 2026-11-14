@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TextLogo } from "@/components/text-logo";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
@@ -44,15 +45,16 @@ export default async function OnboardingPage({
     error && Object.hasOwn(errorMessages, error) ? errorMessages[error] : null;
 
   return (
-    <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-[#171717]">
+    <main className="pixel-dot-bg min-h-dvh px-5 py-12 text-ink">
       <div className="mx-auto flex min-h-[calc(100dvh-6rem)] w-full max-w-2xl flex-col justify-center">
         <TextLogo className="mb-6 self-center" />
-        <section className="border-2 border-[#171717] bg-[#fffdf7] p-6 shadow-pixel-lg">
+        <Card asChild variant="pixel" surface="paper" shadow="lg" className="p-6">
+          <section>
           <div className="space-y-2">
-            <p className="font-pixel text-sm tracking-normal text-[#0f766e]">
+            <p className="font-pixel text-sm tracking-normal text-accent-main">
               온보딩
             </p>
-            <h1 className="font-pixel break-keep text-3xl tracking-normal text-[#4c1d95]">
+            <h1 className="font-pixel break-keep text-3xl tracking-normal text-purple">
               기본 위시리스트 만들기
             </h1>
             <p className="text-sm leading-6 text-zinc-600">
@@ -119,7 +121,8 @@ export default async function OnboardingPage({
               위시리스트 만들기
             </Button>
           </form>
-        </section>
+          </section>
+        </Card>
       </div>
     </main>
   );

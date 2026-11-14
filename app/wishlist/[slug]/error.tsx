@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { PUBLIC_WISHLIST_COPY } from "@/src/lib/design/copy";
 
 export default function PublicWishlistError({
@@ -17,7 +18,8 @@ export default function PublicWishlistError({
 
   return (
     <main className="pub-page grid min-h-dvh place-items-center px-5">
-      <section className="pub-card w-full max-w-md p-6">
+      <Card asChild variant="theme" className="w-full max-w-md p-6">
+        <section>
         <p className="pub-pill">오류</p>
         <h1 className="mt-5 text-3xl font-black leading-tight tracking-normal text-[var(--headline)]">
           {PUBLIC_WISHLIST_COPY.errorTitle}
@@ -33,7 +35,8 @@ export default function PublicWishlistError({
         >
           {PUBLIC_WISHLIST_COPY.retryCta}
         </Button>
-      </section>
+        </section>
+      </Card>
     </main>
   );
 }

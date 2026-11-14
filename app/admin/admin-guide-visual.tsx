@@ -1,4 +1,5 @@
 import { Check, Gift, Heart, Link2 } from "lucide-react";
+import { Card } from "@/components/ui/card";
 import type { PublicThemeId } from "@/src/lib/wishlist/theme";
 import type { AdminGuideStep } from "./admin-guide-state";
 
@@ -62,7 +63,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
       className="pub-page grid h-full place-items-center overflow-hidden p-3 sm:p-8"
       data-theme={themeId}
     >
-      <div className="pub-card w-full max-w-[430px] p-3.5 sm:p-5">
+      <Card variant="theme" className="w-full max-w-[430px] p-3.5 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <span className="pub-pill">NO. 1</span>
           <span className="pub-label">받고 싶은 선물</span>
@@ -84,7 +85,7 @@ function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
         <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--divider-color)] bg-white sm:mt-3">
           <div className="h-full w-1/3 bg-[var(--progress-fill)]" />
         </div>
-      </div>
+      </Card>
     </div>
   );
 }

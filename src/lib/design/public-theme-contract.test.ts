@@ -38,7 +38,10 @@ describe("public theme contract", () => {
     }
 
     expect(source).toContain(".pub-page");
-    expect(source).toContain(".pub-card");
+    expect(source).toContain(".theme-card");
+    expect(source).not.toContain(".pub-card");
+    expect(source).not.toContain(".pub-card-hero");
+    expect(source).not.toContain(".pub-msg");
     expect(source).toContain(".theme-btn");
     expect(source).toContain(".theme-btn-primary");
     expect(source).toContain(".theme-btn-accent");
@@ -72,7 +75,9 @@ describe("public theme contract", () => {
       '<section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">',
     );
     expect(viewSource).toContain('className="pub-stat p-4"');
-    expect(viewSource).not.toContain("pub-card pub-card-hero pub-header");
+    expect(viewSource).toContain('variant="theme"');
+    expect(viewSource).not.toContain("pub-card");
+    expect(viewSource).not.toContain("pub-card-hero");
     expect(viewSource).not.toContain("lg:grid-cols-[0.9fr_1.1fr]");
   });
 
@@ -80,7 +85,7 @@ describe("public theme contract", () => {
     const cssSource = readFileSync(publicThemesCssPath, "utf8");
 
     expect(cssSource).toMatch(
-      /\.pub-card\s*\{[\s\S]*?--headline:\s*var\(--ink\);/,
+      /\.theme-card\s*\{[\s\S]*?--headline:\s*var\(--ink\);/,
     );
   });
 
@@ -131,7 +136,8 @@ describe("public theme contract", () => {
     const source = readFileSync(publicNotFoundPath, "utf8");
 
     expect(source).toContain("pub-page");
-    expect(source).toContain("pub-card");
+    expect(source).toContain('variant="theme"');
+    expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pixel-dot-bg");
   });
 });

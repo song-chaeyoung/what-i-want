@@ -11,6 +11,11 @@ import {
   type WishStatus,
 } from "@/src/lib/wish-item/status";
 import { Button } from "@/components/ui/button";
+import {
+  adminCardFooterClassName,
+  adminCardHoverClassName,
+  Card,
+} from "@/components/ui/card";
 import { AdminToastMessage } from "../admin-toast-message";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
@@ -141,12 +146,12 @@ export default async function AdminWishesPage({
         </div>
       </nav>
 
-      <details
-        id="create-wish"
-        open={result.items.length === 0 && !selectedStatus}
-        className="group rounded-md border border-line bg-white"
-      >
-        <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
+      <Card asChild variant="admin" className="group">
+        <details
+          id="create-wish"
+          open={result.items.length === 0 && !selectedStatus}
+        >
+        <summary className={`flex cursor-pointer list-none items-center justify-between gap-3 p-3 text-sm font-semibold text-ink transition-colors ${adminCardHoverClassName} [&::-webkit-details-marker]:hidden`}>
           <span className="flex items-center gap-1.5">
             <Plus aria-hidden="true" className="size-4" />
             선물 추가
@@ -159,7 +164,7 @@ export default async function AdminWishesPage({
         <form
           action="/api/admin/wishes"
           method="post"
-          className="grid gap-4 border-t border-line bg-[#fbfbfa] p-4 md:grid-cols-2"
+          className={`grid gap-4 p-4 md:grid-cols-2 ${adminCardFooterClassName}`}
         >
           <AdminField label="선물 이름" htmlFor="create-title" required>
             <input
@@ -230,13 +235,14 @@ export default async function AdminWishesPage({
             </Button>
           </div>
         </form>
-      </details>
+        </details>
+      </Card>
 
       <section className="space-y-2">
         {visibleItems.length > 0 ? (
           visibleItems.map((item) => <WishItemEditor key={item.id} item={item} />)
         ) : (
-          <div className="rounded-md border border-line bg-white p-4">
+          <Card variant="admin" className="p-4">
             <p className="text-sm font-semibold text-ink">{emptyStateMessage}</p>
             <p className="mt-2 text-sm leading-6 text-zinc-600">
               {selectedStatus
@@ -246,7 +252,7 @@ export default async function AdminWishesPage({
             <Button asChild variant="admin-outline" className="mt-4">
               <Link href={emptyStateHref}>{emptyStateCta}</Link>
             </Button>
-          </div>
+          </Card>
         )}
       </section>
     </section>
@@ -258,8 +264,9 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
   const displayedStatus = getDisplayedWishStatus(item.status, progress);
 
   return (
-    <details className="group rounded-md border border-line bg-white">
-      <summary className="flex cursor-pointer list-none items-start gap-3 p-3 transition-colors hover:bg-[#fafaf9] [&::-webkit-details-marker]:hidden">
+    <Card asChild variant="admin" className="group">
+      <details>
+      <summary className={`flex cursor-pointer list-none items-start gap-3 p-3 transition-colors ${adminCardHoverClassName} [&::-webkit-details-marker]:hidden`}>
         <WishThumbnail item={item} />
         <div className="min-w-0 flex-1">
           <div className="flex min-w-0 items-center gap-2">
@@ -290,7 +297,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
         </span>
       </summary>
 
-      <div className="border-t border-line bg-[#fbfbfa] p-3">
+      <div className={`p-3 ${adminCardFooterClassName}`}>
         <form
           action={`/api/admin/wishes/${item.id}`}
           method="post"
@@ -387,7 +394,8 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           </Button>
         </form>
       </div>
-    </details>
+      </details>
+    </Card>
   );
 }
 

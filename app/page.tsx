@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { auth } from "@/auth";
 import { HOME_COPY, HOME_FAQ } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -93,7 +94,7 @@ export default async function Home() {
   const homeAccountCta = await getHomeAccountCta();
 
   return (
-    <main className="pixel-dot-bg min-h-dvh text-[#171717]">
+    <main className="pixel-dot-bg min-h-dvh text-ink">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{
@@ -106,13 +107,13 @@ export default async function Home() {
             {HOME_COPY.eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="font-pixel max-w-2xl break-keep text-4xl leading-tight tracking-normal text-[#4c1d95] sm:text-6xl">
+            <h1 className="font-pixel max-w-2xl break-keep text-4xl leading-tight tracking-normal text-purple sm:text-6xl">
               {HOME_COPY.headline}
             </h1>
-            <p className="max-w-lg text-base font-semibold leading-7 text-[#4b5563] sm:text-lg sm:leading-8">
+            <p className="max-w-lg text-base font-semibold leading-7 text-ink-soft sm:text-lg sm:leading-8">
               {HOME_COPY.description}
             </p>
-            <p className="max-w-lg text-sm font-semibold leading-6 text-[#6b7280]">
+            <p className="max-w-lg text-sm font-semibold leading-6 text-ink-faint">
               {HOME_COPY.subDescription}
             </p>
           </div>
@@ -147,17 +148,17 @@ export default async function Home() {
                 {index < homeSteps.length - 1 ? (
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute top-8 left-4 h-[calc(100%-0.75rem)] w-0 border-l-2 border-dotted border-[#171717] sm:top-4 sm:left-[calc(50%+1rem)] sm:h-0 sm:w-[calc(100%-1rem)] sm:border-t-2 sm:border-l-0"
+                    className="pointer-events-none absolute top-8 left-4 h-[calc(100%-0.75rem)] w-0 border-l-2 border-dotted border-ink sm:top-4 sm:left-[calc(50%+1rem)] sm:h-0 sm:w-[calc(100%-1rem)] sm:border-t-2 sm:border-l-0"
                   />
                 ) : null}
-                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-[#171717] bg-[var(--tint-yellow)] font-pixel text-micro leading-none text-[#0f766e]">
+                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-[var(--tint-yellow)] font-pixel text-micro leading-none text-accent-main">
                   {step.number}
                 </span>
                 <div className="min-w-0 pt-1 sm:pt-0">
-                  <h2 className="font-pixel truncate text-sm tracking-normal text-[#4c1d95]">
+                  <h2 className="font-pixel truncate text-sm tracking-normal text-purple">
                     {step.title}
                   </h2>
-                  <p className="mt-1 truncate text-xs font-black text-[#4b5563]">
+                  <p className="mt-1 truncate text-xs font-black text-ink-soft">
                     {step.label}
                   </p>
                 </div>
@@ -166,10 +167,10 @@ export default async function Home() {
           </ol>
         </div>
 
-        <div className="border-2 border-[#171717] bg-[#fffdf7] p-4 shadow-pixel-xs sm:p-5">
-          <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-[#171717] pb-4">
+        <Card variant="pixel" surface="paper" shadow="xs" className="p-4 sm:p-5">
+          <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-ink pb-4">
             <div className="min-w-0">
-              <h2 className="font-pixel mt-1 text-2xl tracking-normal text-[#4c1d95] sm:text-3xl">
+              <h2 className="font-pixel mt-1 text-2xl tracking-normal text-purple sm:text-3xl">
                 민지님의 공개 위시리스트
               </h2>
             </div>
@@ -181,35 +182,41 @@ export default async function Home() {
               <PreviewWish key={wish.title} {...wish} />
             ))}
           </div>
-        </div>
+        </Card>
       </section>
 
       <section className="mx-auto w-full max-w-6xl px-5 pb-14 sm:px-8 lg:pb-20">
-        <p className="font-pixel text-sm tracking-normal text-[#0f766e]">FAQ</p>
-        <h2 className="font-pixel mt-2 text-3xl tracking-normal text-[#4c1d95] sm:text-4xl">
+        <p className="font-pixel text-sm tracking-normal text-accent-main">FAQ</p>
+        <h2 className="font-pixel mt-2 text-3xl tracking-normal text-purple sm:text-4xl">
           자주 묻는 질문
         </h2>
         <div className="mt-6 space-y-3">
           {HOME_FAQ.map((item) => (
-            <details
+            <Card
               key={item.question}
-              className="group border-2 border-[#171717] bg-[#fffdf7] shadow-pixel-xs"
+              asChild
+              variant="pixel"
+              surface="paper"
+              shadow="xs"
+              className="group"
             >
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
-                <span className="break-keep text-base font-black text-[#171717] sm:text-lg">
-                  {item.question}
-                </span>
-                <span
-                  aria-hidden="true"
-                  className="font-pixel shrink-0 text-xl text-[#0f766e] transition-transform group-open:rotate-45"
-                >
-                  +
-                </span>
-              </summary>
-              <p className="border-t-2 border-[#171717] p-4 text-sm font-semibold leading-7 text-[#4b5563] sm:p-5">
-                {item.answer}
-              </p>
-            </details>
+              <details>
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-3 p-4 sm:p-5 [&::-webkit-details-marker]:hidden">
+                  <span className="break-keep text-base font-black text-ink sm:text-lg">
+                    {item.question}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="font-pixel shrink-0 text-xl text-accent-main transition-transform group-open:rotate-45"
+                  >
+                    +
+                  </span>
+                </summary>
+                <p className="border-t-2 border-ink p-4 text-sm font-semibold leading-7 text-ink-soft sm:p-5">
+                  {item.answer}
+                </p>
+              </details>
+            </Card>
           ))}
         </div>
       </section>
@@ -235,25 +242,33 @@ function PreviewWish({
   imageTone: "mint" | "rose";
 }) {
   return (
-    <article className="grid grid-cols-[88px_1fr] overflow-hidden border-2 border-[#171717] bg-white sm:grid-cols-[112px_1fr]">
-      <SampleGiftImage tone={imageTone} label={label} />
-      <div className="min-w-0 p-4">
-        <p className="font-pixel truncate text-xs text-[#0f766e]">{label}</p>
-        <div className="mt-2 flex flex-wrap items-start justify-between gap-2">
-          <h3 className="font-pixel min-w-0 max-w-full truncate text-lg tracking-normal">
-            {title}
-          </h3>
-          <p className="font-pixel shrink-0 text-sm">{amount}</p>
+    <Card
+      asChild
+      variant="pixel"
+      surface="white"
+      shadow="none"
+      className="grid grid-cols-[88px_1fr] overflow-hidden sm:grid-cols-[112px_1fr]"
+    >
+      <article>
+        <SampleGiftImage tone={imageTone} label={label} />
+        <div className="min-w-0 p-4">
+          <p className="font-pixel truncate text-xs text-accent-main">{label}</p>
+          <div className="mt-2 flex flex-wrap items-start justify-between gap-2">
+            <h3 className="font-pixel min-w-0 max-w-full truncate text-lg tracking-normal">
+              {title}
+            </h3>
+            <p className="font-pixel shrink-0 text-sm">{amount}</p>
+          </div>
+          <GiftProgress progress={progress} color="#0f766e" />
+          <span
+            className="mt-3 inline-flex max-w-full rounded-md border-2 border-ink px-2 py-1 text-caption font-black"
+            style={{ backgroundColor: color }}
+          >
+            <span className="truncate">받고 싶은 선물</span>
+          </span>
         </div>
-        <GiftProgress progress={progress} color="#0f766e" />
-        <span
-          className="mt-3 inline-flex max-w-full rounded-md border-2 border-[#171717] px-2 py-1 text-caption font-black"
-          style={{ backgroundColor: color }}
-        >
-          <span className="truncate">받고 싶은 선물</span>
-        </span>
-      </div>
-    </article>
+      </article>
+    </Card>
   );
 }
 
@@ -292,7 +307,7 @@ function SampleGiftImage({
 
 function GiftProgress({ progress, color }: { progress: string; color: string }) {
   return (
-    <div className="mt-3 h-3 overflow-hidden border-2 border-[#171717] bg-[#f3f4f6]">
+    <div className="mt-3 h-3 overflow-hidden border-2 border-ink bg-[#f3f4f6]">
       <div className="h-full" style={{ width: progress, backgroundColor: color }} />
     </div>
   );
