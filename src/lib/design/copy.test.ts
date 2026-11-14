@@ -48,7 +48,7 @@ describe("visual system copy", () => {
       "마음이 전해졌어요.",
     );
     expect(PUBLIC_WISHLIST_COPY.participationErrors.invalid_amount).toBe(
-      "금액은 1원 이상으로 입력해주세요.",
+      "금액은 1원부터 1억 원까지 입력할 수 있어요.",
     );
     expect(PUBLIC_WISHLIST_COPY.participationErrors.rate_limited).toBe(
       "지금 이용자가 많아요. 잠시 후 다시 시도해주세요.",
