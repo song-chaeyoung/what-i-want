@@ -175,6 +175,8 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `text-tab` | `13px` | `text-[13px]` |
 | `text-nav` | `13.5px` | `text-[13.5px]` |
 
+`cn()`은 tailwind-merge에 이 네 글자 크기(`micro`, `caption`, `tab`, `nav`)와 그림자(`pixel-xs`, `pixel-sm`, `pixel-md`, `pixel-lg`, `pixel-xl`, `header-line`)를 등록합니다. 등록하지 않으면 `text-micro`가 색으로 분류되어 같은 문자열의 `text-white`에 지워집니다. 근거는 [병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)과 [cn](../../lib/utils.ts)입니다. 2026-11-14.
+
 `text-[16px]`는 `text-base`로 바꿨습니다. 기본 `text-base`는 `1rem`이고 행간은 `calc(1.5 / 1)`입니다. preflight가 `html`에 주는 행간 `1.5`와 같습니다. 관리자 제목에 있던 `text-[14px]`는 `text-sm`으로 바꿨습니다. 그 요소는 `hidden`이고 `sm:`부터 `text-base`라, 보이는 구간은 16px입니다. `text-sm` 자체는 행간 `calc(1.25 / 0.875)`를 같이 넣으므로, 14px만 지정하던 클래스와 행간이 다릅니다. 기본 스케일을 고쳐 행간을 빼지는 않았습니다.
 
 공개 테마 타이포는 의미 토큰이 값을 가집니다. 컴포넌트 규칙은 의미 이름을 직접 씁니다. 호출부가 없던 별칭은 제거했습니다. `--label-size`와 `--pill-size`는 세 테마가 같은 12px라 `.pub-page` 블록에만 적고, 다른 테마 블록은 덮어쓰지 않습니다.
@@ -346,4 +348,4 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.
 
-[필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, 설정·썸네일·안내·OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다.
+[병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)은 `cn()`이 커스텀 글자 크기·그림자를 색 클래스와 함께 두는지, `Badge` `count` 렌더 class에 `text-micro`가 있는지를 봅니다. [필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, 설정·썸네일·안내·OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다.
