@@ -32,7 +32,7 @@ test.describe("Message Management", () => {
     const anonymousRow = articles.filter({ hasText: "익명으로 보태요" });
     const hiddenRow = articles.filter({ hasText: "숨긴 메시지" });
 
-    // expect: 탭 `받은 메시지` 가 활성(링크 href `/admin/messages`)이고, 지표 값 `2개`, 행이 `생일 축하해!`, `익명으로 보태요` 이다.
+    // expect: 탭 링크 `받은 메시지` 의 href 가 `/admin/messages` 이고(활성 표시는 aria 속성이 없어 확인하지 않음), 지표 값 `2개`, 행이 `생일 축하해!`, `익명으로 보태요` 이다.
     await expect(
       filterNav.getByRole("link", { name: "받은 메시지" }),
     ).toHaveAttribute("href", "/admin/messages");

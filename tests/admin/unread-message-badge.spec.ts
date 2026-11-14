@@ -34,10 +34,17 @@ test.describe("Message Management", () => {
       page.getByRole("article").filter({ hasText: "숨긴 메시지" }),
     ).toBeVisible({ timeout: 30_000 });
 
-    // expect: 배지 `새 메시지 2개` 가 그대로 보인다(숨긴 메시지함은 읽음 처리하지 않음).
-    await expect(badge).toBeVisible();
+    // 3. `/admin/wishes` 로 전체 이동해 서버가 다시 렌더한 사이드바를 기다립니다.
+    // 숨긴 탭 화면의 배지는 사이드바가 임시 읽음 처리를 하지 않아 그대로 보일 뿐이고, 레이아웃의 집계도
+    // `after()` 기록보다 먼저 끝나므로 서버의 읽음 처리 여부는 다음 페이지에서 확인합니다.
+    await page.goto("/admin/wishes");
+    await expect(sidebar).toBeVisible({ timeout: 30_000 });
 
-    // 3. [e2eDb 조회, 코드 근거] `wishlists`(`id = admin.wishlistId`)의 `messagesReadAt` 을 조회합니다.
+    // expect: 배지 `새 메시지 2개`(텍스트 `2`)가 그대로 보인다(숨긴 메시지함은 읽음 처리하지 않음).
+    await expect(badge).toBeVisible();
+    await expect(badge).toHaveText("2");
+
+    // expect: [e2eDb 조회, 코드 근거] `wishlists`(`id = admin.wishlistId`)의 `messagesReadAt` 이 `null` 이다.
     const loadMessagesReadAt = async () =>
       (
         await e2eDb
@@ -46,7 +53,6 @@ test.describe("Message Management", () => {
           .where(eq(wishlists.id, admin.wishlistId!))
       )[0].messagesReadAt;
 
-    // expect: `null` 이다.
     expect(await loadMessagesReadAt()).toBeNull();
 
     // 4. 사이드바의 `메시지함` 링크를 눌러 받은 메시지함으로 갑니다.

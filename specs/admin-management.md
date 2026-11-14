@@ -332,7 +332,7 @@
 
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 30_000 } ], messages: [ { senderName: "김친구", body: "생일 축하해!" }, { senderName: null, body: "익명으로 보태요", wishItemIndex: 0, amount: 30_000 }, { senderName: "박친구", body: "숨긴 메시지", isHidden: true } ] })`, `await signIn(admin)`. `/admin/messages` 로 이동해 `navigation "메시지 필터"` 를 기다립니다(timeout 30초).
-    - expect: 탭 `받은 메시지` 가 활성(링크 href `/admin/messages`)이고, 지표 값 `2개`, 행이 `생일 축하해!`, `익명으로 보태요` 이다.
+    - expect: 탭 링크 `받은 메시지` 의 href 가 `/admin/messages` 이고(활성 표시는 aria 속성이 없어 확인하지 않음), 지표 값 `2개`, 행이 `생일 축하해!`, `익명으로 보태요` 이다.
     - expect: `익명으로 보태요` 행의 보낸 사람이 `익명`, 금액이 `₩30,000` 이다.
     - expect: `숨긴 메시지` 본문 행이 없다.
   2. 탭 `숨긴 메시지` 를 누릅니다.
@@ -349,9 +349,9 @@
   1. [사전 조건] `const admin = await seedAdmin({ messages: [ { senderName: "김친구", body: "생일 축하해!" }, { senderName: "이친구", body: "축하해요" }, { senderName: "박친구", body: "숨긴 메시지", isHidden: true } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 사이드바를 기다립니다(timeout 30초).
     - expect: 사이드바 배지 `새 메시지 2개`(텍스트 `2`)가 보인다(숨긴 메시지는 세지 않음).
   2. `/admin/messages?filter=hidden` 으로 이동해 행 `숨긴 메시지` 를 기다립니다.
-    - expect: 배지 `새 메시지 2개` 가 그대로 보인다(숨긴 메시지함은 읽음 처리하지 않음).
-  3. [e2eDb 조회, 코드 근거] `wishlists`(`id = admin.wishlistId`)의 `messagesReadAt` 을 조회합니다.
-    - expect: `null` 이다.
+  3. `/admin/wishes` 로 전체 이동해 서버가 다시 렌더한 사이드바를 기다립니다. 숨긴 탭 화면의 배지는 사이드바(`app/admin/admin-shell-nav.tsx`)가 `filter=hidden` 에서 임시 읽음 처리를 하지 않아 그대로 보일 뿐이고, 레이아웃의 집계도 `after()` 기록보다 먼저 끝나므로 서버의 읽음 처리 여부는 다음 페이지에서 확인합니다.
+    - expect: 배지 `새 메시지 2개`(텍스트 `2`)가 그대로 보인다(숨긴 메시지함은 읽음 처리하지 않음).
+    - expect: [e2eDb 조회, 코드 근거] `wishlists`(`id = admin.wishlistId`)의 `messagesReadAt` 이 `null` 이다.
   4. 사이드바의 `메시지함` 링크를 눌러 받은 메시지함으로 갑니다.
     - expect: URL 이 `/admin/messages` 이고 행 `생일 축하해!` 가 보인다.
     - expect: 배지가 사라진다(`getByLabel(/^새 메시지/)` count 0).
