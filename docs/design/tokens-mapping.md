@@ -1,6 +1,6 @@
 # 의미 토큰 병합 매핑
 
-코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14. 필·상태 색 토큰 추가 대조일: 2026-11-14.
+코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14. 필·상태 색 토큰 추가 대조일: 2026-11-14. 입력 면 토큰 추가 대조일: 2026-11-15.
 
 상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 세 테마의 리터럴은 그대로입니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
 
@@ -149,7 +149,19 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 필 클래스는 `.pub-pill`, `.pub-pill-alt`에서 `.theme-pill`, `.theme-pill-alt`로 이름을 바꿨습니다. 선언은 같고, `mono_bw` 헤더 예외는 `.pub-page[data-theme="mono_bw"] .pub-header .theme-pill`입니다. 호출은 [Badge](../../components/ui/badge.tsx)의 `theme`, `theme-alt`입니다. 관리자 상태 배지는 `status`·`status-dot`(tone `open`, `paused`, `fulfilled`, `hidden`)이고, 안 읽은 수는 `count`(`bg-point`)입니다. 숨김 글자와 점은 `text-zinc-600`, `bg-zinc-400`로 남겼습니다. 로그인·온보딩 주황 상자는 [Alert](../../components/ui/alert.tsx) `notice`(`border-2 border-point bg-warn-tint text-warn-ink`)입니다.
 
-그대로 둔 hex: 설정 `#f9fafb`, 위시 썸네일 `#f4f4f3`, 안내 `#fafafa`, OG 이미지.
+## 입력 면
+
+2026-11-15에 입력 주변에 남아 있던 면색 세 개를 `:root` 토큰으로 옮겼습니다. 값은 그때의 하드코드와 같고, 서로 합치지 않습니다(2026-11-15 채영 결정). 공개 테마의 `--field-bg`와 이름이 겹치지 않게 `field`만으로 부르지 않습니다. `@theme inline`의 `--color-*` 다리는 `bg-addon-bg`, `bg-placeholder-bg`, `bg-mock-field-bg`가 나오게 합니다. 공개 테마는 이 세 값을 덮어쓰지 않습니다.
+
+| 의미 토큰 | `:root` 값 | 유틸 다리 | 쓰는 곳 |
+| --- | --- | --- | --- |
+| `--addon-bg` | `#f9fafb` | `--color-addon-bg` | 설정 공개 주소의 `/wishlist/` 앞칸 면. 안쪽 input은 `bg-white` 그대로 |
+| `--placeholder-bg` | `#f4f4f3` | `--color-placeholder-bg` | 관리자 선물 목록에서 이미지가 없는 썸네일 |
+| `--mock-field-bg` | `#fafafa` | `--color-mock-field-bg` | 관리자 안내 그림의 가짜 링크 칸 |
+
+입력 껍데기는 [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) variant입니다. `admin`은 높이 40px·흰 면, `onboarding`은 높이 44px·면 없음, `theme`은 `.theme-field`를 감쌉니다. shadcn 기본 `default`는 그대로입니다. 네이티브 `select`는 shadcn Select로 바꾸지 않고 `inputVariants`의 `admin` 클래스를 씁니다. 공개 입력 클래스는 `.theme-field`로 이름을 바꿨습니다. 선언은 `background: var(--field-bg)`, `border: var(--field-border)`, `border-radius: var(--field-radius)`입니다.
+
+그대로 둔 hex: OG 이미지. 안내 대화상자의 `shadow-[5px_5px_0_#111827]`와 `sm:shadow-[7px_7px_0_#111827]`는 `[#hex]`·`"#hex"` 패턴이 아니라 그대로입니다.
 
 ## 타이포
 
@@ -348,4 +360,4 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.
 
-[병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)은 `cn()`이 커스텀 글자 크기·그림자를 색 클래스와 함께 두는지, `Badge` `count` 렌더 class에 `text-micro`가 있는지를 봅니다. [필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, 설정·썸네일·안내·OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다.
+[병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)은 `cn()`이 커스텀 글자 크기·그림자를 색 클래스와 함께 두는지, `Badge` `count` 렌더 class에 `text-micro`가 있는지를 봅니다. [필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다. 2026-11-15에는 `bg-addon-bg`·`bg-placeholder-bg`·`bg-mock-field-bg`와 `.theme-field`, 입력 variant의 계산 스타일(높이·패딩·글자·색·테두리·모서리·포커스·placeholder·disabled)을 같은 계약에서 봅니다.

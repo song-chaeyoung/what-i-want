@@ -17,14 +17,14 @@ import {
   adminCardHoverClassName,
   Card,
 } from "@/components/ui/card";
+import { Input, inputVariants } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
   AdminField,
   AdminMetric,
   AdminMetricGroup,
-  adminInputClassName,
-  adminTextareaClassName,
   formatCurrency,
 } from "../admin-ui";
 
@@ -154,18 +154,18 @@ export default async function AdminWishesPage({
             className={`grid gap-4 p-4 md:grid-cols-2 ${adminCardFooterClassName}`}
           >
             <AdminField label="선물 이름" htmlFor="create-title" required>
-              <input
+              <Input
                 id="create-title"
                 name="title"
                 type="text"
                 maxLength={120}
                 required
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
             <AdminField label="목표 금액" htmlFor="create-targetAmount" required>
-              <input
+              <Input
                 id="create-targetAmount"
                 name="targetAmount"
                 type="number"
@@ -174,7 +174,7 @@ export default async function AdminWishesPage({
                 step={1}
                 required
                 placeholder="45000"
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
@@ -184,34 +184,34 @@ export default async function AdminWishesPage({
               hint="링크를 넣고 정보 불러오기를 누르면 이름, 이미지, 금액을 자동으로 채워요."
             >
               <div className="flex gap-2">
-                <input
+                <Input
                   id="create-productUrl"
                   name="productUrl"
                   type="url"
                   placeholder="https://..."
-                  className={adminInputClassName}
+                  variant="admin"
                 />
                 <LinkAutofillButton />
               </div>
             </AdminField>
 
             <AdminField label="이미지 링크" htmlFor="create-imageUrl">
-              <input
+              <Input
                 id="create-imageUrl"
                 name="imageUrl"
                 type="url"
                 placeholder="https://..."
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
             <div className="md:col-span-2">
               <AdminField label="메모" htmlFor="create-description">
-                <textarea
+                <Textarea
                   id="create-description"
                   name="description"
                   rows={3}
-                  className={adminTextareaClassName}
+                  variant="admin"
                 />
               </AdminField>
             </div>
@@ -287,14 +287,14 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
           >
             <input type="hidden" name="_method" value="patch" />
             <AdminField label="선물 이름" htmlFor={`title-${item.id}`} required>
-              <input
+              <Input
                 id={`title-${item.id}`}
                 name="title"
                 type="text"
                 maxLength={120}
                 required
                 defaultValue={item.title}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
@@ -303,7 +303,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
                 id={`status-${item.id}`}
                 name="status"
                 defaultValue={item.status}
-                className={adminInputClassName}
+                className={inputVariants({ variant: "admin" })}
               >
                 {statusOptions.map((status) => (
                   <option key={status} value={status}>
@@ -314,7 +314,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
             </AdminField>
 
             <AdminField label="목표 금액" htmlFor={`targetAmount-${item.id}`} required>
-              <input
+              <Input
                 id={`targetAmount-${item.id}`}
                 name="targetAmount"
                 type="number"
@@ -323,41 +323,41 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
                 step={1}
                 required
                 defaultValue={item.targetAmount ?? ""}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
             <AdminField label="상품 링크" htmlFor={`productUrl-${item.id}`}>
               <div className="flex gap-2">
-                <input
+                <Input
                   id={`productUrl-${item.id}`}
                   name="productUrl"
                   type="url"
                   defaultValue={item.productUrl ?? ""}
-                  className={adminInputClassName}
+                  variant="admin"
                 />
                 <LinkAutofillButton />
               </div>
             </AdminField>
 
             <AdminField label="이미지 링크" htmlFor={`imageUrl-${item.id}`}>
-              <input
+              <Input
                 id={`imageUrl-${item.id}`}
                 name="imageUrl"
                 type="url"
                 defaultValue={item.imageUrl ?? ""}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
 
             <div className="md:col-span-2">
               <AdminField label="메모" htmlFor={`description-${item.id}`}>
-                <textarea
+                <Textarea
                   id={`description-${item.id}`}
                   name="description"
                   rows={3}
                   defaultValue={item.description ?? ""}
-                  className={adminTextareaClassName}
+                  variant="admin"
                 />
               </AdminField>
             </div>
@@ -385,7 +385,7 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
   return (
     <div
       aria-hidden="true"
-      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-[#f4f4f3] bg-cover bg-center text-caption font-bold text-teal"
+      className="flex h-12 w-12 shrink-0 items-center justify-center rounded-md bg-placeholder-bg bg-cover bg-center text-caption font-bold text-teal"
       style={
         item.imageUrl
           ? { backgroundImage: `url(${JSON.stringify(item.imageUrl)})` }

@@ -72,7 +72,8 @@ describe("admin settings UI contract", () => {
     expect(pageSource).toContain("<AccountVisibilityField");
     expect(pageSource).toContain("disabled={settings.bankAccount === null}");
     expect(fieldSource).toContain('name="accountVisibility"');
-    expect(fieldSource).toContain("adminInputClassName");
+    expect(fieldSource).toContain('inputVariants({ variant: "admin" })');
+    expect(fieldSource).not.toContain("adminInputClassName");
     expect(fieldSource).toContain("<AdminField");
     expect(fieldSource).toContain('label="계좌 공개"');
     expect(fieldSource).toContain("공개 페이지에 보이기");

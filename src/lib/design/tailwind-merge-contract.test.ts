@@ -39,6 +39,22 @@ describe("tailwind-merge custom scales", () => {
     }
   });
 
+  test("keeps input surface colors beside other background utilities", () => {
+    const thumbnail = cn(
+      "bg-placeholder-bg bg-cover bg-center text-caption font-bold text-teal",
+    );
+    expect(thumbnail).toContain("bg-placeholder-bg");
+    expect(thumbnail).toContain("bg-cover");
+    expect(thumbnail).toContain("bg-center");
+    expect(thumbnail).toContain("text-caption");
+    expect(thumbnail).toContain("text-teal");
+
+    expect(cn("bg-addon-bg", "border", "border-line")).toContain("bg-addon-bg");
+    expect(cn("rounded", "border", "border-line", "bg-mock-field-bg")).toContain(
+      "bg-mock-field-bg",
+    );
+  });
+
   test("renders Badge count with text-micro", () => {
     const html = renderToStaticMarkup(
       createElement(Badge, { variant: "count" }, "1"),

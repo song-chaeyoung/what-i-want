@@ -33,7 +33,7 @@ function GiftFormVisual() {
       <div className="rounded-md border-2 border-ink bg-white p-3 shadow-pixel-sm">
         <p className="text-micro font-bold text-zinc-500">상품 링크</p>
         <div className="mt-2 flex items-center gap-2">
-          <div className="min-w-0 flex-1 truncate rounded border border-line bg-[#fafafa] px-2.5 py-2 text-caption font-semibold text-zinc-500">
+          <div className="min-w-0 flex-1 truncate rounded border border-line bg-mock-field-bg px-2.5 py-2 text-caption font-semibold text-zinc-500">
             https://shop.example/gift
           </div>
           <div className="shrink-0 rounded border border-ink bg-yellow-200 px-2.5 py-2 text-micro font-black text-ink">

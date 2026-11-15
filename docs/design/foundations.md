@@ -37,7 +37,7 @@
 | 강조·상태 | [Badge](../../components/ui/badge.tsx) `theme`, `theme-alt`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-pill`, `.theme-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | [Button](../../components/ui/button.tsx)의 `theme`, `theme-primary`, `theme-accent`. 너비는 `size="block"`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-btn` | 공개 행동의 위계. `theme-primary`라는 이름만으로 관리자 `admin` variant와 같다고 가정하지 않음 |
 | 진행률 | `.pub-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
-| 입력 | `.pub-field`와 공개 뷰 내부 필드 | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용 |
+| 입력 | [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) `theme`, `.theme-field` | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용. 관리자는 `admin`, 온보딩은 `onboarding` |
 
 공개 토스트는 `.pub-page` 바깥의 루트 Toaster에 렌더링됩니다. 현재 CSS는 `body:has(.pub-page[data-theme=...])`로 테마 값을 전달하므로 토스트 범위를 바꿀 때 이 연결도 확인합니다. 기본 공개 경계처럼 `data-theme`가 없는 경우까지 선택 테마 토스트가 보장되는 것은 아닙니다.
 
@@ -45,9 +45,9 @@
 
 | 대상 | 기존 재사용 대상 | 선택 기준·경계 |
 | --- | --- | --- |
-| 관리자 필드·지표·버튼 | [admin-ui.tsx](../../app/admin/admin-ui.tsx)의 `AdminField`, `AdminMetricGroup`, `AdminMetric`, 공통 클래스 | 관리자 기존 화면을 확장할 때 먼저 사용. shadcn으로 일괄 변환하지 않음 |
-| 온보딩 입력 | [page.tsx](../../app/onboarding/page.tsx)의 내부 `Field`·입력 클래스, [BirthdayPicker](../../app/onboarding/birthday-picker.tsx) | 고정 브랜드 화면의 현행 흐름. 내부 함수는 공용 export가 아님 |
-| 공개 필드·선물 카드 | [public-wishlist-view.tsx](../../components/public-wishlist-view.tsx)의 내부 `PublicField`·카드 구성, [제출 버튼](../../components/public-participation-submit-button.tsx) | 기존 공개 뷰 안에서 확장. 내부 함수를 다른 파일에서 import할 수 있다고 가정하지 않음 |
+| 관리자 필드·지표·버튼 | [admin-ui.tsx](../../app/admin/admin-ui.tsx)의 `AdminField`, `AdminMetricGroup`, `AdminMetric`, [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) `admin` | 관리자 기존 화면을 확장할 때 먼저 사용. 네이티브 select를 shadcn Select로 일괄 변환하지 않음 |
+| 온보딩 입력 | [page.tsx](../../app/onboarding/page.tsx)의 내부 `Field`, Input·Textarea `onboarding`, [BirthdayPicker](../../app/onboarding/birthday-picker.tsx) | 고정 브랜드 화면의 현행 흐름. 내부 함수는 공용 export가 아님 |
+| 공개 필드·선물 카드 | [public-wishlist-view.tsx](../../components/public-wishlist-view.tsx)의 내부 `PublicField`·Input·Textarea `theme`, [제출 버튼](../../components/public-participation-submit-button.tsx) | 기존 공개 뷰 안에서 확장. 내부 함수를 다른 파일에서 import할 수 있다고 가정하지 않음 |
 | 범용 UI 프리미티브 | [Button](../../components/ui/button.tsx), [Input](../../components/ui/input.tsx), [Field](../../components/ui/field.tsx), [Card](../../components/ui/card.tsx) 등 | 해당 화면이 이 계열을 사용하거나 기존 영역 컴포넌트가 없는 경우 API·스타일을 확인한 뒤 선택 |
 | 날짜·선택 UI | [Calendar](../../components/ui/calendar.tsx), [Popover](../../components/ui/popover.tsx), [Select](../../components/ui/select.tsx) | 이미 사용하는 생일 선택 사례를 확인. 새 폼 라이브러리를 요구하지 않음 |
 | 결과 안내 | [Sonner](../../components/ui/sonner.tsx), [관리자 이벤트](../../app/admin/admin-toast-events.tsx), [공개 이벤트](../../components/public-wishlist-toast-events.tsx) | 성공·오류·후속 행동은 [피드백 패턴](patterns/feedback.md)에서 확인 |
@@ -64,7 +64,7 @@
 ## 차이와 확인할 사항
 
 - 현 CSS에는 의미 토큰과 화면 내부의 직접 지정 색상·크기가 함께 존재합니다. 새 작업에서는 같은 역할의 기존 표현을 찾되, 문서 작성만으로 모든 스타일이 토큰화됐다고 설명하지 않습니다.
-- 공개 필드에는 `outline-none`이 있고 `.pub-field` 자체에 별도 포커스 스타일이 없습니다. 공통 Button의 focus ring 존재를 모든 영역의 보장으로 확대하지 않습니다. 실제 키보드 포커스·대비·disabled 구분은 화면에서 확인해야 합니다.
+- 공개 필드에는 `outline-none`이 있고 `.theme-field` 자체에 별도 포커스 스타일이 없습니다. 공통 Button의 focus ring 존재를 모든 영역의 보장으로 확대하지 않습니다. 실제 키보드 포커스·대비·disabled 구분은 화면에서 확인해야 합니다.
 - `soft_pastel`의 밝은 텍스트·배경 조합을 포함한 테마별 대비와 모션 설정은 이번 정적 대조로 검증하지 않았습니다. 전체 접근성 통과 또는 다크 모드 지원을 선언하지 않습니다.
 - OG의 테마 연동, 전 영역의 필드·버튼 규격 통합, 전체 spacing scale은 이번 문서화에서 새로 결정하지 않았습니다.
 

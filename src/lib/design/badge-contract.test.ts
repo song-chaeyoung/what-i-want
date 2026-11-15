@@ -34,9 +34,6 @@ const globalsCss = read("app/globals.css");
 const themeCss = read("app/public-themes.css");
 
 const allowedHex = new Map<string, string[] | "any">([
-  ["app/admin/settings/page.tsx", ["#f9fafb"]],
-  ["app/admin/wishes/page.tsx", ["#f4f4f3"]],
-  ["app/admin/admin-guide-visual.tsx", ["#fafafa"]],
   ["app/opengraph-image.tsx", "any"],
   ["app/wishlist/[slug]/opengraph-image.tsx", "any"],
 ]);

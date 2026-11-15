@@ -1,6 +1,8 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+import { inputVariants } from "@/components/ui/input";
+import { textareaVariants } from "@/components/ui/textarea";
 
 const root = process.cwd();
 const pagePath = join(root, "app/onboarding/page.tsx");
@@ -43,8 +45,10 @@ describe("onboarding UI contract", () => {
     expect(source).toContain('surface="paper"');
     expect(source).toContain('shadow="lg"');
     expect(source).toContain("text-zinc-600");
-    expect(source).toContain("focus:border-zinc-400");
-    expect(source).toContain("placeholder:text-zinc-400");
+    expect(source).toContain('variant="onboarding"');
+    expect(inputVariants({ variant: "onboarding" })).toContain("focus:border-zinc-400");
+    expect(inputVariants({ variant: "onboarding" })).toContain("placeholder:text-zinc-400");
+    expect(textareaVariants({ variant: "onboarding" })).toContain("focus:border-zinc-400");
     expect(source).not.toContain("bg-[#f7f5f0]");
   });
 

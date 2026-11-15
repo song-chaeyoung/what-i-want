@@ -49,6 +49,9 @@ describe("public theme contract", () => {
     expect(source).toContain(".theme-pill");
     expect(source).toContain(".theme-pill-alt");
     expect(source).not.toContain(".pub-pill");
+    expect(source).toContain(".theme-field");
+    expect(source).toContain("background: var(--field-bg);");
+    expect(source).not.toContain(".pub-" + "field");
     expect(source).toContain('.pub-page[data-theme="mono_bw"] .pub-header .theme-pill');
     expect(source).toContain(".pub-progress > i");
     expect(source).not.toContain("pub-progress-done");

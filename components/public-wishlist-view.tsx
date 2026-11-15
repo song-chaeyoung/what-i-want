@@ -7,6 +7,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
@@ -166,13 +168,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
             label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
             htmlFor="message-sender"
           >
-            <input
+            <Input
               id="message-sender"
               name="senderName"
               type="text"
               maxLength={80}
               placeholder="이름"
-              className={publicInputClassName}
+              variant="theme"
             />
           </PublicField>
 
@@ -180,13 +182,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
             label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
             htmlFor="message-body"
           >
-            <textarea
+            <Textarea
               id="message-body"
               name="body"
               rows={4}
               maxLength={500}
               required
-              className={publicTextareaClassName}
+              variant="theme"
             />
           </PublicField>
 
@@ -356,7 +358,7 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
                 htmlFor={`participation-amount-${item.id}`}
               >
-                <input
+                <Input
                   id={`participation-amount-${item.id}`}
                   name="amount"
                   type="number"
@@ -364,7 +366,7 @@ function PublicWishCard({
                   step={1}
                   required
                   placeholder="10000"
-                  className={publicInputClassName}
+                  variant="theme"
                 />
               </PublicField>
 
@@ -372,13 +374,13 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
                 htmlFor={`participation-sender-${item.id}`}
               >
-                <input
+                <Input
                   id={`participation-sender-${item.id}`}
                   name="senderName"
                   type="text"
                   maxLength={80}
                   placeholder="이름"
-                  className={publicInputClassName}
+                  variant="theme"
                 />
               </PublicField>
 
@@ -386,13 +388,13 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
                 htmlFor={`participation-body-${item.id}`}
               >
-                <textarea
+                <Textarea
                   id={`participation-body-${item.id}`}
                   name="body"
                   rows={3}
                   maxLength={500}
                   required
-                  className={publicTextareaClassName}
+                  variant="theme"
                 />
               </PublicField>
 
@@ -504,9 +506,3 @@ function formatCurrency(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-
-const publicInputClassName =
-  "pub-field h-10 w-full px-3 text-sm font-bold outline-none";
-
-const publicTextareaClassName =
-  "pub-field w-full resize-none px-3 py-2 text-sm font-bold outline-none";

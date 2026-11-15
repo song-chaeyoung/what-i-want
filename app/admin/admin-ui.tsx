@@ -61,12 +61,6 @@ export function AdminField({
   );
 }
 
-export const adminInputClassName =
-  "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
-
-export const adminTextareaClassName =
-  "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
-
 export function formatCurrency(amount: number): string {
   return new Intl.NumberFormat("ko-KR", {
     style: "currency",

@@ -40,6 +40,9 @@
   --info-ink: #1d4ed8;
   --muted-tint: #f4f4f5;
   --track: #f3f4f6;
+  --addon-bg: #f9fafb;
+  --placeholder-bg: #f4f4f3;
+  --mock-field-bg: #fafafa;
   /* 꽃가루만 :root. @theme 유틸로 연결하지 않는다. */
   --confetti-violet: #7c3aed;
   --confetti-amber: #f59e0b;
@@ -138,6 +141,9 @@
   --color-info-ink: var(--info-ink);
   --color-muted-tint: var(--muted-tint);
   --color-track: var(--track);
+  --color-addon-bg: var(--addon-bg);
+  --color-placeholder-bg: var(--placeholder-bg);
+  --color-mock-field-bg: var(--mock-field-bg);
   --color-point: var(--point);
   --color-blush: var(--tint-blush);
   --color-yellow: var(--tint-yellow);
