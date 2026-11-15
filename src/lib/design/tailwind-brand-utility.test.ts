@@ -354,8 +354,9 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toContain(".py-admin-sidebar{padding-block:22px");
       expect(minified).not.toContain(".w-\\[220px\\]");
       expect(minified).not.toContain(".py-\\[22px\\]");
-      expect(minified).toContain(".shadow-\\[5px_5px_0");
-      expect(minified).toContain("shadow-\\[7px_7px_0");
+      expect(minified).toContain(".shadow-\\[5px_5px_0_var\\(--ink-deep\\)");
+      expect(minified).toContain("sm\\:shadow-\\[7px_7px_0_var\\(--ink-deep\\)");
+      expect(minified).toContain("var(--ink-deep)");
     }
   });
 
@@ -379,6 +380,7 @@ describe("compiled Tailwind brand utilities", () => {
           for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
             await expectThemeComputedColors(page, css, label, themeId);
           }
+          await expectGuideDialogShadow(page, css, label);
         }
       } finally {
         await browser.close();
@@ -830,6 +832,36 @@ function themeMarkup(themeId?: string) {
     <p style="font-size:14px" data-probe="px-14">14</p>
     <p style="font-size:16px" data-probe="px-16">16</p>
   </section>`;
+}
+
+function guideShadowMarkup() {
+  // 이전 클래스 문자열은 계산 box-shadow 비교용이다. 앱 .tsx에는 남지 않는다.
+  return `<div class="shadow-[5px_5px_0_var(--ink-deep)] sm:shadow-[7px_7px_0_var(--ink-deep)]" data-probe="guide-next"></div>
+    <div class="shadow-[5px_5px_0_#111827] sm:shadow-[7px_7px_0_#111827]" data-probe="guide-main"></div>`;
+}
+
+async function expectGuideDialogShadow(
+  page: {
+    setViewportSize: (size: { width: number; height: number }) => Promise<void>;
+    goto: (url: string) => Promise<unknown>;
+    evaluate: <T>(fn: () => T) => Promise<T>;
+  },
+  css: string,
+  label: string,
+) {
+  for (const [width, offset] of [
+    [1280, "7px 7px"],
+    [390, "5px 5px"],
+  ] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    const probes = await readProbes(page, css, guideShadowMarkup());
+    const next = probes.find((probe) => probe.probe === "guide-next")!.boxShadow;
+    const previous = probes.find((probe) => probe.probe === "guide-main")!.boxShadow;
+
+    expect(next, `${label} ${width}px guide shadow`).toBe(previous);
+    expect(next, `${label} ${width}px guide offset`).toContain(offset);
+    expect(next, `${label} ${width}px ink-deep`).toContain("17, 24, 39");
+  }
 }
 
 function toastMarkup() {

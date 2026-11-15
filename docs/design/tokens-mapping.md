@@ -161,7 +161,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 입력 껍데기는 [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) variant입니다. `admin`은 높이 40px·흰 면, `onboarding`은 높이 44px·면 없음, `theme`은 `.theme-field`를 감쌉니다. shadcn 기본 `default`는 그대로입니다. 네이티브 `select`는 shadcn Select로 바꾸지 않고 `inputVariants`의 `admin` 클래스를 씁니다. 공개 입력 클래스는 `.theme-field`로 이름을 바꿨습니다. 선언은 `background: var(--field-bg)`, `border: var(--field-border)`, `border-radius: var(--field-radius)`입니다.
 
-그대로 둔 hex: OG 이미지. 안내 대화상자의 `shadow-[5px_5px_0_#111827]`와 `sm:shadow-[7px_7px_0_#111827]`는 `[#hex]`·`"#hex"` 패턴이 아니라 그대로입니다.
+그대로 둔 hex: OG 이미지. 안내 대화상자 그림자는 `shadow-[5px_5px_0_var(--ink-deep)]`, `sm:shadow-[7px_7px_0_var(--ink-deep)]`입니다. `--ink-deep`는 `#111827`이고, `--ink`(`#171717`)와 다릅니다.
 
 ## 타이포
 
@@ -274,7 +274,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 | 현재 | 그대로 둔 이유 |
 | --- | --- |
-| 안내 창의 `shadow-[5px_5px_0_#111827]`, `sm:shadow-[7px_7px_0_#111827]` | 한 곳씩인 5px·7px |
+| 안내 창의 `shadow-[5px_5px_0_var(--ink-deep)]`, `sm:shadow-[7px_7px_0_var(--ink-deep)]` | 한 곳씩인 5px·7px. 색은 `--ink-deep`(`#111827`) |
 | Tailwind 기본 `rounded-md`, `border-2`, `shadow-md` | 기본 스케일 |
 | shadcn `rounded-[min(var(--radius-md),...)]` | 컴포넌트 기본 모서리 상한 |
 | `--toast-*` | `.pub-page` 밖 토스트. 그림자에 `4px 4px 0 #111827`가 있어도 `shadow-pixel-md`로 합치지 않음 |
@@ -360,4 +360,4 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.
 
-[병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)은 `cn()`이 커스텀 글자 크기·그림자를 색 클래스와 함께 두는지, `Badge` `count` 렌더 class에 `text-micro`가 있는지를 봅니다. [필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다. 2026-11-15에는 `bg-addon-bg`·`bg-placeholder-bg`·`bg-mock-field-bg`와 `.theme-field`, 입력 variant의 계산 스타일(높이·패딩·글자·색·테두리·모서리·포커스·placeholder·disabled)을 같은 계약에서 봅니다.
+[병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)은 `cn()`이 커스텀 글자 크기·그림자를 색 클래스와 함께 두는지, `Badge` `count` 렌더 class에 `text-micro`가 있는지를 봅니다. [필·알림 계약](../../src/lib/design/badge-contract.test.ts)은 Badge `theme`·`status`·`count`와 Alert `notice`에 hex가 없는지, `.pub-pill`이 없는지, OG를 뺀 `.tsx`에 `[#hex]`와 `"#hex"`가 없는지를 봅니다. 2026-11-14 Tailwind 유틸 계약은 새 상태 유틸과 꽃가루 `:root` 리터럴, `bg-point`·`bg-blush`·`bg-yellow`의 테마 계산색, `soft_pastel`의 `--gift-soft-*`도 봅니다. 2026-11-15에는 `bg-addon-bg`·`bg-placeholder-bg`·`bg-mock-field-bg`와 `.theme-field`, 입력 variant의 계산 스타일(높이·패딩·글자·색·테두리·모서리·포커스·placeholder·disabled)을 같은 계약에서 봅니다. 안내 대화상자의 5px·7px 그림자는 `--ink-deep`를 쓰고, Chrome 계산 `box-shadow`는 예전 `#111827` 임의 그림자와 같습니다.

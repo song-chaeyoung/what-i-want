@@ -182,7 +182,7 @@ export function AdminGuideDialog({
       <DialogPrimitive.Portal>
         <DialogPrimitive.Overlay className="fixed inset-0 z-40 bg-black/45 backdrop-blur-[2px]" />
         <DialogPrimitive.Content
-          className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-16px)] w-[calc(100%-16px)] max-w-[760px] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-md border-2 border-ink bg-paper p-4 shadow-[5px_5px_0_#111827] outline-none sm:gap-5 sm:p-7 sm:shadow-[7px_7px_0_#111827]"
+          className="fixed top-1/2 left-1/2 z-50 grid max-h-[calc(100dvh-16px)] w-[calc(100%-16px)] max-w-[760px] -translate-x-1/2 -translate-y-1/2 gap-4 overflow-y-auto rounded-md border-2 border-ink bg-paper p-4 shadow-[5px_5px_0_var(--ink-deep)] outline-none sm:gap-5 sm:p-7 sm:shadow-[7px_7px_0_var(--ink-deep)]"
           onPointerDownOutside={(event) => event.preventDefault()}
           onEscapeKeyDown={handleEscapeKeyDown}
           onOpenAutoFocus={(event) => {
