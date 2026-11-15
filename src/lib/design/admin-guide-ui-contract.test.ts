@@ -61,6 +61,10 @@ describe("admin guide UI contract", () => {
     expect(source).toContain("onPointerDownOutside={(event) => event.preventDefault()}");
     expect(source).toContain("onEscapeKeyDown={handleEscapeKeyDown}");
     expect(source).toContain("motion-reduce:animate-none");
+    expect(source).toContain("shadow-[5px_5px_0_var(--ink-deep)]");
+    expect(source).toContain("sm:shadow-[7px_7px_0_var(--ink-deep)]");
+    expect(source).not.toContain("#111827");
+    expect(source).not.toContain("#171717");
   });
 
   test("mounts automatic guide state in the shared admin layout", () => {

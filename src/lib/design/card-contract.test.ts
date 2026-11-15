@@ -64,10 +64,10 @@ describe("card variant contract", () => {
   test("moves pub-card box styles onto theme-card and keeps stat exceptions", () => {
     expect(themeCss).toContain(".theme-card {");
     expect(themeCss).toContain("--headline: var(--ink);");
-    expect(themeCss).toContain(".theme-card.pub-stat");
+    expect(themeCss).toContain(".theme-card.theme-stat");
     expect(themeCss).toContain("--headline: inherit;");
-    expect(themeCss).toContain('.pub-page[data-theme="mono_bw"] .pub-stat');
-    expect(themeCss).toContain('.pub-page[data-theme="soft_pastel"] .pub-stat');
+    expect(themeCss).toContain('.theme-page[data-theme="mono_bw"] .theme-stat');
+    expect(themeCss).toContain('.theme-page[data-theme="soft_pastel"] .theme-stat');
     expect(themeCss).not.toContain(".pub-card");
     expect(themeCss).not.toContain(".pub-card-hero");
     expect(themeCss).not.toContain(".pub-msg");
@@ -140,7 +140,7 @@ describe("card variant contract", () => {
     expect(read("app/admin/wishes/page.tsx")).toContain("adminCardHoverClassName");
     expect(read("app/admin/settings/page.tsx")).toContain("bg-admin-bg/95");
     expect(read("components/public-wishlist-view.tsx")).toContain('variant="theme"');
-    expect(read("components/public-wishlist-view.tsx")).toContain('className="pub-stat p-4"');
+    expect(read("components/public-wishlist-view.tsx")).toContain('className="theme-stat p-4"');
     expect(read("components/public-wishlist-view.tsx")).not.toContain("pub-card");
   });
 });

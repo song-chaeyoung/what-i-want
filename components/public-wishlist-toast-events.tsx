@@ -204,14 +204,14 @@ function AccountRevealModal({
           <Badge asChild variant="theme-alt">
             <p>thank you</p>
           </Badge>
-          <h2 className="mt-4 text-2xl font-black tracking-normal text-[var(--headline)]">
+          <h2 className="mt-4 text-2xl font-black tracking-normal text-(--headline)">
             {PUBLIC_WISHLIST_COPY.fundingSuccessTitle}
           </h2>
-          <p className="mt-2 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
+          <p className="mt-2 text-sm font-semibold leading-6 text-(--ink-muted)">
             {PUBLIC_WISHLIST_COPY.fundingSuccessDescription}
           </p>
           <PublicBankAccountCard account={account} className="mt-5" />
-          <p className="mt-3 text-xs font-semibold text-[var(--ink-muted)]">
+          <p className="mt-3 text-xs font-semibold text-(--ink-muted)">
             {PUBLIC_WISHLIST_COPY.fundingSuccessCorrectionNote}
           </p>
           <Button

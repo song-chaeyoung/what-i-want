@@ -39,7 +39,7 @@
 | 관리자 | 지표·블록 skeleton, pulse | 차분한 카드와 `다시 시도`. [loading](../../../app/admin/loading.tsx), [error](../../../app/admin/error.tsx) |
 | 공개 | 전체 너비 헤더와 카드 skeleton, pulse | 공개 카드의 재시도 또는 404의 `처음으로`. [loading](../../../app/wishlist/[slug]/loading.tsx), [error](../../../app/wishlist/[slug]/error.tsx), [404](../../../app/wishlist/[slug]/not-found.tsx) |
 
-공개 경계에는 조회한 `data-theme`가 없으므로 `.pub-page`의 기본 `pixel_y2k`로 표시합니다. 선택 테마의 로딩 보장을 뜻하지 않습니다. 근거: 위 경계 파일과 [공개 기본 CSS](../../../app/public-themes.css).
+공개 경계에는 조회한 `data-theme`가 없으므로 `.theme-page`의 기본 `pixel_y2k`로 표시합니다. 선택 테마의 로딩 보장을 뜻하지 않습니다. 근거: 위 경계 파일과 [공개 기본 CSS](../../../app/public-themes.css).
 
 제출 대기는 라우트 skeleton과 다릅니다. 공개 참여는 버튼의 `보내는 중...`, 링크 정보 불러오기는 `불러오는 중…`과 비활성화를 사용합니다. 근거: [공개 submit](../../../components/public-participation-submit-button.tsx), [링크 불러오기](../../../app/admin/wishes/link-autofill-button.tsx).
 
@@ -78,7 +78,7 @@
 - 관리자 mutation 오류는 대부분 일반 문구이고 공개 참여는 코드별 문구입니다. 필드 오류·오류 요약과 토스트의 공통 분담은 [폼 가이드](form.md)의 미결정 사항입니다.
 - 로딩을 몇 ms 뒤에 표시하거나 최소 몇 ms 유지하는 시간 규칙은 없습니다. 현 skeleton의 개수·모양을 완성 화면과 항상 동일한 계약으로 일반화하지 않습니다.
 - 관리자 안내에는 reduced-motion 처리가 있으나 route skeleton의 pulse 등 전체 모션의 공통 대응이 완료된 것은 아닙니다. 전체 정책은 미결정입니다.
-- 커스텀 계좌 모달의 포커스·Escape·포커스 복원은 미검증입니다. 공개 토스트는 `body:has(.pub-page[data-theme=...])`로 전역 Toaster에 토큰을 전달하도록 정의되어 있지만, 이번 정적 대조로 실제 표시·대비의 검증 완료를 주장하지 않습니다. 근거: [모달 구현](../../../components/public-wishlist-toast-events.tsx), [전역 Toaster](../../../app/layout.tsx), [토스트 CSS](../../../app/globals.css), [공개 토큰](../../../app/public-themes.css).
+- 커스텀 계좌 모달의 포커스·Escape·포커스 복원은 미검증입니다. 공개 토스트는 `body:has(.theme-page[data-theme=...])`로 전역 Toaster에 토큰을 전달하도록 정의되어 있지만, 이번 정적 대조로 실제 표시·대비의 검증 완료를 주장하지 않습니다. 근거: [모달 구현](../../../components/public-wishlist-toast-events.tsx), [전역 Toaster](../../../app/layout.tsx), [토스트 CSS](../../../app/globals.css), [공개 토큰](../../../app/public-themes.css).
 
 ## 확인 방법
 

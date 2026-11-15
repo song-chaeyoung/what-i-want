@@ -2,7 +2,8 @@
 
 import { useState } from "react";
 import { ADMIN_COPY } from "@/src/lib/design/copy";
-import { AdminField, adminInputClassName } from "../admin-ui";
+import { inputVariants } from "@/components/ui/input";
+import { AdminField } from "../admin-ui";
 
 const selectableAccountVisibilities = ["copy_only", "hidden"] as const;
 
@@ -45,7 +46,7 @@ export function AccountVisibilityField({
             setVisibility(next);
           }
         }}
-        className={adminInputClassName}
+        className={inputVariants({ variant: "admin" })}
       >
         {selectableAccountVisibilities.map((option) => (
           <option key={option} value={option}>

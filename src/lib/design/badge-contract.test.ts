@@ -34,9 +34,6 @@ const globalsCss = read("app/globals.css");
 const themeCss = read("app/public-themes.css");
 
 const allowedHex = new Map<string, string[] | "any">([
-  ["app/admin/settings/page.tsx", ["#f9fafb"]],
-  ["app/admin/wishes/page.tsx", ["#f4f4f3"]],
-  ["app/admin/admin-guide-visual.tsx", ["#fafafa"]],
   ["app/opengraph-image.tsx", "any"],
   ["app/wishlist/[slug]/opengraph-image.tsx", "any"],
 ]);
@@ -103,7 +100,7 @@ describe("badge and notice contract", () => {
     expect(themeCss).toContain("color: var(--pill-color);");
     expect(themeCss).toContain("background: var(--pill-alt-bg);");
     expect(themeCss).toContain(
-      '.pub-page[data-theme="mono_bw"] .pub-header .theme-pill {',
+      '.theme-page[data-theme="mono_bw"] .theme-header .theme-pill {',
     );
     expect(themeCss).not.toContain(".pub-pill");
     expect(globalsCss).not.toContain("--gift-soft-bg");

@@ -4,6 +4,8 @@ import { TextLogo } from "@/components/text-logo";
 import { Alert } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
@@ -75,14 +77,14 @@ export default async function OnboardingPage({
               className="mt-8 space-y-5"
             >
               <Field label="표시 이름" htmlFor="displayName">
-                <input
+                <Input
                   id="displayName"
                   name="displayName"
                   type="text"
                   maxLength={80}
                   defaultValue={user.name ?? ""}
                   required
-                  className={inputClassName}
+                  variant="onboarding"
                 />
               </Field>
 
@@ -91,11 +93,11 @@ export default async function OnboardingPage({
               </Field>
 
               <Field label="소개" htmlFor="description">
-                <textarea
+                <Textarea
                   id="description"
                   name="description"
                   rows={4}
-                  className={textareaClassName}
+                  variant="onboarding"
                 />
               </Field>
 
@@ -147,9 +149,3 @@ function Field({
     </div>
   );
 }
-
-const inputClassName =
-  "h-11 w-full rounded-md border border-line px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";
-
-const textareaClassName =
-  "w-full resize-none rounded-md border border-line px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400";

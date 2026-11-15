@@ -7,6 +7,8 @@ import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import {
   BRAND_NAME,
   PUBLIC_WISHLIST_COPY,
@@ -51,8 +53,8 @@ export function PublicWishlistView({
     wishlist.ownerDescription?.trim() || PUBLIC_WISHLIST_COPY.description;
 
   return (
-    <main className="pub-page min-h-dvh" data-theme={wishlist.themeId}>
-      <header className="pub-header">
+    <main className="theme-page min-h-dvh" data-theme={wishlist.themeId}>
+      <header className="theme-header">
         <div className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12">
           <div className="flex flex-wrap items-center justify-between gap-3">
             <div className="flex flex-wrap items-center gap-3">
@@ -85,8 +87,8 @@ export function PublicWishlistView({
               />
             </div>
           </div>
-          <h1 className="pub-headline mt-5 sm:text-5xl">{wishlist.title}</h1>
-          <p className="mt-5 text-base font-semibold leading-7 text-[var(--header-sub)]">
+          <h1 className="theme-headline mt-5 sm:text-5xl">{wishlist.title}</h1>
+          <p className="mt-5 text-base font-semibold leading-7 text-(--header-sub)">
             {description}
           </p>
 
@@ -121,17 +123,17 @@ export function PublicWishlistView({
           ))
         ) : (
           <Card variant="theme" className="p-6">
-            <h2 className="text-2xl font-black tracking-normal text-[var(--headline)]">
+            <h2 className="text-2xl font-black tracking-normal text-(--headline)">
               {PUBLIC_WISHLIST_COPY.emptyTitle}
             </h2>
-            <p className="mt-3 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
+            <p className="mt-3 text-sm font-semibold leading-6 text-(--ink-muted)">
               {PUBLIC_WISHLIST_COPY.emptyDescription}
             </p>
           </Card>
         )}
 
-        <div className="pub-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
-          <p className="pub-label text-xs">make your own</p>
+        <div className="theme-cta mt-8 flex flex-col items-center gap-4 pt-8 pb-4 text-center">
+          <p className="theme-label text-xs">make your own</p>
           <Button asChild variant="theme" className="h-12 px-6 text-sm">
             <Link href="/login">{PUBLIC_WISHLIST_COPY.createMineCta}</Link>
           </Button>
@@ -150,10 +152,10 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
       <details>
         <summary className="flex cursor-pointer list-none flex-wrap items-center gap-x-3 gap-y-2 p-5 [&::-webkit-details-marker]:hidden">
           <Badge variant="theme-alt">gift note</Badge>
-          <span className="text-lg font-black tracking-normal text-[var(--headline)]">
+          <span className="text-lg font-black tracking-normal text-(--headline)">
             {PUBLIC_WISHLIST_COPY.messageFormTitle}
           </span>
-          <span className="w-full text-sm font-semibold text-[var(--ink-muted)] sm:w-auto">
+          <span className="w-full text-sm font-semibold text-(--ink-muted) sm:w-auto">
             {PUBLIC_WISHLIST_COPY.messageFormNote}
           </span>
         </summary>
@@ -166,13 +168,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
             label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
             htmlFor="message-sender"
           >
-            <input
+            <Input
               id="message-sender"
               name="senderName"
               type="text"
               maxLength={80}
               placeholder="이름"
-              className={publicInputClassName}
+              variant="theme"
             />
           </PublicField>
 
@@ -180,13 +182,13 @@ function MessageOnlyForm({ slug, demo }: { slug: string; demo: boolean }) {
             label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
             htmlFor="message-body"
           >
-            <textarea
+            <Textarea
               id="message-body"
               name="body"
               rows={4}
               maxLength={500}
               required
-              className={publicTextareaClassName}
+              variant="theme"
             />
           </PublicField>
 
@@ -216,7 +218,7 @@ function ParticipationSubmit({
         >
           {PUBLIC_WISHLIST_COPY.participationSubmitCta}
         </Button>
-        <p className="text-xs font-semibold text-[var(--ink-muted)]">
+        <p className="text-xs font-semibold text-(--ink-muted)">
           샘플 페이지에서는 마음을 보낼 수 없어요.
         </p>
       </div>
@@ -257,7 +259,7 @@ function PublicWishCard({
       <article>
         <div className="grid gap-0 lg:grid-cols-[minmax(220px,280px)_1fr]">
           <div
-            className={`gift-image-stage pub-fallback grid place-items-center border-b-2 border-[var(--divider-color)] bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
+            className={`gift-image-stage theme-fallback grid place-items-center border-b-2 border-(--divider-color) bg-cover bg-center p-5 lg:aspect-auto lg:border-r-2 lg:border-b-0 ${
               imageUrl ? "aspect-[4/3] min-h-56" : "min-h-24"
             }`}
             style={
@@ -275,32 +277,32 @@ function PublicWishCard({
                 <Badge asChild variant="theme">
                   <p>NO. {index + 1}</p>
                 </Badge>
-                <p className="pub-label text-xs">
+                <p className="theme-label text-xs">
                   {getWishStatusLabel(item.status, item.progress)}
                 </p>
               </div>
               <h2
                 id={wishTitleId(item.id)}
                 tabIndex={-1}
-                className="mt-3 text-2xl font-black leading-tight tracking-normal text-[var(--headline)] sm:text-3xl"
+                className="mt-3 text-2xl font-black leading-tight tracking-normal text-(--headline) sm:text-3xl"
               >
                 {item.title}
               </h2>
 
               {item.description ? (
-                <p className="mt-4 text-sm font-semibold leading-6 text-[var(--ink-muted)]">
+                <p className="mt-4 text-sm font-semibold leading-6 text-(--ink-muted)">
                   {item.description}
                 </p>
               ) : null}
             </div>
 
-            <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-[var(--divider-color)] pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
-              <p className="pub-label text-xs">gift progress</p>
+            <div className="gift-progress-panel grid content-start gap-3 border-t-2 border-(--divider-color) pt-4 lg:border-t-0 lg:border-l-2 lg:pt-0 lg:pl-5">
+              <p className="theme-label text-xs">gift progress</p>
               <div>
-                <p className="text-2xl font-black tracking-normal text-[var(--headline)]">
+                <p className="text-2xl font-black tracking-normal text-(--headline)">
                   {formatCurrency(item.fundedAmount)}
                 </p>
-                <p className="mt-1 text-xs font-black text-[var(--ink-muted)]">
+                <p className="mt-1 text-xs font-black text-(--ink-muted)">
                   {item.targetAmount
                     ? `${formatCurrency(item.targetAmount)} 중`
                     : PUBLIC_WISHLIST_COPY.noTargetAmount}
@@ -308,10 +310,10 @@ function PublicWishCard({
               </div>
               {item.targetAmount ? (
                 <>
-                  <div className="pub-progress mt-2">
+                  <div className="theme-progress mt-2">
                     <i style={{ width: `${item.progress}%` }} />
                   </div>
-                  <p className="text-xs font-black text-[var(--ink-muted)]">
+                  <p className="text-xs font-black text-(--ink-muted)">
                     {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
                   </p>
                 </>
@@ -332,17 +334,17 @@ function PublicWishCard({
         </div>
 
         {canFund ? (
-          <details className="send-heart-section border-t-2 border-[var(--divider-color)]">
-            <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-[var(--accent-main)] [&::-webkit-details-marker]:hidden">
+          <details className="send-heart-section border-t-2 border-(--divider-color)">
+            <summary className="flex cursor-pointer list-none items-center justify-center gap-2 p-4 text-sm font-black text-(--accent-main) [&::-webkit-details-marker]:hidden">
               {PUBLIC_WISHLIST_COPY.fundCta}
             </summary>
             <form
               action={
                 demo ? undefined : submitParticipationAction.bind(null, slug)
               }
-              className="space-y-4 border-t-2 border-[var(--divider-color)] p-5"
+              className="space-y-4 border-t-2 border-(--divider-color) p-5"
             >
-              <p className="text-lg font-black tracking-normal text-[var(--headline)]">
+              <p className="text-lg font-black tracking-normal text-(--headline)">
                 {PUBLIC_WISHLIST_COPY.participationTitle}
               </p>
               <input type="hidden" name="wishItemId" value={item.id} />
@@ -356,7 +358,7 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationAmountLabel}
                 htmlFor={`participation-amount-${item.id}`}
               >
-                <input
+                <Input
                   id={`participation-amount-${item.id}`}
                   name="amount"
                   type="number"
@@ -364,7 +366,7 @@ function PublicWishCard({
                   step={1}
                   required
                   placeholder="10000"
-                  className={publicInputClassName}
+                  variant="theme"
                 />
               </PublicField>
 
@@ -372,13 +374,13 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationSenderLabel}
                 htmlFor={`participation-sender-${item.id}`}
               >
-                <input
+                <Input
                   id={`participation-sender-${item.id}`}
                   name="senderName"
                   type="text"
                   maxLength={80}
                   placeholder="이름"
-                  className={publicInputClassName}
+                  variant="theme"
                 />
               </PublicField>
 
@@ -386,17 +388,17 @@ function PublicWishCard({
                 label={PUBLIC_WISHLIST_COPY.participationMessageLabel}
                 htmlFor={`participation-body-${item.id}`}
               >
-                <textarea
+                <Textarea
                   id={`participation-body-${item.id}`}
                   name="body"
                   rows={3}
                   maxLength={500}
                   required
-                  className={publicTextareaClassName}
+                  variant="theme"
                 />
               </PublicField>
 
-              <p className="text-xs font-semibold text-[var(--ink-muted)]">
+              <p className="text-xs font-semibold text-(--ink-muted)">
                 {hasAccount
                   ? PUBLIC_WISHLIST_COPY.participationTransferNote
                   : PUBLIC_WISHLIST_COPY.participationTransferNoteNoAccount}
@@ -409,7 +411,7 @@ function PublicWishCard({
             </form>
           </details>
         ) : participationNotice ? (
-          <p className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]">
+          <p className="border-t-2 border-(--divider-color) p-4 text-center text-sm font-semibold text-(--ink-muted)">
             {participationNotice}
           </p>
         ) : null}
@@ -454,9 +456,9 @@ function GiftFallback() {
 
 function SummaryBox({ label, value }: { label: string; value: string }) {
   return (
-    <Card variant="theme" className="pub-stat p-4">
-      <dt className="pub-label text-xs">{label}</dt>
-      <dd className="mt-1 text-lg font-black tracking-normal text-[var(--headline)]">
+    <Card variant="theme" className="theme-stat p-4">
+      <dt className="theme-label text-xs">{label}</dt>
+      <dd className="mt-1 text-lg font-black tracking-normal text-(--headline)">
         {value}
       </dd>
     </Card>
@@ -504,9 +506,3 @@ function formatCurrency(amount: number): string {
     maximumFractionDigits: 0,
   }).format(amount);
 }
-
-const publicInputClassName =
-  "pub-field h-10 w-full px-3 text-sm font-bold outline-none";
-
-const publicTextareaClassName =
-  "pub-field w-full resize-none px-3 py-2 text-sm font-bold outline-none";

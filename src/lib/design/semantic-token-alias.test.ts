@@ -12,7 +12,6 @@ const brandAliases = {
   "--brand-cream": "--surface-page",
   "--brand-yellow": "--tint-yellow",
   "--brand-mint": "--tint-mint",
-  "--brand-blush": "--tint-blush",
   "--brand-orange": "--point",
   "--brand-teal": "--accent-main",
   "--brand-purple": "--headline",
@@ -314,7 +313,6 @@ const previousBrand = {
   "--brand-cream": "#fff7ed",
   "--brand-yellow": "#fef3c7",
   "--brand-mint": "#ccfbf1",
-  "--brand-blush": "#ffe4e6",
   "--brand-orange": "#f97316",
   "--brand-teal": "#0f766e",
   "--brand-purple": "#4c1d95",
@@ -413,13 +411,13 @@ const rootVars = parseVars(extractBlock(globalsCss, /:root\s*\{/));
 const themeBridgeVars = parseVars(extractBlock(globalsCss, /@theme inline\s*\{/));
 const themeBlocks = {
   pixel_y2k: parseVars(
-    extractBlock(publicThemesCss, /\.pub-page,\s*\.pub-page\[data-theme="pixel_y2k"\]\s*\{/),
+    extractBlock(publicThemesCss, /\.theme-page,\s*\.theme-page\[data-theme="pixel_y2k"\]\s*\{/),
   ),
   mono_bw: parseVars(
-    extractBlock(publicThemesCss, /\.pub-page\[data-theme="mono_bw"\]\s*\{/),
+    extractBlock(publicThemesCss, /\.theme-page\[data-theme="mono_bw"\]\s*\{/),
   ),
   soft_pastel: parseVars(
-    extractBlock(publicThemesCss, /\.pub-page\[data-theme="soft_pastel"\]\s*\{/),
+    extractBlock(publicThemesCss, /\.theme-page\[data-theme="soft_pastel"\]\s*\{/),
   ),
 } as const;
 
@@ -511,7 +509,7 @@ describe("semantic token aliases", () => {
   });
 
   test("keeps each theme token literal on its current name", () => {
-    expect(publicThemesCss).not.toMatch(/\.pub-page\s*\{[^}]*--brand-ink\s*:/);
+    expect(publicThemesCss).not.toMatch(/\.theme-page\s*\{[^}]*--brand-ink\s*:/);
 
     const basePubVars = themeBlocks.pixel_y2k;
 
@@ -548,7 +546,7 @@ describe("semantic token aliases", () => {
 
   test("keeps the card headline override on --headline and the header on the theme headline", () => {
     const cardBlock = extractBlock(publicThemesCss, /\.theme-card\s*\{/);
-    const headlineBlock = extractBlock(publicThemesCss, /\.pub-headline\s*\{/);
+    const headlineBlock = extractBlock(publicThemesCss, /\.theme-headline\s*\{/);
     const removedPrefix = "--" + "pub-";
 
     expect(cardBlock).toContain("--headline: var(--ink);");
@@ -558,7 +556,8 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("font-size: var(--label-size);");
     expect(publicThemesCss).toContain("font-size: var(--pill-size);");
     expect(publicThemesCss).toContain("font-size: var(--btn-size);");
-    expect(publicThemesCss).toMatch(/\.pub-eyebrow\s*\{[^}]*font-size:\s*12px;/);
+    expect(publicThemesCss).not.toContain("." + "pu" + "b-eyebrow");
+    expect(publicThemesCss).not.toContain("." + "pu" + "b-stat-value");
     expect(publicThemesCss).toContain("background: var(--pill-bg);");
     expect(publicThemesCss).toContain("color: var(--pill-color);");
     expect(publicThemesCss).toContain("background: var(--pill-alt-bg);");
@@ -573,7 +572,7 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("background: var(--progress-fill);");
     expect(publicThemesCss).toContain("background: var(--field-bg);");
     expect(publicThemesCss).toContain("background: var(--bank-bg);");
-    expect(publicThemesCss).toContain("color: var(--header-sub);");
+    expect(publicThemesCss).toContain("--header-sub:");
     expect(publicThemesCss).toContain("color: var(--label-color);");
     expect(publicThemesCss).not.toContain("--" + "card-shadow-lg");
     expect(publicThemesCss).not.toContain("--" + "msg-title");

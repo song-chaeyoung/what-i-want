@@ -12,17 +12,17 @@ export function PublicBankAccountCard({
 
   return (
     <div
-      className={`soft-bank-card pub-bank flex flex-wrap items-center justify-between gap-3 rounded-[var(--card-radius)] p-4${
+      className={`soft-bank-card theme-bank flex flex-wrap items-center justify-between gap-3 rounded-(--card-radius) p-4${
         className ? ` ${className}` : ""
       }`}
     >
       <div>
-        <p className="pub-label text-xs">예금주</p>
-        <p className="mt-1 text-sm font-black text-[var(--bank-ink)]">
+        <p className="theme-label text-xs">예금주</p>
+        <p className="mt-1 text-sm font-black text-(--bank-ink)">
           {account.accountHolder}
         </p>
         {showAccountNumber ? (
-          <p className="mt-1 text-sm font-black text-[var(--bank-ink)]">
+          <p className="mt-1 text-sm font-black text-(--bank-ink)">
             {account.bankName} {account.accountNumber}
           </p>
         ) : null}

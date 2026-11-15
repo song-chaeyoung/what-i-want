@@ -20,9 +20,9 @@
 
 | 영역 | 현재 구성 | 작업할 때의 선택 |
 | --- | --- | --- |
-| 관리자 선물·설정 | `AdminField`, `adminInputClassName`, `adminTextareaClassName`, 관리자 버튼 클래스 | [admin-ui.tsx](../../../app/admin/admin-ui.tsx)를 먼저 재사용합니다. `AdminField`는 label·필수 표시·hint를 담당하며 실제 input 제약은 호출부가 지정합니다. |
-| 온보딩 | 페이지 내부 `Field`와 입력 클래스, `BirthdayPicker` | [온보딩 페이지](../../../app/onboarding/page.tsx) 문맥을 유지합니다. `Field`는 다른 파일에서 import하는 공통 export가 아닙니다. 생일 선택은 [BirthdayPicker](../../../app/onboarding/birthday-picker.tsx)가 shadcn/Radix UI를 사용합니다. |
-| 공개 위시리스트·샘플 | `PublicWishlistView` 내부 `PublicField`와 공개 입력 클래스 | [공개 화면](../../../components/public-wishlist-view.tsx)의 `.pub-field`와 테마 토큰을 유지합니다. `PublicField`도 페이지 컴포넌트 내부 함수이며 관리자 `AdminField`와 같지 않습니다. |
+| 관리자 선물·설정 | `AdminField`, [Input](../../../components/ui/input.tsx)·[Textarea](../../../components/ui/textarea.tsx) `admin`, 관리자 버튼 클래스 | [admin-ui.tsx](../../../app/admin/admin-ui.tsx)의 `AdminField`는 label·필수 표시·hint를 담당하며 실제 input 제약은 호출부가 지정합니다. 네이티브 `select`는 `inputVariants`의 `admin` 클래스를 쓰고 shadcn Select로 바꾸지 않습니다. |
+| 온보딩 | 페이지 내부 `Field`, Input·Textarea `onboarding`, `BirthdayPicker` | [온보딩 페이지](../../../app/onboarding/page.tsx) 문맥을 유지합니다. `Field`는 다른 파일에서 import하는 공통 export가 아닙니다. 생일 선택은 [BirthdayPicker](../../../app/onboarding/birthday-picker.tsx)가 shadcn/Radix UI를 사용합니다. |
+| 공개 위시리스트·샘플 | `PublicWishlistView` 내부 `PublicField`, Input·Textarea `theme` | [공개 화면](../../../components/public-wishlist-view.tsx)의 `.theme-field`와 테마 토큰을 유지합니다. `PublicField`도 페이지 컴포넌트 내부 함수이며 관리자 `AdminField`와 같지 않습니다. |
 
 ### 입력과 검증
 
@@ -65,7 +65,7 @@
 - **실패 시 입력 유지:** 현재 redirect 흐름은 필드별 오류·입력 상태를 반환하는 공통 구조가 아닙니다. 실환경 실패 후 값 복원은 별도 확인이 필요하며 모든 폼에서 보장된다고 쓰지 않습니다.
 - **오류 위치:** 공개 참여는 코드별 토스트, 관리자 mutation 오류는 대부분 일반 토스트, 온보딩은 페이지 인라인입니다. 필드별 오류·오류 요약·`aria-describedby`를 포함한 공통 정책은 아직 정하지 않았습니다.
 - **pending:** 공개 참여와 링크 불러오기는 구현되어 있지만 관리자 저장 전체의 공통 대기·중복 제출 표준은 없습니다.
-- **포커스:** 관리자 입력은 테두리 변화가 있고 공개 입력은 `outline-none`이며 공통 focus 표현이 없습니다. 현재 값을 접근성 검증 완료 규칙으로 채택하지 않습니다. 근거: [관리자 입력](../../../app/admin/admin-ui.tsx), [공개 입력](../../../components/public-wishlist-view.tsx), [공개 CSS](../../../app/public-themes.css).
+- **포커스:** 관리자·온보딩 입력은 `focus:border-zinc-400`이고 공개 입력은 `outline-none`이며 `.theme-field`에 별도 포커스 스타일이 없습니다. 현재 값을 접근성 검증 완료 규칙으로 채택하지 않습니다. 근거: [Input](../../../components/ui/input.tsx), [공개 CSS](../../../app/public-themes.css).
 - **라이브러리:** 현재 네이티브 폼과 서비스 검증으로 흐름을 설명할 수 있습니다. RHF/Zod 도입은 이 가이드의 선행 조건이 아니며, 도입 필요 여부를 영구적으로 결정하지도 않습니다. 근거: [의존성](../../../package.json), 위 제출·검증 구현.
 
 ## 확인 방법

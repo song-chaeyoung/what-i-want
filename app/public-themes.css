@@ -1,6 +1,6 @@
 @layer base {
-  .pub-page,
-  .pub-page[data-theme="pixel_y2k"] {
+  .theme-page,
+  .theme-page[data-theme="pixel_y2k"] {
     --ink: #171717;
     --ink-muted: #3f3f46;
     --surface-page: #fff7ed;
@@ -68,7 +68,7 @@
     --msg-sub: #9d174d;
   }
 
-  .pub-page[data-theme="mono_bw"] {
+  .theme-page[data-theme="mono_bw"] {
     --ink: #111;
     --ink-muted: #6b6b6b;
     --surface-page: #ffffff;
@@ -131,7 +131,7 @@
     --msg-sub: #6b6b6b;
   }
 
-  .pub-page[data-theme="soft_pastel"] {
+  .theme-page[data-theme="soft_pastel"] {
     --ink: #5b5566;
     --ink-muted: #8b8398;
     --surface-page: #fbf5ff;
@@ -196,8 +196,8 @@
     --msg-sub: #c77ba0;
   }
 
-  /* 토스트는 .pub-page 바깥(루트 Toaster)에 렌더링되므로 body:has()로 테마 변수를 전달 */
-  body:has(.pub-page[data-theme="pixel_y2k"]) {
+  /* 토스트는 .theme-page 바깥(루트 Toaster)에 렌더링되므로 body:has()로 테마 변수를 전달 */
+  body:has(.theme-page[data-theme="pixel_y2k"]) {
     --toast-bg: #fffdf7;
     --toast-ink: #171717;
     --toast-border: 2px solid #171717;
@@ -212,7 +212,7 @@
     --toast-info: #4c1d95;
   }
 
-  body:has(.pub-page[data-theme="mono_bw"]) {
+  body:has(.theme-page[data-theme="mono_bw"]) {
     --toast-bg: #fff;
     --toast-ink: #111;
     --toast-border: 1.5px solid #111;
@@ -224,7 +224,7 @@
     --toast-info: #111;
   }
 
-  body:has(.pub-page[data-theme="soft_pastel"]) {
+  body:has(.theme-page[data-theme="soft_pastel"]) {
     --toast-bg: #fffafc;
     --toast-ink: #5b5566;
     --toast-border: 1.5px solid #f0dfe9;
@@ -238,7 +238,7 @@
 }
 
 @layer components {
-  .pub-page {
+  .theme-page {
     background-color: var(--surface-page);
     background-image: var(--bg-dots);
     background-position: -2px -2px;
@@ -247,7 +247,7 @@
     font-family: var(--font-body, Arial, Helvetica, sans-serif);
   }
 
-  .pub-header {
+  .theme-header {
     background-color: var(--surface-header);
     background-image: var(--header-dots);
     background-position: -2px -2px;
@@ -255,7 +255,7 @@
     border-bottom: var(--header-border);
   }
 
-  .pub-headline {
+  .theme-headline {
     margin: 0;
     color: var(--headline);
     font-family: var(--headline-font);
@@ -265,15 +265,7 @@
     line-height: var(--headline-lh);
   }
 
-  .pub-eyebrow {
-    color: var(--header-sub);
-    font-family: var(--label-font);
-    font-size: 12px;
-    letter-spacing: var(--label-ls);
-    text-transform: uppercase;
-  }
-
-  .pub-label {
+  .theme-label {
     color: var(--label-color);
     font-family: var(--label-font);
     font-size: var(--label-size);
@@ -283,7 +275,7 @@
   }
 
   .theme-card {
-    /* 카드 안 제목만 테마 헤드라인 대신 잉크. 헤더 .pub-headline 은 카드 밖이라 테마 헤드라인을 유지한다. */
+    /* 카드 안 제목만 테마 헤드라인 대신 잉크. 헤더 .theme-headline 은 카드 밖이라 테마 헤드라인을 유지한다. */
     --headline: var(--ink);
     background: var(--surface);
     border: var(--card-border);
@@ -291,7 +283,7 @@
     box-shadow: var(--card-shadow);
   }
 
-  .theme-card.pub-header {
+  .theme-card.theme-header {
     background-color: var(--surface-header);
     background-image: var(--header-dots);
     background-position: -2px -2px;
@@ -300,11 +292,11 @@
   }
 
   /* 지표는 카드와 상자 스타일을 공유하지만, 값 색은 테마 헤드라인을 유지한다. */
-  .theme-card.pub-stat {
+  .theme-card.theme-stat {
     --headline: inherit;
   }
 
-  .pub-fallback {
+  .theme-fallback {
     background: var(--tint-mint);
   }
 
@@ -361,18 +353,18 @@
     color: var(--on-point);
   }
 
-  .pub-page[data-theme="pixel_y2k"] .theme-btn:active,
-  .pub-page:not([data-theme]) .theme-btn:active {
+  .theme-page[data-theme="pixel_y2k"] .theme-btn:active,
+  .theme-page:not([data-theme]) .theme-btn:active {
     box-shadow: 0 0 0;
     transform: translate(3px, 3px);
   }
 
-  .pub-page[data-theme="soft_pastel"] .theme-btn:not(.theme-btn-primary):not(.theme-btn-accent) {
+  .theme-page[data-theme="soft_pastel"] .theme-btn:not(.theme-btn-primary):not(.theme-btn-accent) {
     border: 1.5px solid #f0dfe9;
     box-shadow: none;
   }
 
-  .pub-progress {
+  .theme-progress {
     height: var(--progress-h);
     overflow: hidden;
     background: var(--progress-track);
@@ -380,49 +372,44 @@
     border-radius: var(--progress-radius);
   }
 
-  .pub-progress > i {
+  .theme-progress > i {
     display: block;
     height: 100%;
     background: var(--progress-fill);
     border-radius: var(--progress-radius);
   }
 
-  .pub-field {
+  .theme-field {
     background: var(--field-bg);
     border: var(--field-border);
     border-radius: var(--field-radius);
   }
 
-  .pub-bank {
+  .theme-bank {
     background: var(--bank-bg);
   }
 
-  .pub-cta {
+  .theme-cta {
     border-top: var(--header-border);
   }
 
-  .pub-page[data-theme="mono_bw"] .pub-header .theme-pill {
+  .theme-page[data-theme="mono_bw"] .theme-header .theme-pill {
     border: 1.5px solid rgba(255, 255, 255, 0.6);
     color: #fff;
   }
 
-  .pub-page[data-theme="mono_bw"] .pub-stat {
+  .theme-page[data-theme="mono_bw"] .theme-stat {
     background: rgba(255, 255, 255, 0.08);
     border: 1.5px solid rgba(255, 255, 255, 0.5);
     box-shadow: none;
   }
 
-  .pub-page[data-theme="mono_bw"] .pub-stat .pub-label {
+  .theme-page[data-theme="mono_bw"] .theme-stat .theme-label {
     color: rgba(255, 255, 255, 0.7);
   }
 
-  .pub-page[data-theme="soft_pastel"] .pub-stat {
+  .theme-page[data-theme="soft_pastel"] .theme-stat {
     box-shadow: none;
-  }
-
-  .pub-stat-value {
-    font-family: var(--headline-font);
-    font-weight: var(--headline-weight);
   }
 
   .gm {
@@ -433,16 +420,16 @@
     display: block;
   }
 
-  .pub-page[data-theme="mono_bw"] .gm-pixel,
-  .pub-page[data-theme="soft_pastel"] .gm-pixel {
+  .theme-page[data-theme="mono_bw"] .gm-pixel,
+  .theme-page[data-theme="soft_pastel"] .gm-pixel {
     display: none;
   }
 
-  .pub-page[data-theme="mono_bw"] .gm-line {
+  .theme-page[data-theme="mono_bw"] .gm-line {
     display: block;
   }
 
-  .pub-page[data-theme="soft_pastel"] .gm-soft {
+  .theme-page[data-theme="soft_pastel"] .gm-soft {
     display: block;
   }
 }

@@ -63,8 +63,8 @@ test.describe("Page Overview", () => {
     ).toBeVisible();
     await expect(headphonesCard.getByText("72% 달성", { exact: true })).toBeVisible();
 
-    // expect: 진행 막대(`.pub-progress i`)의 inline style width 가 `72%` 이다.
-    await expect(headphonesCard.locator(".pub-progress i")).toHaveAttribute(
+    // expect: 진행 막대(`.theme-progress i`)의 inline style width 가 `72%` 이다.
+    await expect(headphonesCard.locator(".theme-progress i")).toHaveAttribute(
       "style",
       /width:\s*72%/,
     );
@@ -90,7 +90,7 @@ test.describe("Page Overview", () => {
     await expect(cakeCard.getByText("₩10,640", { exact: true })).toBeVisible();
     await expect(cakeCard.getByText("₩28,000 중", { exact: true })).toBeVisible();
     await expect(cakeCard.getByText("38% 달성", { exact: true })).toBeVisible();
-    await expect(cakeCard.locator(".pub-progress i")).toHaveAttribute(
+    await expect(cakeCard.locator(".theme-progress i")).toHaveAttribute(
       "style",
       /width:\s*38%/,
     );

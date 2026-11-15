@@ -12,14 +12,12 @@ import {
 } from "@/src/lib/settings/types";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Input, inputVariants } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
 import { ResetWishlistForm } from "./reset-wishlist-form";
-import {
-  AdminField,
-  adminInputClassName,
-  adminTextareaClassName,
-} from "../admin-ui";
+import { AdminField } from "../admin-ui";
 
 const errorMessages: Record<SettingsError, string> = {
   settings_not_found: "먼저 온보딩을 완료해주세요.",
@@ -86,38 +84,38 @@ export default async function AdminSettingsPage() {
               required
               hint="80자 이내로 표시됩니다."
             >
-              <input
+              <Input
                 id="displayName"
                 name="displayName"
                 type="text"
                 maxLength={80}
                 required
                 defaultValue={settings.profile.displayName}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
           <SettingsRow>
             <AdminField label="생일" htmlFor="birthday" hint="공개 페이지 안내에 사용됩니다.">
-              <input
+              <Input
                 id="birthday"
                 name="birthday"
                 type="date"
                 // 저장 실패는 공통 토스트로만 보이므로, 14세 미만 생일은 제출 전에 브라우저가 이 칸을 가리키게 한다.
                 max={getLatestSignupBirthday()}
                 defaultValue={settings.profile.birthday ?? ""}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
           <SettingsRow>
             <AdminField label="소개" htmlFor="description" hint="짧게 비워두어도 됩니다.">
-              <textarea
+              <Textarea
                 id="description"
                 name="description"
                 rows={3}
                 defaultValue={settings.profile.description ?? ""}
-                className={adminTextareaClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
@@ -134,7 +132,7 @@ export default async function AdminSettingsPage() {
               required
               hint="영문 소문자, 숫자, 하이픈만 사용할 수 있습니다. sample은 서비스 전용 주소입니다."
             >
-              <div className="flex overflow-hidden rounded-md border border-line bg-[#f9fafb] focus-within:border-zinc-400">
+              <div className="flex overflow-hidden rounded-md border border-line bg-addon-bg focus-within:border-zinc-400">
                 <span className="inline-flex items-center border-r border-line px-3 text-sm font-semibold text-zinc-600">
                   /wishlist/
                 </span>
@@ -153,14 +151,14 @@ export default async function AdminSettingsPage() {
           </SettingsRow>
           <SettingsRow>
             <AdminField label="제목" htmlFor="wishlistTitle" required hint="120자 이내로 입력해주세요.">
-              <input
+              <Input
                 id="wishlistTitle"
                 name="wishlistTitle"
                 type="text"
                 maxLength={120}
                 required
                 defaultValue={settings.wishlist.title}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
@@ -175,7 +173,7 @@ export default async function AdminSettingsPage() {
                 id="wishlistVisibility"
                 name="wishlistVisibility"
                 defaultValue={settings.wishlist.visibility}
-                className={adminInputClassName}
+                className={inputVariants({ variant: "admin" })}
               >
                 {WISHLIST_VISIBILITIES.map((visibility) => (
                   <option key={visibility} value={visibility}>
@@ -191,7 +189,7 @@ export default async function AdminSettingsPage() {
                 id="themeId"
                 name="themeId"
                 defaultValue={settings.wishlist.themeId}
-                className={adminInputClassName}
+                className={inputVariants({ variant: "admin" })}
               >
                 {PUBLIC_THEME_IDS.map((themeId) => (
                   <option key={themeId} value={themeId}>
@@ -210,25 +208,25 @@ export default async function AdminSettingsPage() {
         >
           <SettingsRow>
             <AdminField label="은행" htmlFor="bankName" hint="계좌를 공개할 때 필요합니다.">
-              <input
+              <Input
                 id="bankName"
                 name="bankName"
                 type="text"
                 maxLength={80}
                 defaultValue={settings.bankAccount?.bankName ?? ""}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
           <SettingsRow>
             <AdminField label="예금주" htmlFor="accountHolder" hint="계좌를 공개할 때 필요합니다.">
-              <input
+              <Input
                 id="accountHolder"
                 name="accountHolder"
                 type="text"
                 maxLength={80}
                 defaultValue={settings.bankAccount?.accountHolder ?? ""}
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>
@@ -238,7 +236,7 @@ export default async function AdminSettingsPage() {
               htmlFor="accountNumber"
               hint="기존 계좌는 변경할 때만 다시 입력합니다."
             >
-              <input
+              <Input
                 id="accountNumber"
                 name="accountNumber"
                 type="text"
@@ -248,7 +246,7 @@ export default async function AdminSettingsPage() {
                 placeholder={
                   settings.bankAccount ? "변경할 때만 입력" : "3333-12-1234567"
                 }
-                className={adminInputClassName}
+                variant="admin"
               />
             </AdminField>
           </SettingsRow>

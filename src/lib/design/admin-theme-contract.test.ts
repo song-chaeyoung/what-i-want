@@ -30,8 +30,8 @@ describe("admin calm theme contract", () => {
     expect(adminUiSource).toContain("export function AdminMetricGroup");
     expect(adminUiSource).toContain("export function AdminMetric");
     expect(adminUiSource).toContain("export function AdminField");
-    expect(adminUiSource).toContain("export const adminInputClassName");
-    expect(adminUiSource).toContain("export const adminTextareaClassName");
+    expect(adminUiSource).not.toContain("adminInputClassName");
+    expect(adminUiSource).not.toContain("adminTextareaClassName");
     expect(adminUiSource).not.toContain("adminPrimaryButtonClassName");
     expect(adminUiSource).not.toContain("adminSecondaryButtonClassName");
     expect(adminWishesSource).toContain('variant="admin"');
@@ -54,6 +54,14 @@ describe("admin calm theme contract", () => {
     expect(adminWishesSource).toContain("<AdminMetricGroup");
     expect(adminWishesSource).toContain("<AdminMetric");
     expect(adminWishesSource).toContain("<AdminField");
+    expect(adminWishesSource).toContain('from "@/components/ui/input"');
+    expect(adminWishesSource).toContain('from "@/components/ui/textarea"');
+    expect(adminWishesSource).toContain('variant="admin"');
+    expect(adminWishesSource).toContain('inputVariants({ variant: "admin" })');
+    expect(adminWishesSource).not.toContain("adminInputClassName");
+    expect(adminSettingsSource).toContain('from "@/components/ui/input"');
+    expect(adminSettingsSource).toContain('from "@/components/ui/textarea"');
+    expect(adminSettingsSource).not.toContain("adminInputClassName");
     expect(adminMessagesSource).toContain("<AdminMetricGroup");
     expect(adminMessagesSource).toContain("<AdminMetric");
     expect(adminSettingsSource).toContain("<AdminField");
@@ -142,11 +150,11 @@ describe("admin calm theme contract", () => {
     expect(navSource).toContain("border-b-2");
     expect(navSource).toContain("border-ink text-ink");
     expect(navSource).toContain("border-transparent text-zinc-500");
-    expect(layoutSource).not.toContain("pub-page");
+    expect(layoutSource).not.toContain("theme-page");
     expect(layoutSource).not.toContain("pub-card");
     expect(layoutSource).not.toContain("pub-btn");
     expect(layoutSource).not.toContain("data-theme");
-    expect(navSource).not.toContain("pub-page");
+    expect(navSource).not.toContain("theme-page");
     expect(navSource).not.toContain("pub-card");
     expect(navSource).not.toContain("pub-btn");
     expect(navSource).not.toContain("data-theme");
@@ -199,7 +207,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('href={`/admin/wishes?status=${status}`}');
     expect(source).toContain("getWishStatusLabel(status)");
     expect(source).toContain("function getSelectedStatus");
-    expect(source).not.toContain("pub-page");
+    expect(source).not.toContain("theme-page");
     expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pub-btn");
     expect(source).not.toContain("data-theme");
@@ -267,7 +275,8 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('item.imageUrl ? null : "GIFT"');
     expect(source).toContain("item.imageUrl");
     expect(source).toContain("backgroundImage: `url(${JSON.stringify(item.imageUrl)})`");
-    expect(source).toContain("bg-[#f4f4f3]");
+    expect(source).toContain("bg-placeholder-bg");
+    expect(source).not.toContain("bg-[#f4f4f3]");
     expect(source).toContain("수정");
     expect(source).toContain('name="_method" value="patch"');
     expect(source).toContain('name="_method" value="delete"');
@@ -320,7 +329,8 @@ describe("admin calm theme contract", () => {
     );
     expect(fieldSource).toContain('name="accountVisibility"');
     expect(fieldSource).toContain("<AdminField");
-    expect(fieldSource).toContain("adminInputClassName");
+    expect(fieldSource).toContain('inputVariants({ variant: "admin" })');
+    expect(fieldSource).not.toContain("adminInputClassName");
     expect(fieldSource).not.toContain("accountVisibilityOptions");
     expect(fieldSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
   });
@@ -360,7 +370,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("<SharePublicLinkButton");
     expect(source).not.toContain("function SummaryCard");
     expect(source).not.toContain("shadow-pub");
-    expect(source).not.toContain("pub-page");
+    expect(source).not.toContain("theme-page");
     expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pub-btn");
     expect(source).not.toContain("data-theme");

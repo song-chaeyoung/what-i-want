@@ -2,7 +2,11 @@ import { createRequire } from "node:module";
 import { existsSync, mkdtempSync, readFileSync, realpathSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
+import { createElement } from "react";
+import { renderToStaticMarkup } from "react-dom/server";
 import { beforeAll, describe, expect, test } from "vitest";
+import { Input, inputVariants } from "@/components/ui/input";
+import { Textarea, textareaVariants } from "@/components/ui/textarea";
 
 /**
  * Tailwind 4 `@theme inline` copies the bridge value into the utility.
@@ -21,10 +25,13 @@ const brandUtilities = [
 ] as const;
 
 const semanticUtilities = [
-  [String.raw`.text-\[var\(--headline\)\]`, "color:var(--headline)"],
-  [String.raw`.text-\[var\(--ink\)\]`, "color:var(--ink)"],
-  [String.raw`.text-\[var\(--ink-muted\)\]`, "color:var(--ink-muted)"],
-  [String.raw`.text-\[var\(--accent-main\)\]`, "color:var(--accent-main)"],
+  [String.raw`.text-\(--headline\)`, "color:var(--headline)"],
+  [String.raw`.text-\(--ink\)`, "color:var(--ink)"],
+  [String.raw`.text-\(--ink-muted\)`, "color:var(--ink-muted)"],
+  [String.raw`.text-\(--accent-main\)`, "color:var(--accent-main)"],
+  [String.raw`.border-\(--divider-color\)`, "border-color:var(--divider-color)"],
+  [String.raw`.bg-\(--progress-fill\)`, "background-color:var(--progress-fill)"],
+  [String.raw`.rounded-\(--card-radius\)`, "border-radius:var(--card-radius)"],
 ] as const;
 
 const fixedFontSizes = [
@@ -216,19 +223,20 @@ describe("compiled Tailwind brand utilities", () => {
 
       expect(minified).toMatch(/\.theme-card\{[^}]*--headline:var\(--ink\)/);
       expect(minified).not.toContain(".pub-card{");
-      expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
-      expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
-      expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
+      expect(minified).toMatch(/\.theme-headline\{[^}]*color:var\(--headline\)/);
+      expect(minified).toMatch(/\.theme-headline\{[^}]*font-size:var\(--headline-size\)/);
+      expect(minified).toMatch(/\.theme-label\{[^}]*font-size:var\(--label-size\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*font-size:var\(--pill-size\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*font-size:var\(--btn-size\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*background-image:var\(--bg-dots\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*background-color:var\(--surface-page\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*background-image:var\(--bg-dots\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*background:var\(--pill-bg\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*color:var\(--pill-color\)/);
       expect(minified).toMatch(/\.theme-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
-      expect(minified).toMatch(/\.pub-field\{[^}]*background:var\(--field-bg\)/);
-      expect(minified).toMatch(/\.pub-bank\{[^}]*background:var\(--bank-bg\)/);
+      expect(minified).toMatch(/\.theme-field\{[^}]*background:var\(--field-bg\)/);
+      expect(minified).not.toContain(".pub-" + "field{");
+      expect(minified).toMatch(/\.theme-bank\{[^}]*background:var\(--bank-bg\)/);
       expect(minified).toMatch(/\.theme-btn-primary\{[^}]*color:var\(--on-point\)/);
       expect(minified).not.toContain(removedPubPrefix);
 
@@ -293,10 +301,10 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.theme-card\{[^}]*border:var\(--card-border\)/);
       expect(minified).toMatch(/\.theme-card\{[^}]*border-radius:var\(--card-radius\)/);
       expect(minified).toMatch(/\.theme-card\{[^}]*box-shadow:var\(--card-shadow\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--progress-h\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*background:var\(--progress-track\)/);
-      expect(minified).toMatch(/\.pub-progress>i\{[^}]*background:var\(--progress-fill\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*border:var\(--progress-border\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*height:var\(--progress-h\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*background:var\(--progress-track\)/);
+      expect(minified).toMatch(/\.theme-progress>i\{[^}]*background:var\(--progress-fill\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*gap:var\(--pill-gap\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*padding:var\(--pill-pad\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*gap:var\(--btn-gap\)/);
@@ -325,6 +333,9 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toContain(".text-info-ink{color:var(--info-ink)");
       expect(minified).toContain(".bg-muted-tint{background-color:var(--muted-tint)");
       expect(minified).toContain(".bg-track{background-color:var(--track)");
+      expect(minified).toContain(".bg-addon-bg{background-color:var(--addon-bg)");
+      expect(minified).toContain(".bg-placeholder-bg{background-color:var(--placeholder-bg)");
+      expect(minified).toContain(".bg-mock-field-bg{background-color:var(--mock-field-bg)");
       expect(minified).toContain(".bg-point{background-color:var(--point)");
       expect(minified).toContain(".border-point{border-color:var(--point)");
       expect(minified).toContain(".bg-blush{background-color:var(--tint-blush)");
@@ -346,8 +357,9 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toContain(".py-admin-sidebar{padding-block:22px");
       expect(minified).not.toContain(".w-\\[220px\\]");
       expect(minified).not.toContain(".py-\\[22px\\]");
-      expect(minified).toContain(".shadow-\\[5px_5px_0");
-      expect(minified).toContain("shadow-\\[7px_7px_0");
+      expect(minified).toContain(".shadow-\\[5px_5px_0_var\\(--ink-deep\\)");
+      expect(minified).toContain("sm\\:shadow-\\[7px_7px_0_var\\(--ink-deep\\)");
+      expect(minified).toContain("var(--ink-deep)");
     }
   });
 
@@ -371,6 +383,33 @@ describe("compiled Tailwind brand utilities", () => {
           for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
             await expectThemeComputedColors(page, css, label, themeId);
           }
+          await expectGuideDialogShadow(page, css, label);
+        }
+      } finally {
+        await browser.close();
+      }
+    },
+    60000,
+  );
+
+  test.skipIf(!chromePath)(
+    "keeps computed input styles identical to the previous field classes",
+    async () => {
+      const { chromium } = await import("@playwright/test");
+      const browser = await chromium.launch({
+        executablePath: chromePath,
+        args: ["--no-sandbox", "--disable-gpu"],
+      });
+
+      try {
+        const page = await browser.newPage();
+
+        for (const [label, css] of [
+          ["dev", devCss],
+          ["prod", prodCss],
+        ] as const) {
+          const rows = await readInputSnapshots(page, css, inputProbeMarkup());
+          expectInputSnapshots(rows, label);
         }
       } finally {
         await browser.close();
@@ -380,28 +419,385 @@ describe("compiled Tailwind brand utilities", () => {
   );
 });
 
+const previousInputClasses = {
+  admin:
+    "h-10 w-full rounded-md border border-line bg-white px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400",
+  adminTextarea:
+    "w-full resize-none rounded-md border border-line bg-white px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400",
+  onboarding:
+    "h-11 w-full rounded-md border border-line px-3 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400",
+  onboardingTextarea:
+    "w-full resize-none rounded-md border border-line px-3 py-2 text-sm text-zinc-800 outline-none placeholder:text-zinc-400 focus:border-zinc-400",
+  theme: "theme-field h-10 w-full px-3 text-sm font-bold outline-none",
+  themeTextarea: "theme-field w-full resize-none px-3 py-2 text-sm font-bold outline-none",
+} as const;
+
+const inputStyleKeys = [
+  "height",
+  "paddingTop",
+  "paddingRight",
+  "paddingBottom",
+  "paddingLeft",
+  "fontSize",
+  "fontWeight",
+  "fontFamily",
+  "lineHeight",
+  "color",
+  "backgroundColor",
+  "borderTopWidth",
+  "borderRightWidth",
+  "borderBottomWidth",
+  "borderLeftWidth",
+  "borderTopStyle",
+  "borderTopColor",
+  "borderRightColor",
+  "borderBottomColor",
+  "borderLeftColor",
+  "borderRadius",
+  "outlineStyle",
+  "outlineWidth",
+  "outlineColor",
+  "outlineOffset",
+  "boxShadow",
+  "opacity",
+  "cursor",
+  "pointerEvents",
+] as const;
+
+function renderedControlClass(
+  variant: "admin" | "onboarding" | "theme",
+  tag: "input" | "textarea",
+) {
+  const html =
+    tag === "textarea"
+      ? renderToStaticMarkup(
+          createElement(Textarea, { variant, placeholder: "이름", rows: 3 }),
+        )
+      : renderToStaticMarkup(
+          createElement(Input, { variant, placeholder: "이름", type: "text" }),
+        );
+  const match = /class="([^"]*)"/.exec(html);
+
+  if (!match) {
+    throw new Error(html);
+  }
+
+  return match[1];
+}
+
+function controlMarkup(
+  tag: "input" | "textarea" | "select",
+  pair: string,
+  className: string,
+  side: "legacy" | "next",
+  state: "rest" | "focus" | "disabled",
+  type = "text",
+) {
+  const disabled = state === "disabled" ? " disabled" : "";
+  const placeholder = tag === "select" ? "" : ' placeholder="이름"';
+  const rows = tag === "textarea" ? ' rows="3"' : "";
+  const typeAttr = tag === "input" ? ` type="${type}"` : "";
+  const body = tag === "select" ? "<option>공개</option>" : "";
+  const attrs = ` class="${className}"${typeAttr}${placeholder}${rows}${disabled} data-pair="${pair}" data-state="${state}" data-side="${side}"`;
+
+  if (tag === "input") {
+    return `<input${attrs}>`;
+  }
+
+  return `<${tag}${attrs}>${body}</${tag}>`;
+}
+
+function controlPair(
+  tag: "input" | "textarea" | "select",
+  pair: string,
+  legacyClass: string,
+  nextClass: string,
+  type = "text",
+) {
+  return (["rest", "focus", "disabled"] as const)
+    .map(
+      (state) =>
+        controlMarkup(tag, pair, legacyClass, "legacy", state, type) +
+        controlMarkup(tag, pair, nextClass, "next", state, type),
+    )
+    .join("");
+}
+
+function inputProbeMarkup() {
+  const admin = renderedControlClass("admin", "input");
+  const adminTextarea = renderedControlClass("admin", "textarea");
+  const onboarding = renderedControlClass("onboarding", "input");
+  const onboardingTextarea = renderedControlClass("onboarding", "textarea");
+  const theme = renderedControlClass("theme", "input");
+  const themeTextarea = renderedControlClass("theme", "textarea");
+  const adminSelect = inputVariants({ variant: "admin" });
+
+  expect(admin).toBe(previousInputClasses.admin);
+  expect(adminTextarea).toBe(previousInputClasses.adminTextarea);
+  expect(onboarding).toBe(previousInputClasses.onboarding);
+  expect(onboardingTextarea).toBe(previousInputClasses.onboardingTextarea);
+  expect(theme).toBe(previousInputClasses.theme);
+  expect(themeTextarea).toBe(previousInputClasses.themeTextarea);
+  expect(adminSelect).toBe(previousInputClasses.admin);
+  expect(textareaVariants({ variant: "admin" })).toBe(previousInputClasses.adminTextarea);
+
+  const surfaces = [
+    ["addon", "bg-addon-bg"],
+    ["placeholder", "bg-placeholder-bg"],
+    ["mock", "bg-mock-field-bg"],
+    ["white", "bg-white"],
+    ["zinc-800", "text-zinc-800"],
+    ["zinc-400", "text-zinc-400"],
+    ["line", "border border-line"],
+    ["zinc-border", "border border-zinc-400"],
+  ]
+    .map(([probe, className]) => `<i class="${className}" data-probe="${probe}"></i>`)
+    .join("");
+
+  const fixed = `<div style="width:320px">${surfaces}
+    ${controlPair("input", "admin-text", previousInputClasses.admin, admin, "text")}
+    ${controlPair("input", "admin-number", previousInputClasses.admin, admin, "number")}
+    ${controlPair("input", "admin-url", previousInputClasses.admin, admin, "url")}
+    ${controlPair("input", "admin-date", previousInputClasses.admin, admin, "date")}
+    ${controlPair("textarea", "admin-textarea", previousInputClasses.adminTextarea, adminTextarea)}
+    ${controlPair("select", "admin-select", previousInputClasses.admin, adminSelect)}
+    ${controlPair("input", "onboarding-text", previousInputClasses.onboarding, onboarding, "text")}
+    ${controlPair("textarea", "onboarding-textarea", previousInputClasses.onboardingTextarea, onboardingTextarea)}
+  </div>`;
+
+  const themed = (["pixel_y2k", "mono_bw", "soft_pastel"] as const)
+    .map(
+      (themeId) => `<section class="theme-page" data-theme="${themeId}" style="width:320px">
+        ${controlPair("input", `theme-text-${themeId}`, previousInputClasses.theme, theme, "text")}
+        ${controlPair("input", `theme-number-${themeId}`, previousInputClasses.theme, theme, "number")}
+        ${controlPair("textarea", `theme-textarea-${themeId}`, previousInputClasses.themeTextarea, themeTextarea)}
+      </section>`,
+    )
+    .join("");
+
+  return fixed + themed;
+}
+
+type InputSnapshot = {
+  pair: string;
+  state: string;
+  side: string;
+  placeholderColor: string;
+} & Record<(typeof inputStyleKeys)[number], string>;
+
+async function readInputSnapshots(
+  page: {
+    goto: (url: string) => Promise<unknown>;
+    evaluate: <T, A>(fn: (arg: A) => T, arg: A) => Promise<T>;
+  },
+  css: string,
+  body: string,
+) {
+  const html = `<!doctype html><html style="--font-mona:cursive;--font-sans:serif"><head><style>${css}</style></head><body>${body}</body></html>`;
+  const dir = mkdtempSync(join(tmpdir(), "input-styles-"));
+  const file = join(dir, "index.html");
+  writeFileSync(file, html);
+  await page.goto(`file://${file}`);
+
+  return page.evaluate((keys) => {
+    const rows: InputSnapshot[] = [];
+
+    for (const element of document.querySelectorAll<HTMLElement>("[data-side]")) {
+      if (element.dataset.state === "focus") {
+        element.focus();
+      }
+
+      const style = getComputedStyle(element);
+      const placeholder = getComputedStyle(element, "::placeholder");
+      const row = {
+        pair: element.dataset.pair ?? "",
+        state: element.dataset.state ?? "",
+        side: element.dataset.side ?? "",
+        placeholderColor: placeholder.color,
+      } as InputSnapshot;
+
+      for (const key of keys) {
+        row[key] = style[key as keyof CSSStyleDeclaration] as string;
+      }
+
+      rows.push(row);
+
+      if (document.activeElement === element) {
+        (element as HTMLElement).blur();
+      }
+    }
+
+    const probes = [...document.querySelectorAll<HTMLElement>("[data-probe]")].map((element) => {
+      const style = getComputedStyle(element);
+      return {
+        probe: element.dataset.probe ?? "",
+        backgroundColor: style.backgroundColor,
+        color: style.color,
+        borderTopColor: style.borderTopColor,
+      };
+    });
+
+    return { rows, probes };
+  }, inputStyleKeys);
+}
+
+function styleOf(row: InputSnapshot) {
+  return {
+    placeholderColor: row.placeholderColor,
+    ...Object.fromEntries(inputStyleKeys.map((key) => [key, row[key]])),
+  };
+}
+
+function expectInputSnapshots(
+  result: {
+    rows: InputSnapshot[];
+    probes: { probe: string; backgroundColor: string; color: string; borderTopColor: string }[];
+  },
+  label: string,
+) {
+  const byKey = new Map(result.rows.map((row) => [`${row.pair}|${row.state}|${row.side}`, row]));
+  const pairs = [...new Set(result.rows.map((row) => `${row.pair}|${row.state}`))];
+
+  expect(pairs.length).toBeGreaterThan(0);
+
+  for (const pair of pairs) {
+    const legacy = byKey.get(`${pair}|legacy`);
+    const next = byKey.get(`${pair}|next`);
+    expect(legacy, pair).toBeTruthy();
+    expect(next, pair).toBeTruthy();
+    expect(styleOf(next!), `${label} ${pair}`).toEqual(styleOf(legacy!));
+  }
+
+  const admin = byKey.get("admin-text|rest|next")!;
+  expect(admin.height).toBe("40px");
+  expect(admin.paddingLeft).toBe("12px");
+  expect(admin.paddingRight).toBe("12px");
+  expect(admin.fontSize).toBe("14px");
+  expect(admin.fontWeight).toBe("400");
+  expect(admin.borderTopWidth).toBe("1px");
+  expect(admin.borderTopStyle).toBe("solid");
+  expect(admin.borderRadius).toBe("8px");
+  const probeColor = (name: string) =>
+    result.probes.find((probe) => probe.probe === name);
+  expect(admin.opacity).toBe("1");
+  expect(admin.boxShadow).toBe("none");
+  expect(admin.outlineStyle).toBe("none");
+  expect(admin.backgroundColor).toBe(probeColor("white")!.backgroundColor);
+  expect(admin.color).toBe(probeColor("zinc-800")!.color);
+  expect(admin.borderTopColor).toBe(probeColor("line")!.borderTopColor);
+  expect(admin.placeholderColor).toBe(probeColor("zinc-400")!.color);
+
+  const focused = byKey.get("admin-text|focus|next")!;
+  expect(focused.borderTopColor).toBe(probeColor("zinc-border")!.borderTopColor);
+  expect(focused.boxShadow).toBe("none");
+  expect(focused.outlineStyle).toBe("none");
+  expect(focused.placeholderColor).toBe(probeColor("zinc-400")!.color);
+
+  const disabled = byKey.get("admin-text|disabled|next")!;
+  expect(disabled.opacity).toBe("1");
+  expect(disabled.boxShadow).toBe("none");
+  expect(disabled.backgroundColor).toBe(probeColor("white")!.backgroundColor);
+  expect(disabled.color).toBe(probeColor("zinc-800")!.color);
+
+  const onboarding = byKey.get("onboarding-text|rest|next")!;
+  expect(onboarding.height).toBe("44px");
+  expect(onboarding.paddingLeft).toBe("12px");
+  expect(onboarding.fontSize).toBe("14px");
+  expect(onboarding.fontWeight).toBe("400");
+  expect(onboarding.borderTopWidth).toBe("1px");
+  expect(onboarding.borderRadius).toBe("8px");
+  expect(onboarding.backgroundColor).toBe(byKey.get("onboarding-text|rest|legacy")!.backgroundColor);
+
+  const textarea = byKey.get("admin-textarea|rest|next")!;
+  expect(textarea.paddingTop).toBe("8px");
+  expect(textarea.paddingBottom).toBe("8px");
+  expect(textarea.paddingLeft).toBe("12px");
+  expect(textarea.fontSize).toBe("14px");
+  expect(textarea.borderRadius).toBe("8px");
+  expect(textarea.backgroundColor).toBe(probeColor("white")!.backgroundColor);
+  expect(textarea.placeholderColor).toBe(probeColor("zinc-400")!.color);
+
+  const select = byKey.get("admin-select|rest|next")!;
+  expect(select.height).toBe("40px");
+  expect(select.fontSize).toBe("14px");
+  expect(select.paddingLeft).toBe("12px");
+  expect(select.backgroundColor).toBe(probeColor("white")!.backgroundColor);
+  expect(select.borderTopColor).toBe(probeColor("line")!.borderTopColor);
+
+  const disabledSelect = byKey.get("admin-select|disabled|next")!;
+  expect(disabledSelect.opacity).toBe("1");
+  expect(disabledSelect.backgroundColor).toBe(
+    byKey.get("admin-select|disabled|legacy")!.backgroundColor,
+  );
+
+  for (const themeId of ["pixel_y2k", "mono_bw", "soft_pastel"] as const) {
+    const field = byKey.get(`theme-text-${themeId}|rest|next`)!;
+    const border = themeShape[themeId].fieldBorder.match(/^([\d.]+)px solid (#[0-9a-fA-F]{6})$/);
+    expect(border, themeId).not.toBeNull();
+    expect(field.height).toBe("40px");
+    expect(field.fontSize).toBe("14px");
+    expect(field.fontWeight).toBe("700");
+    expect(field.paddingLeft).toBe("12px");
+    expect(field.boxShadow).toBe("none");
+    expect(field.outlineStyle).toBe("none");
+    expect(field.borderTopStyle).toBe("solid");
+    expect(field.borderTopWidth).toBe(
+      byKey.get(`theme-text-${themeId}|rest|legacy`)!.borderTopWidth,
+    );
+    expectPx(field.borderRadius, themeShape[themeId].fieldRadius, `${label} ${themeId} radius`);
+    expectRgb(field.borderTopColor, border![2], `${label} ${themeId} border`);
+    expectRgb(field.backgroundColor, themeRole[themeId].fieldBg, `${label} ${themeId} bg`);
+
+    const focusedField = byKey.get(`theme-text-${themeId}|focus|next`)!;
+    expect(focusedField.boxShadow).toBe("none");
+    expect(focusedField.outlineStyle).toBe("none");
+    expectRgb(focusedField.borderTopColor, border![2], `${label} ${themeId} focus border`);
+
+    const themeTextarea = byKey.get(`theme-textarea-${themeId}|rest|next`)!;
+    expect(themeTextarea.paddingTop).toBe("8px");
+    expect(themeTextarea.fontWeight).toBe("700");
+    expectRgb(themeTextarea.backgroundColor, themeRole[themeId].fieldBg, `${label} ${themeId} textarea bg`);
+  }
+
+  expectRgb(
+    result.probes.find((probe) => probe.probe === "addon")!.backgroundColor,
+    "#f9fafb",
+    `${label} addon bg`,
+  );
+  expectRgb(
+    result.probes.find((probe) => probe.probe === "placeholder")!.backgroundColor,
+    "#f4f4f3",
+    `${label} placeholder bg`,
+  );
+  expectRgb(
+    result.probes.find((probe) => probe.probe === "mock")!.backgroundColor,
+    "#fafafa",
+    `${label} mock field bg`,
+  );
+}
+
 function themeMarkup(themeId?: string) {
   const themeAttribute = themeId ? ` data-theme="${themeId}"` : "";
   const utilities = Object.keys(fixedColors)
     .map((className) => `<i class="${className}" data-probe="${className}"></i>`)
     .join("");
 
-  return `<section class="pub-page"${themeAttribute} data-probe="page">
-    <header class="pub-header" data-probe="header">
-      <h1 class="pub-headline" data-probe="header-title">제목</h1>
-      <div class="theme-card pub-stat" data-probe="stat">
-        <span class="text-[var(--headline)]" data-probe="stat-value">1</span>
+  return `<section class="theme-page"${themeAttribute} data-probe="page">
+    <header class="theme-header" data-probe="header">
+      <h1 class="theme-headline" data-probe="header-title">제목</h1>
+      <div class="theme-card theme-stat" data-probe="stat">
+        <span class="text-(--headline)" data-probe="stat-value">1</span>
       </div>
       ${utilities}
     </header>
     <article class="theme-card" data-probe="card">
-      <h2 class="text-[var(--headline)]" data-probe="card-title">카드</h2>
-      <p class="text-[var(--ink-muted)]" data-probe="muted">설명</p>
-      <div class="pub-fallback" data-probe="fallback"></div>
+      <h2 class="text-(--headline)" data-probe="card-title">카드</h2>
+      <p class="text-(--ink-muted)" data-probe="muted">설명</p>
+      <div class="theme-fallback" data-probe="fallback"></div>
       <button class="theme-btn" data-probe="btn" type="button">버튼</button>
       <button class="theme-btn theme-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="theme-btn theme-btn-accent" data-probe="btn-accent" type="button">강조</button>
-      <p class="pub-label" data-probe="label">라벨</p>
+      <p class="theme-label" data-probe="label">라벨</p>
       <span class="theme-pill" data-probe="pill">필</span>
       <span class="theme-pill theme-pill-alt" data-probe="pill-alt">대체</span>
       <i class="bg-blush" data-probe="blush"></i>
@@ -410,13 +806,12 @@ function themeMarkup(themeId?: string) {
       <i class="bg-success" data-probe="success"></i>
       <i class="bg-(--gift-soft-bg) text-(--gift-soft-ink)" data-probe="gift-soft"></i>
       <div class="border-[1.5px] border-(--ink)" data-probe="theme-ink-border"></div>
-      <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
-      <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
-      <div class="pub-field" data-probe="field"></div>
-      <div class="pub-bank" data-probe="bank">
-        <p class="text-[var(--bank-ink)]" data-probe="bank-ink">계좌</p>
+      <div class="theme-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
+      <div class="theme-field" data-probe="field"></div>
+      <div class="theme-bank" data-probe="bank">
+        <p class="text-(--bank-ink)" data-probe="bank-ink">계좌</p>
       </div>
-      <div class="border-t-2 border-[var(--divider-color)]" data-probe="divider"></div>
+      <div class="border-t-2 border-(--divider-color)" data-probe="divider"></div>
     </article>
     <div class="shadow-xs" data-probe="shadow-xs"></div>
     <div class="shadow-pixel-xs" data-probe="util-xs"></div>
@@ -439,6 +834,36 @@ function themeMarkup(themeId?: string) {
     <p style="font-size:14px" data-probe="px-14">14</p>
     <p style="font-size:16px" data-probe="px-16">16</p>
   </section>`;
+}
+
+function guideShadowMarkup() {
+  // 이전 클래스 문자열은 계산 box-shadow 비교용이다. 앱 .tsx에는 남지 않는다.
+  return `<div class="shadow-[5px_5px_0_var(--ink-deep)] sm:shadow-[7px_7px_0_var(--ink-deep)]" data-probe="guide-next"></div>
+    <div class="shadow-[5px_5px_0_#111827] sm:shadow-[7px_7px_0_#111827]" data-probe="guide-main"></div>`;
+}
+
+async function expectGuideDialogShadow(
+  page: {
+    setViewportSize: (size: { width: number; height: number }) => Promise<void>;
+    goto: (url: string) => Promise<unknown>;
+    evaluate: <T>(fn: () => T) => Promise<T>;
+  },
+  css: string,
+  label: string,
+) {
+  for (const [width, offset] of [
+    [1280, "7px 7px"],
+    [390, "5px 5px"],
+  ] as const) {
+    await page.setViewportSize({ width, height: 800 });
+    const probes = await readProbes(page, css, guideShadowMarkup());
+    const next = probes.find((probe) => probe.probe === "guide-next")!.boxShadow;
+    const previous = probes.find((probe) => probe.probe === "guide-main")!.boxShadow;
+
+    expect(next, `${label} ${width}px guide shadow`).toBe(previous);
+    expect(next, `${label} ${width}px guide offset`).toContain(offset);
+    expect(next, `${label} ${width}px ink-deep`).toContain("17, 24, 39");
+  }
 }
 
 function toastMarkup() {
@@ -677,7 +1102,6 @@ function expectTypography(
   const headline = probes.get("header-title");
   const labelProbe = probes.get("label");
   const pill = probes.get("pill");
-  const eyebrow = probes.get("eyebrow");
   const button = probes.get("btn");
   const pixel = probes.get("pixel");
   const sticker = probes.get("sticker");
@@ -709,10 +1133,6 @@ function expectTypography(
   expect(pill!.fontWeight, `${label} pill weight`).toBe("700");
   expectPx(pill!.lineHeight, "12px", `${label} pill line-height`);
   expect(pill!.textTransform, `${label} pill transform`).toBe(expected.pillTransform);
-
-  expectFamily(eyebrow!.fontFamily, expected.roleFamily, `${label} eyebrow family`);
-  expectPx(eyebrow!.fontSize, "12px", `${label} eyebrow size`);
-  expect(eyebrow!.textTransform, `${label} eyebrow transform`).toBe("uppercase");
 
   expectFamily(button!.fontFamily, expected.roleFamily, `${label} button family`);
   expectPx(button!.fontSize, expected.buttonSize, `${label} button size`);
@@ -1032,7 +1452,6 @@ function expectRoleTokens(
   const progress = probes.get("progress");
   const progressFill = probes.get("progress-fill");
   const labelProbe = probes.get("label");
-  const eyebrow = probes.get("eyebrow");
   const divider = probes.get("divider");
 
   expectPaint(pill!.backgroundColor, expected.pillBg, `${label} pill bg`);
@@ -1066,7 +1485,6 @@ function expectRoleTokens(
   expectPaint(progress!.backgroundColor, expected.progressTrack, `${label} progress track`);
   expectPaint(progressFill!.backgroundColor, expected.progressFill, `${label} progress fill`);
   expectPaint(labelProbe!.color, expected.labelColor, `${label} label color`);
-  expectPaint(eyebrow!.color, expected.headerSub, `${label} header sub`);
   expectPaint(divider!.borderTopColor, expected.divider, `${label} divider`);
   expectDots(page!.bgDots, expected.dots, `${label} bg dots`);
   expectDots(page!.backgroundImage, expected.dots, `${label} page image`);
