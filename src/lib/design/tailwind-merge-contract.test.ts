@@ -39,6 +39,26 @@ describe("tailwind-merge custom scales", () => {
     }
   });
 
+  test("keeps shorthand theme colors beside font-size and border width", () => {
+    const title = cn("text-2xl", "font-black", "tracking-normal", "text-(--headline)");
+    expect(title).toContain("text-2xl");
+    expect(title).toContain("text-(--headline)");
+
+    const muted = cn("text-sm", "font-semibold", "leading-6", "text-(--ink-muted)");
+    expect(muted).toContain("text-sm");
+    expect(muted).toContain("leading-6");
+    expect(muted).toContain("text-(--ink-muted)");
+
+    const rule = cn("border-t-2", "border-(--divider-color)");
+    expect(rule).toContain("border-t-2");
+    expect(rule).toContain("border-(--divider-color)");
+
+    const stat = cn("theme-card", "theme-stat", "p-4");
+    expect(stat).toContain("theme-card");
+    expect(stat).toContain("theme-stat");
+    expect(stat).toContain("p-4");
+  });
+
   test("keeps input surface colors beside other background utilities", () => {
     const thumbnail = cn(
       "bg-placeholder-bg bg-cover bg-center text-caption font-bold text-teal",

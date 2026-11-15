@@ -119,7 +119,7 @@
     - expect: 레벨 2 제목 `무선 헤드폰` 이 보인다.
     - expect: 설명 `출퇴근길에 늘 쓰고 다닐 헤드폰이에요. 색은 크림색이 좋아요!` 가 보인다.
     - expect: `gift progress` 라벨, 모인 금액 `₩32,400`, 목표 금액 `₩45,000 중`, 진행률 `72% 달성` 이 보인다.
-    - expect: 진행 막대(`.pub-progress i`)의 inline style width 가 `72%` 이다.
+    - expect: 진행 막대(`.theme-progress i`)의 inline style width 가 `72%` 이다.
   3. 두 번째 카드(`생일 케이크`)의 내용을 확인합니다.
     - expect: `NO. 2` 와 상태 라벨 `마음 모으는 중` 이 보인다.
     - expect: 레벨 2 제목 `생일 케이크` 가 보인다.

@@ -25,10 +25,13 @@ const brandUtilities = [
 ] as const;
 
 const semanticUtilities = [
-  [String.raw`.text-\[var\(--headline\)\]`, "color:var(--headline)"],
-  [String.raw`.text-\[var\(--ink\)\]`, "color:var(--ink)"],
-  [String.raw`.text-\[var\(--ink-muted\)\]`, "color:var(--ink-muted)"],
-  [String.raw`.text-\[var\(--accent-main\)\]`, "color:var(--accent-main)"],
+  [String.raw`.text-\(--headline\)`, "color:var(--headline)"],
+  [String.raw`.text-\(--ink\)`, "color:var(--ink)"],
+  [String.raw`.text-\(--ink-muted\)`, "color:var(--ink-muted)"],
+  [String.raw`.text-\(--accent-main\)`, "color:var(--accent-main)"],
+  [String.raw`.border-\(--divider-color\)`, "border-color:var(--divider-color)"],
+  [String.raw`.bg-\(--progress-fill\)`, "background-color:var(--progress-fill)"],
+  [String.raw`.rounded-\(--card-radius\)`, "border-radius:var(--card-radius)"],
 ] as const;
 
 const fixedFontSizes = [
@@ -220,20 +223,20 @@ describe("compiled Tailwind brand utilities", () => {
 
       expect(minified).toMatch(/\.theme-card\{[^}]*--headline:var\(--ink\)/);
       expect(minified).not.toContain(".pub-card{");
-      expect(minified).toMatch(/\.pub-headline\{[^}]*color:var\(--headline\)/);
-      expect(minified).toMatch(/\.pub-headline\{[^}]*font-size:var\(--headline-size\)/);
-      expect(minified).toMatch(/\.pub-label\{[^}]*font-size:var\(--label-size\)/);
+      expect(minified).toMatch(/\.theme-headline\{[^}]*color:var\(--headline\)/);
+      expect(minified).toMatch(/\.theme-headline\{[^}]*font-size:var\(--headline-size\)/);
+      expect(minified).toMatch(/\.theme-label\{[^}]*font-size:var\(--label-size\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*font-size:var\(--pill-size\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*font-size:var\(--btn-size\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*background-color:var\(--surface-page\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*background-image:var\(--bg-dots\)/);
-      expect(minified).toMatch(/\.pub-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*background-color:var\(--surface-page\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*background-image:var\(--bg-dots\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*background:var\(--pill-bg\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*color:var\(--pill-color\)/);
       expect(minified).toMatch(/\.theme-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
       expect(minified).toMatch(/\.theme-field\{[^}]*background:var\(--field-bg\)/);
       expect(minified).not.toContain(".pub-" + "field{");
-      expect(minified).toMatch(/\.pub-bank\{[^}]*background:var\(--bank-bg\)/);
+      expect(minified).toMatch(/\.theme-bank\{[^}]*background:var\(--bank-bg\)/);
       expect(minified).toMatch(/\.theme-btn-primary\{[^}]*color:var\(--on-point\)/);
       expect(minified).not.toContain(removedPubPrefix);
 
@@ -298,10 +301,10 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.theme-card\{[^}]*border:var\(--card-border\)/);
       expect(minified).toMatch(/\.theme-card\{[^}]*border-radius:var\(--card-radius\)/);
       expect(minified).toMatch(/\.theme-card\{[^}]*box-shadow:var\(--card-shadow\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*border:var\(--progress-border\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*height:var\(--progress-h\)/);
-      expect(minified).toMatch(/\.pub-progress\{[^}]*background:var\(--progress-track\)/);
-      expect(minified).toMatch(/\.pub-progress>i\{[^}]*background:var\(--progress-fill\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*border:var\(--progress-border\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*height:var\(--progress-h\)/);
+      expect(minified).toMatch(/\.theme-progress\{[^}]*background:var\(--progress-track\)/);
+      expect(minified).toMatch(/\.theme-progress>i\{[^}]*background:var\(--progress-fill\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*gap:var\(--pill-gap\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*padding:var\(--pill-pad\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*gap:var\(--btn-gap\)/);
@@ -564,7 +567,7 @@ function inputProbeMarkup() {
 
   const themed = (["pixel_y2k", "mono_bw", "soft_pastel"] as const)
     .map(
-      (themeId) => `<section class="pub-page" data-theme="${themeId}" style="width:320px">
+      (themeId) => `<section class="theme-page" data-theme="${themeId}" style="width:320px">
         ${controlPair("input", `theme-text-${themeId}`, previousInputClasses.theme, theme, "text")}
         ${controlPair("input", `theme-number-${themeId}`, previousInputClasses.theme, theme, "number")}
         ${controlPair("textarea", `theme-textarea-${themeId}`, previousInputClasses.themeTextarea, themeTextarea)}
@@ -779,22 +782,22 @@ function themeMarkup(themeId?: string) {
     .map((className) => `<i class="${className}" data-probe="${className}"></i>`)
     .join("");
 
-  return `<section class="pub-page"${themeAttribute} data-probe="page">
-    <header class="pub-header" data-probe="header">
-      <h1 class="pub-headline" data-probe="header-title">제목</h1>
-      <div class="theme-card pub-stat" data-probe="stat">
-        <span class="text-[var(--headline)]" data-probe="stat-value">1</span>
+  return `<section class="theme-page"${themeAttribute} data-probe="page">
+    <header class="theme-header" data-probe="header">
+      <h1 class="theme-headline" data-probe="header-title">제목</h1>
+      <div class="theme-card theme-stat" data-probe="stat">
+        <span class="text-(--headline)" data-probe="stat-value">1</span>
       </div>
       ${utilities}
     </header>
     <article class="theme-card" data-probe="card">
-      <h2 class="text-[var(--headline)]" data-probe="card-title">카드</h2>
-      <p class="text-[var(--ink-muted)]" data-probe="muted">설명</p>
-      <div class="pub-fallback" data-probe="fallback"></div>
+      <h2 class="text-(--headline)" data-probe="card-title">카드</h2>
+      <p class="text-(--ink-muted)" data-probe="muted">설명</p>
+      <div class="theme-fallback" data-probe="fallback"></div>
       <button class="theme-btn" data-probe="btn" type="button">버튼</button>
       <button class="theme-btn theme-btn-primary" data-probe="btn-primary" type="button">주요</button>
       <button class="theme-btn theme-btn-accent" data-probe="btn-accent" type="button">강조</button>
-      <p class="pub-label" data-probe="label">라벨</p>
+      <p class="theme-label" data-probe="label">라벨</p>
       <span class="theme-pill" data-probe="pill">필</span>
       <span class="theme-pill theme-pill-alt" data-probe="pill-alt">대체</span>
       <i class="bg-blush" data-probe="blush"></i>
@@ -803,13 +806,12 @@ function themeMarkup(themeId?: string) {
       <i class="bg-success" data-probe="success"></i>
       <i class="bg-(--gift-soft-bg) text-(--gift-soft-ink)" data-probe="gift-soft"></i>
       <div class="border-[1.5px] border-(--ink)" data-probe="theme-ink-border"></div>
-      <p class="pub-eyebrow" data-probe="eyebrow">눈썹</p>
-      <div class="pub-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
+      <div class="theme-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
       <div class="theme-field" data-probe="field"></div>
-      <div class="pub-bank" data-probe="bank">
-        <p class="text-[var(--bank-ink)]" data-probe="bank-ink">계좌</p>
+      <div class="theme-bank" data-probe="bank">
+        <p class="text-(--bank-ink)" data-probe="bank-ink">계좌</p>
       </div>
-      <div class="border-t-2 border-[var(--divider-color)]" data-probe="divider"></div>
+      <div class="border-t-2 border-(--divider-color)" data-probe="divider"></div>
     </article>
     <div class="shadow-xs" data-probe="shadow-xs"></div>
     <div class="shadow-pixel-xs" data-probe="util-xs"></div>
@@ -1100,7 +1102,6 @@ function expectTypography(
   const headline = probes.get("header-title");
   const labelProbe = probes.get("label");
   const pill = probes.get("pill");
-  const eyebrow = probes.get("eyebrow");
   const button = probes.get("btn");
   const pixel = probes.get("pixel");
   const sticker = probes.get("sticker");
@@ -1132,10 +1133,6 @@ function expectTypography(
   expect(pill!.fontWeight, `${label} pill weight`).toBe("700");
   expectPx(pill!.lineHeight, "12px", `${label} pill line-height`);
   expect(pill!.textTransform, `${label} pill transform`).toBe(expected.pillTransform);
-
-  expectFamily(eyebrow!.fontFamily, expected.roleFamily, `${label} eyebrow family`);
-  expectPx(eyebrow!.fontSize, "12px", `${label} eyebrow size`);
-  expect(eyebrow!.textTransform, `${label} eyebrow transform`).toBe("uppercase");
 
   expectFamily(button!.fontFamily, expected.roleFamily, `${label} button family`);
   expectPx(button!.fontSize, expected.buttonSize, `${label} button size`);
@@ -1455,7 +1452,6 @@ function expectRoleTokens(
   const progress = probes.get("progress");
   const progressFill = probes.get("progress-fill");
   const labelProbe = probes.get("label");
-  const eyebrow = probes.get("eyebrow");
   const divider = probes.get("divider");
 
   expectPaint(pill!.backgroundColor, expected.pillBg, `${label} pill bg`);
@@ -1489,7 +1485,6 @@ function expectRoleTokens(
   expectPaint(progress!.backgroundColor, expected.progressTrack, `${label} progress track`);
   expectPaint(progressFill!.backgroundColor, expected.progressFill, `${label} progress fill`);
   expectPaint(labelProbe!.color, expected.labelColor, `${label} label color`);
-  expectPaint(eyebrow!.color, expected.headerSub, `${label} header sub`);
   expectPaint(divider!.borderTopColor, expected.divider, `${label} divider`);
   expectDots(page!.bgDots, expected.dots, `${label} bg dots`);
   expectDots(page!.backgroundImage, expected.dots, `${label} page image`);

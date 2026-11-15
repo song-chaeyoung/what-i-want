@@ -84,7 +84,7 @@ test.describe("Funding Invalid Amount", () => {
     await expect(card.getByText("₩30,000", { exact: true })).toBeVisible();
     await expect(card.getByText("₩100,000 중", { exact: true })).toBeVisible();
     await expect(card.getByText("30% 달성", { exact: true })).toBeVisible();
-    await expect(card.locator(".pub-progress i")).toHaveAttribute(
+    await expect(card.locator(".theme-progress i")).toHaveAttribute(
       "style",
       /width:\s*30%/,
     );

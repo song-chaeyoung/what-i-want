@@ -150,11 +150,11 @@ describe("admin calm theme contract", () => {
     expect(navSource).toContain("border-b-2");
     expect(navSource).toContain("border-ink text-ink");
     expect(navSource).toContain("border-transparent text-zinc-500");
-    expect(layoutSource).not.toContain("pub-page");
+    expect(layoutSource).not.toContain("theme-page");
     expect(layoutSource).not.toContain("pub-card");
     expect(layoutSource).not.toContain("pub-btn");
     expect(layoutSource).not.toContain("data-theme");
-    expect(navSource).not.toContain("pub-page");
+    expect(navSource).not.toContain("theme-page");
     expect(navSource).not.toContain("pub-card");
     expect(navSource).not.toContain("pub-btn");
     expect(navSource).not.toContain("data-theme");
@@ -207,7 +207,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('href={`/admin/wishes?status=${status}`}');
     expect(source).toContain("getWishStatusLabel(status)");
     expect(source).toContain("function getSelectedStatus");
-    expect(source).not.toContain("pub-page");
+    expect(source).not.toContain("theme-page");
     expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pub-btn");
     expect(source).not.toContain("data-theme");
@@ -370,7 +370,7 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("<SharePublicLinkButton");
     expect(source).not.toContain("function SummaryCard");
     expect(source).not.toContain("shadow-pub");
-    expect(source).not.toContain("pub-page");
+    expect(source).not.toContain("theme-page");
     expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pub-btn");
     expect(source).not.toContain("data-theme");

@@ -82,7 +82,7 @@ describe("public wish card progress", () => {
 
     expect(html).toContain(money(12000));
     expect(html).toContain(`${money(45000)} 중`);
-    expect(html).toContain('class="pub-progress mt-2"');
+    expect(html).toContain('class="theme-progress mt-2"');
     expect(html).toContain("width:26%");
     expect(html).toContain(`26% ${PUBLIC_WISHLIST_COPY.progressSuffix}`);
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.noTargetAmount);
@@ -104,13 +104,13 @@ describe("public wish card progress", () => {
       }),
     );
 
-    expect(html).toContain('class="pub-progress mt-2"');
+    expect(html).toContain('class="theme-progress mt-2"');
     expect(html).toContain("width:100%");
     expect(html).toContain(`100% ${PUBLIC_WISHLIST_COPY.progressSuffix}`);
     expect(html).not.toContain("pub-progress-done");
     expect(html).toContain(PUBLIC_WISHLIST_COPY.participationClosedComplete);
     expect(html).toContain(
-      'class="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
+      'class="border-t-2 border-(--divider-color) p-4 text-center text-sm font-semibold text-(--ink-muted)"',
     );
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.fundCta);
     expect(html).not.toContain('id="participation-submit-wish-1"');
@@ -146,7 +146,7 @@ describe("public wish card progress", () => {
 
     expect(html).toContain(money(8000));
     expect(html).toContain(PUBLIC_WISHLIST_COPY.noTargetAmount);
-    expect(html).not.toContain("pub-progress");
+    expect(html).not.toContain("theme-progress");
     expect(html).not.toContain(PUBLIC_WISHLIST_COPY.progressSuffix);
     expect(html).toContain(PUBLIC_WISHLIST_COPY.fundCta);
   });

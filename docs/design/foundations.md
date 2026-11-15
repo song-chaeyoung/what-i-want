@@ -14,9 +14,9 @@
 | [public-themes.css](../../app/public-themes.css)의 의미 토큰과 컴포넌트 토큰 | 공개 테마의 면·잉크·헤더·카드·버튼·진행률·필드·타이포·모서리·테두리·그림자·반복 간격. `pub-` 접두사는 없습니다. 역할이 갈리는 색은 컴포넌트 이름으로 남아 있습니다 | 공개 뷰나 명시적 공개 미리보기의 시각 표현 |
 | `--toast-*` | 루트 Toaster의 테마별 표현 | [기존 토스트](../../components/ui/sonner.tsx)를 사용할 때. 토스트마다 팔레트를 다시 만들지 않음 |
 
-공개 테마 토큰은 의미 이름 또는 컴포넌트 이름을 직접 씁니다. `pub-` 접두사 별칭은 제거했습니다. `--brand-*`는 지우지 않습니다. 이름과 제거분은 [토큰 매핑](tokens-mapping.md)이 현재 기준입니다.
+공개 테마 토큰은 의미 이름 또는 컴포넌트 이름을 직접 씁니다. `pub-` 접두사 별칭과 `.pub-*` 클래스는 제거했습니다. 페이지·헤더·제목·라벨·폴백·진행률·지표·계좌·CTA는 `.theme-*`입니다. `--brand-*` 9개는 고정 브랜드 색이 테마에 덮이지 않게 남깁니다. 호출이 없던 `--brand-blush`만 2026-11-15에 지웠고, `bg-blush`는 `--tint-blush`를 봅니다. 이름과 제거분은 [토큰 매핑](tokens-mapping.md)이 현재 기준입니다.
 
-`--brand-*`와 공개 의미 토큰은 값이 비슷해도 적용 범위가 다릅니다. 공개 화면에 브랜드 색을 직접 넣으면 선택 테마가 무시될 수 있으므로 해당 역할의 공개 토큰·클래스를 먼저 확인합니다. 반대로 관리자 shell을 `.pub-page`로 감싸는 방식으로 공개 테마를 확장하지 않습니다. Tailwind 색 유틸은 `@theme inline`에서 `--brand-*`를 가리키므로, `.pub-page`가 의미 토큰을 덮어써도 `text-purple` 같은 고정 브랜드 유틸은 테마 색으로 바뀌지 않습니다. 근거: [매핑의 배선](tokens-mapping.md).
+`--brand-*`와 공개 의미 토큰은 값이 비슷해도 적용 범위가 다릅니다. 공개 화면에 브랜드 색을 직접 넣으면 선택 테마가 무시될 수 있으므로 해당 역할의 공개 토큰·클래스를 먼저 확인합니다. 반대로 관리자 shell을 `.theme-page`로 감싸는 방식으로 공개 테마를 확장하지 않습니다. Tailwind 색 유틸은 `@theme inline`에서 `--brand-*`를 가리키므로, `.theme-page`가 의미 토큰을 덮어써도 `text-purple` 같은 고정 브랜드 유틸은 테마 색으로 바뀌지 않습니다. 근거: [매핑의 배선](tokens-mapping.md).
 
 ## 공개 테마와 표현
 
@@ -28,18 +28,18 @@
 | `mono_bw` | 흑백·직각·그림자 없음·sans 제목과 라벨 |
 | `soft_pastel` | 파스텔·둥근 면·부드러운 그림자·sans 제목과 라벨 |
 
-선택 테마는 [공개 뷰](../../components/public-wishlist-view.tsx)의 `main.pub-page[data-theme]`에 적용됩니다. 샘플도 같은 뷰를 사용합니다. 404·로딩·오류 경계는 themeId를 전달받지 않아 기본 표현을 쓰며, [개인별 OG](../../app/wishlist/[slug]/opengraph-image.tsx)는 고정 스타일입니다. 관리자 안내 내부의 공개 미리보기는 [기능별 예외](../superpowers/specs/2026-07-22-admin-first-entry-guide-design.md)입니다.
+선택 테마는 [공개 뷰](../../components/public-wishlist-view.tsx)의 `main.theme-page[data-theme]`에 적용됩니다. 샘플도 같은 뷰를 사용합니다. 404·로딩·오류 경계는 themeId를 전달받지 않아 기본 표현을 쓰며, [개인별 OG](../../app/wishlist/[slug]/opengraph-image.tsx)는 고정 스타일입니다. 관리자 안내 내부의 공개 미리보기는 [기능별 예외](../superpowers/specs/2026-07-22-admin-first-entry-guide-design.md)입니다.
 
 | 역할 | 기존 표현 | 선택할 때의 기준 |
 | --- | --- | --- |
-| 페이지·헤더 | `.pub-page`, `.pub-header`, `.pub-headline` | 페이지 테마와 헤더 위 제목을 함께 표현 |
-| 카드·카드 제목 | [Card](../../components/ui/card.tsx) `theme`, `.theme-card`, `--headline` | 카드 안 제목은 `.theme-card`가 `--headline`을 `--ink`로 재정의. 지표 `.pub-stat`은 같은 상자 스타일을 쓰되 값 색은 테마 헤드라인을 유지. 헤더 `.pub-headline`은 카드 밖이라 테마 헤드라인을 유지. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
+| 페이지·헤더 | `.theme-page`, `.theme-header`, `.theme-headline` | 페이지 테마와 헤더 위 제목을 함께 표현 |
+| 카드·카드 제목 | [Card](../../components/ui/card.tsx) `theme`, `.theme-card`, `--headline` | 카드 안 제목은 `.theme-card`가 `--headline`을 `--ink`로 재정의. 지표 `.theme-stat`은 같은 상자 스타일을 쓰되 값 색은 테마 헤드라인을 유지. 헤더 `.theme-headline`은 카드 밖이라 테마 헤드라인을 유지. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
 | 강조·상태 | [Badge](../../components/ui/badge.tsx) `theme`, `theme-alt`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-pill`, `.theme-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | [Button](../../components/ui/button.tsx)의 `theme`, `theme-primary`, `theme-accent`. 너비는 `size="block"`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-btn` | 공개 행동의 위계. `theme-primary`라는 이름만으로 관리자 `admin` variant와 같다고 가정하지 않음 |
-| 진행률 | `.pub-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
+| 진행률 | `.theme-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
 | 입력 | [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) `theme`, `.theme-field` | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용. 관리자는 `admin`, 온보딩은 `onboarding` |
 
-공개 토스트는 `.pub-page` 바깥의 루트 Toaster에 렌더링됩니다. 현재 CSS는 `body:has(.pub-page[data-theme=...])`로 테마 값을 전달하므로 토스트 범위를 바꿀 때 이 연결도 확인합니다. 기본 공개 경계처럼 `data-theme`가 없는 경우까지 선택 테마 토스트가 보장되는 것은 아닙니다.
+공개 토스트는 `.theme-page` 바깥의 루트 Toaster에 렌더링됩니다. 현재 CSS는 `body:has(.theme-page[data-theme=...])`로 테마 값을 전달하므로 토스트 범위를 바꿀 때 이 연결도 확인합니다. 기본 공개 경계처럼 `data-theme`가 없는 경우까지 선택 테마 토스트가 보장되는 것은 아닙니다.
 
 ## 영역별 컴포넌트 지도
 

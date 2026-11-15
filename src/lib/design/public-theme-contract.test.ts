@@ -37,7 +37,7 @@ describe("public theme contract", () => {
       expect(source).toContain(`[data-theme="${themeId}"]`);
     }
 
-    expect(source).toContain(".pub-page");
+    expect(source).toContain(".theme-page");
     expect(source).toContain(".theme-card");
     expect(source).not.toContain(".pub-card");
     expect(source).not.toContain(".pub-card-hero");
@@ -52,8 +52,8 @@ describe("public theme contract", () => {
     expect(source).toContain(".theme-field");
     expect(source).toContain("background: var(--field-bg);");
     expect(source).not.toContain(".pub-" + "field");
-    expect(source).toContain('.pub-page[data-theme="mono_bw"] .pub-header .theme-pill');
-    expect(source).toContain(".pub-progress > i");
+    expect(source).toContain('.theme-page[data-theme="mono_bw"] .theme-header .theme-pill');
+    expect(source).toContain(".theme-progress > i");
     expect(source).not.toContain("pub-progress-done");
     expect(source).not.toContain("@import url(");
     expect(source).toContain("var(--font-display");
@@ -66,7 +66,7 @@ describe("public theme contract", () => {
 
     expect(existsSync(legacyPublicPagePath)).toBe(false);
     expect(pageSource).toContain("wishlist={result.wishlist}");
-    expect(viewSource).toContain('className="pub-page min-h-dvh"');
+    expect(viewSource).toContain('className="theme-page min-h-dvh"');
     expect(viewSource).toContain("data-theme={wishlist.themeId}");
     expect(viewSource).not.toContain('className="pixel-dot-bg min-h-dvh text-[#171717]"');
   });
@@ -74,14 +74,14 @@ describe("public theme contract", () => {
   test("renders the public wishlist header as a full-width themed section", () => {
     const viewSource = readFileSync(publicViewPath, "utf8");
 
-    expect(viewSource).toContain('<header className="pub-header">');
+    expect(viewSource).toContain('<header className="theme-header">');
     expect(viewSource).toContain(
       'className="mx-auto w-full max-w-6xl px-5 py-8 sm:px-8 lg:py-12"',
     );
     expect(viewSource).toContain(
       '<section className="mx-auto w-full max-w-6xl space-y-5 px-5 py-6 sm:px-8 lg:py-8">',
     );
-    expect(viewSource).toContain('className="pub-stat p-4"');
+    expect(viewSource).toContain('className="theme-stat p-4"');
     expect(viewSource).toContain('variant="theme"');
     expect(viewSource).not.toContain("pub-card");
     expect(viewSource).not.toContain("pub-card-hero");
@@ -126,7 +126,7 @@ describe("public theme contract", () => {
     expect(source).toContain("PUBLIC_WISHLIST_COPY.noTargetAmount");
     expect(source).not.toContain("pub-progress-done");
     expect(source).toContain(
-      'className="border-t-2 border-[var(--divider-color)] p-4 text-center text-sm font-semibold text-[var(--ink-muted)]"',
+      'className="border-t-2 border-(--divider-color) p-4 text-center text-sm font-semibold text-(--ink-muted)"',
     );
     expect(source).not.toContain("statusFilter");
   });
@@ -142,7 +142,7 @@ describe("public theme contract", () => {
   test("uses public theme primitives on the public not-found page", () => {
     const source = readFileSync(publicNotFoundPath, "utf8");
 
-    expect(source).toContain("pub-page");
+    expect(source).toContain("theme-page");
     expect(source).toContain('variant="theme"');
     expect(source).not.toContain("pub-card");
     expect(source).not.toContain("pixel-dot-bg");

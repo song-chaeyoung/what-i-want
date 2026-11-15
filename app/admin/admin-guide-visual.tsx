@@ -61,30 +61,30 @@ function GiftFormVisual() {
 function PublicPreviewVisual({ themeId }: { themeId: PublicThemeId }) {
   return (
     <div
-      className="pub-page grid h-full place-items-center overflow-hidden p-3 sm:p-8"
+      className="theme-page grid h-full place-items-center overflow-hidden p-3 sm:p-8"
       data-theme={themeId}
     >
       <Card variant="theme" className="w-full max-w-[430px] p-3.5 sm:p-5">
         <div className="flex items-center justify-between gap-3">
           <Badge variant="theme">NO. 1</Badge>
-          <span className="pub-label">받고 싶은 선물</span>
+          <span className="theme-label">받고 싶은 선물</span>
         </div>
-        <p className="mt-3 text-lg font-black text-[var(--headline)] sm:mt-4 sm:text-xl">
+        <p className="mt-3 text-lg font-black text-(--headline) sm:mt-4 sm:text-xl">
           무선 헤드폰
         </p>
         <div className="mt-3 flex items-end justify-between gap-4 sm:mt-4">
           <div>
-            <p className="text-base font-black text-[var(--ink)]">
+            <p className="text-base font-black text-(--ink)">
               63,000원
             </p>
-            <p className="mt-1 text-micro font-bold text-[var(--ink-muted)]">
+            <p className="mt-1 text-micro font-bold text-(--ink-muted)">
               189,000원 중
             </p>
           </div>
-          <p className="text-xs font-black text-[var(--accent-main)]">33%</p>
+          <p className="text-xs font-black text-(--accent-main)">33%</p>
         </div>
-        <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-[var(--divider-color)] bg-white sm:mt-3">
-          <div className="h-full w-1/3 bg-[var(--progress-fill)]" />
+        <div className="mt-2.5 h-3 overflow-hidden rounded-sm border border-(--divider-color) bg-white sm:mt-3">
+          <div className="h-full w-1/3 bg-(--progress-fill)" />
         </div>
       </Card>
     </div>

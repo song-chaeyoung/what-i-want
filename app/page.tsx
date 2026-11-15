@@ -151,7 +151,7 @@ export default async function Home() {
                     className="pointer-events-none absolute top-8 left-4 h-[calc(100%-0.75rem)] w-0 border-l-2 border-dotted border-ink sm:top-4 sm:left-[calc(50%+1rem)] sm:h-0 sm:w-[calc(100%-1rem)] sm:border-t-2 sm:border-l-0"
                   />
                 ) : null}
-                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-[var(--tint-yellow)] font-pixel text-micro leading-none text-accent-main">
+                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-yellow font-pixel text-micro leading-none text-accent-main">
                   {step.number}
                 </span>
                 <div className="min-w-0 pt-1 sm:pt-0">

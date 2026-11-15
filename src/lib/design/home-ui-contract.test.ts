@@ -88,7 +88,7 @@ describe("home UI contract", () => {
     expect(listTag).toContain("list-none");
     expect(steps).toContain("rounded-full");
     expect(steps).toContain("border-2 border-ink");
-    expect(steps).toContain("bg-[var(--tint-yellow)]");
+    expect(steps).toContain("bg-yellow");
     expect(steps).toContain("border-dotted");
     expect(steps).toContain("sm:border-t-2");
     expect(steps).toContain("border-l-2");

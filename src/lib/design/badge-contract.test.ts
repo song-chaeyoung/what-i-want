@@ -100,7 +100,7 @@ describe("badge and notice contract", () => {
     expect(themeCss).toContain("color: var(--pill-color);");
     expect(themeCss).toContain("background: var(--pill-alt-bg);");
     expect(themeCss).toContain(
-      '.pub-page[data-theme="mono_bw"] .pub-header .theme-pill {',
+      '.theme-page[data-theme="mono_bw"] .theme-header .theme-pill {',
     );
     expect(themeCss).not.toContain(".pub-pill");
     expect(globalsCss).not.toContain("--gift-soft-bg");
