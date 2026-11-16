@@ -188,8 +188,9 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `text-caption` | `11px` | `text-[11px]` |
 | `text-tab` | `13px` | `text-[13px]` |
 | `text-nav` | `13.5px` | `text-[13.5px]` |
+| `text-hero-mobile` | `min(2.25rem, 18vw)` | 홈 제목의 모바일 `text-4xl` |
 
-`cn()`은 tailwind-merge에 이 네 글자 크기(`micro`, `caption`, `tab`, `nav`)와 그림자(`pixel-xs`, `pixel-sm`, `pixel-md`, `pixel-lg`, `pixel-xl`, `header-line`)를 등록합니다. 등록하지 않으면 `text-micro`가 색으로 분류되어 같은 문자열의 `text-white`에 지워집니다. 근거는 [병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)과 [cn](../../lib/utils.ts)입니다. 2026-11-14.
+`cn()`은 tailwind-merge에 이 다섯 글자 크기(`micro`, `caption`, `tab`, `nav`, `hero-mobile`)와 그림자(`pixel-xs`, `pixel-sm`, `pixel-md`, `pixel-lg`, `pixel-xl`, `header-line`)를 등록합니다. 등록하지 않으면 `text-micro`가 색으로 분류되어 같은 문자열의 `text-white`에 지워집니다. 근거는 [병합 계약](../../src/lib/design/tailwind-merge-contract.test.ts)과 [cn](../../lib/utils.ts)입니다. 2026-11-14. `hero-mobile`은 2026-11-17에 홈 제목용으로 추가했습니다. 320px·200%에서는 `18vw`(57.6px)가 `2.25rem`보다 작고, `sm` 이상은 `text-6xl`이 이 크기를 덮습니다.
 
 `text-[16px]`는 `text-base`로 바꿨습니다. 기본 `text-base`는 `1rem`이고 행간은 `calc(1.5 / 1)`입니다. preflight가 `html`에 주는 행간 `1.5`와 같습니다. 관리자 제목에 있던 `text-[14px]`는 `text-sm`으로 바꿨습니다. 그 요소는 `hidden`이고 `sm:`부터 `text-base`라, 보이는 구간은 16px입니다. `text-sm` 자체는 행간 `calc(1.25 / 0.875)`를 같이 넣으므로, 14px만 지정하던 클래스와 행간이 다릅니다. 기본 스케일을 고쳐 행간을 빼지는 않았습니다.
 

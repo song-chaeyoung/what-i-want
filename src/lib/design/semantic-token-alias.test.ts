@@ -99,6 +99,7 @@ const themeFontSizes = {
   "--text-caption": "11px",
   "--text-tab": "13px",
   "--text-nav": "13.5px",
+  "--text-hero-mobile": "min(2.25rem, 18vw)",
 } as const;
 
 const sharedSpacing = {

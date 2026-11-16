@@ -1,28 +1,70 @@
 "use client"
 
 import * as React from "react"
+import { cva, type VariantProps } from "class-variance-authority"
 import { Progress as ProgressPrimitive } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+const progressVariants = cva("", {
+  variants: {
+    variant: {
+      theme: "theme-progress",
+      pixel: "h-3 overflow-hidden border-2 border-ink bg-track",
+      admin: "h-1.5 overflow-hidden rounded-full bg-track",
+    },
+  },
+  defaultVariants: {
+    variant: "admin",
+  },
+})
+
+const progressIndicatorVariants = cva("", {
+  variants: {
+    variant: {
+      theme: "",
+      pixel: "h-full",
+      admin: "h-full rounded-full bg-teal",
+    },
+  },
+  defaultVariants: {
+    variant: "admin",
+  },
+})
+
+function clampProgress(value: number | null | undefined) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return 0
+  }
+
+  return Math.min(100, Math.max(0, value))
+}
+
 function Progress({
   className,
   value,
+  variant = "admin",
+  indicatorClassName,
+  indicatorStyle,
   ...props
-}: React.ComponentProps<typeof ProgressPrimitive.Root>) {
+}: React.ComponentProps<typeof ProgressPrimitive.Root> &
+  VariantProps<typeof progressVariants> & {
+    indicatorClassName?: string
+    indicatorStyle?: React.CSSProperties
+  }) {
+  const clamped = clampProgress(value)
+
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
-      className={cn(
-        "relative flex h-1 w-full items-center overflow-x-hidden rounded-full bg-muted",
-        className
-      )}
+      className={cn(progressVariants({ variant }), className)}
+      value={clamped}
       {...props}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
-        className="size-full flex-1 bg-primary transition-all"
-        style={{ transform: `translateX(-${100 - (value || 0)}%)` }}
+        className={cn(progressIndicatorVariants({ variant }), indicatorClassName)}
+        style={{ width: `${clamped}%`, ...indicatorStyle }}
       />
     </ProgressPrimitive.Root>
   )

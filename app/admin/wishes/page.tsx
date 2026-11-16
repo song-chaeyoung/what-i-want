@@ -12,6 +12,7 @@ import {
 } from "@/src/lib/wish-item/status";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
 import {
   adminCardFooterClassName,
   adminCardHoverClassName,
@@ -269,9 +270,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               {formatCurrency(item.fundedAmount)} /{" "}
               {item.targetAmount ? formatCurrency(item.targetAmount) : "목표 금액 없음"}
             </p>
-            <div className="mt-2 h-1.5 overflow-hidden rounded-full bg-zinc-100">
-              <div className="h-full rounded-full bg-teal" style={{ width: `${progress}%` }} />
-            </div>
+            <Progress value={progress} className="mt-2" />
           </div>
           <span className="shrink-0 py-1 text-xs font-semibold text-teal">
             <span className="group-open:hidden">수정</span>

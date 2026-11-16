@@ -7,6 +7,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import {
@@ -310,9 +311,7 @@ function PublicWishCard({
               </div>
               {item.targetAmount ? (
                 <>
-                  <div className="theme-progress mt-2">
-                    <i style={{ width: `${item.progress}%` }} />
-                  </div>
+                  <Progress variant="theme" value={item.progress} className="mt-2" />
                   <p className="text-xs font-black text-(--ink-muted)">
                     {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
                   </p>

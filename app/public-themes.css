@@ -372,7 +372,7 @@
     border-radius: var(--progress-radius);
   }
 
-  .theme-progress > i {
+  .theme-progress > [data-slot="progress-indicator"] {
     display: block;
     height: 100%;
     background: var(--progress-fill);

@@ -37,7 +37,7 @@
 | 카드·카드 제목 | [Card](../../components/ui/card.tsx) `theme`, `.theme-card`, `--headline` | 카드 안 제목은 `.theme-card`가 `--headline`을 `--ink`로 재정의. 지표 `.theme-stat`은 같은 상자 스타일을 쓰되 값 색은 테마 헤드라인을 유지. 헤더 `.theme-headline`은 카드 밖이라 테마 헤드라인을 유지. 헤더용 흰색 등을 카드에 직접 복사하지 않음 |
 | 강조·상태 | [Badge](../../components/ui/badge.tsx) `theme`, `theme-alt`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-pill`, `.theme-pill-alt` | 상태의 뜻은 기존 문구로 유지하고 테마의 모양만 바꿈 |
 | 행동 | [Button](../../components/ui/button.tsx)의 `theme`, `theme-primary`, `theme-accent`. 너비는 `size="block"`. 모양은 [public-themes.css](../../app/public-themes.css)의 `.theme-btn` | 공개 행동의 위계. `theme-primary`라는 이름만으로 관리자 `admin` variant와 같다고 가정하지 않음 |
-| 진행률 | `.theme-progress` | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시 |
+| 진행률 | [Progress](../../components/ui/progress.tsx) `theme` (`.theme-progress`) | [조회 서비스](../../src/lib/public-wishlist/service.ts)의 계산 결과와 [상태 판정](../../src/lib/wish-item/status.ts)을 표시. 홈 예시는 `pixel`, 관리자 목록은 `admin` |
 | 입력 | [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) `theme`, `.theme-field` | [폼 패턴](patterns/form.md)의 레이블·제출 경로와 함께 사용. 관리자는 `admin`, 온보딩은 `onboarding` |
 
 공개 토스트는 `.theme-page` 바깥의 루트 Toaster에 렌더링됩니다. 현재 CSS는 `body:has(.theme-page[data-theme=...])`로 테마 값을 전달하므로 토스트 범위를 바꿀 때 이 연결도 확인합니다. 기본 공개 경계처럼 `data-theme`가 없는 경우까지 선택 테마 토스트가 보장되는 것은 아닙니다.

@@ -31,41 +31,56 @@ for (const viewport of viewports) {
     }
 
     const measured = await list.evaluate((element) => {
+      const textPieces = (node: Element) => {
+        const walker = document.createTreeWalker(node, NodeFilter.SHOW_TEXT);
+        const pieces: Text[] = [];
+        let current = walker.nextNode();
+        while (current) {
+          pieces.push(current as Text);
+          current = walker.nextNode();
+        }
+        return pieces;
+      };
+
       const linesOf = (node: Element) => {
-        const textNode = node.firstChild;
-        const text = textNode?.textContent ?? "";
-        if (!textNode || textNode.nodeType !== Node.TEXT_NODE || text.length === 0) {
+        const pieces = textPieces(node);
+        const text = pieces.map((piece) => piece.textContent ?? "").join("");
+        if (pieces.length === 0 || text.length === 0) {
           return [text.trim()];
         }
         const range = document.createRange();
         const fontSize = Number.parseFloat(getComputedStyle(node).fontSize) || 16;
         const lines: string[] = [];
-        let start = 0;
+        let current = "";
         let lastTop: number | null = null;
-        for (let index = 0; index < text.length; index += 1) {
-          range.setStart(textNode, index);
-          range.setEnd(textNode, index + 1);
-          const top = range.getBoundingClientRect().top;
-          if (lastTop !== null && top - lastTop > fontSize * 0.6) {
-            lines.push(text.slice(start, index));
-            start = index;
+        for (const piece of pieces) {
+          const value = piece.textContent ?? "";
+          for (let index = 0; index < value.length; index += 1) {
+            range.setStart(piece, index);
+            range.setEnd(piece, index + 1);
+            const top = range.getBoundingClientRect().top;
+            if (lastTop !== null && top - lastTop > fontSize * 0.6) {
+              lines.push(current);
+              current = "";
+            }
+            current += value[index] ?? "";
+            lastTop = top;
           }
-          lastTop = top;
         }
-        lines.push(text.slice(start));
+        lines.push(current);
         return lines.map((line) => line.trim()).filter((line) => line.length > 0);
       };
 
       const nodes = [...element.querySelectorAll("h2, p")].map((node) => {
         const style = getComputedStyle(node);
-        const textNode = node.firstChild;
-        const text = textNode?.textContent ?? "";
+        const pieces = textPieces(node);
         let inkRight = 0;
-        if (textNode && textNode.nodeType === Node.TEXT_NODE && text.length > 0) {
-          const range = document.createRange();
-          for (let index = 0; index < text.length; index += 1) {
-            range.setStart(textNode, index);
-            range.setEnd(textNode, index + 1);
+        const range = document.createRange();
+        for (const piece of pieces) {
+          const value = piece.textContent ?? "";
+          for (let index = 0; index < value.length; index += 1) {
+            range.setStart(piece, index);
+            range.setEnd(piece, index + 1);
             inkRight = Math.max(inkRight, range.getBoundingClientRect().right);
           }
         }
@@ -90,7 +105,10 @@ for (const viewport of viewports) {
         viewport: document.documentElement.clientWidth,
         pageOverflow:
           document.documentElement.scrollWidth - document.documentElement.clientWidth,
+        scrollWidth: document.documentElement.scrollWidth,
+        innerWidth: window.innerWidth,
         headingRight: heading ? Math.round(heading.getBoundingClientRect().right) : null,
+        headingFontSize: heading ? getComputedStyle(heading).fontSize : null,
       };
     });
 
@@ -117,9 +135,33 @@ for (const viewport of viewports) {
       for (const node of measured.nodes) {
         expect(node.lines, node.text).toEqual([node.text]);
       }
-    } else if (measured.pageOverflow > 0) {
-      expect(measured.headingRight).not.toBeNull();
-      expect(measured.headingRight! - measured.viewport).toBe(measured.pageOverflow);
+    }
+
+    if (viewport.width === 320) {
+      expect(measured.scrollWidth).toBeLessThanOrEqual(measured.innerWidth);
+    }
+
+    if (viewport.width === 320 && viewport.fontSize === "200%") {
+      expect(measured.headingFontSize).toBe("57.6px");
+    }
+
+    if (viewport.fontSize) {
+      const intendedBreaks: Record<string, string[][]> = {
+        만들기: [["만들기"], ["만들", "기"]],
+        공유하기: [["공유하기"], ["공유", "하기"]],
+      };
+      for (const node of measured.nodes) {
+        const allowed = intendedBreaks[node.text];
+        if (!allowed) {
+          continue;
+        }
+        expect(allowed, node.lines.join(" | ")).toContainEqual(node.lines);
+        if (node.text === "공유하기") {
+          for (const line of node.lines) {
+            expect([...line].length, line).toBeGreaterThan(1);
+          }
+        }
+      }
     }
 
     if (viewport.shot) {

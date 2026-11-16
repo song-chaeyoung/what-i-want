@@ -114,6 +114,7 @@
   --text-caption: 11px;
   --text-tab: 13px;
   --text-nav: 13.5px;
+  --text-hero-mobile: min(2.25rem, 18vw);
   --color-ink: var(--brand-ink);
   --color-paper: var(--brand-paper);
   --color-line: var(--brand-line);
