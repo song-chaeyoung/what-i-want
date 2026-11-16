@@ -230,7 +230,8 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.theme-btn\{[^}]*font-size:var\(--btn-size\)/);
       expect(minified).toMatch(/\.theme-page\{[^}]*background-color:var\(--surface-page\)/);
       expect(minified).toMatch(/\.theme-page\{[^}]*background-image:var\(--bg-dots\)/);
-      expect(minified).toMatch(/\.theme-page\{[^}]*font-family:var\(--font-body,Arial,Helvetica,sans-serif\)/);
+      expect(minified).toMatch(/\.theme-page\{[^}]*font-family:var\(--font-body\)/);
+      expect(minified).toMatch(/\.font-sans\{[^}]*font-family:var\(--font-body\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*background:var\(--pill-bg\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*color:var\(--pill-color\)/);
       expect(minified).toMatch(/\.theme-pill-alt\{[^}]*background:var\(--pill-alt-bg\)/);
@@ -1025,13 +1026,16 @@ async function expectThemeComputedColors(
   expectToast(byProbe, toastColors[themeId], `${prefix} toast`);
 }
 
+const bodyFontFamily =
+  "Pretendard Variable, Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Apple SD Gothic Neo, Malgun Gothic, sans-serif";
+
 const themeType = {
   pixel_y2k: {
     headlineSize: "36px",
     headlineWeight: "700",
     headlineLineHeight: "50.4px",
     headlineTracking: "0px",
-    roleFamily: "cursive",
+    roleFamily: "cursive, Arial, Helvetica, sans-serif",
     labelTracking: "0px",
     labelTransform: "none",
     pillTransform: "none",
@@ -1042,7 +1046,7 @@ const themeType = {
     headlineWeight: "900",
     headlineLineHeight: "35.4px",
     headlineTracking: "-1px",
-    roleFamily: "serif",
+    roleFamily: bodyFontFamily,
     labelTracking: "1.6px",
     labelTransform: "uppercase",
     pillTransform: "uppercase",
@@ -1053,7 +1057,7 @@ const themeType = {
     headlineWeight: "800",
     headlineLineHeight: "39px",
     headlineTracking: "-0.4px",
-    roleFamily: "serif",
+    roleFamily: bodyFontFamily,
     labelTracking: "0.4px",
     labelTransform: "none",
     pillTransform: "none",
@@ -1115,7 +1119,7 @@ function expectTypography(
   const px14 = probes.get("px-14");
   const px16 = probes.get("px-16");
 
-  expectFamily(page!.fontFamily, "serif", `${label} page family`);
+  expectFamily(page!.fontFamily, bodyFontFamily, `${label} page family`);
   expectFamily(headline!.fontFamily, expected.roleFamily, `${label} headline family`);
   expectPx(headline!.fontSize, expected.headlineSize, `${label} headline size`);
   expect(headline!.fontWeight, `${label} headline weight`).toBe(expected.headlineWeight);
@@ -1548,7 +1552,16 @@ function expectBrandUtilities(
 }
 
 function expectToast(
-  probes: Map<string, { color: string; backgroundColor: string; borderTopColor: string }>,
+  probes: Map<
+    string,
+    {
+      color: string;
+      backgroundColor: string;
+      borderTopColor: string;
+      fontSize: string;
+      fontFamily: string;
+    }
+  >,
   expected: {
     background: string;
     color?: string;
@@ -1566,6 +1579,12 @@ function expectToast(
   const warningIcon = probes.get("toast-warning-icon");
   const infoIcon = probes.get("toast-info-icon");
 
+  expectPx(toast!.fontSize, "14px", `${label} size`);
+  expectFamily(
+    toast!.fontFamily,
+    `${bodyFontFamily}, Arial, Helvetica, sans-serif`,
+    `${label} family`,
+  );
   expectRgb(toast!.backgroundColor, expected.background, `${label} background`);
   expectRgb(toast!.borderTopColor, expected.border, `${label} border`);
   if (expected.color) {

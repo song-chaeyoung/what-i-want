@@ -15,13 +15,13 @@
     --dot-size: 18px;
     --header-dots: radial-gradient(rgba(23, 23, 23, 0.1) 1.4px, transparent 1.4px);
     --header-border: 2px solid #171717;
-    --headline-font: var(--font-display, Arial, Helvetica, sans-serif);
+    --headline-font: var(--font-display), Arial, Helvetica, sans-serif;
     --headline-weight: 700;
     --headline-size: 36px;
     --headline-lh: 1.4;
     --headline-ls: 0;
     --header-sub: #0f766e;
-    --label-font: var(--font-display, Arial, Helvetica, sans-serif);
+    --label-font: var(--font-display), Arial, Helvetica, sans-serif;
     --label-size: 12px;
     --label-ls: 0;
     --label-transform: none;
@@ -41,7 +41,7 @@
     --pill-border: 2px solid #171717;
     --pill-radius: 0;
     --pill-shadow: 3px 3px 0 #111827;
-    --pill-font: var(--font-display, Arial, Helvetica, sans-serif);
+    --pill-font: var(--font-display), Arial, Helvetica, sans-serif;
     --pill-weight: 700;
     --pill-transform: none;
     --pill-size: 12px;
@@ -49,7 +49,7 @@
     --btn-pad: 15px 18px;
     --btn-gap: 8px;
     --pill-gap: 6px;
-    --btn-font: var(--font-display, Arial, Helvetica, sans-serif);
+    --btn-font: var(--font-display), Arial, Helvetica, sans-serif;
     --btn-weight: 700;
     --btn-size: 15px;
     --btn-radius: 4px;
@@ -83,13 +83,13 @@
     --dot-size: 0;
     --header-dots: none;
     --header-border: 1.5px solid #111;
-    --headline-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --headline-font: var(--font-body);
     --headline-weight: 900;
     --headline-size: 30px;
     --headline-lh: 1.18;
     --headline-ls: -1px;
     --header-sub: rgba(255, 255, 255, 0.6);
-    --label-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --label-font: var(--font-body);
     --label-ls: 1.6px;
     --label-transform: uppercase;
     --label-weight: 700;
@@ -108,11 +108,11 @@
     --pill-border: 1.5px solid #111;
     --pill-radius: 0;
     --pill-shadow: none;
-    --pill-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --pill-font: var(--font-body);
     --pill-weight: 700;
     --pill-transform: uppercase;
     --pill-pad: 6px 10px;
-    --btn-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --btn-font: var(--font-body);
     --btn-weight: 700;
     --btn-size: 14px;
     --btn-radius: 0;
@@ -146,13 +146,13 @@
     --dot-size: 0;
     --header-dots: none;
     --header-border: none;
-    --headline-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --headline-font: var(--font-body);
     --headline-weight: 800;
     --headline-size: 30px;
     --headline-lh: 1.3;
     --headline-ls: -0.4px;
     --header-sub: #7fb8ab;
-    --label-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --label-font: var(--font-body);
     --label-ls: 0.4px;
     --label-transform: none;
     --label-weight: 700;
@@ -173,11 +173,11 @@
     --pill-border: none;
     --pill-radius: 999px;
     --pill-shadow: none;
-    --pill-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --pill-font: var(--font-body);
     --pill-weight: 700;
     --pill-transform: none;
     --pill-pad: 7px 12px;
-    --btn-font: var(--font-body, Arial, Helvetica, sans-serif);
+    --btn-font: var(--font-body);
     --btn-weight: 700;
     --btn-size: 15px;
     --btn-radius: 16px;
@@ -188,7 +188,7 @@
     --progress-radius: 999px;
     --progress-h: 10px;
     --progress-fill: #7fb8ab;
-    --field-border: 1.5px solid #f0dfe9;
+    --field-border: 1.5px solid var(--divider-color);
     --field-radius: 14px;
     --field-bg: #fffafc;
     --bank-bg: #dff1ec;
@@ -244,7 +244,7 @@
     background-position: -2px -2px;
     background-size: var(--dot-size) var(--dot-size);
     color: var(--ink);
-    font-family: var(--font-body, Arial, Helvetica, sans-serif);
+    font-family: var(--font-body);
   }
 
   .theme-header {
@@ -360,7 +360,7 @@
   }
 
   .theme-page[data-theme="soft_pastel"] .theme-btn:not(.theme-btn-primary):not(.theme-btn-accent) {
-    border: 1.5px solid #f0dfe9;
+    border: 1.5px solid var(--divider-color);
     box-shadow: none;
   }
 

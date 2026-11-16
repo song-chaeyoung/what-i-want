@@ -86,12 +86,19 @@ describe("home UI contract", () => {
 
     expect(listTag).toContain('role="list"');
     expect(listTag).toContain("list-none");
+    expect(listTag).toContain("grid-cols-3");
+    expect(listTag).toContain("gap-3");
     expect(steps).toContain("rounded-full");
     expect(steps).toContain("border-2 border-ink");
     expect(steps).toContain("bg-yellow");
+    expect(steps).toContain("text-xs");
+    expect(steps).toContain("text-purple");
+    expect(steps).toContain("{index + 1}");
     expect(steps).toContain("border-dotted");
-    expect(steps).toContain("sm:border-t-2");
-    expect(steps).toContain("border-l-2");
+    expect(steps).toContain("border-t-2");
+    expect(steps).not.toContain("border-l-2");
+    expect(steps).not.toContain("text-micro");
+    expect(steps).not.toContain("text-accent-main");
     expect(steps).not.toContain("shadow-");
     expect(steps).not.toContain("bg-white");
     expect(steps).not.toContain("<Link");

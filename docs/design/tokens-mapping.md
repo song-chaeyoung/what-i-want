@@ -1,8 +1,10 @@
 # 의미 토큰 병합 매핑
 
-코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14. 필·상태 색 토큰 추가 대조일: 2026-11-14. 입력 면 토큰 추가 대조일: 2026-11-15.
+코드 대조일: 2026-11-10. 버튼 색 토큰 추가 대조일: 2026-11-13. 카드 글자·면 토큰 추가 대조일: 2026-11-14. 필·상태 색 토큰 추가 대조일: 2026-11-14. 입력 면 토큰 추가 대조일: 2026-11-15. 본문 글꼴 추가 대조일: 2026-11-16.
 
-상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 세 테마의 리터럴은 그대로입니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
+상태: 공개 테마 커스텀 속성에서 `pub-` 접두사를 뺐습니다. 코어 색·타이포·모서리·테두리·그림자·반복 간격은 의미 이름이 값을 갖고, 그 별칭은 제거했습니다. 값을 직접 갖고 있던 나머지는 접두사만 뺀 이름으로 바꿨습니다. 접두사를 빼던 시점의 세 테마 리터럴은 그대로 두었습니다. 값은 [globals.css](../../app/globals.css)의 `:root`·`@theme inline`과 [public-themes.css](../../app/public-themes.css)의 테마 블록이 원본입니다. 이 표는 그 선언을 옮긴 것이고, 화면을 다시 측정한 값은 아닙니다.
+
+2026-11-16에 본문 글꼴만 바꿨습니다. `:root`의 `--font-body`는 Pretendard Variable 스택이고, `@theme inline`의 `--font-sans`는 `var(--font-body)`입니다. `pixel_y2k`의 제목·라벨·필·버튼 글꼴은 `var(--font-display), Arial, Helvetica, sans-serif`입니다. `mono_bw`·`soft_pastel`과 `.theme-page`는 `var(--font-body)`입니다. 같은 날 `soft_pastel`의 `--field-border`와 보조 버튼 테두리는 `var(--divider-color)`를 가리키게 했습니다. 그 테마의 `--divider-color`는 `#f0dfe9`입니다. `--toast-border` 리터럴은 바꾸지 않았습니다.
 
 ## 결정
 
@@ -167,16 +169,16 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 글꼴 패밀리와 글자 크기, 그리고 같은 역할에 이미 붙어 있던 굵기·행간·자간·대문자 변환만 옮겼습니다. 테마마다 다른 값은 그대로입니다. 픽셀 제목은 36px, 모노와 파스텔 제목은 30px입니다.
 
-`--font-mona`와 `--font-sans`는 Next 폰트가 `html`에 넣는 변수입니다. 역할 이름이 그 변수를 가리키고, 폰트 등록 이름은 바꾸지 않습니다.
+`--font-mona`는 Next 로컬 폰트가 `html`에 넣는 변수입니다. `--font-display`가 그 변수를 가리키고, 폰트 등록 이름은 바꾸지 않습니다. 본문은 `pretendard` 패키지(OFL-1.1)의 동적 서브셋 CSS가 `Pretendard Variable`을 등록합니다. 필요한 `unicode-range`의 woff2만 요청됩니다. Geist와 `--font-geist-*`는 쓰지 않습니다. `--font-mono`는 `"Courier New", Courier, monospace` 그대로입니다.
 
 | 의미 토큰 | `:root` 값 | 쓰는 곳 |
 | --- | --- | --- |
-| `--font-display` | `var(--font-mona)` | `.font-pixel`, `.sticker-label`은 `var(--font-display), Arial, Helvetica, sans-serif`. 공개 `pixel_y2k`의 제목·라벨·필·버튼은 `var(--font-display, Arial, Helvetica, sans-serif)` |
-| `--font-body` | `var(--font-sans)` | `.theme-page`, `mono_bw`·`soft_pastel`의 제목·라벨·필·버튼, 토스트. 공개 쪽은 `var(--font-body, Arial, Helvetica, sans-serif)`, 토스트는 `var(--font-body), Arial, Helvetica, sans-serif` |
+| `--font-display` | `var(--font-mona)` | `.font-pixel`, `.sticker-label`, 공개 `pixel_y2k`의 제목·라벨·필·버튼. 넷 다 `var(--font-display), Arial, Helvetica, sans-serif` |
+| `--font-body` | `"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif` | `body`, `.theme-page`, `mono_bw`·`soft_pastel`의 제목·라벨·필·버튼은 `var(--font-body)`. 토스트는 `var(--font-body), Arial, Helvetica, sans-serif`와 `font-size: 14px` |
 
-두 형태를 한 문자열로 합치지 않았습니다. 변수가 있을 때 `var(--font-mona, Arial, Helvetica, sans-serif)`는 Mona 패밀리만 쓰고, `var(--font-mona), Arial, Helvetica, sans-serif`는 Arial 이하를 뒤에 붙입니다. 없는 글자의 폴백이 달라집니다.
+`var(--font-display, Arial, Helvetica, sans-serif)`는 변수가 있으면 Arial 폴백을 쓰지 않습니다. `var(--font-display), Arial, Helvetica, sans-serif`는 없는 글자를 Arial 이하로 넘깁니다. 2026-11-16에 `pixel_y2k` 네 글꼴을 `.font-pixel`과 같은 뒤 형태로 맞췄습니다. 본문 스택은 `--font-body` 안에 들어 있으므로 공개 테마는 `var(--font-body)`만 씁니다. 토스트의 쉼표 형태와 14px는 그대로입니다.
 
-`font-sans` 유틸은 `@theme inline`의 `--font-sans: var(--font-sans)`를 그대로 씁니다. `--font-body`로 다리를 바꾸면 유틸이 `var(--font-body)`를 가리키고, 나중에 테마가 `--font-body`를 덮으면 고정 본문 글꼴까지 바뀝니다. 색의 `--brand-*` 다리와 같은 이유입니다. `html`과 관리자 shell의 `font-sans` 클래스는 그대로입니다.
+`font-sans` 유틸은 `@theme inline`의 `--font-sans: var(--font-body)`입니다. 공개 테마는 `--font-body`를 다시 적지 않습니다. 나중에 어떤 요소가 `--font-body`를 덮으면 그 자손의 `font-sans`도 그 값을 따릅니다. `html`과 관리자 shell의 `font-sans` 클래스는 그대로입니다. `@theme`의 `--font-heading`은 여전히 `var(--font-sans)`이고, 호출부는 없습니다. OG 이미지 글꼴은 바꾸지 않습니다.
 
 `@theme inline`에 넣은 글자 크기는 기존 임의 값과 같고, `line-height`는 넣지 않았습니다. 임의 클래스 `text-[10px]`도 글자 크기만 바꿨기 때문입니다. `text-xs`부터 `text-6xl`, `font-semibold` 같은 기본 스케일은 이 블록에 다시 적지 않았습니다.
 
@@ -195,21 +197,21 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 | 의미 토큰 | `pixel_y2k` | `mono_bw` | `soft_pastel` |
 | --- | --- | --- | --- |
-| `--headline-font` | `var(--font-display, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` |
+| `--headline-font` | `var(--font-display), Arial, Helvetica, sans-serif` | `var(--font-body)` | `var(--font-body)` |
 | `--headline-weight` | `700` | `900` | `800` |
 | `--headline-size` | `36px` | `30px` | `30px` |
 | `--headline-lh` | `1.4` | `1.18` | `1.3` |
 | `--headline-ls` | `0` | `-1px` | `-0.4px` |
-| `--label-font` | `var(--font-display, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` |
+| `--label-font` | `var(--font-display), Arial, Helvetica, sans-serif` | `var(--font-body)` | `var(--font-body)` |
 | `--label-size` | `12px` | 같은 12px | 같은 12px |
 | `--label-weight` | `700` | `700` | `700` |
 | `--label-ls` | `0` | `1.6px` | `0.4px` |
 | `--label-transform` | `none` | `uppercase` | `none` |
-| `--pill-font` | `var(--font-display, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` |
+| `--pill-font` | `var(--font-display), Arial, Helvetica, sans-serif` | `var(--font-body)` | `var(--font-body)` |
 | `--pill-weight` | `700` | `700` | `700` |
 | `--pill-transform` | `none` | `uppercase` | `none` |
 | `--pill-size` | `12px` | 같은 12px | 같은 12px |
-| `--btn-font` | `var(--font-display, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` | `var(--font-body, Arial, Helvetica, sans-serif)` |
+| `--btn-font` | `var(--font-display), Arial, Helvetica, sans-serif` | `var(--font-body)` | `var(--font-body)` |
 | `--btn-weight` | `700` | `700` | `700` |
 | `--btn-size` | `15px` | `14px` | `15px` |
 
@@ -246,7 +248,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | `--btn-shadow` | `3px 3px 0 #111827` | `none` | `0 6px 16px rgba(150, 120, 160, 0.2)` |
 | `--progress-border` | `2px solid #171717` | `1.5px solid #111` | `none` |
 | `--progress-radius` | `2px` | `0` | `999px` |
-| `--field-border` | `2px solid #171717` | `1.5px solid #111` | `1.5px solid #f0dfe9` |
+| `--field-border` | `2px solid #171717` | `1.5px solid #111` | `1.5px solid var(--divider-color)` |
 | `--field-radius` | `4px` | `0` | `14px` |
 
 지운 모양·간격 별칭: `--pub-border`, `--pub-radius`, `--pub-shadow`, `--pub-shadow-lg`, `--pub-shadow-sm`, `--pub-header-border`, `--pub-pill-border`, `--pub-pill-radius`, `--pub-pill-shadow`, `--pub-btn-radius`, `--pub-btn-border`, `--pub-btn-shadow`, `--pub-progress-border`, `--pub-progress-radius`, `--pub-field-border`, `--pub-field-radius`, `--pub-pill-pad`.
@@ -278,7 +280,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 | Tailwind 기본 `rounded-md`, `border-2`, `shadow-md` | 기본 스케일 |
 | shadcn `rounded-[min(var(--radius-md),...)]` | 컴포넌트 기본 모서리 상한 |
 | `--toast-*` | `.theme-page` 밖 토스트. 그림자에 `4px 4px 0 #111827`가 있어도 `shadow-pixel-md`로 합치지 않음 |
-| `soft_pastel`의 `.theme-btn:not(.theme-btn-primary):not(.theme-btn-accent)` | `border: 1.5px solid #f0dfe9`, `box-shadow: none`. `--btn-border`는 `none` |
+| `soft_pastel`의 `.theme-btn:not(.theme-btn-primary):not(.theme-btn-accent)` | `border: 1.5px solid var(--divider-color)`, `box-shadow: none`. `--btn-border`는 `none`. 이 테마의 `--divider-color`는 `#f0dfe9` |
 | `mono_bw` 헤더 필 `1.5px solid rgba(255,255,255,0.6)`, 지표 `1.5px solid rgba(255,255,255,0.5)` | 테마 `--pill-border`·`--card-border`와 다른 반투명 선 |
 
 ## 간격
@@ -356,7 +358,7 @@ Tailwind는 문서의 옛 클래스 문자열도 유틸로 뽑습니다. [global
 
 [별칭 계약](../../src/lib/design/semantic-token-alias.test.ts)은 `:root` 브랜드 별칭, 세 테마 토큰의 기존 리터럴, 카드의 `--headline: var(--ink)`, 고정 픽셀 그림자와 관리자 사이드바 테마 키, 그리고 `app/`·`components/`·`src/`와 공개 테마 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 봅니다. `--stat-accent`와 `--msg-sub`는 선언만 있는지도 봅니다. 2026-11-14에 지운 `--card-shadow-lg`와 `--msg-title`은 공개 테마 CSS에 선언이 없는지도 봅니다. 이 비교는 브라우저 계산값을 대신하지 않습니다.
 
-[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`는 그대로인지도 봅니다. `shadow-xs`의 Chrome 계산 `box-shadow`는 지운 `--shadow-pub`와 같은 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`입니다. `--radius-pub`는 사용처가 없어 지웠고, `rounded-md`는 `--radius` `0.625rem`의 0.8배라 `0.375rem`과 다릅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.theme-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
+[Tailwind 유틸 계약](../../src/lib/design/tailwind-brand-utility.test.ts)은 `@tailwindcss/postcss` 4.3으로 `app/globals.css`를 dev·production 두 방식으로 컴파일합니다. `.text-purple` 등이 `var(--brand-*)`를 참조하는지, 의미 토큰 유틸이 `var(--headline)`처럼 테마 변수를 그대로 두는지, 생성 CSS에 `pub-` 접두사 커스텀 속성이 없는지를 확인합니다. `text-micro` 등은 `font-size`만 갖고, `text-sm`·`text-base` 기본 스케일은 행간을 유지하는지도 봅니다. `shadow-pixel-*`와 `shadow-header-line`은 예전 임의 유틸과 같은 Tailwind 그림자 래퍼이고, `shadow-md`는 그대로인지도 봅니다. `shadow-xs`의 Chrome 계산 `box-shadow`는 지운 `--shadow-pub`와 같은 `rgba(0, 0, 0, 0.05) 0px 1px 2px 0px`입니다. `--radius-pub`는 사용처가 없어 지웠고, `rounded-md`는 `--radius` `0.625rem`의 0.8배라 `0.375rem`과 다릅니다. `w-admin-sidebar`는 `220px`, `py-admin-sidebar`는 `22px`인지도 봅니다. Chrome이 있으면 그 CSS를 세 테마와 테마 없는 기본 `.theme-page`에 적용해 계산색, 글꼴·글자 크기·굵기·행간·자간, 카드·필·버튼·진행률·필드의 테두리·모서리·그림자, 필·버튼의 여백과 간격, 필·필드·계좌·진행률의 색과 높이를 확인합니다. 2026-11-16 계산 `font-family`는 본문과 모노·파스텔 역할이 Pretendard 스택이고, `pixel_y2k` 역할은 Mona 뒤에 Arial이 붙습니다. 토스트는 14px와 본문 스택 뒤의 Arial 폴백입니다. 카드 제목은 잉크, 헤더 제목과 헤더 지표는 테마 헤드라인, 브랜드 유틸과 상속된 `--brand-purple`은 `#4c1d95`인지 봅니다. 토스트는 테마 리터럴과 브랜드 폴백을 구분합니다.
 
 [관리자 테마 계약](../../src/lib/design/admin-theme-contract.test.ts)은 `--color-*` 다리가 `--brand-*`를 가리키는지 확인합니다. 2026-11-06에 개발 서버의 홈과 `/sample?theme=` 세 테마를 Chrome 계산색으로 따로 대조했습니다. 그 확인은 위 테스트 계약을 대신하지 않고, 관리자 로그인 화면은 열지 않았습니다.
 

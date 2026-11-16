@@ -18,16 +18,30 @@ describe("Mona pixel font integration", () => {
     expect(fontsFile).toContain('variable: "--font-mona"');
   });
 
-  test("exposes a scoped pixel font utility instead of changing the body font", () => {
+  test("keeps the pixel utility scoped while the body uses Pretendard", () => {
     const globalCss = readFileSync(join(root, "app/globals.css"), "utf8");
+    const layout = readFileSync(join(root, "app/layout.tsx"), "utf8");
 
     expect(globalCss).toContain(".font-pixel");
     expect(globalCss).toContain("--font-display: var(--font-mona)");
-    expect(globalCss).toContain("--font-body: var(--font-sans)");
+    expect(globalCss).toContain(
+      '--font-body: "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;',
+    );
+    expect(globalCss).toContain("font-family: var(--font-body);");
     expect(globalCss).toContain(
       "font-family: var(--font-display), Arial, Helvetica, sans-serif;",
     );
-    expect(globalCss).toContain("font-family: Arial, Helvetica, sans-serif;");
+    expect(globalCss).toContain(
+      "font-family: var(--font-body), Arial, Helvetica, sans-serif;",
+    );
+    expect(globalCss).toContain("font-size: 14px;");
+    expect(globalCss).toContain(
+      '@import "pretendard/dist/web/variable/pretendardvariable-dynamic-subset.css"',
+    );
+    expect(layout).toContain('"font-sans"');
+    expect(layout).not.toContain("Geist");
+    expect(layout).not.toContain("next/font/google");
+    expect(layout).not.toContain("--font-geist");
   });
 
   test("applies the pixel font to public brand surfaces", () => {

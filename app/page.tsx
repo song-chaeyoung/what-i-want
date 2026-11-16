@@ -138,23 +138,23 @@ export default async function Home() {
 
           <ol
             role="list"
-            className="m-0 flex list-none flex-col gap-5 p-0 sm:flex-row sm:gap-4"
+            className="m-0 grid list-none grid-cols-3 gap-3 p-0 sm:gap-4"
           >
             {homeSteps.map((step, index) => (
               <li
                 key={step.number}
-                className="relative flex min-w-0 flex-1 items-start gap-3 sm:flex-col sm:items-center sm:gap-2 sm:text-center"
+                className="relative flex min-w-0 flex-col items-start gap-2"
               >
                 {index < homeSteps.length - 1 ? (
                   <span
                     aria-hidden="true"
-                    className="pointer-events-none absolute top-8 left-4 h-[calc(100%-0.75rem)] w-0 border-l-2 border-dotted border-ink sm:top-4 sm:left-[calc(50%+1rem)] sm:h-0 sm:w-[calc(100%-1rem)] sm:border-t-2 sm:border-l-0"
+                    className="absolute top-4 left-10 -right-2 h-0 border-t-2 border-dotted border-ink"
                   />
                 ) : null}
-                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-yellow font-pixel text-micro leading-none text-accent-main">
-                  {step.number}
+                <span className="relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-yellow font-pixel text-xs leading-none text-purple">
+                  {index + 1}
                 </span>
-                <div className="min-w-0 pt-1 sm:pt-0">
+                <div className="min-w-0 w-full">
                   <h2 className="font-pixel truncate text-sm tracking-normal text-purple">
                     {step.title}
                   </h2>

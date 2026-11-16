@@ -90,7 +90,8 @@ const themeBridges = {
 
 const rootFonts = {
   "--font-display": "var(--font-mona)",
-  "--font-body": "var(--font-sans)",
+  "--font-body":
+    '"Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont, system-ui, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif',
 } as const;
 
 const themeFontSizes = {
@@ -128,13 +129,13 @@ const previousPub = {
     "--ink": "#171717",
     "--ink-muted": "#3f3f46",
     "--headline": "#4c1d95",
-    "--headline-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--headline-font": "var(--font-display), Arial, Helvetica, sans-serif",
     "--headline-weight": "700",
     "--headline-size": "36px",
     "--headline-lh": "1.4",
     "--headline-ls": "0",
     "--header-sub": "#0f766e",
-    "--label-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--label-font": "var(--font-display), Arial, Helvetica, sans-serif",
     "--label-color": "#0f766e",
     "--label-ls": "0",
     "--label-transform": "none",
@@ -156,11 +157,11 @@ const previousPub = {
     "--pill-border": "2px solid #171717",
     "--pill-radius": "0",
     "--pill-shadow": "3px 3px 0 #111827",
-    "--pill-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--pill-font": "var(--font-display), Arial, Helvetica, sans-serif",
     "--pill-weight": "700",
     "--pill-transform": "none",
     "--pill-pad": "7px 10px 6px",
-    "--btn-font": "var(--font-display, Arial, Helvetica, sans-serif)",
+    "--btn-font": "var(--font-display), Arial, Helvetica, sans-serif",
     "--btn-weight": "700",
     "--btn-size": "15px",
     "--btn-radius": "4px",
@@ -190,13 +191,13 @@ const previousPub = {
     "--ink": "#111",
     "--ink-muted": "#6b6b6b",
     "--headline": "#fff",
-    "--headline-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--headline-font": "var(--font-body)",
     "--headline-weight": "900",
     "--headline-size": "30px",
     "--headline-lh": "1.18",
     "--headline-ls": "-1px",
     "--header-sub": "rgba(255, 255, 255, 0.6)",
-    "--label-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--label-font": "var(--font-body)",
     "--label-color": "#9a9a9a",
     "--label-ls": "1.6px",
     "--label-transform": "uppercase",
@@ -218,11 +219,11 @@ const previousPub = {
     "--pill-border": "1.5px solid #111",
     "--pill-radius": "0",
     "--pill-shadow": "none",
-    "--pill-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--pill-font": "var(--font-body)",
     "--pill-weight": "700",
     "--pill-transform": "uppercase",
     "--pill-pad": "6px 10px",
-    "--btn-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--btn-font": "var(--font-body)",
     "--btn-weight": "700",
     "--btn-size": "14px",
     "--btn-radius": "0",
@@ -252,13 +253,13 @@ const previousPub = {
     "--ink": "#5b5566",
     "--ink-muted": "#8b8398",
     "--headline": "#bd6595",
-    "--headline-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--headline-font": "var(--font-body)",
     "--headline-weight": "800",
     "--headline-size": "30px",
     "--headline-lh": "1.3",
     "--headline-ls": "-0.4px",
     "--header-sub": "#7fb8ab",
-    "--label-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--label-font": "var(--font-body)",
     "--label-color": "#bd6595",
     "--label-ls": "0.4px",
     "--label-transform": "none",
@@ -280,11 +281,11 @@ const previousPub = {
     "--pill-border": "none",
     "--pill-radius": "999px",
     "--pill-shadow": "none",
-    "--pill-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--pill-font": "var(--font-body)",
     "--pill-weight": "700",
     "--pill-transform": "none",
     "--pill-pad": "7px 12px",
-    "--btn-font": "var(--font-body, Arial, Helvetica, sans-serif)",
+    "--btn-font": "var(--font-body)",
     "--btn-weight": "700",
     "--btn-size": "15px",
     "--btn-radius": "16px",
@@ -295,7 +296,7 @@ const previousPub = {
     "--progress-radius": "999px",
     "--progress-h": "10px",
     "--progress-fill": "#7fb8ab",
-    "--field-border": "1.5px solid #f0dfe9",
+    "--field-border": "1.5px solid var(--divider-color)",
     "--field-radius": "14px",
     "--field-bg": "#fffafc",
     "--bank-bg": "#dff1ec",
@@ -449,7 +450,7 @@ describe("semantic token aliases", () => {
     expect(themeBridgeVars.has("--text-xs")).toBe(false);
     expect(themeBridgeVars.has("--font-display")).toBe(false);
     expect(themeBridgeVars.has("--font-body")).toBe(false);
-    expect(themeBridgeVars.get("--font-sans")).toBe("var(--font-sans)");
+    expect(themeBridgeVars.get("--font-sans")).toBe("var(--font-body)");
 
     for (const [name, value] of Object.entries(pixelShadows)) {
       expect(rootVars.get(name), name).toBe(value);
@@ -524,7 +525,10 @@ describe("semantic token aliases", () => {
 
       for (const [name, literal] of Object.entries(previous)) {
         expect(themeVars.get(name), `${themeId} ${name}`).toBe(literal);
-        expect(resolveVar(name, computed), `${themeId} ${name}`).toBe(literal);
+        const resolved = resolveVar(name, computed);
+        expect(resolved, `${themeId} ${name}`).toBe(
+          literal === "var(--font-body)" ? rootFonts["--font-body"] : literal,
+        );
       }
 
       expect(resolveVar("--label-size", computed), themeId).toBe("12px");
@@ -580,7 +584,8 @@ describe("semantic token aliases", () => {
     expect(publicThemesCss).toContain("padding: var(--pill-pad);");
     expect(publicThemesCss).toContain("gap: var(--btn-gap);");
     expect(publicThemesCss).toContain("padding: var(--btn-pad);");
-    expect(publicThemesCss).toContain("border: 1.5px solid #f0dfe9;");
+    expect(publicThemesCss).toContain("border: 1.5px solid var(--divider-color);");
+    expect(publicThemesCss).toContain("--toast-border: 1.5px solid #f0dfe9;");
     expect(publicThemesCss).not.toMatch(/var\(--stat-accent\)/);
     expect(publicThemesCss).not.toMatch(/var\(--msg-sub\)/);
     expect(publicThemesCss.includes(removedPrefix)).toBe(false);

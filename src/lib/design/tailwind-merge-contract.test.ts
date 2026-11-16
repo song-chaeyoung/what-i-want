@@ -75,6 +75,46 @@ describe("tailwind-merge custom scales", () => {
     );
   });
 
+  test("keeps the home step classes", () => {
+    const list = cn("m-0 grid list-none grid-cols-3 gap-3 p-0 sm:gap-4");
+    for (const token of ["m-0", "grid", "list-none", "grid-cols-3", "gap-3", "p-0", "sm:gap-4"]) {
+      expect(list, token).toContain(token);
+    }
+
+    const item = cn("relative flex min-w-0 flex-col items-start gap-2");
+    for (const token of ["relative", "flex", "min-w-0", "flex-col", "items-start", "gap-2"]) {
+      expect(item, token).toContain(token);
+    }
+
+    const connector = cn(
+      "absolute top-4 left-10 -right-2 h-0 border-t-2 border-dotted border-ink",
+    );
+    for (const token of [
+      "absolute",
+      "top-4",
+      "left-10",
+      "-right-2",
+      "h-0",
+      "border-t-2",
+      "border-dotted",
+      "border-ink",
+    ]) {
+      expect(connector, token).toContain(token);
+    }
+
+    const badge = cn(
+      "relative z-10 grid size-8 shrink-0 place-items-center rounded-full border-2 border-ink bg-yellow font-pixel text-xs leading-none text-purple",
+    );
+    expect(badge).toContain("text-xs");
+    expect(badge).toContain("text-purple");
+    expect(badge).toContain("font-pixel");
+    expect(badge).toContain("leading-none");
+
+    const text = cn("min-w-0 w-full");
+    expect(text).toContain("min-w-0");
+    expect(text).toContain("w-full");
+  });
+
   test("renders Badge count with text-micro", () => {
     const html = renderToStaticMarkup(
       createElement(Badge, { variant: "count" }, "1"),
