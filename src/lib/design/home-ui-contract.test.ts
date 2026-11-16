@@ -93,6 +93,10 @@ describe("home UI contract", () => {
     expect(steps).toContain("bg-yellow");
     expect(steps).toContain("text-xs");
     expect(steps).toContain("text-purple");
+    expect(steps).toContain("break-keep");
+    expect(steps).toContain("break-words");
+    expect(steps).toContain("min-w-0 w-full");
+    expect(steps).not.toContain("truncate");
     expect(steps).toContain("{index + 1}");
     expect(steps).toContain("border-dotted");
     expect(steps).toContain("border-t-2");

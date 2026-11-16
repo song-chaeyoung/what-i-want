@@ -113,6 +113,11 @@ describe("tailwind-merge custom scales", () => {
     const text = cn("min-w-0 w-full");
     expect(text).toContain("min-w-0");
     expect(text).toContain("w-full");
+
+    // break-keep과 break-words는 같은 그룹이라 cn()이 앞의 break-keep을 지운다.
+    // 홈 단계 제목은 cn()을 거치지 않는 className에 둘을 같이 둔다.
+    expect(cn("break-keep", "break-words")).toBe("break-words");
+    expect(cn("break-words", "break-keep")).toBe("break-keep");
   });
 
   test("renders Badge count with text-micro", () => {

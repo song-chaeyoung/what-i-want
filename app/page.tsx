@@ -155,10 +155,10 @@ export default async function Home() {
                   {index + 1}
                 </span>
                 <div className="min-w-0 w-full">
-                  <h2 className="font-pixel truncate text-sm tracking-normal text-purple">
+                  <h2 className="font-pixel break-keep break-words text-sm tracking-normal text-purple">
                     {step.title}
                   </h2>
-                  <p className="mt-1 truncate text-xs font-black text-ink-soft">
+                  <p className="mt-1 break-keep break-words text-xs font-black text-ink-soft">
                     {step.label}
                   </p>
                 </div>
