@@ -4,7 +4,6 @@ import { describe, expect, test, vi } from "vitest";
 import { metadata as layoutMetadata } from "@/app/layout";
 import { metadata as homeMetadata } from "@/app/page";
 
-vi.mock("next/font/google", () => ({ Geist: () => ({ variable: "" }) }));
 vi.mock("@/app/fonts", () => ({ monaPixel: { variable: "" } }));
 vi.mock("@/auth", () => ({ auth: async () => null }));
 vi.mock("@/src/lib/onboarding/repository", () => ({

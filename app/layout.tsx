@@ -2,12 +2,9 @@ import type { Metadata } from "next";
 import { SiteAnalytics } from "./analytics";
 import { monaPixel } from "./fonts";
 import "./globals.css";
-import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
 import { Toaster } from "@/components/ui/sonner";
 import { resolveSiteUrl } from "@/src/lib/metadata/site-url";
-
-const geist = Geist({subsets:['latin'],variable:'--font-sans'});
 
 export const metadata: Metadata = {
   metadataBase: resolveSiteUrl(),
@@ -33,7 +30,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="ko" className={cn("h-full", "antialiased", monaPixel.variable, "font-sans", geist.variable)}>
+    <html lang="ko" className={cn("h-full", "antialiased", monaPixel.variable, "font-sans")}>
       <body className="flex min-h-full flex-col">{children}<Toaster /><SiteAnalytics /></body>
     </html>
   );

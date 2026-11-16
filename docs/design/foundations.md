@@ -2,6 +2,7 @@
 
 코드 대조일: 2026-10-30
 토큰 이전 추가 대조일: 2026-11-10. 색 토큰 소유, 카드 제목, 타이포·모서리·테두리·그림자·반복 간격의 의미 이름만 다시 봤고, 나머지 컴포넌트 지도는 2026-10-30 정적 대조입니다.
+본문 글꼴 추가 대조일: 2026-11-16. `--font-body`와 `font-sans` 연결만 다시 봤습니다.
 
 [디자인 가이드](README.md)에서 영역을 고른 뒤 이 문서를 읽습니다. 실제 값·variant·props는 링크된 코드가 원본이며, 여기에는 역할과 선택 기준을 기록합니다. 문서의 예시 역할이 새로운 토큰의 생성을 뜻하지 않습니다.
 
@@ -56,7 +57,7 @@
 
 ## 타이포·간격·반응형
 
-- 픽셀 폰트는 [fonts.ts](../../app/fonts.ts)의 로컬 MonaS12 Bold이고, 역할 이름은 `--font-display`입니다. 본문 sans의 역할 이름은 `--font-body`이며 `font-sans` 유틸은 Geist 변수 `--font-sans`를 그대로 가리킵니다. 전역 sans 설정은 [layout](../../app/layout.tsx)과 [CSS](../../app/globals.css), 공개 제목·라벨·버튼의 폰트는 테마 CSS를 함께 확인합니다. 폰트 변수 선언만 보고 모든 한글의 실제 렌더링 폰트를 단정하지 않습니다. 대응은 [토큰 매핑](tokens-mapping.md)입니다.
+- 픽셀 폰트는 [fonts.ts](../../app/fonts.ts)의 로컬 MonaS12 Bold이고, 역할 이름은 `--font-display`입니다. 본문은 Pretendard Variable입니다. `pretendard` 패키지의 동적 서브셋 CSS를 [globals.css](../../app/globals.css)에서 불러오고, `:root`의 `--font-body`가 `"Pretendard Variable"`과 시스템 폴백 스택을 가집니다. `font-sans` 유틸은 `@theme inline`에서 `var(--font-body)`를 가리킵니다. Geist는 쓰지 않습니다. 전역 설정은 [layout](../../app/layout.tsx)과 [CSS](../../app/globals.css), 공개 제목·라벨·버튼의 폰트는 테마 CSS를 함께 확인합니다. 픽셀 표시 글꼴에 없는 글자는 Arial 이하로 넘어가므로, 변수 선언만 보고 모든 한글이 Pretendard라고 단정하지 않습니다. 대응은 [토큰 매핑](tokens-mapping.md)입니다.
 - 공개 헤더와 본문은 기존 `max-w-6xl` 컨테이너와 `px-5 sm:px-8`을 사용합니다. 실제 선물은 `space-y-5`의 세로 목록이며 큰 화면에서 카드 내부가 이미지·내용·진행률 영역으로 나뉩니다. 로딩 skeleton의 다열 그리드를 완성 화면의 목록 규칙으로 복사하지 않습니다. 근거: [공개 뷰](../../components/public-wishlist-view.tsx), [공개 로딩](../../app/wishlist/[slug]/loading.tsx).
 - 관리자 필드는 `space-y-2`, 추가 폼은 `grid gap-4`와 `md:grid-cols-2`를 사용합니다. 동일 문맥을 확장할 때 기존 간격을 우선합니다. 이 사례를 전 서비스의 유일한 spacing scale로 일반화하지 않습니다. 근거: [관리자 UI](../../app/admin/admin-ui.tsx), [선물 추가](../../app/admin/wishes/page.tsx).
 - 숫자·통화·진행률은 기존 formatter와 계산 결과를 재사용합니다. 문구와 상태 라벨의 근거는 [copy.ts](../../src/lib/design/copy.ts)와 [status.ts](../../src/lib/wish-item/status.ts)입니다. 모든 화면 문구가 이미 이 파일에 모여 있는 것은 아닙니다.
