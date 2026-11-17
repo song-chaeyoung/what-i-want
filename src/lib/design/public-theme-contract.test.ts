@@ -53,7 +53,7 @@ describe("public theme contract", () => {
     expect(source).toContain("background: var(--field-bg);");
     expect(source).not.toContain(".pub-" + "field");
     expect(source).toContain('.theme-page[data-theme="mono_bw"] .theme-header .theme-pill');
-    expect(source).toContain(".theme-progress > i");
+    expect(source).toContain('.theme-progress > [data-slot="progress-indicator"]');
     expect(source).not.toContain("pub-progress-done");
     expect(source).not.toContain("@import url(");
     expect(source).toContain("var(--font-display");

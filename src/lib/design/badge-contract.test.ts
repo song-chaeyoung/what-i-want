@@ -10,6 +10,16 @@ function read(path: string) {
   return readFileSync(join(root, path), "utf8");
 }
 
+export function toPortableRelative(rootDir: string, file: string) {
+  const normalizedRoot = rootDir.replaceAll("\\", "/").replace(/\/$/, "");
+  const normalizedFile = file.replaceAll("\\", "/");
+  const prefix = `${normalizedRoot}/`;
+
+  return normalizedFile.startsWith(prefix)
+    ? normalizedFile.slice(prefix.length)
+    : normalizedFile;
+}
+
 function sourceFiles(dir: string): string[] {
   const files: string[] = [];
 
@@ -147,7 +157,7 @@ describe("badge and notice contract", () => {
     expect(read("app/onboarding/birthday-picker.tsx")).toContain("text-warn-ink");
     expect(read("app/page.tsx")).toContain("var(--tint-mint)");
     expect(read("app/page.tsx")).toContain("var(--headline)");
-    expect(read("app/page.tsx")).toContain("bg-track");
+    expect(read("components/ui/progress.tsx")).toContain("bg-track");
     expect(read("app/admin/birthday-confetti.tsx")).toContain("var(--confetti-violet)");
     expect(read("app/admin/birthday-confetti.tsx")).toContain("backgroundColor: piece.color");
     expect(read("components/text-logo.tsx")).toContain("text-purple");
@@ -164,7 +174,7 @@ describe("badge and notice contract", () => {
     expect(files.length).toBeGreaterThan(0);
 
     for (const file of files) {
-      const relative = file.slice(root.length + 1);
+      const relative = toPortableRelative(root, file);
       const source = readFileSync(file, "utf8");
       const found = [
         ...source.matchAll(bracket),
@@ -180,5 +190,21 @@ describe("badge and notice contract", () => {
       const extras = found.filter((hex) => !allowance?.includes(hex));
       expect(extras, relative).toEqual([]);
     }
+  });
+
+  test("matches the hex allowlist for a windows-style path", () => {
+    const relative = toPortableRelative(
+      String.raw`C:\repo\what-i-want`,
+      String.raw`C:\repo\what-i-want\app\wishlist\[slug]\opengraph-image.tsx`,
+    );
+
+    expect(relative).toBe("app/wishlist/[slug]/opengraph-image.tsx");
+    expect(allowedHex.get(relative)).toBe("any");
+    expect(
+      toPortableRelative(
+        "/repo/what-i-want",
+        "/repo/what-i-want/app/opengraph-image.tsx",
+      ),
+    ).toBe("app/opengraph-image.tsx");
   });
 });

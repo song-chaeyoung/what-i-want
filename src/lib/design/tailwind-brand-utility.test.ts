@@ -305,7 +305,9 @@ describe("compiled Tailwind brand utilities", () => {
       expect(minified).toMatch(/\.theme-progress\{[^}]*border:var\(--progress-border\)/);
       expect(minified).toMatch(/\.theme-progress\{[^}]*height:var\(--progress-h\)/);
       expect(minified).toMatch(/\.theme-progress\{[^}]*background:var\(--progress-track\)/);
-      expect(minified).toMatch(/\.theme-progress>i\{[^}]*background:var\(--progress-fill\)/);
+      expect(minified).toMatch(
+        /\.theme-progress>\[data-slot="?progress-indicator"?\]\{[^}]*background:var\(--progress-fill\)/,
+      );
       expect(minified).toMatch(/\.theme-pill\{[^}]*gap:var\(--pill-gap\)/);
       expect(minified).toMatch(/\.theme-pill\{[^}]*padding:var\(--pill-pad\)/);
       expect(minified).toMatch(/\.theme-btn\{[^}]*gap:var\(--btn-gap\)/);
@@ -807,7 +809,7 @@ function themeMarkup(themeId?: string) {
       <i class="bg-success" data-probe="success"></i>
       <i class="bg-(--gift-soft-bg) text-(--gift-soft-ink)" data-probe="gift-soft"></i>
       <div class="border-[1.5px] border-(--ink)" data-probe="theme-ink-border"></div>
-      <div class="theme-progress" data-probe="progress"><i data-probe="progress-fill"></i></div>
+      <div class="theme-progress" data-probe="progress"><div data-slot="progress-indicator" data-probe="progress-fill"></div></div>
       <div class="theme-field" data-probe="field"></div>
       <div class="theme-bank" data-probe="bank">
         <p class="text-(--bank-ink)" data-probe="bank-ink">계좌</p>

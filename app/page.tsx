@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import type { ReactNode } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { Progress } from "@/components/ui/progress";
 import { auth } from "@/auth";
 import { HOME_COPY, HOME_FAQ } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
@@ -42,7 +44,7 @@ const previewWishes = [
     title: "무선 헤드폰",
     amount: "45,000원",
     color: "var(--tint-mint)",
-    progress: "72%",
+    progress: 72,
     imageTone: "mint",
   },
   {
@@ -50,16 +52,16 @@ const previewWishes = [
     title: "생일 케이크",
     amount: "28,000원",
     color: "var(--tint-blush)",
-    progress: "38%",
+    progress: 38,
     imageTone: "rose",
   },
 ] as const;
 
-const homeSteps = [
-  { number: "01", title: "만들기", label: "선물 담기" },
-  { number: "02", title: "공유하기", label: "링크 보내기" },
+const homeSteps: Array<{ number: string; title: ReactNode; label: string }> = [
+  { number: "01", title: <>만들<wbr />기</>, label: "선물 담기" },
+  { number: "02", title: <>공유<wbr />하기</>, label: "링크 보내기" },
   { number: "03", title: "마음 받기", label: "메시지 도착" },
-] as const;
+];
 
 async function getHomeAccountCta(): Promise<{ label: string; href: string }> {
   const session = await auth();
@@ -107,7 +109,7 @@ export default async function Home() {
             {HOME_COPY.eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="font-pixel max-w-2xl break-keep text-4xl leading-tight tracking-normal text-purple sm:text-6xl">
+            <h1 className="font-pixel max-w-2xl break-keep wrap-anywhere text-4xl leading-tight tracking-normal text-purple sm:text-6xl">
               {HOME_COPY.headline}
             </h1>
             <p className="max-w-lg text-base font-semibold leading-7 text-ink-soft sm:text-lg sm:leading-8">
@@ -238,7 +240,7 @@ function PreviewWish({
   title: string;
   amount: string;
   color: string;
-  progress: string;
+  progress: number;
   imageTone: "mint" | "rose";
 }) {
   return (
@@ -259,7 +261,13 @@ function PreviewWish({
             </h3>
             <p className="font-pixel shrink-0 text-sm">{amount}</p>
           </div>
-          <GiftProgress progress={progress} color="var(--accent-main)" />
+          <Progress
+            variant="pixel"
+            value={progress}
+            aria-label={`${title} 모금 진행률`}
+            indicatorStyle={{ backgroundColor: "var(--accent-main)" }}
+            className="mt-3"
+          />
           <span
             className="mt-3 inline-flex max-w-full rounded-md border-2 border-ink px-2 py-1 text-caption font-black"
             style={{ backgroundColor: color }}
@@ -301,14 +309,6 @@ function SampleGiftImage({
         <span className="absolute -top-5 left-2 h-5 w-5 border-2 border-ink bg-white" />
         <span className="absolute -top-5 right-2 h-5 w-5 border-2 border-ink bg-white" />
       </div>
-    </div>
-  );
-}
-
-function GiftProgress({ progress, color }: { progress: string; color: string }) {
-  return (
-    <div className="mt-3 h-3 overflow-hidden border-2 border-ink bg-track">
-      <div className="h-full" style={{ width: progress, backgroundColor: color }} />
     </div>
   );
 }

@@ -151,7 +151,7 @@ test.describe("Funding With Account", () => {
     await expect(card.getByText("₩40,000", { exact: true })).toBeVisible();
     await expect(card.getByText("₩100,000 중", { exact: true })).toBeVisible();
     await expect(card.getByText("40% 달성", { exact: true })).toBeVisible();
-    await expect(card.locator(".theme-progress i")).toHaveAttribute(
+    await expect(card.locator('.theme-progress [data-slot="progress-indicator"]')).toHaveAttribute(
       "style",
       /width:\s*40%/,
     );

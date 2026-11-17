@@ -14,7 +14,8 @@ describe("home UI contract", () => {
 
     expect(source).toContain("PreviewWish");
     expect(source).toContain("SampleGiftImage");
-    expect(source).toContain("GiftProgress");
+    expect(source).toContain('variant="pixel"');
+    expect(source).not.toContain("GiftProgress");
     expect(source).toContain('text="SAMPLE"');
     expect(source).toContain('href="/sample"');
     expect(source).not.toContain("HOME_COPY.previewSlug");
@@ -26,8 +27,8 @@ describe("home UI contract", () => {
     const source = readFileSync(homePagePath, "utf8");
 
     expect(source).toContain("homeSteps.map");
-    expect(source).toContain("만들기");
-    expect(source).toContain("공유하기");
+    expect(source).toContain("만들<wbr />기");
+    expect(source).toContain("공유<wbr />하기");
     expect(source).toContain("마음 받기");
   });
 

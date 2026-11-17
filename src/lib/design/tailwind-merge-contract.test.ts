@@ -75,6 +75,17 @@ describe("tailwind-merge custom scales", () => {
     );
   });
 
+  test("keeps progress track and fill colors", () => {
+    const track = cn("h-1.5 overflow-hidden rounded-full bg-track", "mt-2");
+    expect(track).toContain("bg-track");
+    expect(track).toContain("overflow-hidden");
+    expect(track).toContain("rounded-full");
+
+    const fill = cn("h-full rounded-full bg-teal");
+    expect(fill).toContain("bg-teal");
+    expect(fill).toContain("rounded-full");
+  });
+
   test("keeps the home step classes", () => {
     const list = cn("m-0 grid list-none grid-cols-3 gap-3 p-0 sm:gap-4");
     for (const token of ["m-0", "grid", "list-none", "grid-cols-3", "gap-3", "p-0", "sm:gap-4"]) {

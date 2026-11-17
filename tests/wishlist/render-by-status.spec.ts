@@ -115,13 +115,13 @@ test.describe("Rendering", () => {
       earphonesCard.getByText("마음 모으는 중", { exact: true }),
     ).toBeVisible();
 
-    // expect: `₩30,000`, `₩100,000 중`, `30% 달성` 이 보이고 진행 막대(`.theme-progress i`)의 inline style width 가 `30%` 이다.
+    // expect: `₩30,000`, `₩100,000 중`, `30% 달성` 이 보이고 진행 막대(`.theme-progress [data-slot="progress-indicator"]`)의 inline style width 가 `30%` 이다.
     await expect(earphonesCard.getByText("₩30,000", { exact: true })).toBeVisible();
     await expect(
       earphonesCard.getByText("₩100,000 중", { exact: true }),
     ).toBeVisible();
     await expect(earphonesCard.getByText("30% 달성", { exact: true })).toBeVisible();
-    await expect(earphonesCard.locator(".theme-progress i")).toHaveAttribute(
+    await expect(earphonesCard.locator('.theme-progress [data-slot="progress-indicator"]')).toHaveAttribute(
       "style",
       /width:\s*30%/,
     );
@@ -147,7 +147,7 @@ test.describe("Rendering", () => {
     await expect(cameraCard.getByText("₩50,000", { exact: true })).toBeVisible();
     await expect(cameraCard.getByText("₩50,000 중", { exact: true })).toBeVisible();
     await expect(cameraCard.getByText("100% 달성", { exact: true })).toBeVisible();
-    await expect(cameraCard.locator(".theme-progress i")).toHaveAttribute(
+    await expect(cameraCard.locator('.theme-progress [data-slot="progress-indicator"]')).toHaveAttribute(
       "style",
       /width:\s*100%/,
     );
@@ -167,7 +167,7 @@ test.describe("Rendering", () => {
     await expect(chairCard.getByText("₩0", { exact: true })).toBeVisible();
     await expect(chairCard.getByText("₩80,000 중", { exact: true })).toBeVisible();
     await expect(chairCard.getByText("0% 달성", { exact: true })).toBeVisible();
-    await expect(chairCard.locator(".theme-progress i")).toHaveAttribute(
+    await expect(chairCard.locator('.theme-progress [data-slot="progress-indicator"]')).toHaveAttribute(
       "style",
       /width:\s*0%/,
     );
