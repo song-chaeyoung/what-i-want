@@ -39,7 +39,6 @@ const fixedFontSizes = [
   ["text-caption", "font-size:11px"],
   ["text-tab", "font-size:13px"],
   ["text-nav", "font-size:13.5px"],
-  ["text-hero-mobile", "font-size:min(2.25rem,18vw)"],
 ] as const;
 
 const defaultFontScale = [

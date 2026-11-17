@@ -109,7 +109,7 @@ export default async function Home() {
             {HOME_COPY.eyebrow}
           </p>
           <div className="space-y-4">
-            <h1 className="font-pixel max-w-2xl break-keep text-hero-mobile leading-tight tracking-normal text-purple sm:text-6xl">
+            <h1 className="font-pixel max-w-2xl break-keep wrap-anywhere text-4xl leading-tight tracking-normal text-purple sm:text-6xl">
               {HOME_COPY.headline}
             </h1>
             <p className="max-w-lg text-base font-semibold leading-7 text-ink-soft sm:text-lg sm:leading-8">

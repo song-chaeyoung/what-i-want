@@ -7,13 +7,7 @@ import { cn } from "@/lib/utils";
 const countClassName =
   "inline-flex h-4.5 min-w-4.5 shrink-0 items-center justify-center rounded-full bg-point px-1 text-micro font-bold leading-none text-white";
 
-const fontSizes = [
-  "text-micro",
-  "text-caption",
-  "text-tab",
-  "text-nav",
-  "text-hero-mobile",
-] as const;
+const fontSizes = ["text-micro", "text-caption", "text-tab", "text-nav"] as const;
 const shadows = [
   "shadow-pixel-xs",
   "shadow-pixel-sm",
@@ -30,10 +24,6 @@ describe("tailwind-merge custom scales", () => {
       expect(merged, size).toContain(size);
       expect(merged, size).toContain("text-ink");
     }
-
-    const hero = cn("text-hero-mobile", "text-white");
-    expect(hero).toContain("text-hero-mobile");
-    expect(hero).toContain("text-white");
   });
 
   test("keeps the unread count classes and a pixel shadow beside a shadow color", () => {
