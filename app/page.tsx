@@ -172,8 +172,8 @@ export default async function Home() {
         <Card variant="pixel" surface="paper" shadow="xs" className="p-4 sm:p-5">
           <div className="flex flex-wrap items-start justify-between gap-4 border-b-2 border-ink pb-4">
             <div className="min-w-0">
-              <h2 className="font-pixel mt-1 text-2xl tracking-normal text-purple sm:text-3xl">
-                민지님의 공개 위시리스트
+              <h2 className="font-pixel mt-1 text-2xl tracking-normal text-purple sm:text-3xl text-zoom:break-keep text-zoom:break-words">
+                민지님의 공개 위시<wbr />리스트
               </h2>
             </div>
             <SignalSticker text="SAMPLE" color="var(--point)" />

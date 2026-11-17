@@ -8,6 +8,8 @@
 @import "shadcn/tailwind.css";
 
 @custom-variant dark (&:is(.dark *));
+/* em 쿼리는 브라우저 기본 글자 크기를 따른다. 320px·100%는 20em이라 걸리지 않고, 150%(13.3em)·200%(10em)에는 걸린다. */
+@custom-variant text-zoom (@media (max-width: 17.5em));
 
 :root {
   --background: oklch(1 0 0);

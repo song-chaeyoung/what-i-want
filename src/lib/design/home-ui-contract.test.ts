@@ -128,6 +128,22 @@ describe("home UI contract", () => {
     }
   });
 
+  test("wraps the example card title on text zoom without cn()", () => {
+    const source = readFileSync(homePagePath, "utf8");
+    const globalsCss = readFileSync(globalsPath, "utf8");
+    const headingStart = source.indexOf("민지님의 공개 위시");
+    const heading = source.slice(headingStart - 180, headingStart + 80);
+
+    expect(globalsCss).toContain(
+      "@custom-variant text-zoom (@media (max-width: 17.5em));",
+    );
+    expect(heading).toContain(
+      "text-zoom:break-keep text-zoom:break-words",
+    );
+    expect(heading).toContain("민지님의 공개 위시<wbr />리스트");
+    expect(heading).not.toContain("cn(");
+  });
+
   test("keeps the sticker label on the 2px pixel shadow", () => {
     const globalsCss = readFileSync(globalsPath, "utf8");
     const sticker = globalsCss.slice(globalsCss.indexOf(".sticker-label"));
