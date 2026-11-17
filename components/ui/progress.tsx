@@ -78,7 +78,7 @@ function Progress({
         data-slot="progress-indicator"
         className={cn(progressIndicatorVariants({ variant }), indicatorClassName)}
         style={{
-          ...(percent === null ? null : { width: `${percent}%` }),
+          width: percent === null ? "0%" : `${percent}%`,
           ...indicatorStyle,
         }}
       />
