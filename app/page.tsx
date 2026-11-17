@@ -264,6 +264,7 @@ function PreviewWish({
           <Progress
             variant="pixel"
             value={progress}
+            aria-label={`${title} 모금 진행률`}
             indicatorStyle={{ backgroundColor: "var(--accent-main)" }}
             className="mt-3"
           />

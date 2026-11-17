@@ -27,4 +27,23 @@ describe("progress variants", () => {
     expect(html).toContain('aria-valuenow="0"');
     expect(html).toContain("width:0%");
   });
+
+  test("fills by the value to max ratio", () => {
+    const html = renderToStaticMarkup(
+      createElement(Progress, { value: 25, max: 50 }),
+    );
+
+    expect(html).toContain('aria-valuenow="25"');
+    expect(html).toContain('aria-valuemax="50"');
+    expect(html).toContain('data-state="loading"');
+    expect(html).toContain("width:50%");
+  });
+
+  test("keeps a null value indeterminate", () => {
+    const html = renderToStaticMarkup(createElement(Progress, { value: null }));
+
+    expect(html).toContain('data-state="indeterminate"');
+    expect(html).not.toContain("aria-valuenow");
+    expect(html).not.toContain("width:");
+  });
 });

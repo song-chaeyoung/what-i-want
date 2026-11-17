@@ -311,7 +311,12 @@ function PublicWishCard({
               </div>
               {item.targetAmount ? (
                 <>
-                  <Progress variant="theme" value={item.progress} className="mt-2" />
+                  <Progress
+                    variant="theme"
+                    value={item.progress}
+                    aria-labelledby={wishTitleId(item.id)}
+                    className="mt-2"
+                  />
                   <p className="text-xs font-black text-(--ink-muted)">
                     {item.progress}% {PUBLIC_WISHLIST_COPY.progressSuffix}
                   </p>

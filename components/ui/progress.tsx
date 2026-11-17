@@ -32,17 +32,26 @@ const progressIndicatorVariants = cva("", {
   },
 })
 
-function clampProgress(value: number | null | undefined) {
-  if (typeof value !== "number" || Number.isNaN(value)) {
-    return 0
+function resolveMax(max: number | null | undefined) {
+  if (typeof max === "number" && !Number.isNaN(max) && max > 0) {
+    return max
   }
 
-  return Math.min(100, Math.max(0, value))
+  return 100
+}
+
+function resolveValue(value: number | null | undefined, max: number) {
+  if (typeof value !== "number" || Number.isNaN(value)) {
+    return null
+  }
+
+  return Math.min(max, Math.max(0, value))
 }
 
 function Progress({
   className,
   value,
+  max,
   variant = "admin",
   indicatorClassName,
   indicatorStyle,
@@ -52,19 +61,26 @@ function Progress({
     indicatorClassName?: string
     indicatorStyle?: React.CSSProperties
   }) {
-  const clamped = clampProgress(value)
+  const resolvedMax = resolveMax(max)
+  const resolvedValue = resolveValue(value, resolvedMax)
+  const percent =
+    resolvedValue === null ? null : (resolvedValue / resolvedMax) * 100
 
   return (
     <ProgressPrimitive.Root
       data-slot="progress"
       className={cn(progressVariants({ variant }), className)}
-      value={clamped}
+      value={resolvedValue}
+      max={resolvedMax}
       {...props}
     >
       <ProgressPrimitive.Indicator
         data-slot="progress-indicator"
         className={cn(progressIndicatorVariants({ variant }), indicatorClassName)}
-        style={{ width: `${clamped}%`, ...indicatorStyle }}
+        style={{
+          ...(percent === null ? null : { width: `${percent}%` }),
+          ...indicatorStyle,
+        }}
       />
     </ProgressPrimitive.Root>
   )

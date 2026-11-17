@@ -270,7 +270,11 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
               {formatCurrency(item.fundedAmount)} /{" "}
               {item.targetAmount ? formatCurrency(item.targetAmount) : "목표 금액 없음"}
             </p>
-            <Progress value={progress} className="mt-2" />
+            <Progress
+              value={progress}
+              aria-label={`${item.title} 모금 진행률`}
+              className="mt-2"
+            />
           </div>
           <span className="shrink-0 py-1 text-xs font-semibold text-teal">
             <span className="group-open:hidden">수정</span>
