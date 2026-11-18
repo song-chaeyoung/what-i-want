@@ -2,7 +2,7 @@
 
 코드 대조일: 2026-11-04 (`main` @ `d26141e`, PR #20 반영). 관리자 배지 색 토큰 대조일: 2026-11-14. 진행 바 컴포넌트 대조일: 2026-11-17(#35).
 
-[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [피드백](feedback.md)
+[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [피드백](feedback.md) · [온보딩](onboarding.md) · [메시지함](messages.md) · [공유 흐름](share-flow.md)
 
 이 문서는 선물 하나를 보여 주는 카드의 기존 표현을 재사용하기 위한 안내입니다. 친구는 카드에서 무슨 선물인지, 얼마나 모였는지, 지금 마음을 보탤 수 있는지를 확인하고, 소유자는 같은 정보를 관리용으로 압축해 봅니다. 현재 구현, 유지할 규칙, 미결정 개선을 구분하며, 시각 변경 제안은 승인 전까지 규칙이 아닙니다. 이번 작성은 정적 코드 대조와 PR #18 캡처 확인이며 접근성·모든 테스트를 새로 검증한 기록은 아닙니다.
 
@@ -102,7 +102,7 @@ details > summary
 
 - 판정 계약: [status 테스트](../../../src/lib/wish-item/status.test.ts)가 라벨·표시 상태·완료 판정을 검사합니다.
 - 공개 테마: [공개 테마 계약](../../../src/lib/design/public-theme-contract.test.ts), [샘플 테마 E2E](../../../tests/sample/valid-themes.spec.ts). 스크린샷 기준 비교는 아닙니다.
-- 화면 참조: PR #18의 `docs/design/screenshots/` 캡처. 공개 `wishlist-{테마}-{375,1280}-mixed.png`, 관리자 `admin-wishes-default-{375,1280}-mixed.png`, 대시보드 `admin-default-{375,1280}-default.png`. 관리자 캡처는 PR #20 반영 전 화면이라 100% `open`이 "마음 모으는 중"으로 보이며 재촬영이 필요합니다.
+- 화면 참조: [디자인 가이드의 화면 참조](../README.md#화면-참조)에 2026-11-18 참고 캡처가 있습니다(공개 `public-{테마}-{390,1440}.png`, 관리자 `admin-wishes-1440.png`). 카드 다섯 상태를 따로 담은 캡처는 아직 없습니다.
 - 카드 변경 시 다섯 상태(`open` 미만·이상, `fulfilled`, `paused`, `hidden`)를 세 테마와 375·1280에서 확인하고, 관리자 배지·필터·수정 폼 기준 차이를 함께 확인합니다.
 
 이 문서 작성 시 위 테스트는 실행하지 않았습니다. 명령은 `pnpm test`, `pnpm test:e2e`를 사용합니다.
