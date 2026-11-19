@@ -3,6 +3,7 @@
 코드 대조일: 2026-10-30
 토큰 이전 추가 대조일: 2026-11-10. 색 토큰 소유, 카드 제목, 타이포·모서리·테두리·그림자·반복 간격의 의미 이름만 다시 봤고, 나머지 컴포넌트 지도는 2026-10-30 정적 대조입니다.
 본문 글꼴 추가 대조일: 2026-11-16. `--font-body`와 `font-sans` 연결만 다시 봤습니다.
+컴포넌트 지도·줄바꿈·남은 직접 지정 추가 대조일: 2026-11-17.
 
 [디자인 가이드](README.md)에서 영역을 고른 뒤 이 문서를 읽습니다. 실제 값·variant·props는 링크된 코드가 원본이며, 여기에는 역할과 선택 기준을 기록합니다. 문서의 예시 역할이 새로운 토큰의 생성을 뜻하지 않습니다.
 
@@ -49,6 +50,8 @@
 | 관리자 필드·지표·버튼 | [admin-ui.tsx](../../app/admin/admin-ui.tsx)의 `AdminField`, `AdminMetricGroup`, `AdminMetric`, [Input](../../components/ui/input.tsx)·[Textarea](../../components/ui/textarea.tsx) `admin` | 관리자 기존 화면을 확장할 때 먼저 사용. 네이티브 select를 shadcn Select로 일괄 변환하지 않음 |
 | 온보딩 입력 | [page.tsx](../../app/onboarding/page.tsx)의 내부 `Field`, Input·Textarea `onboarding`, [BirthdayPicker](../../app/onboarding/birthday-picker.tsx) | 고정 브랜드 화면의 현행 흐름. 내부 함수는 공용 export가 아님 |
 | 공개 필드·선물 카드 | [public-wishlist-view.tsx](../../components/public-wishlist-view.tsx)의 내부 `PublicField`·Input·Textarea `theme`, [제출 버튼](../../components/public-participation-submit-button.tsx) | 기존 공개 뷰 안에서 확장. 내부 함수를 다른 파일에서 import할 수 있다고 가정하지 않음 |
+| 영역별 변형 | [Button](../../components/ui/button.tsx)은 `cta`, `theme`·`theme-primary`·`theme-accent`, `admin`·`admin-outline`·`danger`·`subtle`, `kakao`. [Card](../../components/ui/card.tsx)는 `pixel`·`theme`·`admin`이고 `surface`와 `shadow` 옵션. [Badge](../../components/ui/badge.tsx)는 `theme`·`theme-alt`, 관리자 `status`·`status-dot`(tone은 `open`·`paused`·`fulfilled`·`hidden`), `count`. [Alert](../../components/ui/alert.tsx)는 `notice`. | 같은 역할이면 새 클래스 대신 이 변형을 먼저 쓴다. shadcn 기본 변형은 관리자·공개 화면에서 쓰지 않는다. 관리자 안내의 "관리 화면 먼저 둘러보기"만 Button `link`다. |
+| 진행률 | [Progress](../../components/ui/progress.tsx)는 `theme`(공개 카드), `pixel`(홈 예시), `admin`(관리자 목록). | `aria-label`이나 `aria-labelledby`로 선물 이름을 붙인다. `value`가 `null`이면 빈 트랙과 미정 상태로 보인다. 진행 바를 새로 만들지 않는다. |
 | 범용 UI 프리미티브 | [Button](../../components/ui/button.tsx), [Input](../../components/ui/input.tsx), [Field](../../components/ui/field.tsx), [Card](../../components/ui/card.tsx) 등 | 해당 화면이 이 계열을 사용하거나 기존 영역 컴포넌트가 없는 경우 API·스타일을 확인한 뒤 선택 |
 | 날짜·선택 UI | [Calendar](../../components/ui/calendar.tsx), [Popover](../../components/ui/popover.tsx), [Select](../../components/ui/select.tsx) | 이미 사용하는 생일 선택 사례를 확인. 새 폼 라이브러리를 요구하지 않음 |
 | 결과 안내 | [Sonner](../../components/ui/sonner.tsx), [관리자 이벤트](../../app/admin/admin-toast-events.tsx), [공개 이벤트](../../components/public-wishlist-toast-events.tsx) | 성공·오류·후속 행동은 [피드백 패턴](patterns/feedback.md)에서 확인 |
@@ -61,10 +64,11 @@
 - 공개 헤더와 본문은 기존 `max-w-6xl` 컨테이너와 `px-5 sm:px-8`을 사용합니다. 실제 선물은 `space-y-5`의 세로 목록이며 큰 화면에서 카드 내부가 이미지·내용·진행률 영역으로 나뉩니다. 로딩 skeleton의 다열 그리드를 완성 화면의 목록 규칙으로 복사하지 않습니다. 근거: [공개 뷰](../../components/public-wishlist-view.tsx), [공개 로딩](../../app/wishlist/[slug]/loading.tsx).
 - 관리자 필드는 `space-y-2`, 추가 폼은 `grid gap-4`와 `md:grid-cols-2`를 사용합니다. 동일 문맥을 확장할 때 기존 간격을 우선합니다. 이 사례를 전 서비스의 유일한 spacing scale로 일반화하지 않습니다. 근거: [관리자 UI](../../app/admin/admin-ui.tsx), [선물 추가](../../app/admin/wishes/page.tsx).
 - 숫자·통화·진행률은 기존 formatter와 계산 결과를 재사용합니다. 문구와 상태 라벨의 근거는 [copy.ts](../../src/lib/design/copy.ts)와 [status.ts](../../src/lib/wish-item/status.ts)입니다. 모든 화면 문구가 이미 이 파일에 모여 있는 것은 아닙니다.
+- 한글 제목과 짧은 라벨은 `break-keep`으로 단어 중간 줄바꿈을 막습니다. 좁은 칸에서 긴 단어가 넘치면 끊을 자리에 `<wbr />`을 넣습니다(예: 홈 단계 `만들<wbr />기`, `공유<wbr />하기`). 큰 제목은 글자 크기를 vw로 줄이지 않고 `wrap-anywhere`로 넘침만 막습니다. 홈 h1은 320px에서 글자 200%일 때 72px까지 커지고, 이때만 단어 중간에서 끊길 수 있습니다(2026-11-17 채영 결정). 기본 글자 크기의 모양을 바꾸는 줄바꿈 수정은 화면을 먼저 보여 주고 결정합니다. 글자를 키웠을 때만 보이는 작은 어긋남에는 따로 공을 들이지 않습니다. 근거: [홈](../../app/page.tsx).
 
 ## 차이와 확인할 사항
 
-- 현 CSS에는 의미 토큰과 화면 내부의 직접 지정 색상·크기가 함께 존재합니다. 새 작업에서는 같은 역할의 기존 표현을 찾되, 문서 작성만으로 모든 스타일이 토큰화됐다고 설명하지 않습니다.
+- 색은 거의 의미 토큰으로 옮겼습니다. 남은 직접 지정 가운데 큰 것은 다섯 가지이며, 아래 값은 토큰으로 옮기지 않고 그 자리에 남겨 둡니다. OG 이미지의 hex, 화면과 공용 컴포넌트의 Tailwind 기본 색(`zinc-*`, `white`, `black` 등 155곳. 관리자 87, 온보딩 23, 공용 컴포넌트 31, 홈·로그인·공개·오류·푸터 14. 공개·공통 화면의 `white`·`black`도 이 155곳에 포함), 그 자리에서만 쓰는 배치 크기(`calc(100dvh-6rem)`, `grid-cols-[88px_1fr]`, `max-w-[760px]` 등), shadcn이 준 값 그대로 둔 [Button](../../components/ui/button.tsx)의 `rounded-[min(var(--radius-md),10px)]`·`rounded-[min(var(--radius-md),12px)]`, `text-[0.8rem]`, [Badge](../../components/ui/badge.tsx)의 `ring-[3px]` 등, [선물 대체 그림](../../components/public-wishlist-view.tsx) `gm-line`의 `border-[1.5px]`, `border-b-[1.5px]`, `border-r-[1.5px]`, `border-l-[1.5px]`와 `tracking-[1.6px]`입니다. 관리자에 테마를 입히지 않는 동안 Tailwind 기본 색은 그대로 둡니다. 이 밖에 [홈 점 패턴](../../app/globals.css)의 `#fecdd3`, 같은 파일의 토스트 폴백 `#fff`, [mono_bw 규칙](../../app/public-themes.css)의 `#fff`·`rgba`가 있습니다. 공개 테마의 `--stat-accent`와 `--msg-sub`는 선언만 있고, 스타일에서 `var()`로 읽는 곳이 없습니다. 테스트는 선언된 값만 확인합니다.
 - 공개 필드에는 `outline-none`이 있고 `.theme-field` 자체에 별도 포커스 스타일이 없습니다. 공통 Button의 focus ring 존재를 모든 영역의 보장으로 확대하지 않습니다. 실제 키보드 포커스·대비·disabled 구분은 화면에서 확인해야 합니다.
 - `soft_pastel`의 밝은 텍스트·배경 조합을 포함한 테마별 대비와 모션 설정은 이번 정적 대조로 검증하지 않았습니다. 전체 접근성 통과 또는 다크 모드 지원을 선언하지 않습니다.
 - OG의 테마 연동, 전 영역의 필드·버튼 규격 통합, 전체 spacing scale은 이번 문서화에서 새로 결정하지 않았습니다.
@@ -74,3 +78,5 @@
 [공개 테마 계약](../../src/lib/design/public-theme-contract.test.ts), [관리자 계약](../../src/lib/design/admin-theme-contract.test.ts), [폰트 계약](../../src/lib/design/font-contract.test.ts)은 구현의 일부 구조를 검사합니다. [샘플 테마 E2E](../../tests/sample/valid-themes.spec.ts)는 테마·동일 콘텐츠·폴백 표시를 확인하며, 스크린샷 기준 이미지 비교는 아닙니다.
 
 UI를 수정할 때는 대상 코드와 테스트의 기대를 대조하고 관련 검증을 실행합니다. 공개 테마 변경은 세 테마를 확인하고, 레이아웃 변경은 모바일·데스크톱을 확인합니다. 현재 [Playwright 설정](../../playwright.config.ts)은 데스크톱 Chromium 하나이므로 모바일 검증 완료를 대신하지 않습니다.
+
+줄바꿈이나 글자 크기를 바꾸면 320px 화면에서 브라우저 글자 크기 100%·150%·200%를 확인합니다. 가로 스크롤이 없어야 하고 제목 글자 크기가 줄지 않아야 합니다.

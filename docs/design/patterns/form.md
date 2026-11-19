@@ -2,7 +2,7 @@
 
 코드 대조일: 2026-10-30
 
-[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [피드백](feedback.md)
+[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [피드백](feedback.md) · [위시 카드](wish-card.md) · [온보딩](onboarding.md) · [메시지함](messages.md) · [공유 흐름](share-flow.md)
 
 이 문서는 기존 입력·제출 흐름을 재사용하기 위한 안내입니다. 현재 구현, 유지할 계약, 미결정 개선을 구분하며 새 폼 라이브러리나 일괄 리팩터링을 요구하지 않습니다. 코드 대조는 정적 확인이며 실환경 제출 검증 기록은 아닙니다.
 

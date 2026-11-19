@@ -1,6 +1,6 @@
 # 디자인 가이드
 
-코드 대조일: 2026-10-30
+코드 대조일: 2026-10-30. 컴포넌트·토큰 정리 반영 대조일: 2026-11-17(#23~#35). 온보딩·메시지함·공유 흐름 패턴과 화면 캡처 대조일: 2026-11-18.
 
 이 가이드는 기존 UI의 의도와 재사용 기준을 AI와 사람이 찾을 수 있도록 정리합니다. [문서 위계](../README.md)에 따라 서비스·기능 설계를 연결하고, 실제 토큰 값과 컴포넌트 API는 코드에서 확인합니다. 이번 작성은 정적 대조이며 화면·접근성·모든 테스트를 새로 검증한 기록은 아닙니다.
 
@@ -9,7 +9,7 @@
 1. 요청의 사용자·행동·바뀔 상태·제약을 확인합니다. 빠진 의도는 가정으로 밝히고, 권한·데이터·제출 방식까지 달라질 해석은 구현 전에 확인합니다.
 2. 아래 표에서 대상 영역을 고릅니다. 같은 서비스라도 관리자와 공개 테마의 시각 표현을 하나로 통일하지 않습니다.
 3. [토큰과 컴포넌트](foundations.md)에서 해당 영역의 재사용 대상을 찾습니다. 공개 테마 토큰은 의미 이름 또는 컴포넌트 이름을 쓰고, `pub-` 접두사는 없습니다. 현재 이름은 [토큰 매핑](tokens-mapping.md)에 있습니다.
-4. 입력 작업은 [폼 패턴](patterns/form.md), 로딩·결과·빈 상태·확인은 [피드백 패턴](patterns/feedback.md), 선물 카드는 [위시 카드 패턴](patterns/wish-card.md)을 읽습니다. 관련 없는 과거 계획 전체를 문맥에 넣을 필요는 없습니다.
+4. 입력 작업은 [폼 패턴](patterns/form.md), 로딩·결과·빈 상태·확인은 [피드백 패턴](patterns/feedback.md), 선물 카드는 [위시 카드 패턴](patterns/wish-card.md), 처음 위시리스트를 만드는 화면은 [온보딩 패턴](patterns/onboarding.md), 받은 메시지 관리는 [메시지함 패턴](patterns/messages.md), 링크 공유와 미리보기는 [공유 흐름 패턴](patterns/share-flow.md)을 읽습니다. 관련 없는 과거 계획 전체를 문맥에 넣을 필요는 없습니다.
 5. 아래 화면 참조와 코드를 대조하고, 유지할 계약·미결정 사항·확인 방법을 작업 범위에 맞게 정합니다.
 
 ## 디자인 영역
@@ -33,15 +33,19 @@
 
 ## 화면 참조
 
-외부 제품의 스타일을 새로 가져오기 전에 같은 영역의 실제 화면과 사용 이유를 확인합니다. 아래는 코드 참조 목록이며, 이번 작업에서 캡처·시각 승인한 스크린샷 목록은 아닙니다.
+외부 제품의 스타일을 새로 가져오기 전에 같은 영역의 실제 화면과 사용 이유를 확인합니다. 캡처 칸의 이미지는 2026-11-18에 개발 서버(데스크톱 Chromium, 기본 글자 크기)에서 찍은 참고 이미지이며, 픽셀 비교 기준(baseline)이나 시각 승인 기록이 아닙니다. 생일 D-day 배지 같은 날짜 값은 촬영일 그대로입니다. 캡처가 없는 행은 코드 참조만 있습니다. 촬영 조건은 [스크린샷 안내](screenshots/README.md)에 있습니다.
 
-| 작업 | 기준 화면·코드 | 참고할 판단 |
-| --- | --- | --- |
-| 공개 테마 비교 | `/sample?theme=pixel_y2k`, `mono_bw`, `soft_pastel` / [샘플](../../app/sample/page.tsx) | 같은 콘텐츠를 테마별로 표현. 데모는 저장하지 않음 |
-| 선물 입력·목록 | `/admin/wishes` / [화면](../../app/admin/wishes/page.tsx) | 접힌 추가 영역, 필드 재사용, 첫 0건과 필터 0건의 행동 구분 |
-| 관리자 결과 안내 | [토스트 이벤트](../../app/admin/admin-toast-events.tsx), [온보딩](../../app/onboarding/page.tsx) | 결과 토스트와 페이지 내 오류가 현재 다르게 사용됨 |
-| 로딩·실패·빈 상태 | [피드백 패턴](patterns/feedback.md) | 전체 페이지 실패와 일부 작업 실패를 구분 |
-| 안내 모달·모션 | [관리자 첫 진입 안내 설계](../superpowers/specs/2026-07-22-admin-first-entry-guide-design.md) | 해당 기능의 단계·닫기·포커스·reduced-motion 기준 |
+| 작업 | 기준 화면·코드 | 캡처 | 참고할 판단 |
+| --- | --- | --- | --- |
+| 공개 테마 비교 | `/sample?theme=pixel_y2k`, `mono_bw`, `soft_pastel` / [샘플](../../app/sample/page.tsx) | `pixel_y2k` [390](screenshots/public-pixel_y2k-390.png)·[1440](screenshots/public-pixel_y2k-1440.png), `mono_bw` [390](screenshots/public-mono_bw-390.png)·[1440](screenshots/public-mono_bw-1440.png), `soft_pastel` [390](screenshots/public-soft_pastel-390.png)·[1440](screenshots/public-soft_pastel-1440.png) | 같은 콘텐츠를 테마별로 표현. 데모는 저장하지 않음 |
+| 홈·온보딩 | `/`, `/onboarding` / [홈](../../app/page.tsx), [온보딩](../../app/onboarding/page.tsx), [온보딩 패턴](patterns/onboarding.md) | 홈 [390](screenshots/home-390.png)·[1440](screenshots/home-1440.png), 온보딩 [390](screenshots/onboarding-390.png) | 고정 브랜드 화면. 공개 테마를 적용하지 않음 |
+| 선물 입력·목록 | `/admin/wishes` / [화면](../../app/admin/wishes/page.tsx) | [1440](screenshots/admin-wishes-1440.png) | 접힌 추가 영역, 필드 재사용, 첫 0건과 필터 0건의 행동 구분 |
+| 관리자 홈·설정 | `/admin`, `/admin/settings` / [홈](../../app/admin/page.tsx), [설정](../../app/admin/settings/page.tsx) | 홈 [1440](screenshots/admin-home-1440.png), 설정 [1440](screenshots/admin-settings-1440.png) | 차분한 레이아웃. 공개 주소·공유 카드 위치 |
+| 메시지함 | `/admin/messages` / [화면](../../app/admin/messages/page.tsx), [메시지함 패턴](patterns/messages.md) | [1440](screenshots/admin-messages-1440.png), [390](screenshots/admin-messages-390.png) | 선물 칩·금액·숨기기 버튼이 한 줄에 놓이는 방식 |
+| 링크 공유 결과 | `/admin` / [공유 버튼](../../app/admin/share-public-link-button.tsx), [공유 흐름 패턴](patterns/share-flow.md) | [복사 후 1440](screenshots/admin-share-result-1440.png) | 버튼 라벨 `복사 완료`와 토스트 |
+| 관리자 결과 안내 | [토스트 이벤트](../../app/admin/admin-toast-events.tsx), [온보딩](../../app/onboarding/page.tsx) | 위 `링크 공유 결과` 참고 | 결과 토스트와 페이지 내 오류가 현재 다르게 사용됨 |
+| 로딩·실패·빈 상태 | [피드백 패턴](patterns/feedback.md) | 없음 | 전체 페이지 실패와 일부 작업 실패를 구분 |
+| 안내 모달·모션 | [관리자 첫 진입 안내 설계](../superpowers/specs/2026-07-22-admin-first-entry-guide-design.md) | 없음 | 해당 기능의 단계·닫기·포커스·reduced-motion 기준 |
 
 새 레퍼런스를 추가할 때는 화면 위치·어떤 문제를 풀었는지·적용 영역·확인 날짜를 함께 기록합니다. 외부 사례를 제품의 합의된 규칙으로 바로 격상하지 않습니다.
 
