@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
@@ -37,14 +38,14 @@ type AdminWishesPageProps = {
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
-  wish_not_found: "수정할 선물을 찾을 수 없습니다.",
-  title_required: "선물 이름을 입력해주세요.",
-  title_too_long: "선물 이름은 120자 이하여야 합니다.",
-  target_amount_required: "목표 금액을 입력해주세요.",
-  invalid_target_amount: "목표 금액은 1 이상 2,147,483,647 이하의 정수로 입력해주세요.",
-  invalid_product_url: "상품 링크는 http 또는 https 주소여야 합니다.",
-  invalid_image_url: "이미지 링크는 http 또는 https 주소여야 합니다.",
-  invalid_status: "지원하지 않는 선물 상태입니다.",
+  wish_not_found: ADMIN_COPY.wishNotFound,
+  title_required: ADMIN_COPY.wishTitleRequired,
+  title_too_long: ADMIN_COPY.wishTitleTooLong,
+  target_amount_required: ADMIN_COPY.wishTargetAmountRequired,
+  invalid_target_amount: ADMIN_COPY.invalidWishTargetAmount,
+  invalid_product_url: ADMIN_COPY.invalidWishProductUrl,
+  invalid_image_url: ADMIN_COPY.invalidWishImageUrl,
+  invalid_status: ADMIN_COPY.invalidWishStatus,
 };
 
 const statusOptions: WishStatus[] = ["open", "paused", "fulfilled", "hidden"];

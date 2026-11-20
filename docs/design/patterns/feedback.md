@@ -75,7 +75,7 @@
 
 ## 차이와 미결정
 
-- 관리자 mutation 오류는 대부분 일반 문구이고 공개 참여는 코드별 문구입니다. 필드 오류·오류 요약과 토스트의 공통 분담은 [폼 가이드](form.md)의 미결정 사항입니다.
+- 관리자 mutation 오류 중 공개 주소(`invalid_slug`·`reserved_slug`·`duplicate_slug`)·계좌번호 형식·선물 저장 오류는 [AdminToastEvents](../../../app/admin/admin-toast-events.tsx)가 `ADMIN_COPY`의 코드별 문구로 보여 주고, 나머지 설정 오류와 `unexpected`는 일반 문구 `요청을 처리하지 못했어요.`입니다(2026-11-21 코드 대조). 공개 참여는 코드별 문구입니다. 필드 오류·오류 요약과 토스트의 공통 분담은 [폼 가이드](form.md)의 미결정 사항입니다.
 - 로딩을 몇 ms 뒤에 표시하거나 최소 몇 ms 유지하는 시간 규칙은 없습니다. 현 skeleton의 개수·모양을 완성 화면과 항상 동일한 계약으로 일반화하지 않습니다.
 - 관리자 안내에는 reduced-motion 처리가 있으나 route skeleton의 pulse 등 전체 모션의 공통 대응이 완료된 것은 아닙니다. 전체 정책은 미결정입니다.
 - 커스텀 계좌 모달의 포커스·Escape·포커스 복원은 미검증입니다. 공개 토스트는 `body:has(.theme-page[data-theme=...])`로 전역 Toaster에 토큰을 전달하도록 정의되어 있지만, 이번 정적 대조로 실제 표시·대비의 검증 완료를 주장하지 않습니다. 근거: [모달 구현](../../../components/public-wishlist-toast-events.tsx), [전역 Toaster](../../../app/layout.tsx), [토스트 CSS](../../../app/globals.css), [공개 토큰](../../../app/public-themes.css).

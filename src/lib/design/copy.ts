@@ -122,8 +122,19 @@ export const PUBLIC_WISHLIST_COPY = {
 } as const;
 
 export const ADMIN_COPY = {
+  invalidSlug: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
   reservedSlug:
     "sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.",
+  duplicateSlug: "이미 사용 중인 공개 주소입니다.",
+  wishNotFound: "수정할 선물을 찾을 수 없습니다.",
+  wishTitleRequired: "선물 이름을 입력해주세요.",
+  wishTitleTooLong: "선물 이름은 120자 이하여야 합니다.",
+  wishTargetAmountRequired: "목표 금액을 입력해주세요.",
+  invalidWishTargetAmount:
+    "목표 금액은 1 이상 2,147,483,647 이하의 정수로 입력해주세요.",
+  invalidWishProductUrl: "상품 링크는 http 또는 https 주소여야 합니다.",
+  invalidWishImageUrl: "이미지 링크는 http 또는 https 주소여야 합니다.",
+  invalidWishStatus: "지원하지 않는 선물 상태입니다.",
   invalidAccountVisibility: "지원하지 않는 계좌 공개 값입니다.",
   bankNameRequired: "은행 이름을 입력해주세요.",
   accountHolderRequired: "예금주를 입력해주세요.",

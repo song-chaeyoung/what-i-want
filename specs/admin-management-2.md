@@ -26,7 +26,7 @@
 
 1. **fixture**: `import { test, expect } from "../fixtures/admin"`. `seedAdmin({ onboarded?, displayName?, items?, messages?, bankAccount? })` 는 호출마다 새 사용자(`admin-<12자>@e2e.test`)와 세션, 위시리스트(slug `e2e-<12자>`, 제목 `${displayName}님의 위시리스트`, public)를 만들고 `{ userId, email, sessionToken, wishlistId, slug, items, messages }` 를 돌려줍니다. `bankAccount` 는 `{ bankName, accountHolder, accountNumber, visibility }` 이고 E2E 키로 암호화해 `bank_accounts` 에 넣습니다. `signIn(admin)` 은 세션 쿠키를 넣고 안내 모달을 끄는 localStorage init script 를 넣습니다. `signIn(admin, { showAdminGuide: true })` 는 init script 를 넣지 않아 모달이 켜집니다. 종료 시 fixture 가 사용자를 지워 cascade 로 정리합니다.
 2. **첫 이동 대기**: `/admin` 레이아웃은 Suspense 스켈레톤을 먼저 보낼 수 있으니 셸 대신 실제 내용(`내 공개 주소`, `#displayName`, `저장하기` 버튼 등)을 기다리고 첫 대기는 timeout 30초를 쓰세요(dev 서버 첫 컴파일이 느림). 공개 페이지도 스트리밍이라 레벨 1 제목을 기다립니다.
-3. **토스트**: `page.locator('[data-sonner-toast]').filter({ hasText: '...' })`, `data-type` 은 `success`/`warning`/`error`. 제출 후 약 1초 안에 나타나고 4~6초 뒤 사라지므로 제출 직후 확인하세요. 설정 문구: 저장 `설정을 저장했어요.`, 초기화 `위시리스트를 초기화했어요. 새 생일을 준비해 보세요.`, 일반 오류 `요청을 처리하지 못했어요.`, `reserved_slug` 는 `sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.`. 토스트가 뜬 뒤 쿼리는 지워지므로 `toHaveURL(/\/admin\/settings$/)` 로 정리된 URL 을 기다리세요. 같은 문구의 토스트가 남아 있으면 다음 단언과 섞이므로 연속 저장 사이에는 `[data-sonner-toast]` count 0 을 기다리거나(timeout 10초) 문구가 다른 단언을 쓰세요.
+3. **토스트**: `page.locator('[data-sonner-toast]').filter({ hasText: '...' })`, `data-type` 은 `success`/`warning`/`error`. 제출 후 약 1초 안에 나타나고 4~6초 뒤 사라지므로 제출 직후 확인하세요. 설정 문구: 저장 `설정을 저장했어요.`, 초기화 `위시리스트를 초기화했어요. 새 생일을 준비해 보세요.`, 일반 오류 `요청을 처리하지 못했어요.`, `reserved_slug` 는 `sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.`, `invalid_slug` 는 `공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.`, `duplicate_slug` 는 `이미 사용 중인 공개 주소입니다.`. 토스트가 뜬 뒤 쿼리는 지워지므로 `toHaveURL(/\/admin\/settings$/)` 로 정리된 URL 을 기다리세요. 같은 문구의 토스트가 남아 있으면 다음 단언과 섞이므로 연속 저장 사이에는 `[data-sonner-toast]` count 0 을 기다리거나(timeout 10초) 문구가 다른 단언을 쓰세요.
 4. **설정 폼 입력**: `page.locator('#displayName')` 처럼 id 로 잡거나 `getByLabel('이름')` 을 씁니다(`이름`·`생일`·`소개`·`공개 주소`·`제목`·`공개 여부`·`테마`·`은행`·`예금주`·`계좌번호`·`계좌 공개`; 필수 라벨에는 `*` 가 붙음). 날짜는 `fill('1990-03-15')`, select 는 `selectOption('soft_pastel')`. 저장은 `getByRole('button', { name: '저장하기' })`. 브라우저 `required`·`minLength`·`maxLength`·`pattern`·`max` 가 먼저 제출을 막을 수 있으니 이 시나리오의 값은 모두 통과하는 값입니다.
 5. **저장 결과는 서버 렌더 값으로**: 저장 뒤 입력값은 리다이렉트로 서버가 다시 렌더한 값이라 `toHaveValue` 단언에 의미가 있습니다. 반대로 `계좌 공개` 힌트 문구는 select 를 바꾸는 즉시 바뀌는 클라이언트 상태이므로 서버 동작의 근거로 삼지 말고 저장 뒤 다시 렌더된 값과 DB 로 확인하세요.
 6. **확인 창(`window.confirm`)**: 테스트 코드에서는 클릭 **전에** `page.once('dialog', async (dialog) => { message = dialog.message(); await dialog.accept(); })`(또는 `dismiss()`)를 겁니다. 이 규칙은 생성된 테스트 코드용이며, MCP 탐색 중에는 `browser_run_code_unsafe` 안에서 확인 창을 띄우지 말고 `browser_click` 으로 클릭한 뒤 `browser_handle_dialog` 로 처리하세요.
@@ -39,7 +39,7 @@
 ## 탐색 중 발견한 사항
 
 - **[관찰 → 설정으로 해결] 탐색 당시 로그아웃이 `http://localhost:3000/login` 으로 이동했습니다.** `.env.local`(과 `.env.example`)의 `AUTH_URL="http://localhost:3000"` 이 `signOut({ redirectTo: "/login" })` 의 상대 경로를 3000 기준으로 풀었기 때문입니다(그때는 3000 에 사용자 dev 서버가 떠 있어 로그인 화면이 보였음). 2026-11-20 사용자 결정으로 `playwright.config.ts` 의 `webServer.env` 에 `AUTH_URL: baseURL` 을 넣었고, 임시 테스트로 로그아웃 뒤 URL 이 `http://localhost:3200/login` 임을 확인했습니다. 운영·개발 환경은 각자의 `AUTH_URL` 을 따릅니다.
-- **[관찰] 중복 slug·형식이 잘못된 slug 는 전용 토스트가 없습니다.** `reserved_slug`(`sample`)는 전용 문구가 나오지만 `invalid_slug`(`Bad_Slug!`, 탐색 확인)는 `요청을 처리하지 못했어요.` 입니다. [코드 근거] `adminErrorMessages` 에 `reserved_slug`·`invalid_account_number` 만 있어 `duplicate_slug` 도 같은 일반 문구입니다(탐색에서는 다른 사용자가 없어 직접 보지 못함). 설정 페이지의 `errorMessages`(`이미 사용 중인 공개 주소입니다.` 등)는 설정 조회 실패(`AdminToastMessage`) 경로에서만 쓰입니다. 시나리오 3.3 은 현재 동작을 기록합니다.
+- **[수정됨, 2026-11-21] 중복 slug·형식이 잘못된 slug 에 전용 토스트가 없었습니다.** 탐색 당시 `reserved_slug`(`sample`)만 전용 문구가 나오고 `invalid_slug`(`Bad_Slug!`)·`duplicate_slug` 는 `요청을 처리하지 못했어요.` 였습니다. `app/admin/admin-toast-events.tsx` 의 `adminErrorMessages` 에 `reserved_slug`·`invalid_account_number` 만 있었고, 설정 페이지 `errorMessages` 의 문구는 설정 조회 실패(`AdminToastMessage`) 경로에서만 쓰였기 때문입니다. 사용자 결정으로 두 문구와 선물 저장 오류 문구를 `ADMIN_COPY` 로 옮겨 `adminErrorMessages` 에서도 쓰게 했고, 시나리오 3.3 은 전용 문구를 확인합니다.
 - **[관찰] 저장 실패 후에도 입력값은 DB 값으로 돌아옵니다.** 거절된 slug 를 입력해도 리다이렉트로 다시 렌더된 `공개 주소` 는 기존 slug 입니다(입력이 사라짐).
 - **[관찰] slug 는 서버에서 `trim` 과 소문자 정규화를 합니다.** `  E2E-New-Slug  ` → `e2e-new-slug`, 옛 주소는 즉시 not-found, 헤더 `공개 페이지 보기` href 갱신.
 - **[관찰] 비공개 위시리스트는 소유자 본인이 로그인한 상태에서도 공개 주소가 not-found 입니다.** 관리자 홈에는 `내 공개 주소` 아래 `비공개라 친구가 열 수 없어요.` 가 표시됩니다.
@@ -212,14 +212,14 @@
     - expect: URL 이 `/admin/settings` 로 정리된다(`?error=reserved_slug` 제거).
     - expect: 다시 렌더된 `공개 주소` 값이 입력한 `sample` 이 아니라 `admin.slug` 이다(서버 렌더 결과, 탐색 확인).
     - expect: [e2eDb 조회, 코드 근거] `wishlists.slug`(`ownerId = admin.userId`)가 `admin.slug` 그대로이다.
-  3. 토스트가 사라지길 기다린 뒤(`[data-sonner-toast]` count 0, timeout 10초 — 같은 일반 문구 토스트가 이어지므로 앞 토스트와 섞이지 않게) `공개 주소` 에 `Bad_Slug!` 를 입력하고 `저장하기` 를 누릅니다(현재 동작 기록). 클릭 전에 `page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/admin/settings')` 를 걸어 서버 응답을 받습니다.
+  3. 토스트가 사라지길 기다린 뒤(`[data-sonner-toast]` count 0, timeout 10초 — 앞 토스트와 섞이지 않게) `공개 주소` 에 `Bad_Slug!` 를 입력하고 `저장하기` 를 누릅니다. 클릭 전에 `page.waitForResponse(r => r.request().method() === 'POST' && new URL(r.url()).pathname === '/api/admin/settings')` 를 걸어 서버 응답을 받습니다.
     - expect: 응답 status 가 `307` 이고 `location` 헤더의 search 가 `?error=invalid_slug` 이다(서버가 정한 오류 코드, 코드 근거).
-    - expect: 토스트 `요청을 처리하지 못했어요.`(`data-type` `error`)가 보인다(탐색 확인: `invalid_slug` 는 전용 문구가 없어 일반 문구).
+    - expect: 토스트 `공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.`(`data-type` `error`)가 보이고, 일반 문구 `요청을 처리하지 못했어요.` 토스트는 없다.
     - expect: `공개 주소` 값이 `admin.slug` 그대로이고 URL 이 `/admin/settings` 이다.
     - expect: [e2eDb 조회, 코드 근거] `wishlists.slug` 가 `admin.slug` 그대로이다.
-  4. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `other.slug`(다른 사용자의 slug)를 입력하고 3단계처럼 POST 응답을 받으며 `저장하기` 를 누릅니다(현재 동작 기록).
+  4. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `other.slug`(다른 사용자의 slug)를 입력하고 3단계처럼 POST 응답을 받으며 `저장하기` 를 누릅니다.
     - expect: 응답 `location` 의 search 가 `?error=duplicate_slug` 이다(코드 근거).
-    - expect: [코드 근거] 토스트 `요청을 처리하지 못했어요.`(`data-type` `error`)가 보인다. `duplicate_slug` 는 `app/admin/admin-toast-events.tsx` 의 `adminErrorMessages` 에 없어 일반 문구가 나온다(탐색에서는 다른 사용자가 없어 직접 보지 못함; 생성기가 실제 문구를 확인해 다르면 현재 동작에 맞춰 고치고 `탐색 중 발견한 사항` 에 기록).
+    - expect: 토스트 `이미 사용 중인 공개 주소입니다.`(`data-type` `error`)가 보이고, 일반 문구 토스트는 없다.
     - expect: URL 이 `/admin/settings` 이고 `공개 주소` 값이 `admin.slug` 이다.
     - expect: [e2eDb 조회, 코드 근거] `wishlists`(`ownerId = admin.userId`)의 `slug` 가 `admin.slug`, `wishlists`(`ownerId = other.userId`)의 `slug` 가 `other.slug` 그대로이다.
 

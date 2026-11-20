@@ -74,7 +74,7 @@ test.describe("Settings", () => {
     // expect: [e2eDb 조회, 코드 근거] `wishlists.slug` 가 `admin.slug` 그대로이다.
     await expect.poll(() => loadSlug(admin.userId)).toBe(slug);
 
-    // 3. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `Bad_Slug!` 를 입력하고 `저장하기` 를 누릅니다(현재 동작 기록).
+    // 3. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `Bad_Slug!` 를 입력하고 `저장하기` 를 누릅니다.
     await waitForToastsGone();
     const invalidResponse = await submitSlug("Bad_Slug!");
 
@@ -84,12 +84,16 @@ test.describe("Settings", () => {
       "?error=invalid_slug",
     );
 
-    // expect: 토스트 `요청을 처리하지 못했어요.`(`data-type` `error`)가 보인다.
+    // expect: 토스트 `공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.`(`data-type` `error`)가 보이고, 일반 문구 `요청을 처리하지 못했어요.` 토스트는 없다.
     const genericToast = page
       .locator("[data-sonner-toast]")
       .filter({ hasText: "요청을 처리하지 못했어요." });
-    await expect(genericToast).toBeVisible({ timeout: 10_000 });
-    await expect(genericToast).toHaveAttribute("data-type", "error");
+    const invalidToast = page.locator("[data-sonner-toast]").filter({
+      hasText: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+    });
+    await expect(invalidToast).toBeVisible({ timeout: 10_000 });
+    await expect(invalidToast).toHaveAttribute("data-type", "error");
+    await expect(genericToast).toHaveCount(0);
 
     // expect: `공개 주소` 값이 `admin.slug` 그대로이고 URL 이 `/admin/settings` 이다.
     await expect(page).toHaveURL(/\/admin\/settings$/, { timeout: 10_000 });
@@ -98,7 +102,7 @@ test.describe("Settings", () => {
     // expect: [e2eDb 조회, 코드 근거] `wishlists.slug` 가 `admin.slug` 그대로이다.
     await expect.poll(() => loadSlug(admin.userId)).toBe(slug);
 
-    // 4. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `other.slug` 를 입력하고 `저장하기` 를 누릅니다(현재 동작 기록).
+    // 4. 토스트가 사라지길 기다린 뒤 `공개 주소` 에 `other.slug` 를 입력하고 `저장하기` 를 누릅니다.
     await waitForToastsGone();
     const duplicateResponse = await submitSlug(otherSlug);
 
@@ -108,9 +112,13 @@ test.describe("Settings", () => {
       "?error=duplicate_slug",
     );
 
-    // expect: [코드 근거] 토스트 `요청을 처리하지 못했어요.`(`data-type` `error`)가 보인다(`duplicate_slug` 는 전용 문구 없음).
-    await expect(genericToast).toBeVisible({ timeout: 10_000 });
-    await expect(genericToast).toHaveAttribute("data-type", "error");
+    // expect: 토스트 `이미 사용 중인 공개 주소입니다.`(`data-type` `error`)가 보이고, 일반 문구 토스트는 없다.
+    const duplicateToast = page
+      .locator("[data-sonner-toast]")
+      .filter({ hasText: "이미 사용 중인 공개 주소입니다." });
+    await expect(duplicateToast).toBeVisible({ timeout: 10_000 });
+    await expect(duplicateToast).toHaveAttribute("data-type", "error");
+    await expect(genericToast).toHaveCount(0);
 
     // expect: URL 이 `/admin/settings` 이고 `공개 주소` 값이 `admin.slug` 이다.
     await expect(page).toHaveURL(/\/admin\/settings$/, { timeout: 10_000 });
