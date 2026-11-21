@@ -9,6 +9,7 @@ const adminShellNavPath = join(root, "app/admin/admin-shell-nav.tsx");
 const adminUiPath = join(root, "app/admin/admin-ui.tsx");
 const adminPagePath = join(root, "app/admin/page.tsx");
 const adminWishesPagePath = join(root, "app/admin/wishes/page.tsx");
+const adminDeleteWishFormPath = join(root, "app/admin/wishes/delete-wish-form.tsx");
 const adminMessagesPagePath = join(root, "app/admin/messages/page.tsx");
 const adminSettingsPagePath = join(root, "app/admin/settings/page.tsx");
 
@@ -24,6 +25,7 @@ describe("admin calm theme contract", () => {
     const adminUiSource = readFileSync(adminUiPath, "utf8");
     const adminPageSource = readFileSync(adminPagePath, "utf8");
     const adminWishesSource = readFileSync(adminWishesPagePath, "utf8");
+    const adminDeleteWishFormSource = readFileSync(adminDeleteWishFormPath, "utf8");
     const adminMessagesSource = readFileSync(adminMessagesPagePath, "utf8");
     const adminSettingsSource = readFileSync(adminSettingsPagePath, "utf8");
 
@@ -36,7 +38,7 @@ describe("admin calm theme contract", () => {
     expect(adminUiSource).not.toContain("adminSecondaryButtonClassName");
     expect(adminWishesSource).toContain('variant="admin"');
     expect(adminWishesSource).toContain('variant="admin-outline"');
-    expect(adminWishesSource).toContain('variant="danger"');
+    expect(adminDeleteWishFormSource).toContain('variant="danger"');
     expect(adminMessagesSource).toContain('variant="admin"');
     expect(adminMessagesSource).toContain('variant="subtle"');
     expect(adminSettingsSource).toContain('variant="admin"');
@@ -178,6 +180,7 @@ describe("admin calm theme contract", () => {
 
   test("preserves admin wishes form and public link contracts", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
+    const deleteFormSource = readFileSync(adminDeleteWishFormPath, "utf8");
     const adminUiSource = readFileSync(adminUiPath, "utf8");
 
     expect(source).not.toContain("slug={result.wishlist.slug}");
@@ -192,7 +195,11 @@ describe("admin calm theme contract", () => {
     expect(source).toContain('name="description"');
     expect(source).toContain('action={`/api/admin/wishes/${item.id}`}');
     expect(source).toContain('name="_method" value="patch"');
-    expect(source).toContain('name="_method" value="delete"');
+    expect(source).toContain("<DeleteWishForm wishId={item.id}");
+    expect(deleteFormSource).toContain('action={`/api/admin/wishes/${wishId}`}');
+    expect(deleteFormSource).toContain('method="post"');
+    expect(deleteFormSource).toContain('name="_method" value="delete"');
+    expect(deleteFormSource).toContain("window.confirm(confirmMessage)");
     expect(source).toContain('name="status"');
   });
 
@@ -265,6 +272,7 @@ describe("admin calm theme contract", () => {
 
   test("renders admin wishes as list rows with thumbnails and collapsed edits", () => {
     const source = readFileSync(adminWishesPagePath, "utf8");
+    const deleteFormSource = readFileSync(adminDeleteWishFormPath, "utf8");
 
     expect(source).toContain('<Card asChild variant="admin" className="group">');
     expect(source).toContain("<details");
@@ -279,7 +287,7 @@ describe("admin calm theme contract", () => {
     expect(source).not.toContain("bg-[#f4f4f3]");
     expect(source).toContain("수정");
     expect(source).toContain('name="_method" value="patch"');
-    expect(source).toContain('name="_method" value="delete"');
+    expect(deleteFormSource).toContain('name="_method" value="delete"');
   });
 
   test("preserves admin messages list rendering contract", () => {

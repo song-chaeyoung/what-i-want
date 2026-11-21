@@ -60,6 +60,7 @@
 - **첫 진입 안내:** [관리자 안내](../../../app/admin/admin-guide-dialog.tsx)는 Radix Dialog의 Title·Description·Portal을 사용하고 주요 버튼 초기 포커스, Escape 처리, 상태 알림을 구현합니다. 기능별 사용 규칙은 [안내 설계](../../superpowers/specs/2026-07-22-admin-first-entry-guide-design.md)를 따릅니다. 이것이 모든 모달의 접근성 감사를 완료했다는 뜻은 아닙니다.
 - **금액 참여 후 계좌 안내:** [AccountRevealModal](../../../components/public-wishlist-toast-events.tsx)은 커스텀 `role="dialog"`와 닫기 버튼입니다. Radix 안내와 같은 포커스 트랩·Escape·복원 처리를 확인할 수 없으므로 접근성 재사용 사례로 일반화하지 않습니다.
 - **참여 숨김:** [HideMessageForm](../../../app/admin/messages/hide-message-form.tsx)은 `window.confirm`으로 금액 차감과 복구 가능 여부를 안내한 뒤 POST합니다.
+- **선물 삭제:** [DeleteWishForm](../../../app/admin/wishes/delete-wish-form.tsx)은 `window.confirm`으로 되돌릴 수 없음을 알리고, 모인 금액이 있으면 금액 기록도 함께 지워지고 메시지는 남는다고 안내한 뒤 POST합니다(2026-11-21 추가). 실제 삭제 범위 근거: [스키마의 `funding_logs` cascade·`messages.wish_item_id` set null](../../../src/lib/db/schema/service.ts).
 - **위시리스트 초기화:** [ResetWishlistForm](../../../app/admin/settings/reset-wishlist-form.tsx)은 삭제 대상과 유지 대상을 확인한 뒤 POST합니다. 프로필·공개 주소·테마·계좌 안내는 유지합니다. 실제 삭제 범위 근거: [reset repository](../../../src/lib/wishlist-reset/repository.ts).
 - **온보딩 연령 확인:** [BirthdayPicker](../../../app/onboarding/birthday-picker.tsx)는 만 14세 미만으로 판단되는 날짜 선택 시 경고를 표시하고, 해당 폼 제출 시 브라우저 확인을 제공합니다. 실제 거절·삭제 판단은 [서버 서비스](../../../src/lib/onboarding/service.ts)에 있습니다. 브라우저 확인을 서버 검증 대신 사용하지 않습니다.
 

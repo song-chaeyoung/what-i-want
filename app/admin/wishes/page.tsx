@@ -22,6 +22,7 @@ import {
 import { Input, inputVariants } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
+import { DeleteWishForm } from "./delete-wish-form";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
   AdminField,
@@ -373,12 +374,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
             </div>
           </form>
 
-          <form action={`/api/admin/wishes/${item.id}`} method="post" className="mt-3">
-            <input type="hidden" name="_method" value="delete" />
-            <Button type="submit" variant="danger">
-              삭제
-            </Button>
-          </form>
+          <DeleteWishForm wishId={item.id} hasAmount={item.fundedAmount > 0} />
         </div>
       </details>
     </Card>

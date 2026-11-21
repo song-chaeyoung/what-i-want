@@ -36,7 +36,7 @@
 4. **선물 카드 범위 좁히기**: `const card = page.locator('details').filter({ has: page.getByRole('heading', { level: 3, name: '<선물 이름>' }) })`. summary 를 클릭해 연 뒤 `card.getByRole('textbox', { name: '선물 이름' })`, `card.getByRole('combobox', { name: '상태' })`, `card.getByRole('spinbutton', { name: '목표 금액' })`, `card.getByRole('textbox', { name: '메모' })`, `card.getByRole('button', { name: '저장' })`, `card.getByRole('button', { name: '삭제' })` 가 동작했습니다. 추가 패널은 `page.locator('details#create-wish')` 로 범위를 좁히고 `getByLabel('선물 이름')`, `getByLabel('목표 금액')`, `getByLabel('상품 링크')`, `getByLabel('이미지 링크')`, `getByLabel('메모')`, 버튼 `추가하기`·`정보 불러오기` 를 씁니다. 저장·추가·삭제 뒤에는 페이지가 다시 렌더링돼 카드 `details` 가 닫힙니다(탐색: 수정 후 `open` false).
 5. **상태 배지와 탭 문구 겹침**: `마음 모으는 중`·`잠시 멈춤`·`완료`·`숨김` 이 필터 탭 링크, 카드 배지, `상태` select 옵션에 모두 있습니다. 탭은 `page.getByRole('navigation', { name: '선물 상태 필터' }).getByRole('link', { name: /^잠시 멈춤/ })`, 배지는 카드 summary 범위(`card.locator('summary').getByText('잠시 멈춤', { exact: true })`)로 좁히세요. 탭 개수는 링크 안 숫자(`link` 이름 `잠시 멈춤 1`)로 확인합니다.
 6. **사이드바**: `page.getByRole('complementary')` 로 범위를 좁힙니다. `홈` 링크는 `뭐갖고싶어 홈` 과 겹치므로 `{ name: '홈', exact: true }` 가 필요했습니다. 안 읽은 배지는 `page.getByRole('complementary').getByLabel('새 메시지 2개')`, 배지가 없음은 `getByLabel(/^새 메시지/)` 의 count 0 으로 확인합니다. `/admin` 홈에서는 `공개 페이지 보기` 링크가 헤더와 본문에 2개 있습니다.
-7. **확인 창**: 메시지 `숨기기` 는 `window.confirm` 을 띄웁니다. 테스트에서는 클릭 **전에** `page.once('dialog', dialog => ...)` 로 메시지를 기록하고 `accept()`/`dismiss()` 하세요. 문구(관찰): 금액 있는 참여 `이 참여 기록을 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.`, 금액 없는 메시지 `이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.`(코드 근거). `숨김 해제` 와 선물 `삭제` 는 확인 창이 없습니다(삭제는 관찰, 해제는 코드 근거).
+7. **확인 창**: 메시지 `숨기기` 는 `window.confirm` 을 띄웁니다. 테스트에서는 클릭 **전에** `page.once('dialog', dialog => ...)` 로 메시지를 기록하고 `accept()`/`dismiss()` 하세요. 문구(관찰): 금액 있는 참여 `이 참여 기록을 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.`, 금액 없는 메시지 `이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.`(코드 근거). `숨김 해제` 는 확인 창이 없습니다(코드 근거). 선물 `삭제` 는 2026-11-21 부터 확인 창을 띄웁니다(`app/admin/wishes/delete-wish-form.tsx`). 문구: 모인 금액이 있는 선물 `이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.`, 없는 선물 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.`
 8. **메시지함 문구 겹침**: `받은 메시지`·`숨긴 메시지` 가 필터 탭과 지표 라벨에 모두 있습니다. 탭은 `page.getByRole('navigation', { name: '메시지 필터' })` 안에서, 지표는 `page.getByText('받은 메시지', { exact: true })` 대신 지표 값(`getByText('2개', { exact: true })`)으로 확인하세요. 행은 `page.getByRole('article').filter({ hasText: '<본문>' })` 로 고릅니다.
 9. **DB 조회(e2eDb)**: `import { eq } from "drizzle-orm"` 와 `import { fundingLogs, messages, profiles, wishItems, wishlists } from "@/src/lib/db/schema"`. 컬럼은 camelCase(`wishlistId`, `title`, `targetAmount`, `fundedAmount`, `status`, `description`, `productUrl`, `imageUrl`, `isHidden`, `messagesReadAt`, `displayName`, `birthday`(문자열 `YYYY-MM-DD`), `onboardingCompletedAt`, `ownerId`, `visibility`)입니다. 성공 제출은 리다이렉트 전에 DB 에 쓰지만 여유를 위해 `expect.poll(...)` 로 기다리세요. 거절 요청은 응답을 받은 뒤 바로 단언해도 됩니다.
 10. **시각**: 로컬 E2E DB 세션 시간대가 Asia/Seoul(`now()` 가 `+09`)이라 `defaultNow()` 로 들어간 값은 Drizzle 이 UTC 로 읽을 때 9시간 앞섭니다. 안 읽은 메시지 비교용 메시지를 테스트에서 직접 넣을 때는 `createdAt: new Date()` 를 명시하세요(fixture 도 같은 이유로 `createdAt` 을 넣음). 화면의 메시지 시각 문자열은 단언하지 마세요.
@@ -46,7 +46,7 @@
 
 ## 탐색 중 발견한 사항
 
-- **[관찰] 선물 `삭제` 는 확인 창 없이 바로 지워집니다.** 탐색에서 `보드게임` 카드의 `삭제` 를 눌렀을 때 dialog 이벤트가 없었고 곧바로 `선물을 삭제했어요.` 토스트와 함께 카드가 사라졌습니다. 메시지 `숨기기` 는 확인 창이 있고 복구할 수 있는 반면, 선물 삭제는 되돌릴 수 없고(`wish_items` 행 삭제, 참여 기록의 `funding_logs` 는 cascade 삭제·`messages.wishItemId` 는 null) 확인도 없습니다. 의도인지 사용자 확인이 필요합니다. 시나리오 3.5 는 현재 동작(확인 창 없음)을 기록합니다.
+- **[해결] 선물 `삭제` 는 확인 창 없이 바로 지워졌습니다.** 탐색에서 `보드게임` 카드의 `삭제` 를 눌렀을 때 dialog 이벤트가 없었고 곧바로 `선물을 삭제했어요.` 토스트와 함께 카드가 사라졌습니다. 메시지 `숨기기` 는 확인 창이 있고 복구할 수 있는 반면, 선물 삭제는 되돌릴 수 없습니다(`wish_items` 행 삭제, 참여 기록의 `funding_logs` 는 cascade 삭제·`messages.wishItemId` 는 null). 2026-11-21 사용자 결정으로 확인 창을 추가했습니다. 시나리오 3.5 는 확인 뒤 삭제를, 3.7 은 취소를 확인합니다.
 - **[코드 근거] 선물 저장 실패 시 오류 사유가 토스트에 나오지 않습니다.** `/api/admin/wishes*` 는 `?error=title_required` 등으로 보내지만 `AdminToastEvents` 의 `adminErrorMessages` 에는 `reserved_slug`, `invalid_account_number` 만 있어 모든 선물 오류가 `요청을 처리하지 못했어요.` 로 표시됩니다. `app/admin/wishes/page.tsx` 의 `errorMessages` 는 목록 조회 실패에만 쓰입니다. 브라우저 검증이 대부분 막으므로 1차 시나리오에는 넣지 않았습니다.
 - **[관찰] 형식이 잘못된 id 는 `wish_not_found` 가 아니라 `unexpected` 로 처리됩니다.** `POST /api/admin/wishes/not-a-uuid`(`_method=patch`)는 307 `/admin/wishes?error=unexpected` 였고 서버 콘솔에 오류가 남았습니다(Postgres uuid 형변환 오류가 catch 로 감). 데이터는 바뀌지 않으므로 권한 문제는 아닙니다. 권한 시나리오는 실제 다른 사용자의 UUID 를 씁니다.
 - **[코드 근거] 금액을 다 모은 `open` 선물은 배지가 `완료` 지만 필터는 `마음 모으는 중` 탭에 들어갑니다.** 배지는 `getWishStatusLabel(status, progress)`(진행률 100% 면 `완료`), 필터와 탭 개수는 DB `status` 기준입니다(`app/admin/wishes/page.tsx`). 공개 페이지도 같은 배지 규칙입니다. 시나리오 3.6 이 현재 동작을 기록합니다.
@@ -68,12 +68,13 @@
 9. Change Wish Status
 10. Delete Wish
 11. Filter Wishes By Status
-12. Hide And Restore Funded Message
-13. Cancel Hide Message
-14. Message Filters
-15. Unread Message Badge
-16. Cross Account Wish Rejected
-17. Cross Account Message Rejected
+12. Cancel Delete Wish
+13. Hide And Restore Funded Message
+14. Cancel Hide Message
+15. Message Filters
+16. Unread Message Badge
+17. Cross Account Wish Rejected
+18. Cross Account Message Rejected
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한입니다.)
 
@@ -256,9 +257,9 @@
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "보드게임", targetAmount: 40_000 }, { title: "무선 이어폰", targetAmount: 100_000 } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 레벨 3 제목 `보드게임` 을 기다립니다(timeout 30초).
     - expect: 지표 `총 선물` 이 `2개` 이다.
-  2. `page.on('dialog', ...)` 로 확인 창이 뜨는지 기록하도록 걸어 두고, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
+  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
     - expect: 토스트 `선물을 삭제했어요.`(`data-type` `success`)가 보인다.
-    - expect: 확인 창(dialog)이 뜨지 않았다(현재 동작 기록, "탐색 중 발견한 사항" 참고).
+    - expect: 확인 창 메시지가 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.` 이다(모인 금액 없는 선물 문구, 코드 근거).
     - expect: URL 이 `/admin/wishes` 로 정리되고, 레벨 3 제목 `보드게임` 이 없고 `무선 이어폰` 은 남는다.
     - expect: 지표 `총 선물` 이 `1개` 이다.
   3. [e2eDb 조회, 코드 근거] `wish_items`(`wishlistId = admin.wishlistId`)를 조회합니다(`expect.poll`).
@@ -283,6 +284,18 @@
     - expect: URL 이 `/admin/wishes?status=hidden` 이고 카드가 없으며 문구 `숨김 상태의 선물이 없습니다.` 와 링크 `전체 선물 보기`(href `/admin/wishes`)가 보인다.
   5. 링크 `전체 선물 보기` 를 누릅니다.
     - expect: URL 이 `/admin/wishes` 이고 카드 4개가 보인다.
+
+#### 3.7. Cancel Delete Wish
+
+**File:** `tests/admin/cancel-delete-wish.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 30_000 } ], messages: [ { senderName: "이친구", body: "이어폰에 보태요", wishItemIndex: 0, amount: 30_000 } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 레벨 3 제목 `무선 이어폰` 을 기다립니다(timeout 30초).
+  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `dismiss()` 하도록 건 뒤, `무선 이어폰` 카드를 열어 버튼 `삭제` 를 누릅니다.
+    - expect: 확인 창 메시지가 `이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.` 이다(모인 금액 있는 선물 문구, 코드 근거).
+    - expect: 토스트가 나타나지 않고(`[data-sonner-toast]` count 0), URL 이 `/admin/wishes` 그대로이며, 레벨 3 제목 `무선 이어폰` 이 남는다.
+  3. [e2eDb 조회, 코드 근거] `wish_items`(`id = items[0].id`)와 `funding_logs`(`wishItemId = items[0].id`)를 조회합니다.
+    - expect: 선물 행이 남고 `fundedAmount` 는 `30000` 이며, 참여 기록 1건이 남는다.
 
 ### 4. Message Management
 
