@@ -25,8 +25,18 @@ const adminToastParams = {
 } as const;
 
 const adminErrorMessages: Record<string, string> = {
+  invalid_slug: ADMIN_COPY.invalidSlug,
   reserved_slug: ADMIN_COPY.reservedSlug,
+  duplicate_slug: ADMIN_COPY.duplicateSlug,
   invalid_account_number: ADMIN_COPY.invalidAccountNumber,
+  wish_not_found: ADMIN_COPY.wishNotFound,
+  title_required: ADMIN_COPY.wishTitleRequired,
+  title_too_long: ADMIN_COPY.wishTitleTooLong,
+  target_amount_required: ADMIN_COPY.wishTargetAmountRequired,
+  invalid_target_amount: ADMIN_COPY.invalidWishTargetAmount,
+  invalid_product_url: ADMIN_COPY.invalidWishProductUrl,
+  invalid_image_url: ADMIN_COPY.invalidWishImageUrl,
+  invalid_status: ADMIN_COPY.invalidWishStatus,
 };
 
 type AdminToastParam = keyof typeof adminToastParams;

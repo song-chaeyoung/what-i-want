@@ -30,7 +30,12 @@ describe("reserved wishlist slug feedback", () => {
       "invalid_account_number",
       "계좌번호는 숫자와 하이픈(-)만 입력해 주세요.",
     ],
-    ["invalid_slug", "요청을 처리하지 못했어요."],
+    [
+      "invalid_slug",
+      "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+    ],
+    ["duplicate_slug", "이미 사용 중인 공개 주소입니다."],
+    ["unexpected", "요청을 처리하지 못했어요."],
     ["__proto__", "요청을 처리하지 못했어요."],
   ])("shows the expected feedback for %s", (error, message) => {
     route.query = `error=${error}&guide=1`;
