@@ -4,6 +4,9 @@ import { Slot } from "radix-ui"
 
 import { cn } from "@/lib/utils"
 
+const socialButtonClassName =
+  "h-12 rounded-md border-2 border-line-strong px-4 text-sm font-black whitespace-normal text-ink transition-colors"
+
 const shadcnButtonClassName =
   "shrink-0 rounded-lg border border-transparent bg-clip-padding text-sm font-medium transition-all outline-none select-none focus-visible:border-ring focus-visible:ring-3 focus-visible:ring-ring/50 active:not-aria-[haspopup]:translate-y-px aria-invalid:border-destructive aria-invalid:ring-3 aria-invalid:ring-destructive/20 dark:aria-invalid:border-destructive/50 dark:aria-invalid:ring-destructive/40 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4"
 
@@ -30,8 +33,8 @@ const buttonVariants = cva(
           "h-9 rounded-md border border-danger bg-white px-3 text-sm font-semibold whitespace-normal text-danger transition-colors hover:bg-danger-tint",
         subtle:
           "h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold whitespace-normal text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700",
-        kakao:
-          "h-12 rounded-md border-2 border-line-strong bg-kakao px-4 text-sm font-black whitespace-normal text-ink transition-colors hover:bg-kakao-hover",
+        social: `${socialButtonClassName} bg-kakao hover:bg-kakao-hover`,
+        "social-neutral": `${socialButtonClassName} bg-white hover:bg-zinc-100`,
       },
       size: {
         default:
@@ -67,7 +70,8 @@ const selfSizedVariants = new Set<NonNullable<VariantProps<typeof buttonVariants
   "admin-outline",
   "danger",
   "subtle",
-  "kakao",
+  "social",
+  "social-neutral",
 ])
 
 function Button({

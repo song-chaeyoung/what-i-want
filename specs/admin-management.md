@@ -32,7 +32,7 @@
 
 1. **fixture 사용**: `import { test, expect } from "../fixtures/admin"`. `seedAdmin({ onboarded?, displayName?, items?, messages? })` 는 호출마다 새 사용자(`admin-<12자>@e2e.test`, users.name = displayName, 기본 `E2E 관리자`)와 database 세션을 만들고, `onboarded`(기본 true)면 온보딩 완료 profile 과 위시리스트(slug `e2e-<12자>`, 제목 `${displayName}님의 위시리스트`, public)·선물·메시지·후원 기록을 만듭니다. 반환값은 `{ userId, email, sessionToken, wishlistId, slug, items: [{ id, title }], messages: [{ id, body }] }` 이고 `onboarded: false` 면 `wishlistId`·`slug` 가 null 입니다. `items` 배열 순서가 sortOrder, `status` 생략 시 `open`, `fundedAmount` 생략 시 0 입니다. `messages` 의 각 항목은 `{ senderName, body, isHidden?, wishItemIndex?, amount? }` 이고 `amount` 를 주면 `funding_logs` 행도 만듭니다(선물의 `fundedAmount` 는 `items` 에서 직접 맞춥니다). 메시지 `createdAt` 은 배열 순서대로 1분 간격 과거(첫 항목이 가장 최근)이고 `wishlists.messagesReadAt` 은 null 입니다. `signIn(admin)` 은 브라우저 컨텍스트에 세션 쿠키를 넣고 첫 진입 안내 모달을 끕니다. 비로그인 시나리오는 `signIn` 을 부르지 않습니다. 테스트 종료 시 fixture 가 사용자를 지워 FK cascade 로 정리하므로 직접 지울 필요가 없습니다(온보딩으로 새로 생긴 profile·위시리스트도 같은 사용자라 함께 지워짐).
 2. **첫 이동 대기**: `/admin` 레이아웃은 Suspense 로 스켈레톤 셸을 먼저 보낼 수 있어(탐색: 이동 직후 `main header` 가 잠시 2개) 셸 요소가 아니라 그 화면의 실제 내용(선물 제목, `navigation "메시지 필터"`, 온보딩 제목 등)을 기다리세요. dev 서버 첫 컴파일이 느리므로 첫 대기는 timeout 30초를 권장합니다.
-3. **토스트**: sonner `[data-sonner-toast]`(`data-type` = `success`/`warning`/`error`). 탐색에서 제출 후 약 1초 안에 나타났고 3.5초 시점엔 남아 있었으며 6.5초 시점엔 사라졌습니다. **제출 직후 토스트를 먼저 확인**하고 DB 조회는 그 뒤에 하세요. 로케이터 예: `page.locator('[data-sonner-toast]').filter({ hasText: '선물을 추가했어요.' })`. 문구(`app/admin/admin-toast-events.tsx`): 추가 `선물을 추가했어요.`, 계좌 없음 경고 `계좌번호가 등록되어 있지 않아요. 설정에서 계좌번호를 추가해 주세요.`(warning, 버튼 `계좌 등록`), 수정 `선물을 수정했어요.`, 삭제 `선물을 삭제했어요.`, 숨김 `참여 기록을 숨겼어요.`, 복구 `참여 기록을 복구했어요.`, 오류 `요청을 처리하지 못했어요.`. 토스트를 띄운 뒤 쿼리는 지워지므로 `await expect(page).toHaveURL(/\/admin\/wishes$/)` 처럼 정리된 URL 을 기다리세요.
+3. **토스트**: sonner `[data-sonner-toast]`(`data-type` = `success`/`warning`/`error`). 탐색에서 제출 후 약 1초 안에 나타났고 3.5초 시점엔 남아 있었으며 6.5초 시점엔 사라졌습니다. **제출 직후 토스트를 먼저 확인**하고 DB 조회는 그 뒤에 하세요. 로케이터 예: `page.locator('[data-sonner-toast]').filter({ hasText: '선물을 추가했어요.' })`. 문구(`app/admin/admin-toast-events.tsx`): 추가 `선물을 추가했어요.`, 계좌 없음 경고 `계좌번호가 등록되어 있지 않아요. 설정에서 계좌번호를 추가해 주세요.`(warning, 버튼 `계좌 등록`), 수정 `선물을 수정했어요.`, 삭제 `선물을 삭제했어요.`, 숨김 `메시지를 숨겼어요.`, 복구 `메시지를 복구했어요.`, 오류 `요청을 처리하지 못했어요.`. 토스트를 띄운 뒤 쿼리는 지워지므로 `await expect(page).toHaveURL(/\/admin\/wishes$/)` 처럼 정리된 URL 을 기다리세요.
 4. **선물 카드 범위 좁히기**: `const card = page.locator('details').filter({ has: page.getByRole('heading', { level: 3, name: '<선물 이름>' }) })`. summary 를 클릭해 연 뒤 `card.getByRole('textbox', { name: '선물 이름' })`, `card.getByRole('combobox', { name: '상태' })`, `card.getByRole('spinbutton', { name: '목표 금액' })`, `card.getByRole('textbox', { name: '메모' })`, `card.getByRole('button', { name: '저장' })`, `card.getByRole('button', { name: '삭제' })` 가 동작했습니다. 추가 패널은 `page.locator('details#create-wish')` 로 범위를 좁히고 `getByLabel('선물 이름')`, `getByLabel('목표 금액')`, `getByLabel('상품 링크')`, `getByLabel('이미지 링크')`, `getByLabel('메모')`, 버튼 `추가하기`·`정보 불러오기` 를 씁니다. 저장·추가·삭제 뒤에는 페이지가 다시 렌더링돼 카드 `details` 가 닫힙니다(탐색: 수정 후 `open` false).
 5. **상태 배지와 탭 문구 겹침**: `마음 모으는 중`·`잠시 멈춤`·`완료`·`숨김` 이 필터 탭 링크, 카드 배지, `상태` select 옵션에 모두 있습니다. 탭은 `page.getByRole('navigation', { name: '선물 상태 필터' }).getByRole('link', { name: /^잠시 멈춤/ })`, 배지는 카드 summary 범위(`card.locator('summary').getByText('잠시 멈춤', { exact: true })`)로 좁히세요. 탭 개수는 링크 안 숫자(`link` 이름 `잠시 멈춤 1`)로 확인합니다.
 6. **사이드바**: `page.getByRole('complementary')` 로 범위를 좁힙니다. `홈` 링크는 `뭐갖고싶어 홈` 과 겹치므로 `{ name: '홈', exact: true }` 가 필요했습니다. 안 읽은 배지는 `page.getByRole('complementary').getByLabel('새 메시지 2개')`, 배지가 없음은 `getByLabel(/^새 메시지/)` 의 count 0 으로 확인합니다. `/admin` 홈에서는 `공개 페이지 보기` 링크가 헤더와 본문에 2개 있습니다.
@@ -74,8 +74,11 @@
 15. Unread Message Badge
 16. Cross Account Wish Rejected
 17. Cross Account Message Rejected
+18. Submit Button Pending
+19. Admin Home Share Link Copy
+20. Admin Home Native Share Paths
 
-(아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한입니다.)
+(아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한, 6.x 관리자 홈 공유입니다.)
 
 
 ## Test Scenarios
@@ -143,7 +146,7 @@
     - expect: `표시 이름` 에 `소셜 이름` 이 미리 채워져 있다.
     - expect: 버튼 `생일` 의 텍스트가 `생일을 선택하세요` 이다.
     - expect: 체크박스 `만 14세 이상입니다.` 가 체크되어 있지 않다.
-  2. `표시 이름` 을 `E2E 생일자` 로 바꾸고, 버튼 `생일` 을 눌러 달력을 엽니다. `getByRole('combobox', { name: 'Choose the Year' })` 에서 `2000`, `getByRole('combobox', { name: 'Choose the Month' })` 에서 3월(옵션 index 2)을 고른 뒤 `getByRole('button', { name: /March 15th, 2000/ })` 을 누릅니다. (탐색: 달력 grid 이름 `March 2000`, 날짜 버튼 이름 예 `Wednesday, March 15th, 2000`)
+  2. `표시 이름` 을 `E2E 생일자` 로 바꾸고, 버튼 `생일` 을 눌러 달력을 엽니다. `getByRole('combobox', { name: '연도 선택' })` 에서 `2000`, `getByRole('combobox', { name: '월 선택' })` 에서 3월(옵션 index 2)을 고른 뒤 `getByRole('button', { name: /March 15th, 2000/ })` 을 누릅니다. 이전·다음 버튼 이름은 `이전 달`, `다음 달`입니다. (날짜 버튼 이름 예 `Wednesday, March 15th, 2000`)
     - expect: 달력 팝오버(`dialog`)가 닫힌다.
     - expect: 버튼 `생일`(`#birthday`)의 텍스트가 `2000-03-15` 이고 hidden input `input[name=birthday]` 값이 `2000-03-15` 이다.
     - expect: 버튼 `선택 해제` 가 보인다.
@@ -175,6 +178,19 @@
     - expect: 둘 다 0행이다.
   6. `/admin` 으로 이동합니다.
     - expect: URL 이 `/onboarding` 이 된다(아직 온보딩 미완료).
+
+#### 2.3. Submit Button Pending
+
+**File:** `tests/admin/onboarding-submit-pending.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
+  2. `표시 이름` 을 `E2E 생일자` 로 바꾸고 체크박스 `만 14세 이상입니다.` 를 체크합니다. 생일은 비워 둡니다.
+  3. `POST /api/onboarding` 응답을 붙잡은 채 버튼 `위시리스트 만들기` 를 누릅니다.
+    - expect: 제출 버튼이 `disabled` 이고 라벨이 `만드는 중…` 이다. 스피너는 없다.
+    - expect: 버튼을 한 번 더 눌러도 `/api/onboarding` 요청은 1번이다.
+  4. 붙잡은 응답을 이어 줍니다.
+    - expect: URL 이 `/admin` 이 된다.
 
 ### 3. Wish Management
 
@@ -298,7 +314,7 @@
     - expect: `이어폰에 보태요` 행에 `무선 이어폰`, `이친구`, `₩10,000`, 버튼 `숨기기` 가 있고 `생일 축하해!` 행에는 `선물 없음`, `금액 없음` 이 있다.
   2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤 `이어폰에 보태요` 행의 `숨기기` 를 누릅니다.
     - expect: 확인 창 메시지가 `이 참여 기록을 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 이다.
-    - expect: 토스트 `참여 기록을 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
+    - expect: 토스트 `메시지를 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
     - expect: 행이 `생일 축하해!` 하나만 남고 지표 값이 `1개` 이다.
   3. [e2eDb 조회, 코드 근거] 숨김 결과를 조회합니다(`expect.poll`).
     - expect: `messages`(`id = messages[0].id`)의 `isHidden` 이 `true` 이다.
@@ -307,7 +323,7 @@
   4. 메시지 필터의 `숨긴 메시지` 탭을 누릅니다.
     - expect: URL 이 `/admin/messages?filter=hidden` 이고 행이 `이어폰에 보태요` 하나이며 `₩10,000` 과 버튼 `숨김 해제` 가 있다(버튼 `숨기기` 없음). 지표 값 `1개`.
   5. `숨김 해제` 를 누릅니다(확인 창 없음).
-    - expect: 토스트 `참여 기록을 복구했어요.`(`data-type` `success`)가 보인다.
+    - expect: 토스트 `메시지를 복구했어요.`(`data-type` `success`)가 보인다.
     - expect: URL 이 `/admin/messages` 로 정리되어(받은 메시지함으로 돌아옴) 행 2개 `이어폰에 보태요`, `생일 축하해!` 가 보인다.
   6. [e2eDb 조회, 코드 근거] 복구 결과를 조회합니다(`expect.poll`).
     - expect: `messages[0]` 의 `isHidden` 이 `false`, `wish_items.fundedAmount` 가 `40000` 이다.
@@ -398,3 +414,30 @@
     - expect: `owner.messages[0]` 의 `isHidden` 이 `false`, `owner.messages[1]` 의 `isHidden` 이 `true` 그대로이다.
     - expect: `wish_items`(`id = owner.items[0].id`)의 `fundedAmount` 가 `40000` 그대로이다.
     - expect: `wishlists`(`id = owner.wishlistId`)의 `messagesReadAt` 이 null 그대로이다(A 의 메시지함 방문이 B 의 읽음 기준을 바꾸지 않음).
+
+### 6. Admin Home Share
+
+**Seed:** `tests/fixtures/admin.ts` 의 `seedAdmin()` / `signIn()`. 샘플 공유 시나리오(`tests/sample/share-link-copy.spec.ts`, `tests/sample/native-share-paths.spec.ts`)의 관리자 홈 버전입니다. 실제 기기 공유 시트는 열지 않고 `navigator.share` 를 스텁합니다.
+
+#### 6.1. Share Link Copy
+
+**File:** `tests/admin/share-link-copy.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `clipboard-read`, `clipboard-write`. `navigator.share` 를 `undefined` 로 둔 뒤 `seedAdmin()`, `signIn(admin)`. `/admin` 에서 `내 공개 주소` 를 기다립니다(timeout 30초).
+    - expect: 버튼 `공유하기` 가 보인다.
+  2. `공유하기` 를 누릅니다.
+    - expect: 라벨이 `복사 완료` 가 되고 토스트 `위시리스트 링크를 복사했어요.` 가 보인다.
+    - expect: 클립보드 URL 의 origin 이 `http://localhost:3200`, pathname 이 `/wishlist/{slug}`, `utm_source` 가 `owner_share`, `utm_medium` 이 `share` 이다.
+    - expect: 페이지는 `/admin` 에 머물고 새 탭이 생기지 않는다.
+  3. 약 2초 뒤.
+    - expect: 라벨이 `공유하기` 로 돌아온다.
+
+#### 6.2. Native Share Paths
+
+**File:** `tests/admin/native-share-paths.spec.ts`
+
+**Steps:**
+  1. [하위 케이스 A] `navigator.share` 가 resolve 되면 `/admin` 의 `공유하기` 가 `{ title: "뭐갖고싶어 생일 위시리스트", url }` 로 1번 호출된다. url 은 owner 공유 링크이다. 토스트와 `복사 완료` 는 없다.
+  2. [하위 케이스 B] `AbortError` 로 reject 되면 토스트도 클립보드 복사도 없고 라벨은 `공유하기` 이다.
+  3. [하위 케이스 C] `NotAllowedError` 로 reject 되면 클립보드에 owner 공유 URL 이 복사되고 라벨이 `복사 완료`, 토스트 `위시리스트 링크를 복사했어요.` 가 보인다.

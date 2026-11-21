@@ -44,8 +44,11 @@ describe("button variant contract", () => {
     expect(buttonVariants({ variant: "danger" })).toContain("text-danger");
     expect(buttonVariants({ variant: "danger" })).toContain("hover:bg-danger-tint");
     expect(buttonVariants({ variant: "subtle" })).toContain("text-xs");
-    expect(buttonVariants({ variant: "kakao" })).toContain("bg-kakao");
-    expect(buttonVariants({ variant: "kakao" })).toContain("hover:bg-kakao-hover");
+    expect(buttonVariants({ variant: "social" })).toContain("bg-kakao");
+    expect(buttonVariants({ variant: "social" })).toContain("hover:bg-kakao-hover");
+    expect(buttonVariants({ variant: "social-neutral" })).toContain("bg-white");
+    expect(buttonVariants({ variant: "social-neutral" })).toContain("hover:bg-zinc-100");
+    expect(buttonSource).not.toContain("kakao:");
     expect(buttonVariants({ variant: "link" })).toContain("hover:text-ink");
     expect(buttonVariants({ variant: "link" })).toContain("hover:underline");
 
@@ -92,7 +95,7 @@ describe("button variant contract", () => {
   test("moves former hard-coded button colors onto variants", () => {
     const files = [
       "app/page.tsx",
-      "app/onboarding/page.tsx",
+      "app/onboarding/submit-button.tsx",
       "app/not-found.tsx",
       "app/error.tsx",
       "app/login/page.tsx",
@@ -133,9 +136,12 @@ describe("button variant contract", () => {
 
     expect(read("app/page.tsx")).toContain('variant="cta"');
     expect(read("app/page.tsx")).toContain("hover:bg-mint");
-    expect(read("app/onboarding/page.tsx")).toContain("h-12 w-full px-4 py-0");
-    expect(read("app/login/page.tsx")).toContain("hover:bg-zinc-100");
-    expect(read("app/login/page.tsx")).toContain('variant="kakao"');
+    expect(read("app/onboarding/submit-button.tsx")).toContain("h-12 w-full px-4 py-0");
+    expect(read("app/login/page.tsx")).toContain('variant="social-neutral"');
+    expect(read("app/login/page.tsx")).toContain('variant="social"');
+    expect(read("app/login/page.tsx")).not.toContain("hover:bg-zinc-100");
+    expect(read("app/login/page.tsx")).not.toContain("bg-white");
+    expect(read("app/login/page.tsx")).not.toContain('variant="kakao"');
     expect(read("app/admin/wishes/link-autofill-button.tsx")).toContain("h-10");
     expect(read("app/admin/wishes/link-autofill-button.tsx")).toContain("text-zinc-700");
     expect(read("app/admin/admin-ui.tsx")).not.toContain("ButtonClassName");
