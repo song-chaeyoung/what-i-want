@@ -49,10 +49,10 @@ test.describe("Admin Dashboard", () => {
     const metric = (label: string) =>
       main.getByText(label, { exact: true }).locator("xpath=..");
 
-    // expect: `선물` 5개(숨긴 선물 포함), 보조 문구 `등록된 공개 항목`.
+    // expect: `선물` 5개(숨긴 선물 포함, `/admin/wishes` 의 `총 선물` 과 같은 기준), 보조 문구 `등록된 선물`.
     const giftMetric = metric("선물");
     await expect(giftMetric.locator("p").nth(1)).toHaveText("5개");
-    await expect(giftMetric.locator("p").nth(2)).toHaveText("등록된 공개 항목");
+    await expect(giftMetric.locator("p").nth(2)).toHaveText("등록된 선물");
 
     // expect: `메시지` 2개(숨긴 메시지 제외), 보조 문구 `도착한 마음`.
     const messageMetric = metric("메시지");

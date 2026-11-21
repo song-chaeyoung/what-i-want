@@ -92,7 +92,7 @@ export default async function AdminPage() {
         <AdminMetric
           label="선물"
           value={`${wishesResult.items.length}개`}
-          detail="등록된 공개 항목"
+          detail="등록된 선물"
         />
         <AdminMetric
           label="메시지"
