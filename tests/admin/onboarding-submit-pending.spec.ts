@@ -1,12 +1,10 @@
 // spec: specs/admin-management.md
 // seed: tests/admin/seed-onboarding.spec.ts
 
-import type { Page } from "@playwright/test";
 import { test, expect } from "../fixtures/admin";
 
 test.describe("Onboarding", () => {
   test("Submit Button Pending", async ({ page, seedAdmin, signIn }) => {
-    test.setTimeout(60_000);
     // 1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목이 보일 때까지 기다립니다.
     const admin = await seedAdmin({
       onboarded: false,
@@ -39,18 +37,44 @@ test.describe("Onboarding", () => {
       'form[action="/api/onboarding"] button[type="submit"]',
     );
 
+    // 이동 중에는 locator가 새 문서를 기다리므로, 현재 문서가 콘솔로 상태를 알린다.
+    await page.evaluate(() => {
+      const form = document.querySelector('form[action="/api/onboarding"]');
+      if (!form) return;
+      let clickedAgain = false;
+      const observer = new MutationObserver(() => {
+        const button = form.querySelector('button[type="submit"]');
+        if (
+          clickedAgain ||
+          !(button instanceof HTMLButtonElement) ||
+          !button.disabled ||
+          button.textContent !== "만드는 중…" ||
+          button.querySelectorAll("svg").length !== 0
+        ) {
+          return;
+        }
+        clickedAgain = true;
+        button.click();
+        console.info("PENDING_READY");
+      });
+      observer.observe(form, {
+        subtree: true,
+        attributes: true,
+        childList: true,
+        characterData: true,
+      });
+    });
+    const pendingReady = page.waitForEvent("console", {
+      predicate: (message) => message.text() === "PENDING_READY",
+      timeout: 10_000,
+    });
+
     // 3. 버튼 `위시리스트 만들기` 를 누릅니다. 응답은 잠시 붙잡아 둡니다.
-    // 이동이 끝나기 전에는 Playwright locator가 현재 페이지를 보지 않는다.
     await submitButton.click({ noWaitAfter: true });
 
     // expect: 버튼이 disabled이고 라벨이 `만드는 중…` 이다. 스피너는 없다.
     // expect: 잠긴 버튼을 한 번 더 눌러도 `/api/onboarding` 요청은 1번이다.
-    const pending = await readPendingSubmit(page);
-    expect(pending).toEqual({
-      disabled: true,
-      text: "만드는 중…",
-      svgCount: 0,
-    });
+    await pendingReady;
     await expect.poll(() => requestCount).toBe(1);
 
     // 4. 붙잡은 응답을 이어 줍니다.
@@ -113,53 +137,3 @@ test.describe("Onboarding", () => {
     }
   });
 });
-
-type PendingSubmitState = {
-  disabled: boolean;
-  text: string;
-  svgCount: number;
-};
-
-// 응답을 붙잡은 문서 이동 중에는 locator가 새 문서를 기다린다.
-async function readPendingSubmit(page: Page): Promise<PendingSubmitState | null> {
-  return evaluateOnPage<PendingSubmitState | null>(
-    page,
-    `new Promise((resolve) => {
-      const start = Date.now();
-      const tick = () => {
-        const button = document.querySelector('form[action="/api/onboarding"] button[type="submit"]');
-        if (!(button instanceof HTMLButtonElement)) {
-          resolve(null);
-          return;
-        }
-        if (!button.disabled && Date.now() - start < 1500) {
-          setTimeout(tick, 50);
-          return;
-        }
-        if (button.disabled) button.click();
-        resolve({
-          disabled: button.disabled,
-          text: button.textContent,
-          svgCount: button.querySelectorAll("svg").length,
-        });
-      };
-      tick();
-    })`,
-    true,
-  );
-}
-
-async function evaluateOnPage<T>(
-  page: Page,
-  expression: string,
-  awaitPromise: boolean,
-): Promise<T> {
-  const client = await page.context().newCDPSession(page);
-  const probed = await client.send("Runtime.evaluate", {
-    expression,
-    awaitPromise,
-    returnByValue: true,
-  });
-
-  return probed.result.value as T;
-}
