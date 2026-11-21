@@ -18,32 +18,9 @@ export function OnboardingSubmitButton() {
       return;
     }
 
-    const iframe = document.createElement("iframe");
-    iframe.name = "onboarding-submit";
-    iframe.hidden = true;
-    iframe.setAttribute("aria-hidden", "true");
-    iframe.tabIndex = -1;
-    document.body.appendChild(iframe);
-
     let locked = false;
 
-    const onFrameLoad = () => {
-      let href = "";
-
-      try {
-        href = iframe.contentWindow?.location.href ?? "";
-      } catch {
-        return;
-      }
-
-      if (href === "" || href === "about:blank") {
-        return;
-      }
-
-      window.location.assign(href);
-    };
-
-    // 14세 확인 리스너가 폼에서 먼저 돈 뒤에 판단한다.
+    // 14세 확인은 폼에 나중에 붙을 수 있다. window 버블은 그 다음이라 defaultPrevented를 본다.
     const onSubmit = (event: SubmitEvent) => {
       if (event.target !== form) {
         return;
@@ -59,20 +36,25 @@ export function OnboardingSubmitButton() {
       }
 
       locked = true;
-      // 최상위 이동은 버튼을 바로 지운다. 응답은 숨은 프레임이 받고, 그때 이동한다.
-      form.target = iframe.name;
       // 제출 이벤트 안에서 바로 disabled로 바꾸면 브라우저가 첫 제출을 취소할 수 있다.
       window.setTimeout(() => setNativePending(true), 0);
     };
 
-    iframe.addEventListener("load", onFrameLoad);
+    const onPageShow = (event: PageTransitionEvent) => {
+      if (!event.persisted) {
+        return;
+      }
+
+      locked = false;
+      setNativePending(false);
+    };
+
     window.addEventListener("submit", onSubmit);
+    window.addEventListener("pageshow", onPageShow);
 
     return () => {
       window.removeEventListener("submit", onSubmit);
-      iframe.removeEventListener("load", onFrameLoad);
-      iframe.remove();
-      form.target = "";
+      window.removeEventListener("pageshow", onPageShow);
     };
   }, []);
 

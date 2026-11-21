@@ -168,6 +168,12 @@ describe("onboarding UI contract", () => {
     expect(source).toContain("if (event.defaultPrevented)");
     expect(source).toContain("if (locked)");
     expect(source).toContain("event.preventDefault();");
+    expect(source).toContain("window.setTimeout(() => setNativePending(true), 0)");
+    expect(source).toContain('window.addEventListener("pageshow", onPageShow)');
+    expect(source).toContain("if (!event.persisted)");
+    expect(source).not.toContain("iframe");
+    expect(source).not.toContain("location.assign");
+    expect(source).not.toContain("form.target");
     expect(source).not.toContain("animate-spin");
     expect(source).not.toContain("Loader");
     expect(pageSource).toContain('import { OnboardingSubmitButton } from "./submit-button";');

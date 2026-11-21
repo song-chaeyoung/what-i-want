@@ -77,6 +77,7 @@
 18. Submit Button Pending
 19. Admin Home Share Link Copy
 20. Admin Home Native Share Paths
+21. Underage Confirm Cancel Does Not Lock
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한, 6.x 관리자 홈 공유입니다.)
 
@@ -187,10 +188,22 @@
   1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
   2. `표시 이름` 을 `E2E 생일자` 로 바꾸고 체크박스 `만 14세 이상입니다.` 를 체크합니다. 생일은 비워 둡니다.
   3. `POST /api/onboarding` 응답을 붙잡은 채 버튼 `위시리스트 만들기` 를 누릅니다.
-    - expect: 제출 버튼이 `disabled` 이고 라벨이 `만드는 중…` 이다. 스피너는 없다.
-    - expect: 버튼을 한 번 더 눌러도 `/api/onboarding` 요청은 1번이다.
+    - expect: 제출 버튼이 `disabled` 이고 라벨이 `만드는 중…` 이다. 스피너는 없다. 응답을 붙잡은 동안 Playwright locator는 이동이 끝나기를 기다리므로, 현재 문서의 버튼을 직접 읽는다.
+    - expect: 잠긴 버튼을 한 번 더 눌러도 `/api/onboarding` 요청은 1번이다.
   4. 붙잡은 응답을 이어 줍니다.
     - expect: URL 이 `/admin` 이 된다.
+
+#### 2.4. Underage Confirm Cancel Does Not Lock
+
+**File:** `tests/admin/onboarding-submit-pending.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
+  2. 생일 `2015-03-15` 를 고르고 체크박스 `만 14세 이상입니다.` 를 체크합니다.
+    - expect: `role="alert"` 에 `2015년생` 이 보인다.
+  3. 버튼 `위시리스트 만들기` 를 누르고 `window.confirm` 을 취소합니다. 한 번 더 같습니다.
+    - expect: 제출 버튼은 활성 상태이고 라벨이 `위시리스트 만들기` 이다.
+    - expect: URL 이 `/onboarding` 이고 `/api/onboarding` 요청은 0번이다.
 
 ### 3. Wish Management
 
