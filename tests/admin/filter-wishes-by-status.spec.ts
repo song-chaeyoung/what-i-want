@@ -24,12 +24,12 @@ test.describe("Wish Management", () => {
     const tabs = page.getByRole("navigation", { name: "선물 상태 필터" });
     const cardHeadings = page.getByRole("heading", { level: 3 });
 
-    // expect: 필터 탭 링크가 순서대로 `전체 4`, `마음 모으는 중 2`, `잠시 멈춤 1`, `완료 1`, `숨김 0` 이다.
+    // expect: 필터 탭 링크가 순서대로 `전체 4`, `마음 모으는 중 1`, `잠시 멈춤 1`, `완료 2`, `숨김 0` 이다(탭 개수는 배지와 같은 표시 상태 기준).
     await expect(tabs.getByRole("link")).toHaveText([
       /^전체\s*4$/,
-      /^마음 모으는 중\s*2$/,
+      /^마음 모으는 중\s*1$/,
       /^잠시 멈춤\s*1$/,
-      /^완료\s*1$/,
+      /^완료\s*2$/,
       /^숨김\s*0$/,
     ]);
 
@@ -48,8 +48,8 @@ test.describe("Wish Management", () => {
     // expect: URL 이 `/admin/wishes?status=open` 이다.
     await expect(page).toHaveURL(/\/admin\/wishes\?status=open$/);
 
-    // expect: 레벨 3 제목이 `무선 이어폰`, `필름 카메라` 2개뿐이다(필름 카메라는 배지가 `완료` 여도 DB status 가 open 이라 이 탭에 있음).
-    await expect(cardHeadings).toHaveText(["무선 이어폰", "필름 카메라"]);
+    // expect: 레벨 3 제목이 `무선 이어폰` 하나뿐이다(필름 카메라는 DB status 가 open 이지만 금액을 다 모아 배지가 `완료` 라 이 탭에 없음).
+    await expect(cardHeadings).toHaveText(["무선 이어폰"]);
 
     // expect: 지표 `총 선물` 은 `4개` 그대로이다(전체 기준).
     await expect(page.getByText("총 선물", { exact: true })).toBeVisible();
@@ -64,12 +64,9 @@ test.describe("Wish Management", () => {
     // 3. 탭 `완료` 를 누릅니다.
     await tabs.getByRole("link", { name: /^완료/ }).click();
 
-    // expect: URL 이 `/admin/wishes?status=fulfilled` 이고 레벨 3 제목이 `보드게임` 하나뿐이다(`필름 카메라` 없음).
+    // expect: URL 이 `/admin/wishes?status=fulfilled` 이고 레벨 3 제목이 `필름 카메라`, `보드게임` 2개다(금액 달성 open 과 저장 상태 fulfilled 가 함께 있음).
     await expect(page).toHaveURL(/\/admin\/wishes\?status=fulfilled$/);
-    await expect(cardHeadings).toHaveText(["보드게임"]);
-    await expect(
-      page.getByRole("heading", { level: 3, name: "필름 카메라" }),
-    ).toHaveCount(0);
+    await expect(cardHeadings).toHaveText(["필름 카메라", "보드게임"]);
 
     // 4. 탭 `숨김` 을 누릅니다.
     await tabs.getByRole("link", { name: /^숨김/ }).click();

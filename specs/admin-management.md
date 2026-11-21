@@ -49,7 +49,7 @@
 - **[해결] 선물 `삭제` 는 확인 창 없이 바로 지워졌습니다.** 탐색에서 `보드게임` 카드의 `삭제` 를 눌렀을 때 dialog 이벤트가 없었고 곧바로 `선물을 삭제했어요.` 토스트와 함께 카드가 사라졌습니다. 메시지 `숨기기` 는 확인 창이 있고 복구할 수 있는 반면, 선물 삭제는 되돌릴 수 없습니다(`wish_items` 행 삭제, 참여 기록의 `funding_logs` 는 cascade 삭제·`messages.wishItemId` 는 null). 2026-11-21 사용자 결정으로 확인 창을 추가했습니다. 시나리오 3.5 는 확인 뒤 삭제를, 3.7 은 취소를 확인합니다.
 - **[코드 근거] 선물 저장 실패 시 오류 사유가 토스트에 나오지 않습니다.** `/api/admin/wishes*` 는 `?error=title_required` 등으로 보내지만 `AdminToastEvents` 의 `adminErrorMessages` 에는 `reserved_slug`, `invalid_account_number` 만 있어 모든 선물 오류가 `요청을 처리하지 못했어요.` 로 표시됩니다. `app/admin/wishes/page.tsx` 의 `errorMessages` 는 목록 조회 실패에만 쓰입니다. 브라우저 검증이 대부분 막으므로 1차 시나리오에는 넣지 않았습니다.
 - **[관찰] 형식이 잘못된 id 는 `wish_not_found` 가 아니라 `unexpected` 로 처리됩니다.** `POST /api/admin/wishes/not-a-uuid`(`_method=patch`)는 307 `/admin/wishes?error=unexpected` 였고 서버 콘솔에 오류가 남았습니다(Postgres uuid 형변환 오류가 catch 로 감). 데이터는 바뀌지 않으므로 권한 문제는 아닙니다. 권한 시나리오는 실제 다른 사용자의 UUID 를 씁니다.
-- **[코드 근거] 금액을 다 모은 `open` 선물은 배지가 `완료` 지만 필터는 `마음 모으는 중` 탭에 들어갑니다.** 배지는 `getWishStatusLabel(status, progress)`(진행률 100% 면 `완료`), 필터와 탭 개수는 DB `status` 기준입니다(`app/admin/wishes/page.tsx`). 공개 페이지도 같은 배지 규칙입니다. 시나리오 3.6 이 현재 동작을 기록합니다.
+- **[해결] 금액을 다 모은 `open` 선물은 배지가 `완료` 지만 필터는 `마음 모으는 중` 탭에 들어갔습니다.** 배지는 `getWishStatusLabel(status, progress)`(진행률 100% 면 `완료`), 필터와 탭 개수는 DB `status` 기준이었습니다. 2026-11-21 사용자 결정으로 필터와 탭 개수도 `getDisplayedWishStatus` 기준으로 바꿨습니다(`app/admin/wishes/page.tsx`). 수정 폼의 `상태` 선택지는 저장된 `status` 그대로입니다. 시나리오 3.6 이 바뀐 동작을 확인합니다.
 - **[관찰] 온보딩 서버 오류 뒤에는 입력값이 남지 않습니다.** 나이 확인 없이 `/api/onboarding` 에 직접 보낸 `displayName: 확인 안 함` 은 `/onboarding?error=age_confirmation_required` 로 돌아온 뒤 `E2E 관리자`(users.name)로 다시 채워졌고, 오류는 토스트가 아니라 폼 위 문단으로 표시되며 `?error=` 쿼리도 남습니다. 브라우저 `required` 가 먼저 막는 경로라 일반 사용자에게는 드뭅니다.
 - **[관찰] 비로그인 `/admin/*` 문서 응답은 HTTP 200 으로 `/login` 에 도착합니다.** 레이아웃이 Suspense 안에서 `redirect('/login')` 해 스트리밍 중 클라이언트 이동이 일어납니다. 상태 코드는 단언하지 않고 최종 URL 과 로그인 화면만 확인합니다.
 - **[해결 / 환경] 로컬 E2E DB 시간대가 운영과 달랐습니다.** `mwagotgo_e2e` 의 `now()` 는 `+09`(Asia/Seoul)이고, 운영·개발 Neon 은 UTC 입니다(2026-10-26 확인 기록). 공개 참여(`src/lib/public-participation/*`)로 만들어진 메시지는 `defaultNow()` 라 이 DB 에서는 9시간 미래로 읽혀, 메시지함을 열어도 안 읽은 메시지로 남았습니다. 2026-11-21 사용자 결정으로 `E2E_DATABASE_URL` 에 `?TimeZone=UTC` 를 붙여 dev 서버와 seed 연결의 세션 시간대를 UTC 로 고정했습니다(postgres-js 가 URL 의 모르는 쿼리를 접속 파라미터로 보냄). DB 기본 설정은 바꾸지 않았습니다.
@@ -271,15 +271,15 @@
 
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 30_000 }, { title: "필름 카메라", targetAmount: 50_000, fundedAmount: 50_000 }, { title: "캠핑 의자", targetAmount: 80_000, status: "paused" }, { title: "보드게임", targetAmount: 40_000, status: "fulfilled" } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 레벨 3 제목 `무선 이어폰` 을 기다립니다(timeout 30초).
-    - expect: 필터 탭 링크가 순서대로 `전체 4`, `마음 모으는 중 2`, `잠시 멈춤 1`, `완료 1`, `숨김 0` 이다.
+    - expect: 필터 탭 링크가 순서대로 `전체 4`, `마음 모으는 중 1`, `잠시 멈춤 1`, `완료 2`, `숨김 0` 이다(탭 개수는 배지와 같은 표시 상태 기준).
     - expect: 카드 4개가 보이고 `필름 카메라` 카드 배지는 `완료` 이다(status open 이지만 금액 달성, 코드 근거).
   2. 탭 `마음 모으는 중` 을 누릅니다.
     - expect: URL 이 `/admin/wishes?status=open` 이다.
-    - expect: 레벨 3 제목이 `무선 이어폰`, `필름 카메라` 2개뿐이다(필름 카메라는 배지가 `완료` 여도 DB status 가 open 이라 이 탭에 있음).
+    - expect: 레벨 3 제목이 `무선 이어폰` 하나뿐이다(필름 카메라는 DB status 가 open 이지만 금액을 다 모아 배지가 `완료` 라 이 탭에 없음).
     - expect: 지표 `총 선물` 은 `4개` 그대로이다(전체 기준).
     - expect: `details#create-wish` 가 닫혀 있다.
   3. 탭 `완료` 를 누릅니다.
-    - expect: URL 이 `/admin/wishes?status=fulfilled` 이고 레벨 3 제목이 `보드게임` 하나뿐이다(`필름 카메라` 없음).
+    - expect: URL 이 `/admin/wishes?status=fulfilled` 이고 레벨 3 제목이 `필름 카메라`, `보드게임` 2개다(금액 달성 open 과 저장 상태 fulfilled 가 함께 있음).
   4. 탭 `숨김` 을 누릅니다.
     - expect: URL 이 `/admin/wishes?status=hidden` 이고 카드가 없으며 문구 `숨김 상태의 선물이 없습니다.` 와 링크 `전체 선물 보기`(href `/admin/wishes`)가 보인다.
   5. 링크 `전체 선물 보기` 를 누릅니다.

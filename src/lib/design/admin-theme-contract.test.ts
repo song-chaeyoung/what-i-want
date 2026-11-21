@@ -209,7 +209,10 @@ describe("admin calm theme contract", () => {
     expect(source).toContain("status?: string;");
     expect(source).toContain("const selectedStatus = getSelectedStatus(params.status);");
     expect(source).toContain("const visibleItems = selectedStatus");
-    expect(source).toContain("result.items.filter((item) => item.status === selectedStatus)");
+    expect(source).toContain(
+      "result.items.filter((item) => getItemDisplayedStatus(item) === selectedStatus)",
+    );
+    expect(source).toContain("statusCounts[getItemDisplayedStatus(item)] += 1;");
     expect(source).toContain('href="/admin/wishes"');
     expect(source).toContain('href={`/admin/wishes?status=${status}`}');
     expect(source).toContain("getWishStatusLabel(status)");

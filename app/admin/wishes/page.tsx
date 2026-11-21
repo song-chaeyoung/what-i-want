@@ -74,7 +74,7 @@ export default async function AdminWishesPage({
   }
 
   const visibleItems = selectedStatus
-    ? result.items.filter((item) => item.status === selectedStatus)
+    ? result.items.filter((item) => getItemDisplayedStatus(item) === selectedStatus)
     : result.items;
   const totalFundedAmount = result.items.reduce(
     (sum, item) => sum + item.fundedAmount,
@@ -87,7 +87,7 @@ export default async function AdminWishesPage({
     hidden: 0,
   };
   for (const item of result.items) {
-    statusCounts[item.status] += 1;
+    statusCounts[getItemDisplayedStatus(item)] += 1;
   }
   const emptyStateMessage = selectedStatus
     ? `${getWishStatusLabel(selectedStatus)} 상태의 선물이 없습니다.`
@@ -394,6 +394,14 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
     >
       {item.imageUrl ? null : "GIFT"}
     </div>
+  );
+}
+
+// 필터와 탭 개수는 배지와 같은 표시 상태로 센다. 다 모은 open 선물은 "완료"에 들어간다.
+function getItemDisplayedStatus(item: WishItemRecord): WishStatus {
+  return getDisplayedWishStatus(
+    item.status,
+    getWishFundingProgress(item.fundedAmount, item.targetAmount),
   );
 }
 
