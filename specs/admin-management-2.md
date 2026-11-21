@@ -15,7 +15,7 @@
 
 ## 탐색으로 확인한 실제 렌더링 데이터
 
-- 관리자 홈 `/admin`(seed-settings): 지표 `선물` `5개`(보조 `등록된 선물`), `메시지` `2개`(보조 `도착한 마음`), `모인 금액` `₩35,000`(보조 `전체 선물 기준`). `내 공개 주소` 문구 `/wishlist/<slug>`, 버튼 `공유하기`, 링크 `열어 보기`(href `/wishlist/<slug>`). `최근 선물`(링크 `전체 보기` → `/admin/wishes`) 4행: 무선 이어폰/마음 모으는 중/`₩30,000 / ₩100,000`, 캠핑 의자/잠시 멈춤/`₩0 / ₩80,000`, 보드게임/완료/`₩0 / ₩40,000`, 숨긴 선물/숨김/`₩0 / ₩10,000`(필름 카메라는 5번째라 없음). `최근 메시지`(링크 `메시지함` → `/admin/messages`) 2행: 김친구 `선물 없음 · 금액 없음`, 이친구 `무선 이어폰 · ₩30,000`(박친구 숨김은 없음). 선물 행 날짜는 `2026. 11. 15.`, 메시지 행 날짜는 `2026. 11. 14.` 로 읽혔습니다(`defaultNow()` 값이 로컬 DB 시간대로 9시간 앞섬).
+- 관리자 홈 `/admin`(seed-settings): 지표 `선물` `5개`(보조 `등록된 선물`), `메시지` `2개`(보조 `도착한 마음`), `모인 금액` `₩35,000`(보조 `전체 선물 기준`). `내 공개 주소` 문구 `/wishlist/<slug>`, 버튼 `공유하기`, 링크 `열어 보기`(href `/wishlist/<slug>`). `최근 선물`(링크 `전체 보기` → `/admin/wishes`) 4행: 무선 이어폰/마음 모으는 중/`₩30,000 / ₩100,000`, 캠핑 의자/잠시 멈춤/`₩0 / ₩80,000`, 보드게임/완료/`₩0 / ₩40,000`, 숨긴 선물/숨김/`₩0 / ₩10,000`(필름 카메라는 5번째라 없음). `최근 메시지`(링크 `메시지함` → `/admin/messages`) 2행: 김친구 `선물 없음 · 금액 없음`, 이친구 `무선 이어폰 · ₩30,000`(박친구 숨김은 없음). 선물 행 날짜는 `2026. 11. 15.`, 메시지 행 날짜는 `2026. 11. 14.` 로 읽혔습니다(탐색 당시 `defaultNow()` 값이 로컬 DB 시간대로 9시간 앞섬. 2026-11-21 부터 UTC).
 - 빈 관리자 홈(seed-guide 에서 모달을 닫은 뒤): 지표 `0개`/`0개`/`₩0`, `등록된 선물이 없습니다.` + `첫 선물을 추가하면 운영 목록과 공개 페이지에 바로 반영됩니다.` + 링크 `선물 추가`(href `/admin/wishes`), `아직 메시지가 없습니다.` + `공개 페이지에서 마음이 도착하면 이곳에서 빠르게 확인합니다.` + 링크 `공개 페이지 보기`(href `/wishlist/<slug>`; 헤더에도 같은 이름 링크가 있어 총 2개).
 - 공유하기: 복사 폴백에서 버튼 라벨 `공유하기` → `복사 완료`(약 2초 뒤 복귀), 토스트 `위시리스트 링크를 복사했어요.`(success), 클립보드 `http://localhost:3200/wishlist/<slug>?utm_source=owner_share&utm_medium=share`. 네이티브 공유 스텁에서는 `navigator.share({ title: "뭐갖고싶어 생일 위시리스트", url })` 한 번 호출, 클립보드 쓰기 0, 토스트 0, 라벨 그대로.
 - 설정 `/admin/settings` 레벨 3 제목 순서: `프로필`, `공개 페이지`, `계좌 안내`, `새 생일 준비`, `계정`. 입력 id: `displayName`, `birthday`(type date, `max` 는 실행일 기준 14년 전이라 단언하지 않음), `description`, `wishlistSlug`(`minLength` 3, `maxLength` 32), `wishlistTitle`, `wishlistVisibility`(`public`=공개, `private`=비공개), `themeId`(`pixel_y2k`=픽셀 Y2K, `mono_bw`=모노 흑백, `soft_pastel`=소프트 파스텔), `bankName`, `accountHolder`, `accountNumber`(계좌가 있으면 placeholder `변경할 때만 입력`, 없으면 `3333-12-1234567`), `accountVisibility`(옵션 `copy_only`=공개 페이지에 보이기, `hidden`=숨기기). 계좌가 없으면 `accountVisibility` 가 disabled 입니다. 힌트: copy_only `공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.`, hidden `공개 페이지에 계좌가 보이지 않아요.`(선택만 바꿔도 즉시 바뀌는 클라이언트 상태). 저장은 버튼 `저장하기`, 초기화는 버튼 `위시리스트 초기화`, 로그아웃은 버튼 `로그아웃`.
@@ -32,7 +32,7 @@
 6. **확인 창(`window.confirm`)**: 테스트 코드에서는 클릭 **전에** `page.once('dialog', async (dialog) => { message = dialog.message(); await dialog.accept(); })`(또는 `dismiss()`)를 겁니다. 이 규칙은 생성된 테스트 코드용이며, MCP 탐색 중에는 `browser_run_code_unsafe` 안에서 확인 창을 띄우지 말고 `browser_click` 으로 클릭한 뒤 `browser_handle_dialog` 로 처리하세요.
 7. **공유 스텁**: `tests/sample/share-link-copy.spec.ts`(`navigator.share` 를 `undefined` 로 → 클립보드 폴백, `test.use({ permissions: ['clipboard-read', 'clipboard-write'] })`), `tests/sample/native-share-paths.spec.ts` 방식을 따릅니다. 관리자 홈의 버튼은 `main` 안에 `공유하기` 하나입니다(공개 페이지에는 헤더에도 같은 이름 버튼이 있음).
 8. **DB 조회(e2eDb)**: `import { eq } from "drizzle-orm"`, `import { bankAccounts, fundingLogs, messages, profiles, sessions, wishItems, wishlists } from "@/src/lib/db/schema"`. 컬럼은 camelCase(`displayName`, `birthday`(문자열 `YYYY-MM-DD`), `description`, `slug`, `title`, `themeId`, `visibility`, `messagesReadAt`, `bankName`, `accountHolder`, `accountNumberEncrypted`, `sessionToken`). 값이 생기는 확인은 `expect.poll(...)` 로 기다리고, 계좌번호는 `decryptAccountNumber` 와 `E2E_ACCOUNT_ENCRYPTION_SECRET`(`tests/support/e2e-db.ts`)으로 복호화해 비교합니다.
-9. **시각**: 로컬 E2E DB 세션 시간대가 Asia/Seoul 이라 `defaultNow()` 값이 9시간 앞서 읽힙니다. 홈의 날짜 문자열은 단언하지 마세요. 공개 페이지 생일 배지의 `D-<일수>` 도 실행 날짜에 따라 변하고 생일 당일은 `D-DAY` 이므로 `/^3월 15일 · D-(DAY|\d+)$/` 처럼 정규식으로 쓰세요.
+9. **시각**: E2E DB 세션 시간대는 2026-11-21 부터 UTC 입니다(1차 명세 공통 주의사항 10). 탐색 당시에는 Asia/Seoul 이라 `defaultNow()` 값이 9시간 앞서 읽혔습니다. 실행 시각에 따라 날짜가 바뀌므로 홈의 날짜 문자열은 단언하지 마세요. 공개 페이지 생일 배지의 `D-<일수>` 도 실행 날짜에 따라 변하고 생일 당일은 `D-DAY` 이므로 `/^3월 15일 · D-(DAY|\d+)$/` 처럼 정규식으로 쓰세요.
 10. **금액 기호**: `formatCurrency` 결과(`₩35,000`)의 기호는 U+20A9 입니다. 복사해서 쓰거나 `/35,000/` 정규식을 쓰세요.
 11. **안내 모달 신호**: 모달은 hydration 직후 localStorage 를 읽어 열리므로 로드 직후 `dialog` 0개 단언은 항상 참입니다. 6.1 의 근거(저장 폼 POST 후 토스트·URL 정리가 끝난 시점)와 대조 단계를 따르세요.
 
@@ -50,7 +50,7 @@
 - **[해결] 관리자 홈 `선물` 지표는 숨김 선물을 포함합니다**(5개). 탐색 당시 보조 문구 `등록된 공개 항목` 과 맞지 않아, 2026-11-21 사용자 결정으로 개수는 그대로 두고 보조 문구를 `등록된 선물` 로 바꿨습니다(`/admin/wishes` 의 `총 선물` 과 같은 기준). `메시지` 지표는 숨긴 메시지를 제외합니다.
 - **[관찰] 생일 당일 홈 축하 카드(범위 밖).** 생일을 오늘(`2000-11-14`)로 저장하면 홈 지표 위에 `생일 축하해요, 새 이름님! 🎉` 카드가 나오고 공개 페이지 배지는 `11월 14일 · D-DAY` 였습니다. 서버가 `new Date()` 로 결정해 시계 고정이 안 되어 시나리오에 넣지 않았습니다.
 - **[도구] 탐색 중 `browser_run_code_unsafe` 안에서 `window.confirm` 을 띄우지 않았고, 모든 대기에 timeout 을 줬습니다.** 초기화는 `browser_click` + `browser_handle_dialog` 로 처리했습니다.
-- **[환경] 로컬 E2E DB 시간대(Asia/Seoul)** 때문에 홈의 선물 날짜가 하루 앞서 읽힙니다(1차 명세 참고).
+- **[해결 / 환경] 로컬 E2E DB 시간대(Asia/Seoul)** 때문에 홈의 선물 날짜가 하루 앞서 읽혔습니다. 2026-11-21 부터 E2E 접속의 세션 시간대를 UTC 로 고정했습니다(1차 명세 참고).
 
 ## 시나리오 목록 요약
 
@@ -98,7 +98,7 @@
     - expect: 레벨 3 제목 `최근 선물` 과 링크 `전체 보기`(href `/admin/wishes`)가 있다.
     - expect: 행이 4개뿐이며 순서는 `무선 이어폰`(배지 `마음 모으는 중`, `₩30,000 / ₩100,000`), `캠핑 의자`(`잠시 멈춤`, `₩0 / ₩80,000`), `보드게임`(`완료`, `₩0 / ₩40,000`), `숨긴 선물`(`숨김`, `₩0 / ₩10,000`) 이다(sortOrder 순, 탐색 확인).
     - expect: 5번째 선물 `필름 카메라` 는 이 패널에 없다(최대 4개).
-    - expect: 각 행의 날짜 문자열은 단언하지 않는다(탐색: 선물은 `defaultNow()` 라 로컬 DB 시간대 때문에 `2026. 11. 15.` 로 하루 앞서 읽힘).
+    - expect: 각 행의 날짜 문자열은 단언하지 않는다(실행 시각에 따라 바뀜. 탐색 당시 선물은 `defaultNow()` 라 로컬 DB 시간대 때문에 `2026. 11. 15.` 로 하루 앞서 읽힘).
   5. `최근 메시지` 패널을 확인합니다.
     - expect: 레벨 3 제목 `최근 메시지` 와 링크 `메시지함`(href `/admin/messages`; 사이드바에도 같은 이름 링크가 있어 `main` 안으로 좁힘)이 있다.
     - expect: 행이 2개이며 순서는 `김친구`(메타 `선물 없음 · 금액 없음`), `이친구`(메타 `무선 이어폰 · ₩30,000`) 이다.

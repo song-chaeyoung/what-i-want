@@ -177,7 +177,7 @@ export const test = base.extend<{
               ...message,
               wishlistId: wishlist.id,
               wishItemId,
-              // 로컬 Postgres 세션 시간대(Asia/Seoul)에서 defaultNow()는 Drizzle이 UTC로 읽는 값보다 9시간 앞선다.
+              // E2E DB 세션은 UTC로 고정돼 있지만(tests/support/e2e-db.ts) 같은 시각에 넣으면 순서가 정해지지 않는다.
               // 읽음 기준(messagesReadAt)과 비교되도록 Node 시각을 1분 간격 과거로 넣는다(첫 항목이 가장 최근).
               createdAt: new Date(now.getTime() - (index + 1) * 60_000),
             })
