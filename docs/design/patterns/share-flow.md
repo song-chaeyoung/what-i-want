@@ -29,7 +29,7 @@
 
 - 관리자: Button `admin-outline`에 `Share2` 아이콘이고, 복사 후에는 teal `Check`로 바뀝니다. 같은 카드에 `열어 보기`가 있습니다. 위시리스트가 비공개면 주소 아래에 `비공개라 친구가 열 수 없어요.`가 보이지만 버튼은 그대로 동작합니다.
 - 공개·샘플: 헤더 오른쪽의 Button `theme`이며 선택 테마의 모양을 따릅니다.
-- `social`·`social-neutral` 변형은 공유 버튼이 아니라 [로그인](../../../app/login/page.tsx)의 `Kakao로 계속하기`·`Google로 계속하기`에서만 씁니다. `social`은 노란 면, `social-neutral`은 흰 면입니다. 카카오 전용 공유 SDK는 없고, 카카오톡은 기기 공유 시트에서 고르는 경로입니다.
+- `kakao`·`google` 변형은 공유 버튼이 아니라 [로그인](../../../app/login/page.tsx)의 `Kakao로 계속하기`·`Google로 계속하기`에서만 씁니다. `kakao`는 노란 면, `google`은 흰 면입니다. 카카오 전용 공유 SDK는 없고, 카카오톡은 기기 공유 시트에서 고르는 경로입니다.
 
 ### 링크 형태
 
