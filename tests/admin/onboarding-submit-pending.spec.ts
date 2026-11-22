@@ -38,14 +38,15 @@ test.describe("Onboarding", () => {
     );
 
     // 이동 중에는 locator가 새 문서를 기다리므로, 현재 문서가 콘솔로 상태를 알린다.
+    // disabled 버튼의 click()은 무시된다. requestSubmit은 disabled여도 submit 이벤트를 만든다.
+    // 버튼을 끄기 전이나 같은 태스크에서 바로 다시 호출하면 브라우저가 두 번째 POST를 만들지 않는다.
     await page.evaluate(() => {
       const form = document.querySelector('form[action="/api/onboarding"]');
-      if (!form) return;
-      let clickedAgain = false;
+      if (!(form instanceof HTMLFormElement)) return;
+
       const observer = new MutationObserver(() => {
         const button = form.querySelector('button[type="submit"]');
         if (
-          clickedAgain ||
           !(button instanceof HTMLButtonElement) ||
           !button.disabled ||
           button.textContent !== "만드는 중…" ||
@@ -53,9 +54,10 @@ test.describe("Onboarding", () => {
         ) {
           return;
         }
-        clickedAgain = true;
-        button.click();
+        observer.disconnect();
         console.info("PENDING_READY");
+        form.requestSubmit(button);
+        console.info("SECOND_SUBMIT_DONE");
       });
       observer.observe(form, {
         subtree: true,
@@ -68,14 +70,20 @@ test.describe("Onboarding", () => {
       predicate: (message) => message.text() === "PENDING_READY",
       timeout: 10_000,
     });
+    const secondSubmitDone = page.waitForEvent("console", {
+      predicate: (message) => message.text() === "SECOND_SUBMIT_DONE",
+      timeout: 10_000,
+    });
 
     // 3. 버튼 `위시리스트 만들기` 를 누릅니다. 응답은 잠시 붙잡아 둡니다.
     await submitButton.click({ noWaitAfter: true });
 
     // expect: 버튼이 disabled이고 라벨이 `만드는 중…` 이다. 스피너는 없다.
-    // expect: 잠긴 버튼을 한 번 더 눌러도 `/api/onboarding` 요청은 1번이다.
+    // expect: disabled 상태에서 requestSubmit을 한 번 더 해도 `/api/onboarding` 요청은 1번이다.
     await pendingReady;
-    await expect.poll(() => requestCount).toBe(1);
+    await secondSubmitDone;
+    await page.waitForTimeout(800);
+    expect(requestCount).toBe(1);
 
     // 4. 붙잡은 응답을 이어 줍니다.
     releaseRequest();

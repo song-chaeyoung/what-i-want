@@ -1,6 +1,7 @@
 import { readFile } from "node:fs/promises";
 import { join } from "node:path";
 import { ImageResponse } from "next/og";
+import { wishlistTitleWordBreak } from "@/src/lib/design/og-title-word-break";
 import { getCachedPublicWishlist } from "@/src/lib/public-wishlist/cache";
 
 export const alt = "공개 생일 위시리스트";
@@ -126,7 +127,7 @@ function renderWishlistImage({
                   lineHeight: 1.15,
                   fontWeight: 900,
                   letterSpacing: 0,
-                  wordBreak: "break-all",
+                  wordBreak: wishlistTitleWordBreak(title),
                   lineClamp: 2,
                   fontFamily: OG_TITLE_FONT_FAMILY,
                 }}

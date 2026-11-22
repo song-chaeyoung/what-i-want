@@ -157,14 +157,13 @@ describe("onboarding UI contract", () => {
     const pageSource = readSource(pagePath);
 
     expect(source).toMatch(/^"use client";/);
-    expect(source).toContain('import { useFormStatus } from "react-dom";');
-    expect(source).toContain("const { pending: actionPending } = useFormStatus();");
-    expect(source).toContain("const pending = actionPending || nativePending;");
-    expect(source).toContain("disabled={pending}");
-    expect(source).toContain("aria-disabled={pending}");
+    expect(source).not.toContain("useFormStatus");
+    expect(source).not.toContain("aria-disabled");
+    expect(source).toContain("const [nativePending, setNativePending] = useState(false);");
+    expect(source).toContain("disabled={nativePending}");
     expect(source).toContain('variant="cta"');
     expect(source).toContain("h-12 w-full px-4 py-0 disabled:opacity-100");
-    expect(source).toContain('pending ? "만드는 중…" : "위시리스트 만들기"');
+    expect(source).toContain('nativePending ? "만드는 중…" : "위시리스트 만들기"');
     expect(source).toContain("if (event.defaultPrevented)");
     expect(source).toContain("if (locked)");
     expect(source).toContain("event.preventDefault();");

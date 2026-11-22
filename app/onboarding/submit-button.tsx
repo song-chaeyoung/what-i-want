@@ -1,14 +1,11 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { useFormStatus } from "react-dom";
 import { Button } from "@/components/ui/button";
 
 export function OnboardingSubmitButton() {
-  const { pending: actionPending } = useFormStatus();
   const [nativePending, setNativePending] = useState(false);
   const ref = useRef<HTMLButtonElement>(null);
-  const pending = actionPending || nativePending;
 
   useEffect(() => {
     const button = ref.current;
@@ -63,11 +60,10 @@ export function OnboardingSubmitButton() {
       ref={ref}
       type="submit"
       variant="cta"
-      disabled={pending}
-      aria-disabled={pending}
+      disabled={nativePending}
       className="h-12 w-full px-4 py-0 disabled:opacity-100"
     >
-      {pending ? "만드는 중…" : "위시리스트 만들기"}
+      {nativePending ? "만드는 중…" : "위시리스트 만들기"}
     </Button>
   );
 }

@@ -1,6 +1,7 @@
 import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, test } from "vitest";
+import { wishlistTitleWordBreak } from "@/src/lib/design/og-title-word-break";
 
 const root = process.cwd();
 
@@ -51,10 +52,35 @@ describe("Open Graph image contract", () => {
     expect(source).toContain("fonts:");
     expect(source).toContain("fontSize: 58");
     expect(source).toContain("fontSize: 25");
+    expect(source).toContain("wishlistTitleWordBreak(title)");
+    const wordBreakSource = readFileSync(
+      join(root, "src/lib/design/og-title-word-break.ts"),
+      "utf8",
+    );
+    expect(wordBreakSource).toContain("export const TITLE_WORD_BREAK_LIMIT = 10");
+    expect(wordBreakSource).toContain("58px");
+    expect(wordBreakSource).toContain('? "keep-all"');
+    expect(wordBreakSource).toContain(': "break-all"');
     expect(source).toContain('wordBreak: "break-all"');
     expect(source).toContain("lineClamp: 2");
     expect(source).toContain("lineClamp: 1");
-    expect(source).not.toContain('wordBreak: "keep-all"');
+  });
+
+  test("keeps title words intact until one word exceeds the title width", () => {
+    expect(wishlistTitleWordBreak("우리 가족과 친구들")).toBe("keep-all");
+    expect(wishlistTitleWordBreak("우리 가족과 친구들님의 위시리스트")).toBe("keep-all");
+    expect(wishlistTitleWordBreak("짧은 제목")).toBe("keep-all");
+    expect(
+      wishlistTitleWordBreak(
+        "우리 가족과 친구들이 함께 고른 올해 생일 선물 위시리스트예요 화이팅해요",
+      ),
+    ).toBe("keep-all");
+    expect(wishlistTitleWordBreak("가".repeat(10))).toBe("keep-all");
+
+    expect(wishlistTitleWordBreak("생일축하받고싶은김민지")).toBe("break-all");
+    expect(wishlistTitleWordBreak("가".repeat(11))).toBe("break-all");
+    expect(wishlistTitleWordBreak("가".repeat(40))).toBe("break-all");
+    expect(wishlistTitleWordBreak("짧은 생일축하받고싶은김민지")).toBe("break-all");
   });
 
   test("exposes share metadata from the root layout", () => {
