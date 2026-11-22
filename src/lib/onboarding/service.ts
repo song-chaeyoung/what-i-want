@@ -5,7 +5,6 @@ import type {
 import type { CompleteOnboardingError } from "./errors";
 import { getSignupBirthdayError } from "./age";
 import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
-import { isWithdrawnSlugBlocked } from "@/src/lib/wishlist/slug-block-status";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
 const MAX_DISPLAY_NAME_LENGTH = 80;
@@ -21,7 +20,6 @@ export type CompleteOnboardingInput = {
 type CompleteOnboardingOptions = {
   createWishlistSlug?: () => string;
   now?: Date;
-  isSlugBlocked?: (slug: string) => Promise<boolean>;
 };
 
 export type CompleteOnboardingResult =
@@ -82,7 +80,6 @@ export async function completeOnboarding(
   const slug = await createAvailableWishlistSlug(
     repository,
     options.createWishlistSlug ?? createRandomWishlistSlug,
-    options.isSlugBlocked ?? isWithdrawnSlugBlocked,
   );
 
   if (!slug) {
@@ -177,17 +174,13 @@ function isLeapYear(year: number): boolean {
 async function createAvailableWishlistSlug(
   repository: OnboardingRepository,
   createWishlistSlug: () => string,
-  isSlugBlocked: (slug: string) => Promise<boolean>,
 ): Promise<string | null> {
   const maxAttempts = 5;
 
   for (let attempt = 0; attempt < maxAttempts; attempt += 1) {
     const slug = createWishlistSlug();
 
-    if (
-      (await repository.isWishlistSlugAvailable(slug)) &&
-      !(await isSlugBlocked(slug))
-    ) {
+    if (await repository.isWishlistSlugAvailable(slug)) {
       return slug;
     }
   }

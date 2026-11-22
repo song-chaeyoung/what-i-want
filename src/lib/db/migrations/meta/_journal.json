@@ -57,13 +57,6 @@
       "when": 1784548006020,
       "tag": "0007_oval_shard",
       "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "7",
-      "when": 1795348080831,
-      "tag": "0008_withdrawn_slug_blocks",
-      "breakpoints": true
     }
   ]
 }

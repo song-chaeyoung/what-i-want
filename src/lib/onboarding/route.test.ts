@@ -1,10 +1,6 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { POST } from "@/app/api/onboarding/route";
 
-vi.mock("@/src/lib/wishlist/slug-block-status", () => ({
-  isWithdrawnSlugBlocked: vi.fn(async () => false),
-}));
-
 const { auth, repository } = vi.hoisted(() => ({
   auth: vi.fn(),
   repository: {
