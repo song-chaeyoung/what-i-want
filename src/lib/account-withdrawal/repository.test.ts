@@ -1,5 +1,5 @@
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { eq, inArray } from "drizzle-orm";
 import { drizzle } from "drizzle-orm/postgres-js";
 import { migrate } from "drizzle-orm/postgres-js/migrator";
 import postgres from "postgres";
@@ -32,6 +32,8 @@ describe("account withdrawal repository", () => {
   });
   let sql: ReturnType<typeof postgres> | undefined;
   let database: Database | undefined;
+  const createdUserIds: string[] = [];
+  const createdVerificationTokens: string[] = [];
 
   beforeAll(async () => {
     const existing = await root<{ datname: string }[]>`
@@ -48,6 +50,16 @@ describe("account withdrawal repository", () => {
   });
 
   afterAll(async () => {
+    if (database && createdUserIds.length > 0) {
+      await database.delete(users).where(inArray(users.id, createdUserIds));
+    }
+
+    if (database && createdVerificationTokens.length > 0) {
+      await database
+        .delete(verificationTokens)
+        .where(inArray(verificationTokens.token, createdVerificationTokens));
+    }
+
     await sql?.end();
     await root.end();
   });
@@ -57,9 +69,10 @@ describe("account withdrawal repository", () => {
       throw new Error("database was not created");
     }
 
-    const owner = await seedUser(database, "owner");
-    const other = await seedUser(database, "other");
+    const owner = await seedUser(database, "owner", createdUserIds);
+    const other = await seedUser(database, "other", createdUserIds);
     const verificationToken = `token-${randomUUID()}`;
+    createdVerificationTokens.push(verificationToken);
 
     await database.insert(verificationTokens).values({
       identifier: "nobody@withdrawal.test",
@@ -87,6 +100,7 @@ describe("account withdrawal repository", () => {
     expect(keptToken?.identifier).toBe("nobody@withdrawal.test");
 
     const reusedUserId = randomUUID();
+    createdUserIds.push(reusedUserId);
     await database!.insert(users).values({
       id: reusedUserId,
       email: `reused-${reusedUserId}@withdrawal.test`,
@@ -155,6 +169,7 @@ type SeededUser = {
 async function seedUser(
   database: Database,
   label: string,
+  createdUserIds: string[],
 ): Promise<SeededUser> {
   const userId = randomUUID();
   const slug = `wd-${label}-${userId.slice(0, 8)}`;
@@ -166,6 +181,7 @@ async function seedUser(
     name: label,
     image: "https://cdn.example/oauth-avatar.png",
   });
+  createdUserIds.push(userId);
   await database.insert(accounts).values({
     userId,
     type: "oauth",
