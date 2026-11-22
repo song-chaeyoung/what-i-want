@@ -33,7 +33,17 @@ export async function POST(request: Request): Promise<Response> {
       revalidatePublicWishlist(result.wishlistSlug);
     }
 
-    await signOut({ redirectTo: "/?withdrawn=1" });
+    // 계정은 이미 지워졌다. signOut이 redirect가 아닌 오류를 내도 실패로 안내하지 않는다.
+    try {
+      await signOut({ redirectTo: "/?withdrawn=1" });
+    } catch (error) {
+      if (isNextRedirect(error)) {
+        throw error;
+      }
+
+      console.error(error);
+    }
+
     return NextResponse.redirect(new URL("/?withdrawn=1", requestUrl));
   } catch (error) {
     if (isNextRedirect(error)) {
