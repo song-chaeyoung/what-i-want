@@ -49,6 +49,12 @@ describe("Open Graph image contract", () => {
     expect(source).not.toContain("data:image/png;base64");
     expect(source).not.toContain("/b/{slug}");
     expect(source).toContain("fonts:");
+    expect(source).toContain("fontSize: 58");
+    expect(source).toContain("fontSize: 25");
+    expect(source).toContain('wordBreak: "break-all"');
+    expect(source).toContain("lineClamp: 2");
+    expect(source).toContain("lineClamp: 1");
+    expect(source).not.toContain('wordBreak: "keep-all"');
   });
 
   test("exposes share metadata from the root layout", () => {

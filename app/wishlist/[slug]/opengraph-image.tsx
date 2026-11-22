@@ -119,13 +119,15 @@ function renderWishlistImage({
               </div>
               <div
                 style={{
-                  display: "flex",
+                  display: "block",
+                  width: "100%",
                   color: "#4c1d95",
                   fontSize: 58,
                   lineHeight: 1.15,
                   fontWeight: 900,
                   letterSpacing: 0,
-                  wordBreak: "keep-all",
+                  wordBreak: "break-all",
+                  lineClamp: 2,
                   fontFamily: OG_TITLE_FONT_FAMILY,
                 }}
               >
@@ -197,12 +199,14 @@ function renderWishlistImage({
                 </div>
                 <div
                   style={{
-                    display: "flex",
+                    display: "block",
+                    width: "100%",
                     color: "#171717",
                     fontSize: 25,
                     lineHeight: 1.28,
                     fontWeight: 800,
-                    wordBreak: "keep-all",
+                    wordBreak: "break-all",
+                    lineClamp: 1,
                   }}
                 >
                   {item}
