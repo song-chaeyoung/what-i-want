@@ -25,9 +25,9 @@ const errorMessages: Record<SettingsError, string> = {
   display_name_too_long: "이름은 80자 이하여야 합니다.",
   wishlist_title_required: "위시리스트 제목을 입력해주세요.",
   wishlist_title_too_long: "위시리스트 제목은 120자 이하여야 합니다.",
-  invalid_slug: "공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.",
+  invalid_slug: ADMIN_COPY.invalidSlug,
   reserved_slug: ADMIN_COPY.reservedSlug,
-  duplicate_slug: "이미 사용 중인 공개 주소입니다.",
+  duplicate_slug: ADMIN_COPY.duplicateSlug,
   invalid_birthday: "생일 날짜 형식을 확인해주세요.",
   under_minimum_age:
     "생일 기준 만 14세 미만이라 저장할 수 없어요. 태어난 연도를 확인해주세요.",

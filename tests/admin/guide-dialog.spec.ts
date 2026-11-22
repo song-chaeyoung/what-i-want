@@ -19,7 +19,9 @@ test("opens the guide from the menu", async ({ page, seedAdmin, signIn }) => {
   await expect(
     page.getByRole("heading", { level: 1, name: "위시리스트 관리" }),
   ).toBeVisible({ timeout: 30_000 });
-  await expect(page.getByRole("dialog")).toHaveCount(0);
+  // 안내는 hydration 뒤 effect에서 localStorage를 읽고 열리므로, 제목이 보인 직후의 dialog 0개 단언은
+  // 항상 참이라 넣지 않는다. 이미 본 안내가 다시 열리지 않는지는 admin-guide-first-visit.spec.ts가
+  // hydration 이후 신호(저장 토스트·URL 정리) 뒤에 확인한다.
 
   await page.getByRole("complementary").getByRole("link", { name: "사용 가이드" }).click();
 

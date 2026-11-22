@@ -25,11 +25,11 @@ test.describe("Wish Management", () => {
     await expect(page.getByText("총 선물", { exact: true })).toBeVisible();
     await expect(page.getByText("2개", { exact: true })).toBeVisible();
 
-    // 2. `page.on('dialog', ...)` 로 확인 창이 뜨는지 기록하도록 걸어 두고, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
-    const dialogMessages: string[] = [];
-    page.on("dialog", (dialog) => {
-      dialogMessages.push(dialog.message());
-      return dialog.dismiss();
+    // 2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
+    let dialogMessage = "";
+    page.once("dialog", async (dialog) => {
+      dialogMessage = dialog.message();
+      await dialog.accept();
     });
 
     const card = page.locator("details").filter({
@@ -45,8 +45,8 @@ test.describe("Wish Management", () => {
     await expect(toast).toBeVisible();
     await expect(toast).toHaveAttribute("data-type", "success");
 
-    // expect: 확인 창(dialog)이 뜨지 않았다(현재 동작 기록, "탐색 중 발견한 사항" 참고).
-    expect(dialogMessages).toEqual([]);
+    // expect: 확인 창 메시지가 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.` 이다(모인 금액 없는 선물 문구, 코드 근거).
+    expect(dialogMessage).toBe("이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.");
 
     // expect: URL 이 `/admin/wishes` 로 정리되고, 레벨 3 제목 `보드게임` 이 없고 `무선 이어폰` 은 남는다.
     await expect(page).toHaveURL(/\/admin\/wishes$/);

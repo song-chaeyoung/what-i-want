@@ -1,6 +1,7 @@
 import { Plus } from "lucide-react";
 import Link from "next/link";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { DrizzleWishRepository } from "@/src/lib/wishes/repository";
 import { listWishes } from "@/src/lib/wishes/service";
 import type { WishItemRecord } from "@/src/lib/wishes/types";
@@ -21,6 +22,7 @@ import {
 import { Input, inputVariants } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
+import { DeleteWishForm } from "./delete-wish-form";
 import { LinkAutofillButton } from "./link-autofill-button";
 import {
   AdminField,
@@ -37,14 +39,14 @@ type AdminWishesPageProps = {
 
 const errorMessages: Record<string, string> = {
   wishlist_not_found: "먼저 온보딩을 완료해주세요.",
-  wish_not_found: "수정할 선물을 찾을 수 없습니다.",
-  title_required: "선물 이름을 입력해주세요.",
-  title_too_long: "선물 이름은 120자 이하여야 합니다.",
-  target_amount_required: "목표 금액을 입력해주세요.",
-  invalid_target_amount: "목표 금액은 1 이상 2,147,483,647 이하의 정수로 입력해주세요.",
-  invalid_product_url: "상품 링크는 http 또는 https 주소여야 합니다.",
-  invalid_image_url: "이미지 링크는 http 또는 https 주소여야 합니다.",
-  invalid_status: "지원하지 않는 선물 상태입니다.",
+  wish_not_found: ADMIN_COPY.wishNotFound,
+  title_required: ADMIN_COPY.wishTitleRequired,
+  title_too_long: ADMIN_COPY.wishTitleTooLong,
+  target_amount_required: ADMIN_COPY.wishTargetAmountRequired,
+  invalid_target_amount: ADMIN_COPY.invalidWishTargetAmount,
+  invalid_product_url: ADMIN_COPY.invalidWishProductUrl,
+  invalid_image_url: ADMIN_COPY.invalidWishImageUrl,
+  invalid_status: ADMIN_COPY.invalidWishStatus,
 };
 
 const statusOptions: WishStatus[] = ["open", "paused", "fulfilled", "hidden"];
@@ -72,7 +74,7 @@ export default async function AdminWishesPage({
   }
 
   const visibleItems = selectedStatus
-    ? result.items.filter((item) => item.status === selectedStatus)
+    ? result.items.filter((item) => getItemDisplayedStatus(item) === selectedStatus)
     : result.items;
   const totalFundedAmount = result.items.reduce(
     (sum, item) => sum + item.fundedAmount,
@@ -85,7 +87,7 @@ export default async function AdminWishesPage({
     hidden: 0,
   };
   for (const item of result.items) {
-    statusCounts[item.status] += 1;
+    statusCounts[getItemDisplayedStatus(item)] += 1;
   }
   const emptyStateMessage = selectedStatus
     ? `${getWishStatusLabel(selectedStatus)} 상태의 선물이 없습니다.`
@@ -372,12 +374,7 @@ function WishItemEditor({ item }: { item: WishItemRecord }) {
             </div>
           </form>
 
-          <form action={`/api/admin/wishes/${item.id}`} method="post" className="mt-3">
-            <input type="hidden" name="_method" value="delete" />
-            <Button type="submit" variant="danger">
-              삭제
-            </Button>
-          </form>
+          <DeleteWishForm wishId={item.id} hasAmount={item.fundedAmount > 0} />
         </div>
       </details>
     </Card>
@@ -397,6 +394,14 @@ function WishThumbnail({ item }: { item: WishItemRecord }) {
     >
       {item.imageUrl ? null : "GIFT"}
     </div>
+  );
+}
+
+// 필터와 탭 개수는 배지와 같은 표시 상태로 센다. 다 모은 open 선물은 "완료"에 들어간다.
+function getItemDisplayedStatus(item: WishItemRecord): WishStatus {
+  return getDisplayedWishStatus(
+    item.status,
+    getWishFundingProgress(item.fundedAmount, item.targetAmount),
   );
 }
 

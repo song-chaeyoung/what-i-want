@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { inArray } from "drizzle-orm";
 import {
+  bankAccounts,
   fundingLogs,
   messages,
   profiles,
@@ -9,13 +10,17 @@ import {
   wishItems,
   wishlists,
 } from "@/src/lib/db/schema";
-import { E2E_EMAIL_DOMAIN } from "../support/e2e-db";
+import { encryptAccountNumber } from "@/src/lib/settings/account-crypto";
+import {
+  E2E_ACCOUNT_ENCRYPTION_SECRET,
+  E2E_EMAIL_DOMAIN,
+} from "../support/e2e-db";
 import { test as base } from "./wishlist";
 
 // auth.ts는 http에서 `__Secure-` 접두사 없는 Auth.js 기본 이름을 쓴다(@auth/core lib/utils/cookie.js defaultCookies).
 const SESSION_COOKIE_NAME = "authjs.session-token";
 
-// app/admin/admin-guide-storage.ts의 "이미 봤음" 표시. 1차 범위는 첫 진입 안내 모달을 다루지 않아서 끈다.
+// app/admin/admin-guide-storage.ts의 "이미 봤음" 표시. 안내 모달을 다루는 테스트가 아니면 끈다.
 const ADMIN_GUIDE_SEEN_KEY = "mwagotgo:admin-guide-seen";
 
 type SeedAdminWishInput = Pick<
@@ -33,6 +38,13 @@ type SeedAdminMessageInput = Pick<
   amount?: number;
 };
 
+type SeedAdminBankAccountInput = Pick<
+  typeof bankAccounts.$inferInsert,
+  "bankName" | "accountHolder" | "visibility"
+> & {
+  accountNumber: string;
+};
+
 export type SeedAdminInput = {
   // false면 소셜 로그인 직후처럼 users만 만들고 profiles·wishlists는 만들지 않는다.
   onboarded?: boolean;
@@ -41,6 +53,7 @@ export type SeedAdminInput = {
   items?: SeedAdminWishInput[];
   // 배열 순서가 메시지함의 표시 순서(최신순)가 된다.
   messages?: SeedAdminMessageInput[];
+  bankAccount?: SeedAdminBankAccountInput;
 };
 
 export type SeededAdmin = {
@@ -56,7 +69,11 @@ export type SeededAdmin = {
 
 export const test = base.extend<{
   seedAdmin: (input?: SeedAdminInput) => Promise<SeededAdmin>;
-  signIn: (admin: Pick<SeededAdmin, "sessionToken">) => Promise<void>;
+  signIn: (
+    admin: Pick<SeededAdmin, "sessionToken">,
+    // showAdminGuide: true면 첫 진입 안내 모달을 끄지 않는다(안내 모달 테스트용).
+    options?: { showAdminGuide?: boolean },
+  ) => Promise<void>;
 }>({
   seedAdmin: async ({ e2eDb }, provide) => {
     const userIds: string[] = [];
@@ -67,6 +84,7 @@ export const test = base.extend<{
         displayName = "E2E 관리자",
         items = [],
         messages: messageInputs = [],
+        bankAccount,
       } = {}) => {
         const key = randomUUID().replaceAll("-", "").slice(0, 12);
         const email = `admin-${key}@${E2E_EMAIL_DOMAIN}`;
@@ -128,6 +146,24 @@ export const test = base.extend<{
                 .returning({ id: wishItems.id, title: wishItems.title })
             : [];
 
+        if (bankAccount) {
+          const { accountNumber, ...account } = bankAccount;
+          const encrypted = encryptAccountNumber(
+            accountNumber,
+            E2E_ACCOUNT_ENCRYPTION_SECRET,
+          );
+
+          if (!encrypted.ok) {
+            throw new Error(encrypted.error);
+          }
+
+          await e2eDb.insert(bankAccounts).values({
+            ...account,
+            userId: user.id,
+            accountNumberEncrypted: encrypted.value,
+          });
+        }
+
         const createdMessages: SeededAdmin["messages"] = [];
 
         for (const [index, input] of messageInputs.entries()) {
@@ -141,7 +177,7 @@ export const test = base.extend<{
               ...message,
               wishlistId: wishlist.id,
               wishItemId,
-              // 로컬 Postgres 세션 시간대(Asia/Seoul)에서 defaultNow()는 Drizzle이 UTC로 읽는 값보다 9시간 앞선다.
+              // E2E DB 세션은 UTC로 고정돼 있지만(tests/support/e2e-db.ts) 같은 시각에 넣으면 순서가 정해지지 않는다.
               // 읽음 기준(messagesReadAt)과 비교되도록 Node 시각을 1분 간격 과거로 넣는다(첫 항목이 가장 최근).
               createdAt: new Date(now.getTime() - (index + 1) * 60_000),
             })
@@ -178,7 +214,7 @@ export const test = base.extend<{
   },
 
   signIn: async ({ context, baseURL }, provide) => {
-    await provide(async ({ sessionToken }) => {
+    await provide(async ({ sessionToken }, { showAdminGuide = false } = {}) => {
       await context.addCookies([
         {
           name: SESSION_COOKIE_NAME,
@@ -188,6 +224,11 @@ export const test = base.extend<{
           sameSite: "Lax",
         },
       ]);
+
+      if (showAdminGuide) {
+        return;
+      }
+
       await context.addInitScript((key) => {
         window.localStorage.setItem(key, "1");
       }, ADMIN_GUIDE_SEEN_KEY);
