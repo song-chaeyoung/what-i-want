@@ -7,6 +7,7 @@ import { textareaVariants } from "@/components/ui/textarea";
 const root = process.cwd();
 const pagePath = join(root, "app/onboarding/page.tsx");
 const birthdayPickerPath = join(root, "app/onboarding/birthday-picker.tsx");
+const submitButtonPath = join(root, "app/onboarding/submit-button.tsx");
 const textLogoPath = join(root, "components/text-logo.tsx");
 
 function readSource(path: string) {
@@ -81,6 +82,10 @@ describe("onboarding UI contract", () => {
     expect(source).toContain(
       'className="w-auto rounded-md border border-line bg-white p-3 shadow-xs"',
     );
+    expect(source).toContain('labelYearDropdown: () => "연도 선택"');
+    expect(source).toContain('labelMonthDropdown: () => "월 선택"');
+    expect(source).toContain('labelPrevious: () => "이전 달"');
+    expect(source).toContain('labelNext: () => "다음 달"');
     expect(source).toContain("startMonth={new Date(1900, 0)}");
     expect(source).toContain("endMonth={kstToday}");
     expect(source).toContain("disabled={{ after: kstToday }}");
@@ -143,6 +148,37 @@ describe("onboarding UI contract", () => {
     expect(source).toContain('form.addEventListener("submit", confirmUnderMinimumAge);');
     expect(source).toContain("window.confirm(");
     expect(source).toContain("event.preventDefault();");
+  });
+
+  test("locks the submit button and relabels it while the form is pending", () => {
+    expect(existsSync(submitButtonPath)).toBe(true);
+
+    const source = readSource(submitButtonPath);
+    const pageSource = readSource(pagePath);
+
+    expect(source).toMatch(/^"use client";/);
+    expect(source).not.toContain("useFormStatus");
+    expect(source).not.toContain("aria-disabled");
+    expect(source).toContain("const [nativePending, setNativePending] = useState(false);");
+    expect(source).toContain("disabled={nativePending}");
+    expect(source).toContain('variant="cta"');
+    expect(source).toContain("h-12 w-full px-4 py-0 disabled:opacity-100");
+    expect(source).toContain('nativePending ? "만드는 중…" : "위시리스트 만들기"');
+    expect(source).toContain("if (event.defaultPrevented)");
+    expect(source).toContain("if (locked)");
+    expect(source).toContain("event.preventDefault();");
+    expect(source).toContain("window.setTimeout(() => setNativePending(true), 0)");
+    expect(source).toContain('window.addEventListener("pageshow", onPageShow)');
+    expect(source).toContain("if (!event.persisted)");
+    expect(source).not.toContain("iframe");
+    expect(source).not.toContain("location.assign");
+    expect(source).not.toContain("form.target");
+    expect(source).not.toContain("animate-spin");
+    expect(source).not.toContain("Loader");
+    expect(pageSource).toContain('import { OnboardingSubmitButton } from "./submit-button";');
+    expect(pageSource).toContain("<OnboardingSubmitButton />");
+    expect(pageSource).toContain('action="/api/onboarding"');
+    expect(pageSource).toContain('method="post"');
   });
 
   test("does not ask users to enter a public slug", () => {

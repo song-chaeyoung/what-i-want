@@ -51,10 +51,10 @@ describe("admin toast contract", () => {
     expect(source).toContain('updated: { type: "success", message: "선물을 수정했어요." }');
     expect(source).toContain('deleted: { type: "success", message: "선물을 삭제했어요." }');
     expect(source).toContain(
-      'messageHidden: { type: "success", message: "참여 기록을 숨겼어요." }',
+      'messageHidden: { type: "success", message: "메시지를 숨겼어요." }',
     );
     expect(source).toContain(
-      'messageRestored: { type: "success", message: "참여 기록을 복구했어요." }',
+      'messageRestored: { type: "success", message: "메시지를 복구했어요." }',
     );
     expect(source).toContain("accountDeleted: {");
     expect(source).toContain("message: ADMIN_COPY.deleteBankAccountSuccess");

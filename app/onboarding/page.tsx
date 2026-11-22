@@ -2,13 +2,13 @@ import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { TextLogo } from "@/components/text-logo";
 import { Alert } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
+import { OnboardingSubmitButton } from "./submit-button";
 
 export const metadata: Metadata = {
   robots: {
@@ -116,13 +116,7 @@ export default async function OnboardingPage({
                 </span>
               </label>
 
-              <Button
-                type="submit"
-                variant="cta"
-                className="h-12 w-full px-4 py-0"
-              >
-                위시리스트 만들기
-              </Button>
+              <OnboardingSubmitButton />
             </form>
           </section>
         </Card>

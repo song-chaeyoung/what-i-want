@@ -42,11 +42,13 @@ test.describe("Onboarding", () => {
     // 2. `표시 이름` 을 `E2E 생일자` 로 바꾸고, 버튼 `생일` 을 눌러 달력을 열어 2000년 3월 15일을 고릅니다.
     await displayNameInput.fill("E2E 생일자");
     await page.getByRole("button", { name: "생일" }).click();
+    await expect(page.getByRole("button", { name: "이전 달" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "다음 달" })).toBeVisible();
     await page
-      .getByRole("combobox", { name: "Choose the Year" })
+      .getByRole("combobox", { name: "연도 선택" })
       .selectOption("2000");
     await page
-      .getByRole("combobox", { name: "Choose the Month" })
+      .getByRole("combobox", { name: "월 선택" })
       .selectOption({ index: 2 });
     await page.getByRole("button", { name: /March 15th, 2000/ }).click();
 

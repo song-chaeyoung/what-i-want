@@ -60,15 +60,15 @@ test.describe("Message Management", () => {
     });
     await fundedRow.getByRole("button", { name: "숨기기" }).click();
 
-    // expect: 확인 창 메시지가 `이 참여 기록을 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 이다.
+    // expect: 확인 창 메시지가 `이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 이다.
     expect(dialogMessage).toBe(
-      "이 참여 기록을 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
+      "이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
     );
 
-    // expect: 토스트 `참여 기록을 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
+    // expect: 토스트 `메시지를 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
     const hideToast = page
       .locator("[data-sonner-toast]")
-      .filter({ hasText: "참여 기록을 숨겼어요." });
+      .filter({ hasText: "메시지를 숨겼어요." });
     await expect(hideToast).toBeVisible();
     await expect(hideToast).toHaveAttribute("data-type", "success");
     await expect(page).toHaveURL(/\/admin\/messages$/);
@@ -130,10 +130,10 @@ test.describe("Message Management", () => {
     // 5. `숨김 해제` 를 누릅니다(확인 창 없음).
     await articles.first().getByRole("button", { name: "숨김 해제" }).click();
 
-    // expect: 토스트 `참여 기록을 복구했어요.`(`data-type` `success`)가 보인다.
+    // expect: 토스트 `메시지를 복구했어요.`(`data-type` `success`)가 보인다.
     const restoreToast = page
       .locator("[data-sonner-toast]")
-      .filter({ hasText: "참여 기록을 복구했어요." });
+      .filter({ hasText: "메시지를 복구했어요." });
     await expect(restoreToast).toBeVisible();
     await expect(restoreToast).toHaveAttribute("data-type", "success");
 

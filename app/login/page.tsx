@@ -72,11 +72,7 @@ export default async function LoginPage({ searchParams }: LoginPageProps) {
 
             <div className="mt-8 space-y-3">
               <form action={signInWithGoogle}>
-                <Button
-                  type="submit"
-                  variant="kakao"
-                  className="w-full bg-white hover:bg-zinc-100"
-                >
+                <Button type="submit" variant="google" className="w-full">
                   Google로 계속하기
                 </Button>
               </form>
