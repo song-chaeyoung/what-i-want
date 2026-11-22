@@ -96,6 +96,12 @@ export const wishItems = pgTable(
   ],
 );
 
+// 탈퇴한 공개 주소의 HMAC과 차단 해제 시각만 둔다. users FK가 없어 탈퇴 cascade로 지워지지 않는다.
+export const withdrawnSlugBlocks = pgTable("withdrawn_slug_blocks", {
+  slugHash: varchar("slug_hash", { length: 64 }).primaryKey(),
+  blockedUntil: timestamp("blocked_until", { mode: "date" }).notNull(),
+});
+
 export const bankAccounts = pgTable("bank_accounts", {
   id: uuid("id").defaultRandom().primaryKey(),
   userId: uuid("user_id")

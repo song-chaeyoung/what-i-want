@@ -1,5 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { revalidateTag, unstable_cache } from "next/cache";
+
+vi.mock("@/src/lib/wishlist/slug-block-status", () => ({
+  isWithdrawnSlugBlocked: vi.fn(async () => false),
+}));
 import { POST } from "@/app/api/admin/settings/route";
 import type {
   SettingsRecord,

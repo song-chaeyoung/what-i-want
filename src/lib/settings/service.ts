@@ -3,6 +3,7 @@ import {
   isPublicThemeId,
 } from "@/src/lib/wishlist/theme";
 import { parseWishlistSlug } from "@/src/lib/wishlist/slug";
+import { isWithdrawnSlugBlocked } from "@/src/lib/wishlist/slug-block-status";
 import { getSignupBirthdayError } from "@/src/lib/onboarding/age";
 import {
   encryptAccountNumber,
@@ -99,6 +100,7 @@ export async function updateSettings(
   input: UpdateSettingsInput,
   repository: SettingsRepository,
   encryptionSecret: string | undefined = getAccountEncryptionSecret(),
+  isSlugBlocked: (slug: string) => Promise<boolean> = isWithdrawnSlugBlocked,
 ): Promise<UpdateSettingsResult> {
   const current = await repository.getSettingsByOwnerId(input.ownerId);
 
@@ -106,7 +108,12 @@ export async function updateSettings(
     return { ok: false, error: "settings_not_found" };
   }
 
-  const record = await normalizeSettingsInput(input, current, encryptionSecret);
+  const record = await normalizeSettingsInput(
+    input,
+    current,
+    encryptionSecret,
+    isSlugBlocked,
+  );
 
   if (!record.ok) {
     return record;
@@ -153,6 +160,7 @@ async function normalizeSettingsInput(
   input: UpdateSettingsInput,
   current: SettingsRecord,
   encryptionSecret: string | undefined,
+  isSlugBlocked: (slug: string) => Promise<boolean>,
 ): Promise<
   | {
       ok: true;
@@ -191,6 +199,10 @@ async function normalizeSettingsInput(
 
   if (RESERVED_WISHLIST_SLUGS.has(slug.value)) {
     return { ok: false, error: "reserved_slug" };
+  }
+
+  if (await isSlugBlocked(slug.value)) {
+    return { ok: false, error: "duplicate_slug" };
   }
 
   const birthday = normalizeBirthday(input.birthday);

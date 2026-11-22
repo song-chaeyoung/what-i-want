@@ -1,5 +1,10 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { decryptAccountNumber } from "./account-crypto";
+
+vi.mock("@/src/lib/wishlist/slug-block-status", () => ({
+  isWithdrawnSlugBlocked: vi.fn(async () => false),
+}));
 import {
   deleteBankAccount,
   getSettings,
@@ -478,6 +483,23 @@ describe("admin settings service", () => {
         "secret",
       ),
     ).resolves.toEqual({ ok: false, error: "invalid_wishlist_visibility" });
+  });
+
+  test("rejects a withdrawn slug with the existing duplicate slug copy", async () => {
+    const repository = new FakeSettingsRepository();
+    repository.settings = makeSettings({ bankAccount: null });
+
+    const result = await updateSettings(
+      makeInput({ wishlistSlug: "old-address" }),
+      repository,
+      "secret",
+      async () => true,
+    );
+
+    expect(result).toEqual({ ok: false, error: "duplicate_slug" });
+    expect(ADMIN_COPY.duplicateSlug).toBe("이미 사용 중인 공개 주소입니다.");
+    expect(repository.requestedSlugChecks).toEqual([]);
+    expect(repository.updated).toEqual([]);
   });
 
   test("rejects duplicate slugs when the slug changes", async () => {

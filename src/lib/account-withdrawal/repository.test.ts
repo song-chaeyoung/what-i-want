@@ -18,12 +18,21 @@ import {
   verificationTokens,
   wishItems,
   wishlists,
+  withdrawnSlugBlocks,
 } from "@/src/lib/db/schema";
+import { DrizzleOnboardingRepository } from "@/src/lib/onboarding/repository";
+import { completeOnboarding } from "@/src/lib/onboarding/service";
+import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
+import { updateSettings } from "@/src/lib/settings/service";
+import { hashWithdrawnSlug } from "@/src/lib/wishlist/slug-block";
+import { isWithdrawnSlugBlocked } from "@/src/lib/wishlist/slug-block-status";
 import { DrizzleAccountWithdrawalRepository } from "./repository";
 
 vi.mock("@/src/lib/db/client", () => ({ db: undefined }));
 
 const unitDatabaseUrl = "postgres://localhost:5432/mwagotgo_unit?TimeZone=UTC";
+
+const slugBlockSecret = "unit-slug-block-secret";
 
 describe("account withdrawal repository", () => {
   const root = postgres("postgres://localhost:5432/postgres", {
@@ -34,6 +43,7 @@ describe("account withdrawal repository", () => {
   let database: Database | undefined;
 
   beforeAll(async () => {
+    process.env.SLUG_BLOCK_SECRET = slugBlockSecret;
     const existing = await root<{ datname: string }[]>`
       select datname from pg_database where datname = 'mwagotgo_unit'
     `;
@@ -86,6 +96,87 @@ describe("account withdrawal repository", () => {
       .where(eq(verificationTokens.token, verificationToken));
     expect(keptToken?.identifier).toBe("nobody@withdrawal.test");
 
+    const [block] = await database!
+      .select()
+      .from(withdrawnSlugBlocks)
+      .where(
+        eq(
+          withdrawnSlugBlocks.slugHash,
+          hashWithdrawnSlug(owner.slug, slugBlockSecret),
+        ),
+      );
+    expect(block?.slugHash).toBe(hashWithdrawnSlug(owner.slug, slugBlockSecret));
+    expect(block?.slugHash).not.toBe(owner.slug);
+    expect(block).not.toHaveProperty("slug");
+    expect(
+      await isWithdrawnSlugBlocked(owner.slug, { database: database! }),
+    ).toBe(true);
+    expect(
+      await isWithdrawnSlugBlocked("other-open-slug", { database: database! }),
+    ).toBe(false);
+
+    const blockedReuse = await updateSettings(
+      settingsInput(other.userId, owner.slug),
+      new DrizzleSettingsRepository(database!),
+      "unused-account-secret",
+      (slug) => isWithdrawnSlugBlocked(slug, { database: database! }),
+    );
+    expect(blockedReuse).toEqual({ ok: false, error: "duplicate_slug" });
+
+    const returningUserId = randomUUID();
+    await database!.insert(users).values({
+      id: returningUserId,
+      email: `returning-${returningUserId}@withdrawal.test`,
+      name: "다시 온 사람",
+    });
+    const isSlugBlocked = (slug: string) =>
+      isWithdrawnSlugBlocked(slug, { database: database! });
+    const returningOnboarding = await completeOnboarding(
+      {
+        userId: returningUserId,
+        displayName: "다시 온 사람",
+        birthday: "1990-01-01",
+        description: null,
+        ageConfirmed: true,
+      },
+      new DrizzleOnboardingRepository(database!),
+      {
+        createWishlistSlug: () => `ret-${returningUserId.slice(0, 8)}`,
+        isSlugBlocked,
+      },
+    );
+    expect(returningOnboarding).toEqual({
+      ok: true,
+      wishlistSlug: `ret-${returningUserId.slice(0, 8)}`,
+    });
+    const returningReuse = await updateSettings(
+      {
+        ownerId: returningUserId,
+        displayName: "다시 온 사람",
+        description: null,
+        birthday: "1990-01-01",
+        wishlistSlug: owner.slug,
+        wishlistTitle: "다시 온 사람님의 위시리스트",
+        wishlistVisibility: "public",
+        themeId: "pixel_y2k",
+        bankName: null,
+        accountHolder: null,
+        accountNumber: null,
+      },
+      new DrizzleSettingsRepository(database!),
+      "unused-account-secret",
+      isSlugBlocked,
+    );
+    expect(returningReuse).toEqual({ ok: false, error: "duplicate_slug" });
+
+    await database!
+      .update(withdrawnSlugBlocks)
+      .set({ blockedUntil: new Date(Date.now() - 1000) })
+      .where(eq(withdrawnSlugBlocks.slugHash, block!.slugHash));
+    expect(
+      await isWithdrawnSlugBlocked(owner.slug, { database: database! }),
+    ).toBe(false);
+
     const reusedUserId = randomUUID();
     await database!.insert(users).values({
       id: reusedUserId,
@@ -99,24 +190,40 @@ describe("account withdrawal repository", () => {
       provider: "google",
       providerAccountId: owner.providerAccountId,
     });
-    await database!.insert(wishlists).values({
-      ownerId: reusedUserId,
-      slug: owner.slug,
-      title: "다시 만든 위시리스트",
-    });
 
-    const [reusedWishlist] = await database!
-      .select({ slug: wishlists.slug })
-      .from(wishlists)
-      .where(eq(wishlists.ownerId, reusedUserId));
-    expect(reusedWishlist?.slug).toBe(owner.slug);
+    const [reusedAccount] = await database!
+      .select({ providerAccountId: accounts.providerAccountId })
+      .from(accounts)
+      .where(eq(accounts.userId, reusedUserId));
+    expect(reusedAccount?.providerAccountId).toBe(owner.providerAccountId);
 
     await database!.delete(users).where(eq(users.id, reusedUserId));
+    await database!.delete(users).where(eq(users.id, returningUserId));
+    await database!
+      .delete(withdrawnSlugBlocks)
+      .where(eq(withdrawnSlugBlocks.slugHash, block!.slugHash));
     await database!
       .delete(verificationTokens)
       .where(eq(verificationTokens.token, verificationToken));
   });
 });
+
+function settingsInput(ownerId: string, wishlistSlug: string) {
+  return {
+    ownerId,
+    displayName: "other",
+    description: null,
+    birthday: null,
+    wishlistSlug,
+    wishlistTitle: "other의 위시리스트",
+    wishlistVisibility: "public",
+    themeId: "pixel_y2k",
+    bankName: "테스트은행",
+    accountHolder: "other",
+    accountNumber: null,
+    accountVisibility: "copy_only",
+  };
+}
 
 const emptyCounts = {
   users: 0,

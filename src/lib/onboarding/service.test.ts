@@ -1,5 +1,9 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
 import { completeOnboarding } from "./service";
+
+vi.mock("@/src/lib/wishlist/slug-block-status", () => ({
+  isWithdrawnSlugBlocked: vi.fn(async () => false),
+}));
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
@@ -194,6 +198,53 @@ describe("completeOnboarding", () => {
     );
 
     expect(result).toEqual({ ok: false, error: "already_completed" });
+  });
+
+  test("skips a withdrawn slug and keeps the next available one", async () => {
+    const repository = new FakeOnboardingRepository();
+    const slugs = ["blocked-slug", "fresh-slug"];
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: "민지",
+        birthday: "2000-01-01",
+        description: null,
+        ageConfirmed: true,
+      },
+      repository,
+      {
+        createWishlistSlug: () => slugs.shift() ?? "fresh-slug",
+        isSlugBlocked: async (slug) => slug === "blocked-slug",
+        now: new Date("2026-11-22T00:00:00.000Z"),
+      },
+    );
+
+    expect(result).toEqual({ ok: true, wishlistSlug: "fresh-slug" });
+    expect(repository.records[0]?.wishlistSlug).toBe("fresh-slug");
+  });
+
+  test("rejects onboarding when every generated slug is still blocked", async () => {
+    const repository = new FakeOnboardingRepository();
+
+    const result = await completeOnboarding(
+      {
+        userId: "user-1",
+        displayName: "민지",
+        birthday: "2000-01-01",
+        description: null,
+        ageConfirmed: true,
+      },
+      repository,
+      {
+        createWishlistSlug: () => "blocked-slug",
+        isSlugBlocked: async () => true,
+        now: new Date("2026-11-22T00:00:00.000Z"),
+      },
+    );
+
+    expect(result).toEqual({ ok: false, error: "duplicate_slug" });
+    expect(repository.records).toEqual([]);
   });
 
   test("allows birthday to be null", async () => {
