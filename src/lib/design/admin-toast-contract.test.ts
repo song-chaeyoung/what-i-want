@@ -112,4 +112,35 @@ describe("admin toast contract", () => {
       expect(source).not.toContain("AdminNotice");
     }
   });
+
+  test("shows the shared admin copy for slug and wish mutation errors", () => {
+    const toastSource = readFileSync(adminToastEventsPath, "utf8");
+    const settingsSource = readFileSync(adminSettingsPagePath, "utf8");
+    const wishesSource = readFileSync(adminWishesPagePath, "utf8");
+
+    const slugErrors = [
+      ["invalid_slug", "ADMIN_COPY.invalidSlug"],
+      ["duplicate_slug", "ADMIN_COPY.duplicateSlug"],
+    ];
+    const wishErrors = [
+      ["wish_not_found", "ADMIN_COPY.wishNotFound"],
+      ["title_required", "ADMIN_COPY.wishTitleRequired"],
+      ["title_too_long", "ADMIN_COPY.wishTitleTooLong"],
+      ["target_amount_required", "ADMIN_COPY.wishTargetAmountRequired"],
+      ["invalid_target_amount", "ADMIN_COPY.invalidWishTargetAmount"],
+      ["invalid_product_url", "ADMIN_COPY.invalidWishProductUrl"],
+      ["invalid_image_url", "ADMIN_COPY.invalidWishImageUrl"],
+      ["invalid_status", "ADMIN_COPY.invalidWishStatus"],
+    ];
+
+    for (const [code, copy] of [...slugErrors, ...wishErrors]) {
+      expect(toastSource).toContain(`${code}: ${copy},`);
+    }
+    for (const [code, copy] of slugErrors) {
+      expect(settingsSource).toContain(`${code}: ${copy},`);
+    }
+    for (const [code, copy] of wishErrors) {
+      expect(wishesSource).toContain(`${code}: ${copy},`);
+    }
+  });
 });

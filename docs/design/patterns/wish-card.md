@@ -1,6 +1,6 @@
 # 위시 카드
 
-코드 대조일: 2026-11-04 (`main` @ `d26141e`, PR #20 반영). 관리자 배지 색 토큰 대조일: 2026-11-14. 진행 바 컴포넌트 대조일: 2026-11-17(#35). 완료·멈춤 안내와 관리자 썸네일 대조일: 2026-11-21.
+코드 대조일: 2026-11-04 (`main` @ `d26141e`, PR #20 반영). 관리자 배지 색 토큰 대조일: 2026-11-14. 진행 바 컴포넌트 대조일: 2026-11-17(#35). 완료·멈춤 안내와 관리자 썸네일 대조일: 2026-11-21. 관리자 상태 필터 대조일: 2026-11-21.
 
 [디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [피드백](feedback.md) · [온보딩](onboarding.md) · [메시지함](messages.md) · [공유 흐름](share-flow.md)
 
@@ -37,7 +37,7 @@
 
 - 공개 참여 폼은 `canFund = status === "open" && !isComplete`일 때만 나옵니다. 서버 저장도 `open`을 확인하며 UI 표시가 서버 검증을 대신하지 않습니다. 근거: [form.md](form.md#입력과-검증).
 - `hidden`은 [공개 조회 서비스](../../../src/lib/public-wishlist/service.ts)에서 제외됩니다.
-- 관리자 목록 배지는 `getDisplayedWishStatus`로 표시 상태를 따릅니다. 반면 **상태 필터 탭과 수정 폼의 상태 선택지는 저장된 `status`** 를 씁니다. 100%인 `open` 선물은 배지가 "완료"여도 "마음 모으는 중" 필터에 남고 수정 폼에서도 `open`으로 선택돼 있습니다.
+- 관리자 목록 배지와 상태 필터 탭·탭 개수는 `getDisplayedWishStatus`로 표시 상태를 따릅니다. 100%인 `open` 선물은 "완료" 탭에 들어갑니다(2026-11-21 채영 결정). 반면 **수정 폼의 상태 선택지는 저장된 `status`** 를 씁니다. 그래서 "완료" 탭에서 연 100% `open` 선물도 수정 폼에서는 `open`("마음 모으는 중")으로 선택돼 있습니다.
 - 대시보드 최근 선물은 `getWishStatusLabel(status, progress)` 문구만 표시하며 상태별 색이 없습니다.
 
 ### 공개 카드 구성
@@ -79,7 +79,7 @@ details > summary
 1. 상태 문구는 `getWishStatusLabel`, 표시 상태는 `getDisplayedWishStatus`를 사용합니다. 화면에서 진행률로 완료를 다시 계산하지 않습니다. 근거: 위 status.ts.
 2. `fulfilled` 또는 100% 이상은 "완료"이고 공개 참여 폼을 닫습니다. `paused`·`hidden`은 진행률과 관계없이 소유자가 고른 상태를 유지합니다(2026-11-03 채영 결정).
 3. 완료 색은 관리자 목록 배지에만 사용합니다. 대시보드 최근 선물에는 상태별 색을 추가하지 않습니다(PR #20 범위).
-4. 필터와 수정 폼은 저장된 상태 기준을 유지합니다. 배지 표시를 이유로 필터 결과나 폼 기본값을 바꾸지 않습니다.
+4. 관리자 상태 필터와 탭 개수는 배지와 같은 표시 상태(`getDisplayedWishStatus`)를 따릅니다. 수정 폼의 상태 기본값은 저장된 `status`를 유지하며, 표시 상태를 저장하지 않습니다(2026-11-21 채영 결정).
 5. 공개 카드의 시각 차이는 테마 토큰과 `.theme-*` 클래스(`.theme-card`, `.theme-pill`, `.theme-progress` 등)로만 만듭니다. 관리자 배지 색을 공개 카드에 가져오지 않습니다. 근거: [foundations.md](../foundations.md#토큰의-소유-범위).
 6. 테마 키는 DB와 `/sample?theme=`에서 사용하므로 바꾸지 않습니다.
 
@@ -92,17 +92,19 @@ details > summary
 | 완료·멈춤 카드가 라벨 외에는 `open`과 같은 모양이고, 100% 진행 바도 같은 색 | ❌ P1·P2 적용 안 함(2026-11-04 채영 결정, 현행 유지). 원안: P1. 완료 시 라벨을 `.theme-pill-alt`로 강조하고 진행 바 채움을 `--point`로. P2. `paused`는 본문·이미지를 약하게 흐리게(라벨·링크 제외) |
 | 참여 영역이 통째로 빠져 카드 높이가 상태마다 다름 | ✅ P3 구현 완료(2026-11-21). 참여 영역 자리에 한 줄 안내를 `text-(--ink-muted)`로 표시. 문구: 완료 "마음이 다 모였어요. 고마워요!", 멈춤 "지금은 잠시 마음을 받지 않아요." 근거: [copy.ts](../../../src/lib/design/copy.ts) 81–82행, 표시는 [public-wishlist-view.tsx](../../../components/public-wishlist-view.tsx) 418행. 모든 화면 폭에서 같은 문구(짧은 문구 사용 안 함, 2026-11-04 채영 결정) |
 | 공개 카드 이름 줄 수 제한 없음. 375px에서 10줄 이상 가능(`wishlist-mono_bw-375-mixed.png`), 관리자는 한 줄 말줄임 | ❌ P4 적용 안 함(2026-11-04 채영 결정, 현행 유지). 원안: P4. 375px 3줄, `lg` 2줄 말줄임과 전체 이름 `title` |
-| 이미지 없음 표시가 공개 "GIFT" 일러스트와 관리자 "선물" 텍스트로 다름 | ✅ P5 구현 완료(2026-11-21). 관리자 썸네일도 "GIFT". 근거: [wishes/page.tsx](../../../app/admin/wishes/page.tsx) `WishThumbnail` 398행 |
+| 이미지 없음 표시가 공개 "GIFT" 일러스트와 관리자 "선물" 텍스트로 다름 | ✅ P5 구현 완료(2026-11-21). 관리자 썸네일도 "GIFT". 근거: [wishes/page.tsx](../../../app/admin/wishes/page.tsx) `WishThumbnail` 395행 |
 | 진행 바가 공개 `.theme-progress`, 관리자 `h-1.5 teal`, 홈 예시까지 세 가지 | ✅ P6 적용(2026-11-17). 진행 바는 `components/ui/progress.tsx` 하나로, `theme`·`pixel`·`admin` 변형. 관리자 배경은 `--track` |
 | 숨김 배지의 글자·점만 zinc. 나머지 배지 색은 상태 토큰 | ✅ P7 적용(2026-11-14). 면·글자·점은 `success`·`info`·`warn`·`point`·`muted-tint`. 숨김 글자·점은 `zinc-600`·`zinc-400` 유지 |
 | 관리자 `WishItemEditor`가 진행률을 직접 계산(`calculateProgress`와 결과는 같음) | 별도 제안 없음 |
 | 완료 카드에도 "선물 링크 보기" 표시 | ✅ 유지(2026-11-04 채영 결정) |
+| 관리자 "완료" 탭에서 연 100% `open` 선물의 수정 폼 상태 선택지가 "마음 모으는 중" | 별도 제안 없음. 저장해도 `open` 그대로이며 표시는 계속 "완료" |
 
 ## 확인 방법
 
 - 판정 계약: [status 테스트](../../../src/lib/wish-item/status.test.ts)가 라벨·표시 상태·완료 판정을 검사합니다.
+- 관리자 필터: [상태 필터 E2E](../../../tests/admin/filter-wishes-by-status.spec.ts)가 100% `open` 선물이 "완료" 탭과 개수에 들어가는지 확인합니다.
 - 공개 테마: [공개 테마 계약](../../../src/lib/design/public-theme-contract.test.ts), [샘플 테마 E2E](../../../tests/sample/valid-themes.spec.ts). 스크린샷 기준 비교는 아닙니다.
 - 화면 참조: [디자인 가이드의 화면 참조](../README.md#화면-참조)에 2026-11-18 참고 캡처가 있습니다(공개 `public-{테마}-{390,1440}.png`, 관리자 `admin-wishes-1440.png`). 카드 다섯 상태를 따로 담은 캡처는 아직 없습니다.
-- 카드 변경 시 다섯 상태(`open` 미만·이상, `fulfilled`, `paused`, `hidden`)를 세 테마와 375·1280에서 확인하고, 관리자 배지·필터·수정 폼 기준 차이를 함께 확인합니다.
+- 카드 변경 시 다섯 상태(`open` 미만·이상, `fulfilled`, `paused`, `hidden`)를 세 테마와 375·1280에서 확인하고, 관리자 배지·필터와 수정 폼의 기준 차이를 함께 확인합니다.
 
 이 문서 작성 시 위 테스트는 실행하지 않았습니다. 명령은 `pnpm test`, `pnpm test:e2e`를 사용합니다.
