@@ -190,7 +190,7 @@
   2. `표시 이름` 을 `E2E 생일자` 로 바꾸고 체크박스 `만 14세 이상입니다.` 를 체크합니다. 생일은 비워 둡니다.
   3. `POST /api/onboarding` 응답을 붙잡은 채 버튼 `위시리스트 만들기` 를 누릅니다.
     - expect: 제출 버튼이 `disabled` 이고 라벨이 `만드는 중…` 이다. 스피너는 없다. 응답을 붙잡은 동안 Playwright locator는 이동이 끝나기를 기다리므로, 현재 문서의 버튼을 직접 읽는다.
-    - expect: 버튼이 `disabled`가 된 뒤 `form.requestSubmit()`으로 한 번 더 제출해도 `/api/onboarding` 요청은 1번이다. `disabled` 버튼의 `click()`은 브라우저가 무시한다. 버튼을 끄기 전이나 같은 태스크에서 바로 `requestSubmit`을 다시 호출하면 두 번째 POST가 만들어지지 않는다.
+    - expect: 버튼이 `disabled`가 된 뒤 300ms 뒤에 `form.requestSubmit()`으로 한 번 더 제출해도 `/api/onboarding` 요청은 1번이다. `disabled` 버튼의 `click()`은 브라우저가 무시한다. 첫 POST가 나가기 전에 `requestSubmit`을 다시 호출하면 두 번째 POST가 만들어지지 않는다.
   4. 붙잡은 응답을 이어 줍니다.
     - expect: URL 이 `/admin` 이 된다.
 

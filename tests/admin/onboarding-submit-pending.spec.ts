@@ -39,7 +39,7 @@ test.describe("Onboarding", () => {
 
     // 이동 중에는 locator가 새 문서를 기다리므로, 현재 문서가 콘솔로 상태를 알린다.
     // disabled 버튼의 click()은 무시된다. requestSubmit은 disabled여도 submit 이벤트를 만든다.
-    // 버튼을 끄기 전이나 같은 태스크에서 바로 다시 호출하면 브라우저가 두 번째 POST를 만들지 않는다.
+    // 첫 POST가 나가기 전에 다시 호출하면 브라우저가 두 번째 POST를 만들지 않는다.
     await page.evaluate(() => {
       const form = document.querySelector('form[action="/api/onboarding"]');
       if (!(form instanceof HTMLFormElement)) return;
@@ -56,8 +56,10 @@ test.describe("Onboarding", () => {
         }
         observer.disconnect();
         console.info("PENDING_READY");
-        form.requestSubmit(button);
-        console.info("SECOND_SUBMIT_DONE");
+        window.setTimeout(() => {
+          form.requestSubmit(button);
+          console.info("SECOND_SUBMIT_DONE");
+        }, 300);
       });
       observer.observe(form, {
         subtree: true,
@@ -79,7 +81,7 @@ test.describe("Onboarding", () => {
     await submitButton.click({ noWaitAfter: true });
 
     // expect: 버튼이 disabled이고 라벨이 `만드는 중…` 이다. 스피너는 없다.
-    // expect: disabled 상태에서 requestSubmit을 한 번 더 해도 `/api/onboarding` 요청은 1번이다.
+    // expect: disabled 뒤 300ms에 requestSubmit을 한 번 더 해도 `/api/onboarding` 요청은 1번이다.
     await pendingReady;
     await secondSubmitDone;
     await page.waitForTimeout(800);
