@@ -3,7 +3,7 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
-import { ADMIN_COPY } from "@/src/lib/design/copy";
+import { ADMIN_COPY, WITHDRAWAL_COPY } from "@/src/lib/design/copy";
 import { ACCOUNT_NUMBER_INPUT_PATTERN } from "@/src/lib/settings/account-number";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
@@ -18,6 +18,7 @@ import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
 import { DeleteBankAccountForm } from "./delete-bank-account-form";
 import { ResetWishlistForm } from "./reset-wishlist-form";
+import { WithdrawAccountForm } from "./withdraw-account-form";
 import { AdminField } from "../admin-ui";
 
 const errorMessages: Record<SettingsError, string> = {
@@ -304,6 +305,19 @@ export default async function AdminSettingsPage() {
           </form>
         </SettingsRow>
       </SettingsSection>
+
+      <SettingsSection
+        title={WITHDRAWAL_COPY.sectionTitle}
+        description={WITHDRAWAL_COPY.sectionDescription}
+      >
+        <SettingsRow>
+          <Button type="submit" form="withdraw-account-form" variant="danger">
+            {WITHDRAWAL_COPY.button}
+          </Button>
+        </SettingsRow>
+      </SettingsSection>
+
+      <WithdrawAccountForm />
     </section>
   );
 }

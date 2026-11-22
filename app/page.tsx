@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
-import type { ReactNode } from "react";
+import { Suspense, type ReactNode } from "react";
 import Link from "next/link";
 import { SiteFooter } from "@/components/site-footer";
+import { WithdrawnToast } from "@/components/withdrawn-toast";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
@@ -97,6 +98,9 @@ export default async function Home() {
 
   return (
     <main className="pixel-dot-bg min-h-dvh text-ink">
+      <Suspense fallback={null}>
+        <WithdrawnToast />
+      </Suspense>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{

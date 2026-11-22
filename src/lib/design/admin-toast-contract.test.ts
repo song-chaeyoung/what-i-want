@@ -61,6 +61,7 @@ describe("admin toast contract", () => {
     expect(source).toContain(
       "bank_account_delete_failed: ADMIN_COPY.deleteBankAccountError",
     );
+    expect(source).toContain("withdraw_failed: WITHDRAWAL_COPY.error");
     expect(source).toContain('error: { type: "error", message: "요청을 처리하지 못했어요." }');
     expect(source).toContain("toastConfigList.forEach((toastConfig) => {");
     expect(source).toContain("toast[toastConfig.type](");

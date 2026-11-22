@@ -3,7 +3,7 @@
 import { useEffect, useRef } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { toast, type ExternalToast } from "sonner";
-import { ADMIN_COPY } from "@/src/lib/design/copy";
+import { ADMIN_COPY, WITHDRAWAL_COPY } from "@/src/lib/design/copy";
 
 const adminToastParams = {
   saved: { type: "success", message: "설정을 저장했어요." },
@@ -42,6 +42,7 @@ const adminErrorMessages: Record<string, string> = {
   invalid_image_url: ADMIN_COPY.invalidWishImageUrl,
   invalid_status: ADMIN_COPY.invalidWishStatus,
   bank_account_delete_failed: ADMIN_COPY.deleteBankAccountError,
+  withdraw_failed: WITHDRAWAL_COPY.error,
 };
 
 type AdminToastParam = keyof typeof adminToastParams;

@@ -78,6 +78,8 @@
 19. Cancel Delete Bank Account
 20. Delete Bank Account
 21. Cross Account Bank Account Rejected
+22. Cancel Withdraw Account
+23. Withdraw Account
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한입니다.)
 
@@ -463,3 +465,42 @@
   3. JSON POST `{ userId: B }`와 `DELETE /api/admin/settings/bank-account`를 보낸다.
     - expect: 둘 다 상태 `404`, 본문 `{ error: "bank_account_not_found" }`이다.
   4. [e2eDb] B의 계좌 1행이 `before`와 같고, A의 `bank_accounts`는 0행이다.
+
+### 7. Account Withdrawal
+
+`계정` 섹션 다음에 `회원 탈퇴` 섹션이 있다. 로그아웃 버튼과 같은 칸에 두지 않는다. 설명은 `계정과 위시리스트, 선물, 받은 메시지, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요.` 버튼 `회원 탈퇴`는 바깥 폼 `withdraw-account-form`을 `form="withdraw-account-form"`으로 제출한다. 확인은 `window.confirm`이고 문구는 `정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 친구들에게 공유한 링크도 더 이상 열리지 않아요.` 성공하면 로그아웃 뒤 `/`에서 토스트 `탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.`를 한 번 보여 주고 쿼리 `withdrawn`을 지운다. 실패 토스트는 `탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=withdraw_failed`).
+
+**Seed:** `tests/admin/seed-settings.spec.ts`
+
+#### 7.1. Cancel Withdraw Account
+
+**File:** `tests/admin/cancel-withdraw-account.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin()`, `signIn(admin)`. `/admin/settings`에서 버튼 `회원 탈퇴`를 기다린다(timeout 30초).
+    - expect: 레벨 3 제목 `회원 탈퇴` 섹션에 위 설명이 있고, 그 섹션 안에 버튼 `로그아웃`은 없다.
+  2. `page.once('dialog')`로 메시지를 기록하고 `dismiss()` 한 뒤 버튼 `회원 탈퇴`를 누른다.
+    - expect: 확인 창 메시지가 위 문구와 같다.
+    - expect: 토스트가 없고 URL은 `/admin/settings`이며 [e2eDb] `users` 행이 남는다.
+  3. 로그인 세션으로 `_method` 없는 form POST `/api/admin/account/withdraw`(`userId`에 다른 값을 넣음, `maxRedirects: 0`).
+    - expect: 상태 `307`, `location`이 `/admin/settings?error=withdraw_failed`이다.
+    - expect: 그 주소로 이동하면 토스트 `탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.`(`data-type` `error`)가 보이고 URL이 `/admin/settings`로 정리된다.
+    - expect: [e2eDb] `users` 행은 그대로 1행이다.
+
+#### 7.2. Withdraw Account
+
+**File:** `tests/admin/withdraw-account.spec.ts`
+
+**Steps:**
+  1. [사전 조건] 탈퇴할 사용자는 선물·메시지·계좌가 있다. 다른 사용자도 `seedAdmin`으로 만든다. 탈퇴할 사용자만 `signIn`한다. `/wishlist/${slug}`를 열어 공개 페이지 캐시를 채운 뒤 `/admin/settings`에서 버튼 `회원 탈퇴`를 기다린다.
+  2. `page.once('dialog')`로 `accept()` 한 뒤 버튼 `회원 탈퇴`를 누른다.
+    - expect: 확인 창 메시지가 위 문구와 같다.
+    - expect: 토스트 `탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.`(`data-type` `success`)가 1개이고 URL이 `http://localhost:3200/`이다.
+    - expect: 새로고침 뒤에는 토스트가 없고(`count 0`) URL은 `/` 그대로이다.
+    - expect: 쿠키 `authjs.session-token`이 없다.
+    - expect: [e2eDb] 탈퇴한 사용자의 `users`·`sessions`·`wishlists`·`wish_items`·`messages`·`funding_logs`·`bank_accounts`가 0행이고, 다른 사용자의 `users` 행은 남는다.
+  3. `/admin`으로 이동한다.
+    - expect: URL이 `/login`이고 버튼 `Google로 계속하기`가 보이며 사이드바(`complementary`)는 없다.
+  4. `/wishlist/${slug}`로 이동하고 `GET /wishlist/${slug}/opengraph-image`를 보낸다.
+    - expect: 레벨 1 제목 `위시리스트를 찾을 수 없어요`가 보인다.
+    - expect: OG 응답 상태 `200`, `content-type`에 `image/png`가 있다.
