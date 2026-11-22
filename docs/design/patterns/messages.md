@@ -37,6 +37,7 @@
 ### 숨기기와 복구
 
 - `숨기기`는 `window.confirm`으로 묻습니다. 금액이 있으면 모인 금액에서 빠지고 복구할 수 있다고 알립니다. `숨김 해제`는 확인 없이 바로 복구합니다. 근거: [HideMessageForm](../../../app/admin/messages/hide-message-form.tsx).
+- 확인창, 안내, 토스트는 모두 '메시지'라고 부릅니다. '참여 기록'은 화면에 쓰지 않습니다.
 - [메시지 route](../../../app/api/admin/messages/[id]/route.ts)가 `intent`(`hide`·`unhide`)를 받아 처리하고 `?messageHidden=1`, `?messageRestored=1`, 실패는 `?error=1`로 돌려보냅니다. [관리자 토스트](../../../app/admin/admin-toast-events.tsx)가 `메시지를 숨겼어요.`, `메시지를 복구했어요.`, `요청을 처리하지 못했어요.`를 보여 줍니다.
 - 숨김·복구 때 참여 기록은 지우지 않고 선물의 모인 금액만 빼거나 더합니다(0 아래로는 내려가지 않음). 처리 후 공개 페이지 캐시를 갱신합니다.
 
