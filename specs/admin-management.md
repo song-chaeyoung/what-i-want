@@ -507,8 +507,8 @@
   4. `/admin/settings`에서 `은행` `새은행`, `예금주` `홍길동`, `계좌번호` `987-654-321098`를 입력하고 `저장하기`를 누른다.
     - expect: 토스트 `설정을 저장했어요.`가 보이고 [e2eDb] `bank_accounts`가 1행이며 복호화 결과가 `987-654-321098`이다.
     - expect: 공개 페이지에 `계좌 안내`가 다시 1개 있다.
-  5. 로그인 세션으로 `DELETE /api/admin/settings/bank-account`를 보낸다.
-    - expect: 상태 `200`, 본문 `{ ok: true }`이고 [e2eDb] 계좌 행이 다시 0행이다. 이어서 form POST(`_method=delete`)는 `307`, `location` search가 `?error=bank_account_delete_failed`이다.
+  5. 로그인 세션으로 form POST `/api/admin/settings/bank-account`(`_method=delete`, `maxRedirects: 0`)를 보낸다.
+    - expect: 상태 `307`, `location` search가 `?accountDeleted=1`이고 [e2eDb] 계좌 행이 다시 0행이다.
 
 #### 7.3. Cross Account Bank Account Rejected
 
@@ -518,9 +518,7 @@
   1. [사전 조건] 주인 B는 계좌가 있고, 요청자 A는 계좌가 없다. A만 `signIn`한다. B의 `accountNumberEncrypted`를 `before`에 보관한다.
   2. A의 세션으로 form POST `/api/admin/settings/bank-account`(`_method=delete`, `userId`에 B의 id를 넣음, `maxRedirects: 0`).
     - expect: 상태 `307`, `location`이 `/admin/settings?error=bank_account_delete_failed`이다.
-  3. JSON POST `{ userId: B }`와 `DELETE /api/admin/settings/bank-account`를 보낸다.
-    - expect: 둘 다 상태 `404`, 본문 `{ error: "bank_account_not_found" }`이다.
-  4. [e2eDb] B의 계좌 1행이 `before`와 같고, A의 `bank_accounts`는 0행이다.
+  3. [e2eDb] B의 계좌 1행이 `before`와 같고, A의 `bank_accounts`는 0행이다.
 
 ### 8. Account Withdrawal
 

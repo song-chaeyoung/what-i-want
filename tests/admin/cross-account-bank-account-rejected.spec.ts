@@ -45,20 +45,7 @@ test.describe("Cross Account Access", () => {
     expect(formLocation.pathname).toBe("/admin/settings");
     expect(formLocation.search).toBe("?error=bank_account_delete_failed");
 
-    // 3. JSON POST·DELETE 도 같은 이유로 주인 계좌를 찾지 못한다.
-    const jsonPost = await page.request.post(endpoint, {
-      data: { userId: owner.userId },
-    });
-    const jsonDelete = await page.request.delete(endpoint);
-
-    expect(jsonPost.status()).toBe(404);
-    expect(await jsonPost.json()).toEqual({ error: "bank_account_not_found" });
-    expect(jsonDelete.status()).toBe(404);
-    expect(await jsonDelete.json()).toEqual({
-      error: "bank_account_not_found",
-    });
-
-    // 4. [e2eDb] B 의 계좌는 그대로이고 A 의 계좌 행은 없다.
+    // 3. [e2eDb] B 의 계좌는 그대로이고 A 의 계좌 행은 없다.
     const ownerAccounts = await loadOwnerAccounts();
     expect(ownerAccounts).toHaveLength(1);
     expect(ownerAccounts[0].accountNumberEncrypted).toBe(before);

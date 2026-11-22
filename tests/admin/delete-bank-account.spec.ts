@@ -104,14 +104,7 @@ test.describe("Bank Account Deletion", () => {
     ).toBeVisible({ timeout: 30_000 });
     await expect(page.getByText("계좌 안내", { exact: true })).toHaveCount(1);
 
-    // 5. JSON 삭제도 본인 계좌만 지운다. 이미 없으면 form 삭제는 실패 토스트로 돌아온다.
-    const jsonDelete = await page.request.delete(
-      "/api/admin/settings/bank-account",
-    );
-    expect(jsonDelete.status()).toBe(200);
-    expect(await jsonDelete.json()).toEqual({ ok: true });
-    await expect.poll(async () => (await loadAccounts()).length).toBe(0);
-
+    // 5. form POST도 세션 사용자의 계좌만 지운다.
     const formDelete = await page.request.post(
       "/api/admin/settings/bank-account",
       { form: { _method: "delete" }, maxRedirects: 0 },
@@ -119,6 +112,7 @@ test.describe("Bank Account Deletion", () => {
     expect(formDelete.status()).toBe(307);
     const location = new URL(formDelete.headers()["location"]);
     expect(location.pathname).toBe("/admin/settings");
-    expect(location.search).toBe("?error=bank_account_delete_failed");
+    expect(location.search).toBe("?accountDeleted=1");
+    await expect.poll(async () => (await loadAccounts()).length).toBe(0);
   });
 });

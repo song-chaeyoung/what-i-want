@@ -112,6 +112,8 @@ describe("admin settings UI contract", () => {
     expect(routeSource).toContain('"bank_account_delete_failed"');
     expect(routeSource).not.toContain('getBodyString(body, "userId")');
     expect(routeSource).not.toContain('getFormString(formData, "userId")');
+    expect(routeSource).not.toContain("export async function DELETE");
+    expect(routeSource).not.toContain("isJsonRequest");
   });
 
   test("reveals account guidance only after a funding submission", () => {
