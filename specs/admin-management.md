@@ -75,6 +75,9 @@
 16. Unread Message Badge
 17. Cross Account Wish Rejected
 18. Cross Account Message Rejected
+19. Cancel Delete Bank Account
+20. Delete Bank Account
+21. Cross Account Bank Account Rejected
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한입니다.)
 
@@ -411,3 +414,52 @@
     - expect: `owner.messages[0]` 의 `isHidden` 이 `false`, `owner.messages[1]` 의 `isHidden` 이 `true` 그대로이다.
     - expect: `wish_items`(`id = owner.items[0].id`)의 `fundedAmount` 가 `40000` 그대로이다.
     - expect: `wishlists`(`id = owner.wishlistId`)의 `messagesReadAt` 이 null 그대로이다(A 의 메시지함 방문이 B 의 읽음 기준을 바꾸지 않음).
+
+### 6. Bank Account Deletion
+
+설정 화면의 나머지 동작은 [admin-management-2.md](admin-management-2.md)에 있다. 여기에는 2026-11-22에 추가한 계좌 삭제만 적는다. 계좌가 저장된 경우에만 `계좌 안내`의 공개 여부 칸 아래 `계좌 삭제` 버튼이 보인다. 버튼은 큰 설정 폼 밖의 `form#delete-bank-account-form`을 `form="delete-bank-account-form"`으로 제출한다. 확인은 `window.confirm`이고 문구는 `계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.` 성공 토스트는 `계좌 정보를 삭제했어요.`, 실패 토스트는 `계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=bank_account_delete_failed`). 세 칸을 비우고 `저장하기`를 누르는 경로는 바꾸지 않는다.
+
+**Seed:** `tests/admin/seed-settings.spec.ts`
+
+#### 6.1. Cancel Delete Bank Account
+
+**File:** `tests/admin/cancel-delete-bank-account.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin({ bankAccount: { bankName: "E2E은행", accountHolder: "E2E 관리자", accountNumber: "123-456-789012", visibility: "copy_only" } })`, `signIn(admin)`. `e2eDb`로 `accountNumberEncrypted`를 `before`에 보관한다. `/admin/settings`로 이동해 버튼 `계좌 삭제`를 기다린다(timeout 30초).
+    - expect: `은행` `E2E은행`, `예금주` `E2E 관리자`, `계좌번호` placeholder `변경할 때만 입력`, `계좌 공개`는 활성·값 `copy_only`이다.
+  2. 클릭 전에 `page.once('dialog', ...)`로 종류·메시지를 기록하고 `dismiss()` 한 뒤 버튼 `계좌 삭제`를 누른다.
+    - expect: 확인 창 종류가 `confirm`, 메시지가 위 문구와 같다.
+    - expect: 토스트가 없고(`[data-sonner-toast]` count 0) URL은 `/admin/settings`이다.
+    - expect: `은행`·`예금주`·placeholder·버튼 `계좌 삭제`가 그대로이다.
+    - expect: [e2eDb] `bank_accounts` 1행의 `accountNumberEncrypted`가 `before`와 같다.
+
+#### 6.2. Delete Bank Account
+
+**File:** `tests/admin/delete-bank-account.spec.ts`
+
+**Steps:**
+  1. [사전 조건] 같은 계좌 seed, `signIn(admin)`. 먼저 `/wishlist/${slug}`를 열어 `계좌 안내`가 보이게 해 공개 페이지 캐시를 채운다. 이어서 `/admin/settings`에서 버튼 `계좌 삭제`를 기다린다.
+  2. `page.once('dialog')`로 `accept()` 한 뒤 버튼 `계좌 삭제`를 누른다.
+    - expect: 토스트 `계좌 정보를 삭제했어요.`(`data-type` `success`)가 보이고 URL이 `/admin/settings`로 정리된다.
+    - expect: `은행`·`예금주`가 빈 값, `계좌번호` placeholder가 `3333-12-1234567`, `계좌 공개`가 비활성, 버튼 `계좌 삭제`가 없다.
+    - expect: [e2eDb] `bank_accounts`(`userId`)가 0행이다.
+  3. `/wishlist/${slug}`로 이동한다.
+    - expect: `계좌 안내`가 없다(count 0).
+  4. `/admin/settings`에서 `은행` `새은행`, `예금주` `홍길동`, `계좌번호` `987-654-321098`를 입력하고 `저장하기`를 누른다.
+    - expect: 토스트 `설정을 저장했어요.`가 보이고 [e2eDb] `bank_accounts`가 1행이며 복호화 결과가 `987-654-321098`이다.
+    - expect: 공개 페이지에 `계좌 안내`가 다시 1개 있다.
+  5. 로그인 세션으로 `DELETE /api/admin/settings/bank-account`를 보낸다.
+    - expect: 상태 `200`, 본문 `{ ok: true }`이고 [e2eDb] 계좌 행이 다시 0행이다. 이어서 form POST(`_method=delete`)는 `307`, `location` search가 `?error=bank_account_delete_failed`이다.
+
+#### 6.3. Cross Account Bank Account Rejected
+
+**File:** `tests/admin/cross-account-bank-account-rejected.spec.ts`
+
+**Steps:**
+  1. [사전 조건] 주인 B는 계좌가 있고, 요청자 A는 계좌가 없다. A만 `signIn`한다. B의 `accountNumberEncrypted`를 `before`에 보관한다.
+  2. A의 세션으로 form POST `/api/admin/settings/bank-account`(`_method=delete`, `userId`에 B의 id를 넣음, `maxRedirects: 0`).
+    - expect: 상태 `307`, `location`이 `/admin/settings?error=bank_account_delete_failed`이다.
+  3. JSON POST `{ userId: B }`와 `DELETE /api/admin/settings/bank-account`를 보낸다.
+    - expect: 둘 다 상태 `404`, 본문 `{ error: "bank_account_not_found" }`이다.
+  4. [e2eDb] B의 계좌 1행이 `before`와 같고, A의 `bank_accounts`는 0행이다.

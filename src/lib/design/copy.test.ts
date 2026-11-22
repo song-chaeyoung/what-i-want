@@ -108,6 +108,14 @@ describe("visual system copy", () => {
     expect(ADMIN_COPY.accountVisibilityHiddenHint).toBe(
       "공개 페이지에 계좌가 보이지 않아요.",
     );
+    expect(ADMIN_COPY.deleteBankAccountButton).toBe("계좌 삭제");
+    expect(ADMIN_COPY.deleteBankAccountConfirm).toBe(
+      "계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+    );
+    expect(ADMIN_COPY.deleteBankAccountSuccess).toBe("계좌 정보를 삭제했어요.");
+    expect(ADMIN_COPY.deleteBankAccountError).toBe(
+      "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    );
   });
 
   test("chooses a closed participation notice from the displayed status", () => {

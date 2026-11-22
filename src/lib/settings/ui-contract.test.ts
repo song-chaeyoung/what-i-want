@@ -84,6 +84,36 @@ describe("admin settings UI contract", () => {
     expect(routeSource).toContain('"accountVisibility"');
   });
 
+  test("deletes a saved bank account from a form outside the settings form", () => {
+    const pageSource = readFileSync(adminSettingsPagePath, "utf8");
+    const formSource = readFileSync(
+      join(process.cwd(), "app/admin/settings/delete-bank-account-form.tsx"),
+      "utf8",
+    );
+    const routeSource = readFileSync(
+      join(process.cwd(), "app/api/admin/settings/bank-account/route.ts"),
+      "utf8",
+    );
+
+    expect(pageSource).toContain("settings.bankAccount ? (");
+    expect(pageSource).toContain('form="delete-bank-account-form"');
+    expect(pageSource).toContain("ADMIN_COPY.deleteBankAccountButton");
+    expect(pageSource).toContain(
+      "{settings.bankAccount ? <DeleteBankAccountForm /> : null}",
+    );
+    expect(formSource).toContain('id="delete-bank-account-form"');
+    expect(formSource).toContain('action="/api/admin/settings/bank-account"');
+    expect(formSource).toContain('name="_method" value="delete"');
+    expect(formSource).toContain("window.confirm(ADMIN_COPY.deleteBankAccountConfirm)");
+    expect(formSource).not.toContain("<Button");
+    expect(routeSource).toContain("session.user.id");
+    expect(routeSource).toContain("deleteBankAccount");
+    expect(routeSource).toContain('"/admin/settings?accountDeleted=1"');
+    expect(routeSource).toContain('"bank_account_delete_failed"');
+    expect(routeSource).not.toContain('getBodyString(body, "userId")');
+    expect(routeSource).not.toContain('getFormString(formData, "userId")');
+  });
+
   test("reveals account guidance only after a funding submission", () => {
     const pageSource = readFileSync(publicPagePath, "utf8");
     const toastSource = readFileSync(publicToastEventsPath, "utf8");

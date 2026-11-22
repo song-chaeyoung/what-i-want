@@ -21,6 +21,10 @@ const adminToastParams = {
     type: "success",
     message: "위시리스트를 초기화했어요. 새 생일을 준비해 보세요.",
   },
+  accountDeleted: {
+    type: "success",
+    message: ADMIN_COPY.deleteBankAccountSuccess,
+  },
   error: { type: "error", message: "요청을 처리하지 못했어요." },
 } as const;
 
@@ -37,6 +41,7 @@ const adminErrorMessages: Record<string, string> = {
   invalid_product_url: ADMIN_COPY.invalidWishProductUrl,
   invalid_image_url: ADMIN_COPY.invalidWishImageUrl,
   invalid_status: ADMIN_COPY.invalidWishStatus,
+  bank_account_delete_failed: ADMIN_COPY.deleteBankAccountError,
 };
 
 type AdminToastParam = keyof typeof adminToastParams;

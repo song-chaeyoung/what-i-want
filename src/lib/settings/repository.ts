@@ -142,6 +142,15 @@ export class DrizzleSettingsRepository implements SettingsRepository {
 
     return settings;
   }
+
+  async deleteBankAccount(ownerId: string): Promise<boolean> {
+    const deleted = await this.database
+      .delete(bankAccounts)
+      .where(eq(bankAccounts.userId, ownerId))
+      .returning({ id: bankAccounts.id });
+
+    return deleted.length > 0;
+  }
 }
 
 function toBankAccountRecord(row: {

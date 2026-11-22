@@ -16,6 +16,7 @@ import { Input, inputVariants } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
+import { DeleteBankAccountForm } from "./delete-bank-account-form";
 import { ResetWishlistForm } from "./reset-wishlist-form";
 import { AdminField } from "../admin-ui";
 
@@ -260,6 +261,17 @@ export default async function AdminSettingsPage() {
               disabled={settings.bankAccount === null}
             />
           </SettingsRow>
+          {settings.bankAccount ? (
+            <SettingsRow>
+              <Button
+                type="submit"
+                form="delete-bank-account-form"
+                variant="danger"
+              >
+                {ADMIN_COPY.deleteBankAccountButton}
+              </Button>
+            </SettingsRow>
+          ) : null}
         </SettingsSection>
 
         <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-admin-bg/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
@@ -268,6 +280,8 @@ export default async function AdminSettingsPage() {
           </Button>
         </div>
       </form>
+
+      {settings.bankAccount ? <DeleteBankAccountForm /> : null}
 
       <SettingsSection
         title="새 생일 준비"

@@ -146,6 +146,12 @@ export const ADMIN_COPY = {
   accountVisibilityCopyOnlyHint:
     "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
   accountVisibilityHiddenHint: "공개 페이지에 계좌가 보이지 않아요.",
+  deleteBankAccountButton: "계좌 삭제",
+  deleteBankAccountConfirm:
+    "계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+  deleteBankAccountSuccess: "계좌 정보를 삭제했어요.",
+  deleteBankAccountError:
+    "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
 } as const;
 
 export function formatWishCount(count: number): string {
