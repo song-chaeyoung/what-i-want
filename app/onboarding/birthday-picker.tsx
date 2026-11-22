@@ -102,6 +102,12 @@ export function BirthdayPicker({
             selected={selected}
             onSelect={handleSelect}
             captionLayout="dropdown"
+            labels={{
+              labelYearDropdown: () => "연도 선택",
+              labelMonthDropdown: () => "월 선택",
+              labelPrevious: () => "이전 달",
+              labelNext: () => "다음 달",
+            }}
             startMonth={new Date(1900, 0)}
             endMonth={kstToday}
             // 미래 날짜는 생일이 아니므로 고를 수 없게 한다(서버도 invalid_birthday로 거절).

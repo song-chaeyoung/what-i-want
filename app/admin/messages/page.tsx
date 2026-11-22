@@ -99,7 +99,7 @@ export default async function AdminMessagesPage({
         <Card variant="admin" className="p-4">
           <p className="text-sm font-semibold">숨긴 메시지가 없습니다.</p>
           <p className="mt-2 text-sm leading-6 text-zinc-600">
-            받은 메시지에서 숨긴 참여 기록이 여기에 표시됩니다.
+            받은 메시지에서 숨긴 메시지가 여기에 표시됩니다.
           </p>
         </Card>
       ) : (

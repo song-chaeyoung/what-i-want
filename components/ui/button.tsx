@@ -32,6 +32,8 @@ const buttonVariants = cva(
           "h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold whitespace-normal text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700",
         kakao:
           "h-12 rounded-md border-2 border-line-strong bg-kakao px-4 text-sm font-black whitespace-normal text-ink transition-colors hover:bg-kakao-hover",
+        google:
+          "h-12 rounded-md border-2 border-line-strong bg-white px-4 text-sm font-black whitespace-normal text-ink transition-colors hover:bg-zinc-100",
       },
       size: {
         default:
@@ -68,6 +70,7 @@ const selfSizedVariants = new Set<NonNullable<VariantProps<typeof buttonVariants
   "danger",
   "subtle",
   "kakao",
+  "google",
 ])
 
 function Button({
