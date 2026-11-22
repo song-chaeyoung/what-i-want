@@ -16,7 +16,7 @@ import { test, expect } from "../fixtures/admin";
 
 const SESSION_COOKIE = "authjs.session-token";
 const CONFIRM_MESSAGE =
-  "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 친구들에게 공유한 링크도 더 이상 열리지 않아요.";
+  "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.";
 
 test.describe("Withdraw Account", () => {
   test("Withdraw Account", async ({
