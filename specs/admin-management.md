@@ -84,6 +84,7 @@
 25. Cross Account Bank Account Rejected
 26. Cancel Withdraw Account
 27. Withdraw Account
+28. Underage Confirm Accept Deletes Account
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한, 6.x 관리자 홈 공유, 7.x 계좌 삭제, 8.x 회원 탈퇴입니다.)
 
@@ -210,6 +211,18 @@
   3. 버튼 `위시리스트 만들기` 를 누릅니다. `alertdialog` 이름은 `2015년생이 맞나요?`이고 포커스는 `연도 고치기`입니다. 바깥 클릭은 닫지 않습니다. 한 번은 `Escape`, 한 번은 `연도 고치기`로 닫습니다. 닫히면 달력의 `연도 선택`에 포커스가 갑니다.
     - expect: 제출 버튼은 활성 상태이고 라벨이 `위시리스트 만들기` 이다.
     - expect: URL 이 `/onboarding` 이고 `/api/onboarding` 요청은 0번이다.
+
+#### 2.5. Underage Confirm Accept Deletes Account
+
+**File:** `tests/admin/onboarding-submit-pending.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
+  2. `표시 이름` 을 `E2E 생일자` 로 바꾸고 생일 `2015-03-15` 를 고른 뒤 체크박스 `만 14세 이상입니다.` 를 체크합니다.
+  3. 버튼 `위시리스트 만들기` 를 누르고, `alertdialog` `2015년생이 맞나요?` 에서 `이 생일로 제출` 을 누릅니다. 확인창이 같은 폼을 다시 제출하므로, `birthday-picker.tsx` 의 submit 리스너가 이 두 번째 제출을 다시 막지 않아야 합니다.
+    - expect: URL 이 `/login?notice=under_minimum_age` 가 된다(timeout 30초).
+    - expect: `POST /api/onboarding` 요청은 1번이다.
+    - expect: [e2eDb] `users`(`id = admin.userId`) 행이 0개다. seed 사용자에는 카카오 `accounts` 행이 없어 카카오 연결 끊기는 호출되지 않습니다.
 
 ### 3. Wish Management
 
