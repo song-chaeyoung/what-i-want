@@ -96,15 +96,17 @@ describe("admin settings UI contract", () => {
     );
 
     expect(pageSource).toContain("settings.bankAccount ? (");
-    expect(pageSource).toContain('form="delete-bank-account-form"');
+    expect(pageSource).toContain('formId="delete-bank-account-form"');
     expect(pageSource).toContain("ADMIN_COPY.deleteBankAccountButton");
+    expect(pageSource).toContain("ADMIN_COPY.deleteBankAccountConfirm.title");
+    expect(pageSource).toContain("<ConfirmDialog");
     expect(pageSource).toContain(
       "{settings.bankAccount ? <DeleteBankAccountForm /> : null}",
     );
     expect(formSource).toContain('id="delete-bank-account-form"');
     expect(formSource).toContain('action="/api/admin/settings/bank-account"');
     expect(formSource).toContain('name="_method" value="delete"');
-    expect(formSource).toContain("window.confirm(ADMIN_COPY.deleteBankAccountConfirm)");
+    expect(formSource).not.toContain("window.confirm");
     expect(formSource).not.toContain("<Button");
     expect(routeSource).toContain("session.user.id");
     expect(routeSource).toContain("deleteBankAccount");

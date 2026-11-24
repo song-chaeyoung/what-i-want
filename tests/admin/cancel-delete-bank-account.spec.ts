@@ -32,7 +32,10 @@ test.describe("Bank Account Deletion", () => {
     const before = (await loadAccounts())[0]?.accountNumberEncrypted;
 
     await page.goto("/admin/settings");
-    const deleteButton = page.getByRole("button", { name: "계좌 삭제" });
+    const deleteButton = page.getByRole("button", {
+      name: "계좌 삭제",
+      exact: true,
+    });
     await expect(deleteButton).toBeVisible({ timeout: 30_000 });
 
     // expect: 저장된 계좌 칸이 그대로 보인다.
@@ -45,19 +48,24 @@ test.describe("Bank Account Deletion", () => {
     await expect(page.locator("#accountVisibility")).toBeEnabled();
     await expect(page.locator("#accountVisibility")).toHaveValue("copy_only");
 
-    // 2. 확인 창을 취소한다.
-    let dialogType = "";
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogType = dialog.type();
-      dialogMessage = dialog.message();
-      await dialog.dismiss();
+    // 2. 확인창은 Esc와 취소로 닫히고 계좌는 바뀌지 않는다.
+    const dialog = page.getByRole("alertdialog", {
+      name: ADMIN_COPY.deleteBankAccountConfirm.title,
     });
     await deleteButton.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(ADMIN_COPY.deleteBankAccountConfirm.description)).toBeVisible();
+    const cancelButton = dialog.getByRole("button", { name: "취소", exact: true });
+    await expect(cancelButton).toBeFocused();
+    await page.mouse.click(8, 8);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(deleteButton).toBeFocused();
 
-    // expect: 확인 문구만 뜨고 계좌는 바뀌지 않는다.
-    expect(dialogType).toBe("confirm");
-    expect(dialogMessage).toBe(ADMIN_COPY.deleteBankAccountConfirm);
+    await deleteButton.click();
+    await dialog.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(dialog).toBeHidden();
     await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
     await expect(page).toHaveURL(/\/admin\/settings$/);
     await expect(page.locator("#bankName")).toHaveValue("E2E은행");

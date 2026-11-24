@@ -5,8 +5,7 @@ import { eq } from "drizzle-orm";
 import { users } from "@/src/lib/db/schema";
 import { test, expect } from "../fixtures/admin";
 
-const CONFIRM_MESSAGE =
-  "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.";
+import { WITHDRAWAL_COPY } from "@/src/lib/design/copy";
 
 test.describe("Withdraw Account", () => {
   test("Cancel Withdraw Account", async ({ page, seedAdmin, signIn, e2eDb }) => {
@@ -15,7 +14,10 @@ test.describe("Withdraw Account", () => {
     await signIn(admin);
 
     await page.goto("/admin/settings");
-    const withdrawButton = page.getByRole("button", { name: "회원 탈퇴" });
+    const withdrawButton = page.getByRole("button", {
+      name: "회원 탈퇴",
+      exact: true,
+    });
     await expect(withdrawButton).toBeVisible({ timeout: 30_000 });
 
     const withdrawal = page.locator("section[data-slot='card']").filter({
@@ -28,15 +30,25 @@ test.describe("Withdraw Account", () => {
       0,
     );
 
-    // 2. 확인 창을 취소하면 계정은 그대로다.
-    let dialogMessage = "";
-    page.once("dialog", (dialog) => {
-      dialogMessage = dialog.message();
-      return dialog.dismiss();
+    // 2. 확인창은 Esc와 취소로 닫히고 계정은 그대로다.
+    const dialog = page.getByRole("alertdialog", {
+      name: WITHDRAWAL_COPY.confirm.title,
     });
     await withdrawButton.click();
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText(WITHDRAWAL_COPY.confirm.description)).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await page.mouse.click(8, 8);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(withdrawButton).toBeFocused();
 
-    expect(dialogMessage).toBe(CONFIRM_MESSAGE);
+    await withdrawButton.click();
+    await dialog.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(dialog).toBeHidden();
     await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);
     await expect(page).toHaveURL(/\/admin\/settings$/);
     await expect(withdrawButton).toBeVisible();

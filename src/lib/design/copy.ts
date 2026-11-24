@@ -147,8 +147,13 @@ export const ADMIN_COPY = {
     "공개 페이지를 방문한 사람은 계좌번호를 복사할 수 있어요.",
   accountVisibilityHiddenHint: "공개 페이지에 계좌가 보이지 않아요.",
   deleteBankAccountButton: "계좌 삭제",
-  deleteBankAccountConfirm:
-    "계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+  deleteBankAccountConfirm: {
+    title: "계좌 정보를 삭제할까요?",
+    description:
+      "은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+    confirm: "삭제",
+    pending: "삭제하는 중…",
+  },
   deleteBankAccountSuccess: "계좌 정보를 삭제했어요.",
   deleteBankAccountError:
     "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
@@ -159,8 +164,13 @@ export const WITHDRAWAL_COPY = {
   sectionDescription:
     "계정과 위시리스트, 선물, 받은 메시지, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요.",
   button: "회원 탈퇴",
-  confirm:
-    "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.",
+  confirm: {
+    title: "정말 탈퇴할까요?",
+    description:
+      "계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.",
+    confirm: "탈퇴",
+    pending: "탈퇴하는 중…",
+  },
   success: "탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.",
   error: "탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.",
 } as const;

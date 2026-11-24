@@ -475,7 +475,7 @@
 
 ### 7. Bank Account Deletion
 
-설정 화면의 나머지 동작은 [admin-management-2.md](admin-management-2.md)에 있다. 여기에는 2026-11-22에 추가한 계좌 삭제만 적는다. 계좌가 저장된 경우에만 `계좌 안내`의 공개 여부 칸 아래 `계좌 삭제` 버튼이 보인다. 버튼은 큰 설정 폼 밖의 `form#delete-bank-account-form`을 `form="delete-bank-account-form"`으로 제출한다. 확인은 `window.confirm`이고 문구는 `계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.` 성공 토스트는 `계좌 정보를 삭제했어요.`, 실패 토스트는 `계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=bank_account_delete_failed`). 세 칸을 비우고 `저장하기`를 누르는 경로는 바꾸지 않는다.
+설정 화면의 나머지 동작은 [admin-management-2.md](admin-management-2.md)에 있다. 여기에는 2026-11-22에 추가한 계좌 삭제만 적는다. 계좌가 저장된 경우에만 `계좌 안내`의 공개 여부 칸 아래 `계좌 삭제` 버튼이 보인다. 버튼은 확인창을 열고, 확인하면 큰 설정 폼 밖의 `form#delete-bank-account-form`을 제출한다. 확인창 이름은 `계좌 정보를 삭제할까요?`이고 설명은 `은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.`이다. 포커스는 `취소`에서 시작하고, `Escape`와 `취소`는 제출하지 않으며 바깥 클릭은 닫지 않는다. 성공 토스트는 `계좌 정보를 삭제했어요.`, 실패 토스트는 `계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=bank_account_delete_failed`). 세 칸을 비우고 `저장하기`를 누르는 경로는 바꾸지 않는다.
 
 **Seed:** `tests/admin/seed-settings.spec.ts`
 
@@ -486,8 +486,8 @@
 **Steps:**
   1. [사전 조건] `seedAdmin({ bankAccount: { bankName: "E2E은행", accountHolder: "E2E 관리자", accountNumber: "123-456-789012", visibility: "copy_only" } })`, `signIn(admin)`. `e2eDb`로 `accountNumberEncrypted`를 `before`에 보관한다. `/admin/settings`로 이동해 버튼 `계좌 삭제`를 기다린다(timeout 30초).
     - expect: `은행` `E2E은행`, `예금주` `E2E 관리자`, `계좌번호` placeholder `변경할 때만 입력`, `계좌 공개`는 활성·값 `copy_only`이다.
-  2. 클릭 전에 `page.once('dialog', ...)`로 종류·메시지를 기록하고 `dismiss()` 한 뒤 버튼 `계좌 삭제`를 누른다.
-    - expect: 확인 창 종류가 `confirm`, 메시지가 위 문구와 같다.
+  2. 버튼 `계좌 삭제`를 눌러 확인창을 연다. 포커스가 `취소`인지 보고, 바깥을 누른 뒤 `Escape`로 닫는다. 다시 열어 `취소`를 누른다.
+    - expect: `alertdialog` 이름이 `계좌 정보를 삭제할까요?`이고 설명 문구가 보인다.
     - expect: 토스트가 없고(`[data-sonner-toast]` count 0) URL은 `/admin/settings`이다.
     - expect: `은행`·`예금주`·placeholder·버튼 `계좌 삭제`가 그대로이다.
     - expect: [e2eDb] `bank_accounts` 1행의 `accountNumberEncrypted`가 `before`와 같다.
@@ -498,7 +498,7 @@
 
 **Steps:**
   1. [사전 조건] 같은 계좌 seed, `signIn(admin)`. 먼저 `/wishlist/${slug}`를 열어 `계좌 안내`가 보이게 해 공개 페이지 캐시를 채운다. 이어서 `/admin/settings`에서 버튼 `계좌 삭제`를 기다린다.
-  2. `page.once('dialog')`로 `accept()` 한 뒤 버튼 `계좌 삭제`를 누른다.
+  2. 버튼 `계좌 삭제`를 눌러 확인창을 연 뒤 버튼 `삭제`를 누른다. `취소`에 포커스가 있는지 먼저 본다.
     - expect: 토스트 `계좌 정보를 삭제했어요.`(`data-type` `success`)가 보이고 URL이 `/admin/settings`로 정리된다.
     - expect: `은행`·`예금주`가 빈 값, `계좌번호` placeholder가 `3333-12-1234567`, `계좌 공개`가 비활성, 버튼 `계좌 삭제`가 없다.
     - expect: [e2eDb] `bank_accounts`(`userId`)가 0행이다.
@@ -522,7 +522,7 @@
 
 ### 8. Account Withdrawal
 
-`계정` 섹션 다음에 `회원 탈퇴` 섹션이 있다. 로그아웃 버튼과 같은 칸에 두지 않는다. 설명은 `계정과 위시리스트, 선물, 받은 메시지, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요.` 버튼 `회원 탈퇴`는 바깥 폼 `withdraw-account-form`을 `form="withdraw-account-form"`으로 제출한다. 확인은 `window.confirm`이고 문구는 `정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.` 성공하면 로그아웃 뒤 `/`에서 토스트 `탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.`를 한 번 보여 주고 쿼리 `withdrawn`을 지운다. 실패 토스트는 `탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=withdraw_failed`).
+`계정` 섹션 다음에 `회원 탈퇴` 섹션이 있다. 로그아웃 버튼과 같은 칸에 두지 않는다. 설명은 `계정과 위시리스트, 선물, 받은 메시지, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요.` 버튼 `회원 탈퇴`는 확인창을 열고, 확인하면 바깥 폼 `withdraw-account-form`을 제출한다. 확인창 이름은 `정말 탈퇴할까요?`이고 설명은 `계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.`이다. 포커스는 `취소`에서 시작한다. 성공하면 로그아웃 뒤 `/`에서 토스트 `탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.`를 한 번 보여 주고 쿼리 `withdrawn`을 지운다. 실패 토스트는 `탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.`(`?error=withdraw_failed`).
 
 **Seed:** `tests/admin/seed-settings.spec.ts`
 
@@ -533,8 +533,8 @@
 **Steps:**
   1. [사전 조건] `seedAdmin()`, `signIn(admin)`. `/admin/settings`에서 버튼 `회원 탈퇴`를 기다린다(timeout 30초).
     - expect: 레벨 3 제목 `회원 탈퇴` 섹션에 위 설명이 있고, 그 섹션 안에 버튼 `로그아웃`은 없다.
-  2. `page.once('dialog')`로 메시지를 기록하고 `dismiss()` 한 뒤 버튼 `회원 탈퇴`를 누른다.
-    - expect: 확인 창 메시지가 위 문구와 같다.
+  2. 버튼 `회원 탈퇴`를 눌러 확인창을 연다. 포커스가 `취소`인지 보고, 바깥을 누른 뒤 `Escape`로 닫는다. 다시 열어 `취소`를 누른다.
+    - expect: `alertdialog` 이름이 `정말 탈퇴할까요?`이고 설명 문구가 보인다.
     - expect: 토스트가 없고 URL은 `/admin/settings`이며 [e2eDb] `users` 행이 남는다.
   3. 로그인 세션으로 `_method` 없는 form POST `/api/admin/account/withdraw`(`userId`에 다른 값을 넣음, `maxRedirects: 0`).
     - expect: 상태 `307`, `location`이 `/admin/settings?error=withdraw_failed`이다.
@@ -547,8 +547,7 @@
 
 **Steps:**
   1. [사전 조건] 탈퇴할 사용자는 선물·메시지·계좌가 있다. 다른 사용자도 `seedAdmin`으로 만든다. 탈퇴할 사용자만 `signIn`한다. `/wishlist/${slug}`를 열어 공개 페이지 캐시를 채운 뒤 `/admin/settings`에서 버튼 `회원 탈퇴`를 기다린다.
-  2. `page.once('dialog')`로 `accept()` 한 뒤 버튼 `회원 탈퇴`를 누른다.
-    - expect: 확인 창 메시지가 위 문구와 같다.
+  2. 버튼 `회원 탈퇴`를 눌러 확인창을 연 뒤 버튼 `탈퇴`를 누른다. `취소`에 포커스가 있는지 먼저 본다.
     - expect: 토스트 `탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.`(`data-type` `success`)가 1개이고 URL이 `http://localhost:3200/`이다.
     - expect: 새로고침 뒤에는 토스트가 없고(`count 0`) URL은 `/` 그대로이다.
     - expect: 쿠키 `authjs.session-token`이 없다.

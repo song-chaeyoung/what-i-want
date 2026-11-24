@@ -31,12 +31,18 @@ test.describe("Bank Account Deletion", () => {
     await expect(page.getByText("계좌 안내", { exact: true })).toBeVisible();
 
     await page.goto("/admin/settings");
-    const deleteButton = page.getByRole("button", { name: "계좌 삭제" });
+    const deleteButton = page.getByRole("button", {
+      name: "계좌 삭제",
+      exact: true,
+    });
     await expect(deleteButton).toBeVisible({ timeout: 30_000 });
 
-    // 2. 확인 창을 수락해 계좌를 삭제한다.
-    page.once("dialog", (dialog) => dialog.accept());
+    // 2. 확인창에서 삭제를 눌러 계좌를 지운다.
     await deleteButton.click();
+    const dialog = page.getByRole("alertdialog", { name: "계좌 정보를 삭제할까요?" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "취소", exact: true })).toBeFocused();
+    await dialog.getByRole("button", { name: "삭제", exact: true }).click();
 
     const deletedToast = page
       .locator("[data-sonner-toast]")

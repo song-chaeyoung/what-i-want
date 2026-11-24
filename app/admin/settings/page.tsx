@@ -11,6 +11,7 @@ import {
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card } from "@/components/ui/card";
 import { Input, inputVariants } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
@@ -264,13 +265,15 @@ export default async function AdminSettingsPage() {
           </SettingsRow>
           {settings.bankAccount ? (
             <SettingsRow>
-              <Button
-                type="submit"
-                form="delete-bank-account-form"
-                variant="danger"
-              >
-                {ADMIN_COPY.deleteBankAccountButton}
-              </Button>
+              <ConfirmDialog
+                tone="danger"
+                title={ADMIN_COPY.deleteBankAccountConfirm.title}
+                description={ADMIN_COPY.deleteBankAccountConfirm.description}
+                confirmLabel={ADMIN_COPY.deleteBankAccountConfirm.confirm}
+                pendingLabel={ADMIN_COPY.deleteBankAccountConfirm.pending}
+                formId="delete-bank-account-form"
+                triggerLabel={ADMIN_COPY.deleteBankAccountButton}
+              />
             </SettingsRow>
           ) : null}
         </SettingsSection>
@@ -311,9 +314,15 @@ export default async function AdminSettingsPage() {
         description={WITHDRAWAL_COPY.sectionDescription}
       >
         <SettingsRow>
-          <Button type="submit" form="withdraw-account-form" variant="danger">
-            {WITHDRAWAL_COPY.button}
-          </Button>
+          <ConfirmDialog
+            tone="danger"
+            title={WITHDRAWAL_COPY.confirm.title}
+            description={WITHDRAWAL_COPY.confirm.description}
+            confirmLabel={WITHDRAWAL_COPY.confirm.confirm}
+            pendingLabel={WITHDRAWAL_COPY.confirm.pending}
+            formId="withdraw-account-form"
+            triggerLabel={WITHDRAWAL_COPY.button}
+          />
         </SettingsRow>
       </SettingsSection>
 

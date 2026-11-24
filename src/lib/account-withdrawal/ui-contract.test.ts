@@ -26,8 +26,10 @@ describe("account withdrawal UI contract", () => {
     expect(pageSource).toContain(
       "description={WITHDRAWAL_COPY.sectionDescription}",
     );
-    expect(pageSource).toContain('form="withdraw-account-form"');
+    expect(pageSource).toContain('formId="withdraw-account-form"');
     expect(pageSource).toContain("{WITHDRAWAL_COPY.button}");
+    expect(pageSource).toContain("WITHDRAWAL_COPY.confirm.title");
+    expect(pageSource).toContain("<ConfirmDialog");
     expect(pageSource.indexOf('title="계정"')).toBeLessThan(
       pageSource.indexOf("title={WITHDRAWAL_COPY.sectionTitle}"),
     );
@@ -36,7 +38,7 @@ describe("account withdrawal UI contract", () => {
     );
     expect(formSource).toContain('id="withdraw-account-form"');
     expect(formSource).toContain('action="/api/admin/account/withdraw"');
-    expect(formSource).toContain("window.confirm(WITHDRAWAL_COPY.confirm)");
+    expect(formSource).not.toContain("window.confirm");
     expect(formSource).not.toContain("<Button");
     expect(routeSource).toContain("withdrawAccount(");
     expect(routeSource).toContain("session.user.id");

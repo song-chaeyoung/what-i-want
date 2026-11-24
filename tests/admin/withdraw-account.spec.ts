@@ -15,8 +15,6 @@ import type { E2EDatabase } from "../support/e2e-db";
 import { test, expect } from "../fixtures/admin";
 
 const SESSION_COOKIE = "authjs.session-token";
-const CONFIRM_MESSAGE =
-  "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.";
 
 test.describe("Withdraw Account", () => {
   test("Withdraw Account", async ({
@@ -59,23 +57,24 @@ test.describe("Withdraw Account", () => {
     ).toBeVisible({ timeout: 30_000 });
 
     await page.goto("/admin/settings");
-    const withdrawButton = page.getByRole("button", { name: "회원 탈퇴" });
+    const withdrawButton = page.getByRole("button", {
+      name: "회원 탈퇴",
+      exact: true,
+    });
     await expect(withdrawButton).toBeVisible({ timeout: 30_000 });
 
-    // 2. 확인 창을 수락하면 로그아웃되고 첫 화면 토스트가 한 번 나온다.
-    let dialogMessage = "";
-    page.once("dialog", (dialog) => {
-      dialogMessage = dialog.message();
-      return dialog.accept();
-    });
+    // 2. 확인창에서 탈퇴를 누르면 로그아웃되고 첫 화면 토스트가 한 번 나온다.
     await withdrawButton.click();
+    const dialog = page.getByRole("alertdialog", { name: "정말 탈퇴할까요?" });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByRole("button", { name: "취소", exact: true })).toBeFocused();
+    await dialog.getByRole("button", { name: "탈퇴", exact: true }).click();
 
     const withdrawnToast = page.locator("[data-sonner-toast]").filter({
       hasText: "탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.",
     });
     await expect(withdrawnToast).toBeVisible({ timeout: 15_000 });
     await expect(withdrawnToast).toHaveAttribute("data-type", "success");
-    expect(dialogMessage).toBe(CONFIRM_MESSAGE);
     await expect(page).toHaveURL("http://localhost:3200/", { timeout: 15_000 });
     await expect(withdrawnToast).toHaveCount(1);
 
