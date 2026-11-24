@@ -36,7 +36,7 @@
 4. **선물 카드 범위 좁히기**: `const card = page.locator('details').filter({ has: page.getByRole('heading', { level: 3, name: '<선물 이름>' }) })`. summary 를 클릭해 연 뒤 `card.getByRole('textbox', { name: '선물 이름' })`, `card.getByRole('combobox', { name: '상태' })`, `card.getByRole('spinbutton', { name: '목표 금액' })`, `card.getByRole('textbox', { name: '메모' })`, `card.getByRole('button', { name: '저장' })`, `card.getByRole('button', { name: '삭제' })` 가 동작했습니다. 추가 패널은 `page.locator('details#create-wish')` 로 범위를 좁히고 `getByLabel('선물 이름')`, `getByLabel('목표 금액')`, `getByLabel('상품 링크')`, `getByLabel('이미지 링크')`, `getByLabel('메모')`, 버튼 `추가하기`·`정보 불러오기` 를 씁니다. 저장·추가·삭제 뒤에는 페이지가 다시 렌더링돼 카드 `details` 가 닫힙니다(탐색: 수정 후 `open` false).
 5. **상태 배지와 탭 문구 겹침**: `마음 모으는 중`·`잠시 멈춤`·`완료`·`숨김` 이 필터 탭 링크, 카드 배지, `상태` select 옵션에 모두 있습니다. 탭은 `page.getByRole('navigation', { name: '선물 상태 필터' }).getByRole('link', { name: /^잠시 멈춤/ })`, 배지는 카드 summary 범위(`card.locator('summary').getByText('잠시 멈춤', { exact: true })`)로 좁히세요. 탭 개수는 링크 안 숫자(`link` 이름 `잠시 멈춤 1`)로 확인합니다.
 6. **사이드바**: `page.getByRole('complementary')` 로 범위를 좁힙니다. `홈` 링크는 `뭐갖고싶어 홈` 과 겹치므로 `{ name: '홈', exact: true }` 가 필요했습니다. 안 읽은 배지는 `page.getByRole('complementary').getByLabel('새 메시지 2개')`, 배지가 없음은 `getByLabel(/^새 메시지/)` 의 count 0 으로 확인합니다. `/admin` 홈에서는 `공개 페이지 보기` 링크가 헤더와 본문에 2개 있습니다.
-7. **확인 창**: 메시지 `숨기기` 는 `window.confirm` 을 띄웁니다. 테스트에서는 클릭 **전에** `page.once('dialog', dialog => ...)` 로 메시지를 기록하고 `accept()`/`dismiss()` 하세요. 문구(관찰): 금액 있는 참여 `이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.`, 금액 없는 메시지 `이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.`(코드 근거). `숨김 해제` 는 확인 창이 없습니다(코드 근거). 선물 `삭제` 는 2026-11-21 부터 확인 창을 띄웁니다(`app/admin/wishes/delete-wish-form.tsx`). 문구: 모인 금액이 있는 선물 `이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.`, 없는 선물 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.`
+7. **확인 창**: 메시지 `숨기기`와 선물 `삭제`는 `alertdialog`를 엽니다(2026-11-24). `page.once('dialog')`는 쓰지 않습니다. 트리거를 누른 뒤 `getByRole('alertdialog', { name: 제목 })`으로 잡고, 포커스가 `취소`인지 본 다음 확인 버튼 또는 `취소`/`Escape`를 누릅니다. 바깥 클릭은 닫지 않고, 닫히면 포커스는 트리거로 돌아갑니다. 메시지 제목 `이 메시지를 숨길까요?`. 금액이 있으면 설명 `함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.`, 없으면 `숨긴 메시지 목록에서 복구할 수 있어요.`. 확인 버튼 `숨기기`. `숨김 해제`는 확인 창이 없습니다. 선물 제목 `이 선물을 삭제할까요?`. 모인 금액이 있으면 설명 `이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.`, 없으면 `삭제하면 되돌릴 수 없어요.`. 확인 버튼 `삭제`. 온보딩 만 14세 미만 제출도 `alertdialog`입니다. 제목 `{연도}년생이 맞나요?`, 설명 `만 14세 미만은 가입할 수 없어서, 이대로 제출하면 로그인 정보가 바로 삭제돼요.`, 취소 `연도 고치기`(연도 선택으로 포커스), 확인 `이 생일로 제출`.
 8. **메시지함 문구 겹침**: `받은 메시지`·`숨긴 메시지` 가 필터 탭과 지표 라벨에 모두 있습니다. 탭은 `page.getByRole('navigation', { name: '메시지 필터' })` 안에서, 지표는 `page.getByText('받은 메시지', { exact: true })` 대신 지표 값(`getByText('2개', { exact: true })`)으로 확인하세요. 행은 `page.getByRole('article').filter({ hasText: '<본문>' })` 로 고릅니다.
 9. **DB 조회(e2eDb)**: `import { eq } from "drizzle-orm"` 와 `import { fundingLogs, messages, profiles, wishItems, wishlists } from "@/src/lib/db/schema"`. 컬럼은 camelCase(`wishlistId`, `title`, `targetAmount`, `fundedAmount`, `status`, `description`, `productUrl`, `imageUrl`, `isHidden`, `messagesReadAt`, `displayName`, `birthday`(문자열 `YYYY-MM-DD`), `onboardingCompletedAt`, `ownerId`, `visibility`)입니다. 성공 제출은 리다이렉트 전에 DB 에 쓰지만 여유를 위해 `expect.poll(...)` 로 기다리세요. 거절 요청은 응답을 받은 뒤 바로 단언해도 됩니다.
 10. **시각**: E2E DB 세션 시간대는 접속 주소의 `TimeZone=UTC` 로 운영과 같은 UTC 입니다(2026-11-21 부터, `tests/support/e2e-db.ts`). 그 전에는 로컬 Postgres 기본값 Asia/Seoul(`now()` 가 `+09`)이라 `defaultNow()` 값이 Drizzle 에서 9시간 앞서 읽혔습니다. 메시지 순서나 읽음 비교가 중요한 테스트는 지금도 `createdAt` 을 명시하세요(fixture 는 1분 간격으로 넣음). 화면의 메시지 시각 문자열은 단언하지 마세요.
@@ -53,7 +53,7 @@
 - **[관찰] 온보딩 서버 오류 뒤에는 입력값이 남지 않습니다.** 나이 확인 없이 `/api/onboarding` 에 직접 보낸 `displayName: 확인 안 함` 은 `/onboarding?error=age_confirmation_required` 로 돌아온 뒤 `E2E 관리자`(users.name)로 다시 채워졌고, 오류는 토스트가 아니라 폼 위 문단으로 표시되며 `?error=` 쿼리도 남습니다. 브라우저 `required` 가 먼저 막는 경로라 일반 사용자에게는 드뭅니다.
 - **[관찰] 비로그인 `/admin/*` 문서 응답은 HTTP 200 으로 `/login` 에 도착합니다.** 레이아웃이 Suspense 안에서 `redirect('/login')` 해 스트리밍 중 클라이언트 이동이 일어납니다. 상태 코드는 단언하지 않고 최종 URL 과 로그인 화면만 확인합니다.
 - **[해결 / 환경] 로컬 E2E DB 시간대가 운영과 달랐습니다.** `mwagotgo_e2e` 의 `now()` 는 `+09`(Asia/Seoul)이고, 운영·개발 Neon 은 UTC 입니다(2026-10-26 확인 기록). 공개 참여(`src/lib/public-participation/*`)로 만들어진 메시지는 `defaultNow()` 라 이 DB 에서는 9시간 미래로 읽혀, 메시지함을 열어도 안 읽은 메시지로 남았습니다. 2026-11-21 사용자 결정으로 `E2E_DATABASE_URL` 에 `?TimeZone=UTC` 를 붙여 dev 서버와 seed 연결의 세션 시간대를 UTC 로 고정했습니다(postgres-js 가 URL 의 모르는 쿼리를 접속 파라미터로 보냄). DB 기본 설정은 바꾸지 않았습니다.
-- **[도구] Playwright MCP 의 `browser_run_code_unsafe` 안에서는 `window.confirm` 이 MCP 모달 상태로 넘어가 `page.once('dialog')` 가 동작하지 않고 코드 실행이 끊깁니다.** 또 run_code 의 `waitFor()` 는 기본 timeout 이 없어, 확인 창 처리와 다음 호출 사이에 사라진 토스트를 기다리면 무기한 멈췄습니다(이번 탐색에서 30분 정지, planner 서브에이전트 정지도 같은 원인으로 추정). 탐색 중 확인 창은 `browser_handle_dialog` 로 처리하고 run_code 의 모든 대기에 timeout 을 주세요. 생성된 테스트 코드(`page.once('dialog')`)에는 해당하지 않습니다.
+- **[도구] Playwright MCP 의 `browser_run_code_unsafe` 안에서는 `window.confirm` 이 MCP 모달 상태로 넘어가 `page.once('dialog')` 가 동작하지 않고 코드 실행이 끊깁니다.** 또 run_code 의 `waitFor()` 는 기본 timeout 이 없어, 확인 창 처리와 다음 호출 사이에 사라진 토스트를 기다리면 무기한 멈췄습니다(이번 탐색에서 30분 정지, planner 서브에이전트 정지도 같은 원인으로 추정). 탐색 중 확인 창은 `browser_handle_dialog` 로 처리하고 run_code 의 모든 대기에 timeout 을 주세요. 2026-11-24부터 선물 삭제·메시지 숨기기·온보딩 만 14세 확인의 생성된 테스트는 `alertdialog` 버튼을 누릅니다.
 
 ## 시나리오 목록 요약
 
@@ -84,6 +84,7 @@
 25. Cross Account Bank Account Rejected
 26. Cancel Withdraw Account
 27. Withdraw Account
+28. Underage Confirm Accept Deletes Account
 
 (아래 "Test Scenarios" 는 묶음 번호 `N.M` 을 씁니다. 1.x 로그인 경계, 2.x 온보딩, 3.x 선물, 4.x 메시지, 5.x 권한, 6.x 관리자 홈 공유, 7.x 계좌 삭제, 8.x 회원 탈퇴입니다.)
 
@@ -207,9 +208,21 @@
   1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
   2. 생일 `2015-03-15` 를 고르고 체크박스 `만 14세 이상입니다.` 를 체크합니다.
     - expect: `role="alert"` 에 `2015년생` 이 보인다.
-  3. 버튼 `위시리스트 만들기` 를 누르고 `window.confirm` 을 취소합니다. 한 번 더 같습니다.
+  3. 버튼 `위시리스트 만들기` 를 누릅니다. `alertdialog` 이름은 `2015년생이 맞나요?`이고 포커스는 `연도 고치기`입니다. 바깥 클릭은 닫지 않습니다. 한 번은 `Escape`, 한 번은 `연도 고치기`로 닫습니다. 닫히면 달력의 `연도 선택`에 포커스가 갑니다.
     - expect: 제출 버튼은 활성 상태이고 라벨이 `위시리스트 만들기` 이다.
     - expect: URL 이 `/onboarding` 이고 `/api/onboarding` 요청은 0번이다.
+
+#### 2.5. Underage Confirm Accept Deletes Account
+
+**File:** `tests/admin/onboarding-submit-pending.spec.ts`
+
+**Steps:**
+  1. [사전 조건] `seedAdmin({ onboarded: false, displayName: "소셜 이름" })`, `signIn(admin)`. `/onboarding` 으로 이동해 제목을 기다립니다(timeout 30초).
+  2. `표시 이름` 을 `E2E 생일자` 로 바꾸고 생일 `2015-03-15` 를 고른 뒤 체크박스 `만 14세 이상입니다.` 를 체크합니다.
+  3. 버튼 `위시리스트 만들기` 를 누르고, `alertdialog` `2015년생이 맞나요?` 에서 `이 생일로 제출` 을 누릅니다. 확인창이 같은 폼을 다시 제출하므로, `birthday-picker.tsx` 의 submit 리스너가 이 두 번째 제출을 다시 막지 않아야 합니다.
+    - expect: URL 이 `/login?notice=under_minimum_age` 가 된다(timeout 30초).
+    - expect: `POST /api/onboarding` 요청은 1번이다.
+    - expect: [e2eDb] `users`(`id = admin.userId`) 행이 0개다. seed 사용자에는 카카오 `accounts` 행이 없어 카카오 연결 끊기는 호출되지 않습니다.
 
 ### 3. Wish Management
 
@@ -291,9 +304,9 @@
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "보드게임", targetAmount: 40_000 }, { title: "무선 이어폰", targetAmount: 100_000 } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 레벨 3 제목 `보드게임` 을 기다립니다(timeout 30초).
     - expect: 지표 `총 선물` 이 `2개` 이다.
-  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
+  2. `보드게임` 카드를 열어 버튼 `삭제` 를 누른 뒤, `alertdialog` `이 선물을 삭제할까요?`에서 포커스가 `취소`인지 보고 버튼 `삭제` 를 누릅니다.
     - expect: 토스트 `선물을 삭제했어요.`(`data-type` `success`)가 보인다.
-    - expect: 확인 창 메시지가 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.` 이다(모인 금액 없는 선물 문구, 코드 근거).
+    - expect: 설명 `삭제하면 되돌릴 수 없어요.` 가 보인다(모인 금액 없는 선물 문구).
     - expect: URL 이 `/admin/wishes` 로 정리되고, 레벨 3 제목 `보드게임` 이 없고 `무선 이어폰` 은 남는다.
     - expect: 지표 `총 선물` 이 `1개` 이다.
   3. [e2eDb 조회, 코드 근거] `wish_items`(`wishlistId = admin.wishlistId`)를 조회합니다(`expect.poll`).
@@ -325,8 +338,8 @@
 
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 30_000 } ], messages: [ { senderName: "이친구", body: "이어폰에 보태요", wishItemIndex: 0, amount: 30_000 } ] })`, `await signIn(admin)`. `/admin/wishes` 로 이동해 레벨 3 제목 `무선 이어폰` 을 기다립니다(timeout 30초).
-  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `dismiss()` 하도록 건 뒤, `무선 이어폰` 카드를 열어 버튼 `삭제` 를 누릅니다.
-    - expect: 확인 창 메시지가 `이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.` 이다(모인 금액 있는 선물 문구, 코드 근거).
+  2. `무선 이어폰` 카드를 열어 버튼 `삭제` 를 누릅니다. 바깥 클릭은 닫지 않고, `Escape`로 닫은 뒤 다시 열어 `취소`를 누릅니다.
+    - expect: `alertdialog` 이름이 `이 선물을 삭제할까요?`이고 설명 `이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.` 가 보인다. 포커스는 `취소`이고, 닫히면 `삭제` 버튼으로 돌아간다.
     - expect: 토스트가 나타나지 않고(`[data-sonner-toast]` count 0), URL 이 `/admin/wishes` 그대로이며, 레벨 3 제목 `무선 이어폰` 이 남는다.
   3. [e2eDb 조회, 코드 근거] `wish_items`(`id = items[0].id`)와 `funding_logs`(`wishItemId = items[0].id`)를 조회합니다.
     - expect: 선물 행이 남고 `fundedAmount` 는 `30000` 이며, 참여 기록 1건이 남는다.
@@ -343,8 +356,8 @@
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 40_000 } ], messages: [ { senderName: "이친구", body: "이어폰에 보태요", wishItemIndex: 0, amount: 10_000 }, { senderName: "김친구", body: "생일 축하해!" } ] })`, `await signIn(admin)`. `/admin/messages` 로 이동해 `navigation "메시지 필터"` 를 기다립니다(timeout 30초).
     - expect: 지표 값 `2개`, 행(`article`) 2개가 최신순으로 `이어폰에 보태요`, `생일 축하해!` 이다.
     - expect: `이어폰에 보태요` 행에 `무선 이어폰`, `이친구`, `₩10,000`, 버튼 `숨기기` 가 있고 `생일 축하해!` 행에는 `선물 없음`, `금액 없음` 이 있다.
-  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤 `이어폰에 보태요` 행의 `숨기기` 를 누릅니다.
-    - expect: 확인 창 메시지가 `이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 이다.
+  2. `이어폰에 보태요` 행의 `숨기기` 를 누른 뒤, `alertdialog`에서 포커스가 `취소`인지 보고 버튼 `숨기기` 를 누릅니다.
+    - expect: 제목 `이 메시지를 숨길까요?`, 설명 `함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 가 보인다.
     - expect: 토스트 `메시지를 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
     - expect: 행이 `생일 축하해!` 하나만 남고 지표 값이 `1개` 이다.
   3. [e2eDb 조회, 코드 근거] 숨김 결과를 조회합니다(`expect.poll`).
@@ -365,8 +378,8 @@
 
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ messages: [ { senderName: "김친구", body: "생일 축하해!" } ] })`, `await signIn(admin)`. `/admin/messages` 로 이동해 행 `생일 축하해!` 를 기다립니다(timeout 30초).
-  2. `page.once('dialog', ...)` 로 메시지를 기록하고 `dismiss()` 하도록 건 뒤 행의 `숨기기` 를 누릅니다.
-    - expect: 확인 창 메시지가 `이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.` 이다(금액 없는 메시지 문구, 코드 근거).
+  2. 행의 `숨기기` 를 누릅니다. 바깥 클릭은 닫지 않고, `Escape`로 닫은 뒤 다시 열어 `취소`를 누릅니다.
+    - expect: `alertdialog` 이름이 `이 메시지를 숨길까요?`이고 설명 `숨긴 메시지 목록에서 복구할 수 있어요.` 가 보인다(금액 없는 메시지). 포커스는 `취소`이고, 닫히면 `숨기기` 버튼으로 돌아간다.
     - expect: 토스트가 나타나지 않고(`[data-sonner-toast]` count 0), URL 이 `/admin/messages` 그대로이며, 행 `생일 축하해!` 가 남는다.
   3. [e2eDb 조회, 코드 근거] `messages`(`id = messages[0].id`)를 조회합니다.
     - expect: `isHidden` 이 `false` 이다.

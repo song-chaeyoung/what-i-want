@@ -25,18 +25,21 @@ test.describe("Wish Management", () => {
     await expect(page.getByText("총 선물", { exact: true })).toBeVisible();
     await expect(page.getByText("2개", { exact: true })).toBeVisible();
 
-    // 2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤, `보드게임` 카드를 열어 버튼 `삭제` 를 누릅니다.
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogMessage = dialog.message();
-      await dialog.accept();
-    });
-
+    // 2. `보드게임` 카드를 열어 확인창의 `삭제` 를 누릅니다.
     const card = page.locator("details").filter({
       has: page.getByRole("heading", { level: 3, name: "보드게임" }),
     });
     await card.locator("summary").click();
-    await card.getByRole("button", { name: "삭제" }).click();
+    await card.getByRole("button", { name: "삭제", exact: true }).click();
+    const dialog = page.getByRole("alertdialog", {
+      name: "이 선물을 삭제할까요?",
+    });
+    await expect(dialog).toBeVisible();
+    await expect(dialog.getByText("삭제하면 되돌릴 수 없어요.")).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await dialog.getByRole("button", { name: "삭제", exact: true }).click();
 
     // expect: 토스트 `선물을 삭제했어요.`(`data-type` `success`)가 보인다.
     const toast = page
@@ -44,9 +47,6 @@ test.describe("Wish Management", () => {
       .filter({ hasText: "선물을 삭제했어요." });
     await expect(toast).toBeVisible();
     await expect(toast).toHaveAttribute("data-type", "success");
-
-    // expect: 확인 창 메시지가 `이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.` 이다(모인 금액 없는 선물 문구, 코드 근거).
-    expect(dialogMessage).toBe("이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.");
 
     // expect: URL 이 `/admin/wishes` 로 정리되고, 레벨 3 제목 `보드게임` 이 없고 `무선 이어폰` 은 남는다.
     await expect(page).toHaveURL(/\/admin\/wishes$/);

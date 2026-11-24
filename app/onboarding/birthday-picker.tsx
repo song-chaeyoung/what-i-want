@@ -5,14 +5,20 @@ import { format } from "date-fns";
 import { CalendarIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Calendar } from "@/components/ui/calendar";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import {
+  ONBOARDING_COPY,
+  underAgeConfirmTitle,
+} from "@/src/lib/design/copy";
 import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";
 import { getKstDateKey } from "@/src/lib/public-wishlist/birthday";
+import { ONBOARDING_FORM_ID } from "./form-id";
 
 type BirthdayPickerProps = {
   id?: string;
@@ -26,10 +32,13 @@ export function BirthdayPicker({
   defaultValue = null,
 }: BirthdayPickerProps) {
   const [open, setOpen] = useState(false);
+  const [confirmOpen, setConfirmOpen] = useState(false);
   const [selected, setSelected] = useState<Date | undefined>(() =>
     parseBirthday(defaultValue),
   );
   const inputRef = useRef<HTMLInputElement>(null);
+  const confirmOpenRef = useRef(false);
+  const focusYearRef = useRef(false);
   const birthdayValue = selected ? format(selected, "yyyy-MM-dd") : "";
   // 달력이 올해에서 열려 연도를 안 바꾸고 고르는 경우가 많다. 제출 전에 알려준다.
   const isUnderMinimumAge =
@@ -37,7 +46,10 @@ export function BirthdayPicker({
   // 서버는 KST 기준으로 미래 생일을 거절하므로 달력도 KST 오늘까지만 고르게 한다.
   const kstToday = getKstToday();
 
+  const birthYear = birthdayValue.slice(0, 4);
+
   // 경고를 못 본 채 제출하면 계정이 바로 삭제되므로, 서버 폼 제출 직전에 한 번 더 확인한다.
+  // 확인창이 이미 열린 제출은 같은 폼이 그대로 나간다.
   useEffect(() => {
     const form = inputRef.current?.form;
 
@@ -46,19 +58,29 @@ export function BirthdayPicker({
     }
 
     const confirmUnderMinimumAge = (event: SubmitEvent) => {
-      if (
-        !window.confirm(
-          `${birthdayValue.slice(0, 4)}년생으로 선택됐어요. 만 14세 미만은 가입할 수 없어서 제출하면 로그인 정보가 바로 삭제돼요. 생일이 맞으면 확인, 연도를 고치려면 취소를 눌러주세요.`,
-        )
-      ) {
-        event.preventDefault();
+      if (confirmOpenRef.current) {
+        return;
       }
+
+      event.preventDefault();
+      confirmOpenRef.current = true;
+      setConfirmOpen(true);
     };
 
     form.addEventListener("submit", confirmUnderMinimumAge);
 
     return () => form.removeEventListener("submit", confirmUnderMinimumAge);
   }, [birthdayValue, isUnderMinimumAge]);
+
+  function handleConfirmOpenChange(nextOpen: boolean) {
+    confirmOpenRef.current = nextOpen;
+    setConfirmOpen(nextOpen);
+
+    if (!nextOpen) {
+      focusYearRef.current = true;
+      setOpen(true);
+    }
+  }
 
   const handleSelect = (date: Date | undefined) => {
     setSelected(date);
@@ -96,6 +118,18 @@ export function BirthdayPicker({
         <PopoverContent
           align="start"
           className="w-auto rounded-md border border-line bg-white p-3 shadow-xs"
+          onOpenAutoFocus={(event) => {
+            if (!focusYearRef.current) {
+              return;
+            }
+
+            focusYearRef.current = false;
+            event.preventDefault();
+            const year = (event.currentTarget as HTMLElement).querySelector<HTMLSelectElement>(
+              'select[aria-label="연도 선택"]',
+            );
+            year?.focus();
+          }}
         >
           <Calendar
             mode="single"
@@ -140,11 +174,22 @@ export function BirthdayPicker({
           role="alert"
           className="text-sm font-semibold leading-6 text-warn-ink"
         >
-          {birthdayValue.slice(0, 4)}년생으로 선택됐어요. 만 14세 미만은 가입할 수
-          없어요. 연도를 잘못 고르셨다면 달력 위쪽에서 태어난 연도로
-          바꿔주세요.
+          {birthYear}년생으로 선택됐어요. 만 14세 미만은 가입할 수 없어요. 연도를
+          잘못 고르셨다면 달력 위쪽에서 태어난 연도로 바꿔주세요.
         </p>
       ) : null}
+
+      <ConfirmDialog
+        tone="danger"
+        title={underAgeConfirmTitle(birthYear)}
+        description={ONBOARDING_COPY.underAgeConfirm.description}
+        confirmLabel={ONBOARDING_COPY.underAgeConfirm.confirm}
+        pendingLabel={ONBOARDING_COPY.underAgeConfirm.pending}
+        cancelLabel={ONBOARDING_COPY.underAgeConfirm.cancel}
+        formId={ONBOARDING_FORM_ID}
+        open={confirmOpen}
+        onOpenChange={handleConfirmOpenChange}
+      />
 
       {selected ? (
         <Button

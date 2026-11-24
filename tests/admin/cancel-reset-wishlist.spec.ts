@@ -3,6 +3,7 @@
 
 import { eq } from "drizzle-orm";
 import { fundingLogs, messages, wishItems } from "@/src/lib/db/schema";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { test, expect } from "../fixtures/admin";
 
 const WON = "₩";
@@ -37,21 +38,27 @@ test.describe("Wishlist Reset", () => {
       ),
     ).toBeVisible();
 
-    // 2. 클릭 전에 dialog 핸들러를 걸고(취소) 버튼 `위시리스트 초기화` 를 누릅니다.
-    let dialogType = "";
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogType = dialog.type();
-      dialogMessage = dialog.message();
-      await dialog.dismiss();
+    // 2. 버튼 `위시리스트 초기화` 를 누르고 확인창은 Esc와 취소로 닫는다.
+    const dialog = page.getByRole("alertdialog", {
+      name: ADMIN_COPY.resetWishlistConfirm.title,
     });
     await resetButton.click();
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByText(ADMIN_COPY.resetWishlistConfirm.description),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await page.mouse.click(8, 8);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(resetButton).toBeFocused();
 
-    // expect: 확인 창 종류가 `confirm`, 메시지가 안내 문구이다.
-    await expect.poll(() => dialogType, { timeout: 10_000 }).toBe("confirm");
-    expect(dialogMessage).toBe(
-      "위시리스트를 초기화할까요? 등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.",
-    );
+    await resetButton.click();
+    await dialog.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(dialog).toBeHidden();
 
     // 3. [e2eDb 조회, 코드 근거] 선물·메시지·후원 기록을 조회합니다.
     // expect: 취소하면 제출이 막혀 `wish_items` 1행(30000), `messages` 1행, `funding_logs` 1행(30000)이 그대로이다.

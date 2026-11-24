@@ -1,6 +1,9 @@
 // spec: specs/admin-management.md
 // seed: tests/admin/seed-onboarding.spec.ts
 
+import { eq } from "drizzle-orm";
+import { users } from "@/src/lib/db/schema";
+import { ONBOARDING_COPY, underAgeConfirmTitle } from "@/src/lib/design/copy";
 import { test, expect } from "../fixtures/admin";
 
 test.describe("Onboarding", () => {
@@ -134,10 +137,41 @@ test.describe("Onboarding", () => {
       'form[action="/api/onboarding"] button[type="submit"]',
     );
 
-    // 3. 제출하고 확인창을 취소합니다. 한 번 더 해도 같습니다.
+    // 3. 제출하고 확인창을 취소합니다. Esc와 `연도 고치기` 모두 제출하지 않습니다.
+    const dialog = page.getByRole("alertdialog", {
+      name: underAgeConfirmTitle("2015"),
+    });
+    const yearSelect = page.getByRole("combobox", { name: "연도 선택" });
+
     for (let attempt = 0; attempt < 2; attempt += 1) {
-      page.once("dialog", (dialog) => dialog.dismiss());
       await submitButton.click();
+      await expect(dialog).toBeVisible();
+      await expect(
+        dialog.getByText(ONBOARDING_COPY.underAgeConfirm.description),
+      ).toBeVisible();
+      const fixYear = dialog.getByRole("button", {
+        name: ONBOARDING_COPY.underAgeConfirm.cancel,
+        exact: true,
+      });
+      await expect(fixYear).toBeFocused();
+      await expect(
+        dialog.getByRole("button", {
+          name: ONBOARDING_COPY.underAgeConfirm.confirm,
+          exact: true,
+        }),
+      ).toBeVisible();
+
+      if (attempt === 0) {
+        await page.mouse.click(8, 8);
+        await expect(dialog).toBeVisible();
+        await page.keyboard.press("Escape");
+      } else {
+        await fixYear.click();
+      }
+
+      await expect(dialog).toBeHidden();
+      await expect(yearSelect).toBeFocused();
+      await page.keyboard.press("Escape");
 
       // expect: 버튼은 잠기지 않고 요청은 나가지 않는다.
       await expect(submitButton).toBeEnabled();
@@ -145,5 +179,74 @@ test.describe("Onboarding", () => {
       await expect(page).toHaveURL(/\/onboarding$/);
       expect(requestCount).toBe(0);
     }
+  });
+
+  test("Underage Confirm Accept Deletes Account", async ({
+    page,
+    seedAdmin,
+    signIn,
+    e2eDb,
+  }) => {
+    // 1. [사전 조건] 온보딩 전 사용자로 `/onboarding` 에 들어갑니다.
+    const admin = await seedAdmin({
+      onboarded: false,
+      displayName: "소셜 이름",
+    });
+    await signIn(admin);
+
+    await page.goto("/onboarding");
+    await expect(
+      page.getByRole("heading", { level: 1, name: "기본 위시리스트 만들기" }),
+    ).toBeVisible({ timeout: 30_000 });
+
+    // 2. 만 14세 미만 생일(2015-03-15)을 고르고 나이 확인 체크를 합니다.
+    await page.getByRole("textbox", { name: "표시 이름" }).fill("E2E 생일자");
+    await page.getByRole("button", { name: "생일" }).click();
+    await page.getByRole("combobox", { name: "연도 선택" }).selectOption("2015");
+    await page
+      .getByRole("combobox", { name: "월 선택" })
+      .selectOption({ index: 2 });
+    await page.getByRole("button", { name: /March 15th, 2015/ }).click();
+    await page.getByRole("checkbox", { name: /만 14세 이상입니다\./ }).check();
+
+    let requestCount = 0;
+    await page.route("**/api/onboarding", async (route) => {
+      if (route.request().method() === "POST") {
+        requestCount += 1;
+      }
+      await route.continue();
+    });
+
+    // 3. 제출하고 확인창에서 `이 생일로 제출` 을 누릅니다.
+    await page
+      .locator('form[action="/api/onboarding"] button[type="submit"]')
+      .click();
+    const dialog = page.getByRole("alertdialog", {
+      name: underAgeConfirmTitle("2015"),
+    });
+    await expect(dialog).toBeVisible();
+    await dialog
+      .getByRole("button", {
+        name: ONBOARDING_COPY.underAgeConfirm.confirm,
+        exact: true,
+      })
+      .click();
+
+    // expect: 로그인 화면으로 가서 만 14세 미만 안내를 받고, 요청은 1번이다.
+    await expect(page).toHaveURL(/\/login\?notice=under_minimum_age$/, {
+      timeout: 30_000,
+    });
+    expect(requestCount).toBe(1);
+
+    // expect: [e2eDb] 사용자 행이 지워졌다.
+    await expect
+      .poll(async () => {
+        const rows = await e2eDb
+          .select({ id: users.id })
+          .from(users)
+          .where(eq(users.id, admin.userId));
+        return rows.length;
+      })
+      .toBe(0);
   });
 });

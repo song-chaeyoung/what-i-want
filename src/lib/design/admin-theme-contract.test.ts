@@ -38,7 +38,8 @@ describe("admin calm theme contract", () => {
     expect(adminUiSource).not.toContain("adminSecondaryButtonClassName");
     expect(adminWishesSource).toContain('variant="admin"');
     expect(adminWishesSource).toContain('variant="admin-outline"');
-    expect(adminDeleteWishFormSource).toContain('variant="danger"');
+    expect(adminDeleteWishFormSource).toContain("<ConfirmDialog");
+    expect(adminDeleteWishFormSource).toContain('tone="danger"');
     expect(adminMessagesSource).toContain('variant="admin"');
     expect(adminMessagesSource).toContain('variant="subtle"');
     expect(adminSettingsSource).toContain('variant="admin"');
@@ -199,7 +200,8 @@ describe("admin calm theme contract", () => {
     expect(deleteFormSource).toContain('action={`/api/admin/wishes/${wishId}`}');
     expect(deleteFormSource).toContain('method="post"');
     expect(deleteFormSource).toContain('name="_method" value="delete"');
-    expect(deleteFormSource).toContain("window.confirm(confirmMessage)");
+    expect(deleteFormSource).toContain("ADMIN_COPY.deleteWishConfirm.title");
+    expect(deleteFormSource).toContain("<ConfirmDialog");
     expect(source).toContain('name="status"');
   });
 

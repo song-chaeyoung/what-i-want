@@ -5,7 +5,7 @@
 "뭐갖고싶어" 관리자 화면 `/admin` 중 2차분(홈 요약, 공개 링크 공유, 설정, 위시리스트 초기화, 로그아웃, 첫 진입 안내 모달)을 검증하는 E2E 테스트 계획입니다. 1차(`specs/admin-management.md`: 로그인 경계, 온보딩, 선물, 메시지함, 권한)와 같은 형식입니다.
 
 - 소스: `app/admin/page.tsx`, `app/admin/share-public-link-button.tsx`, `components/use-wishlist-share.ts`, `src/lib/share/share-url.ts`, `app/admin/settings/page.tsx`·`account-visibility-field.tsx`·`reset-wishlist-form.tsx`, `app/api/admin/settings/route.ts`, `src/lib/settings/service.ts`, `app/api/admin/wishlist/reset/route.ts`, `src/lib/wishlist-reset/repository.ts`, `app/login/actions.ts`(signOutAction), `app/admin/admin-guide-dialog.tsx`·`admin-guide-storage.ts`·`admin-guide-state.ts`, `app/admin/admin-toast-events.tsx`(토스트 문구), 공개 페이지 `components/public-wishlist-view.tsx`·`public-account-section.tsx`·`public-bank-account-card.tsx`.
-- 동작 방식: 설정 저장은 `<form action="/api/admin/settings" method="post">` 가 서버에서 저장한 뒤 `/admin/settings?saved=1` 또는 `?error=<코드>` 로 리다이렉트합니다. 클라이언트 `AdminToastEvents` 가 토스트를 띄우고 `router.replace` 로 쿼리를 지웁니다. 위시리스트 초기화는 `window.confirm` 뒤 `/api/admin/wishlist/reset` 로 POST 되고 `?wishlistReset=1` 로 돌아옵니다. 로그아웃은 서버 액션 `signOutAction`(`signOut({ redirectTo: "/login" })`)입니다. 서버가 DB 를 직접 쓰므로 `page.route()` 로 가로챌 수 없고, 결과는 서버가 렌더한 화면과 fixture `e2eDb` 조회로 확인합니다. 공유하기는 브라우저 API(`navigator.share`, `navigator.clipboard`)만 쓰므로 init script 로 스텁합니다.
+- 동작 방식: 설정 저장은 `<form action="/api/admin/settings" method="post">` 가 서버에서 저장한 뒤 `/admin/settings?saved=1` 또는 `?error=<코드>` 로 리다이렉트합니다. 클라이언트 `AdminToastEvents` 가 토스트를 띄우고 `router.replace` 로 쿼리를 지웁니다. 위시리스트 초기화는 `alertdialog`에서 확인한 뒤 `/api/admin/wishlist/reset` 로 POST 되고 `?wishlistReset=1` 로 돌아옵니다. 로그아웃은 서버 액션 `signOutAction`(`signOut({ redirectTo: "/login" })`)입니다. 서버가 DB 를 직접 쓰므로 `page.route()` 로 가로챌 수 없고, 결과는 서버가 렌더한 화면과 fixture `e2eDb` 조회로 확인합니다. 공유하기는 브라우저 API(`navigator.share`, `navigator.clipboard`)만 쓰므로 init script 로 스텁합니다.
 - baseURL `http://localhost:3200`(chromium 데스크톱 1280x720). 탐색용 seed 는 `tests/admin/seed-settings.spec.ts`(선물 5개: 무선 이어폰 open 30,000/100,000 · 캠핑 의자 paused · 보드게임 fulfilled · 숨긴 선물 hidden · 필름 카메라 open 5,000/50,000, 메시지 3개: 김친구 `생일 축하해!` · 이친구 `이어폰에 보태요`(무선 이어폰 30,000) · 박친구 `숨긴 메시지`(숨김), 계좌 E2E은행/E2E 관리자/123-456-789012 copy_only, 안내 모달 꺼짐)와 `tests/admin/seed-guide.spec.ts`(선물·메시지·계좌 없는 관리자, 안내 모달 켜짐)입니다. **각 테스트는 seed 를 재사용하지 않고 자기 `seedAdmin({...})` 로 새 사용자를 만듭니다.** 모든 테스트는 `tests/admin/` 아래에 두고 `import { test, expect } from "../fixtures/admin"` 을 씁니다.
 - 범위 밖: 14세 미만 계정 삭제, 모바일 nav, 선물 입력값 서버 검증 오류, 실제 OAuth, 계좌 입력값 서버 검증 오류(`bank_name_required`·`invalid_account_number` 등), 생일 당일 관리자 홈 축하 카드(`birthday-confetti.tsx`, 서버가 `new Date()` 로 정해 `page.clock` 으로 고정 불가 — 탐색 결과만 아래에 기록), 설정의 14세 미만 생일 거절·이름/제목 서버 검증.
 - 탐색은 2026-11-14 dev 서버(3200, 로컬 E2E DB)에서 Playwright MCP 로 planner 서브에이전트가 했습니다. 탐색 중에는 DB 를 볼 수 없었으므로 **DB 단언(e2eDb)은 코드 근거**이며 각 단계에 `[e2eDb 조회, 코드 근거]` 로 표시했습니다.
@@ -29,7 +29,7 @@
 3. **토스트**: `page.locator('[data-sonner-toast]').filter({ hasText: '...' })`, `data-type` 은 `success`/`warning`/`error`. 제출 후 약 1초 안에 나타나고 4~6초 뒤 사라지므로 제출 직후 확인하세요. 설정 문구: 저장 `설정을 저장했어요.`, 초기화 `위시리스트를 초기화했어요. 새 생일을 준비해 보세요.`, 일반 오류 `요청을 처리하지 못했어요.`, `reserved_slug` 는 `sample은 서비스 전용 주소입니다. 다른 공개 주소를 입력해주세요.`, `invalid_slug` 는 `공개 주소는 영문 소문자, 숫자, 하이픈만 사용할 수 있습니다.`, `duplicate_slug` 는 `이미 사용 중인 공개 주소입니다.`. 토스트가 뜬 뒤 쿼리는 지워지므로 `toHaveURL(/\/admin\/settings$/)` 로 정리된 URL 을 기다리세요. 같은 문구의 토스트가 남아 있으면 다음 단언과 섞이므로 연속 저장 사이에는 `[data-sonner-toast]` count 0 을 기다리거나(timeout 10초) 문구가 다른 단언을 쓰세요.
 4. **설정 폼 입력**: `page.locator('#displayName')` 처럼 id 로 잡거나 `getByLabel('이름')` 을 씁니다(`이름`·`생일`·`소개`·`공개 주소`·`제목`·`공개 여부`·`테마`·`은행`·`예금주`·`계좌번호`·`계좌 공개`; 필수 라벨에는 `*` 가 붙음). 날짜는 `fill('1990-03-15')`, select 는 `selectOption('soft_pastel')`. 저장은 `getByRole('button', { name: '저장하기' })`. 브라우저 `required`·`minLength`·`maxLength`·`pattern`·`max` 가 먼저 제출을 막을 수 있으니 이 시나리오의 값은 모두 통과하는 값입니다.
 5. **저장 결과는 서버 렌더 값으로**: 저장 뒤 입력값은 리다이렉트로 서버가 다시 렌더한 값이라 `toHaveValue` 단언에 의미가 있습니다. 반대로 `계좌 공개` 힌트 문구는 select 를 바꾸는 즉시 바뀌는 클라이언트 상태이므로 서버 동작의 근거로 삼지 말고 저장 뒤 다시 렌더된 값과 DB 로 확인하세요.
-6. **확인 창(`window.confirm`)**: 테스트 코드에서는 클릭 **전에** `page.once('dialog', async (dialog) => { message = dialog.message(); await dialog.accept(); })`(또는 `dismiss()`)를 겁니다. 이 규칙은 생성된 테스트 코드용이며, MCP 탐색 중에는 `browser_run_code_unsafe` 안에서 확인 창을 띄우지 말고 `browser_click` 으로 클릭한 뒤 `browser_handle_dialog` 로 처리하세요.
+6. **확인 창**: 위시리스트 초기화는 `alertdialog`입니다(2026-11-24). `page.once('dialog')`는 쓰지 않습니다. 버튼 `위시리스트 초기화`를 누른 뒤 `getByRole('alertdialog', { name: '위시리스트를 초기화할까요?' })`로 잡고, 포커스가 `취소`인지 본 다음 `초기화` 또는 `취소`/`Escape`를 누릅니다. 바깥 클릭은 닫지 않습니다. 설명은 `등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.`입니다.
 7. **공유 스텁**: `tests/sample/share-link-copy.spec.ts`(`navigator.share` 를 `undefined` 로 → 클립보드 폴백, `test.use({ permissions: ['clipboard-read', 'clipboard-write'] })`), `tests/sample/native-share-paths.spec.ts` 방식을 따릅니다. 관리자 홈의 버튼은 `main` 안에 `공유하기` 하나입니다(공개 페이지에는 헤더에도 같은 이름 버튼이 있음).
 8. **DB 조회(e2eDb)**: `import { eq } from "drizzle-orm"`, `import { bankAccounts, fundingLogs, messages, profiles, sessions, wishItems, wishlists } from "@/src/lib/db/schema"`. 컬럼은 camelCase(`displayName`, `birthday`(문자열 `YYYY-MM-DD`), `description`, `slug`, `title`, `themeId`, `visibility`, `messagesReadAt`, `bankName`, `accountHolder`, `accountNumberEncrypted`, `sessionToken`). 값이 생기는 확인은 `expect.poll(...)` 로 기다리고, 계좌번호는 `decryptAccountNumber` 와 `E2E_ACCOUNT_ENCRYPTION_SECRET`(`tests/support/e2e-db.ts`)으로 복호화해 비교합니다.
 9. **시각**: E2E DB 세션 시간대는 2026-11-21 부터 UTC 입니다(1차 명세 공통 주의사항 10). 탐색 당시에는 Asia/Seoul 이라 `defaultNow()` 값이 9시간 앞서 읽혔습니다. 실행 시각에 따라 날짜가 바뀌므로 홈의 날짜 문자열은 단언하지 마세요. 공개 페이지 생일 배지의 `D-<일수>` 도 실행 날짜에 따라 변하고 생일 당일은 `D-DAY` 이므로 `/^3월 15일 · D-(DAY|\d+)$/` 처럼 정규식으로 쓰세요.
@@ -49,7 +49,7 @@
 - **[관찰] 선물이 없으면 `첫 선물 담기` 의 `#create-wish` 패널은 원래 열려 있습니다.** 그래서 패널 `open` 은 해시 이동의 단독 증거가 아닙니다(6.2 는 URL 로 확인).
 - **[해결] 관리자 홈 `선물` 지표는 숨김 선물을 포함합니다**(5개). 탐색 당시 보조 문구 `등록된 공개 항목` 과 맞지 않아, 2026-11-21 사용자 결정으로 개수는 그대로 두고 보조 문구를 `등록된 선물` 로 바꿨습니다(`/admin/wishes` 의 `총 선물` 과 같은 기준). `메시지` 지표는 숨긴 메시지를 제외합니다.
 - **[관찰] 생일 당일 홈 축하 카드(범위 밖).** 생일을 오늘(`2000-11-14`)로 저장하면 홈 지표 위에 `생일 축하해요, 새 이름님! 🎉` 카드가 나오고 공개 페이지 배지는 `11월 14일 · D-DAY` 였습니다. 서버가 `new Date()` 로 결정해 시계 고정이 안 되어 시나리오에 넣지 않았습니다.
-- **[도구] 탐색 중 `browser_run_code_unsafe` 안에서 `window.confirm` 을 띄우지 않았고, 모든 대기에 timeout 을 줬습니다.** 초기화는 `browser_click` + `browser_handle_dialog` 로 처리했습니다.
+- **[도구] 탐색 중 `browser_run_code_unsafe` 안에서 `window.confirm` 을 띄우지 않았고, 모든 대기에 timeout 을 줬습니다.** 당시 초기화는 `browser_click` + `browser_handle_dialog` 로 처리했습니다. 2026-11-24부터 생성된 테스트는 `alertdialog`의 `초기화`·`취소` 버튼을 누릅니다.
 - **[해결 / 환경] 로컬 E2E DB 시간대(Asia/Seoul)** 때문에 홈의 선물 날짜가 하루 앞서 읽혔습니다. 2026-11-21 부터 E2E 접속의 세션 시간대를 UTC 로 고정했습니다(1차 명세 참고).
 
 ## 시나리오 목록 요약
@@ -295,8 +295,8 @@
 **Steps:**
   1. [사전 조건] `const admin = await seedAdmin({ items: [ { title: "무선 이어폰", targetAmount: 100_000, fundedAmount: 30_000 } ], messages: [ { senderName: "이친구", body: "이어폰에 보태요", wishItemIndex: 0, amount: 30_000 } ] })`, `await signIn(admin)`. `/admin/settings` 로 이동해 버튼 `위시리스트 초기화` 를 기다립니다(timeout 30초).
     - expect: `새 생일 준비` 섹션에 설명 `지난 생일의 선물, 메시지, 모인 금액 기록을 모두 지우고 새로 시작해요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.` 가 있다.
-  2. 클릭 전에 `page.once('dialog', async (dialog) => { type = dialog.type(); message = dialog.message(); await dialog.dismiss(); })` 를 걸고 버튼 `위시리스트 초기화` 를 누릅니다.
-    - expect: 확인 창 종류가 `confirm`, 메시지가 `위시리스트를 초기화할까요? 등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.` 이다(탐색 확인).
+  2. 버튼 `위시리스트 초기화` 를 누릅니다. 바깥 클릭은 닫지 않고, `Escape`로 닫은 뒤 다시 열어 `취소`를 누릅니다.
+    - expect: `alertdialog` 이름이 `위시리스트를 초기화할까요?`이고 설명 `등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.` 가 보인다. 포커스는 `취소`이고, 닫히면 트리거로 돌아간다.
     - expect: 취소하면 제출이 막힌다. 근거는 고정 대기 뒤의 토스트 0개가 아니라(취소 직후에는 항상 참) 아래 DB 행 수와 `/admin` 에서 서버가 렌더한 지표로 삼습니다.
   3. [e2eDb 조회, 코드 근거] `wish_items`(`wishlistId = admin.wishlistId`), `messages`(`wishlistId = admin.wishlistId`), `funding_logs`(`wishItemId = admin.items[0].id`)를 조회합니다.
     - expect: `wish_items` 1행(`fundedAmount` `30000`), `messages` 1행, `funding_logs` 1행(`amount` `30000`)이 그대로이다.
@@ -313,7 +313,7 @@
     - `/wishlist/${admin.slug}` 를 열어 레벨 1 제목과 `선물` `1개`(숨긴 선물 제외)를 확인합니다(timeout 30초). 공개 페이지 캐시를 채워 6단계가 초기화 시 캐시 무효화까지 확인하게 합니다.
   2. `/admin/messages` 를 한 번 방문한 뒤 [e2eDb 조회, 코드 근거] `expect.poll` 로 `wishlists.messagesReadAt` 이 null 이 아니게 되길 기다립니다(읽음 처리가 초기화로 null 이 되는지 보기 위한 사전 조건).
     - expect: `messagesReadAt` 이 null 이 아니다.
-  3. `/admin/settings` 로 이동해 버튼 `위시리스트 초기화` 를 기다립니다(timeout 30초). 클릭 전에 `page.once('dialog', async (dialog) => { await dialog.accept(); })` 를 걸고 버튼을 누릅니다. (MCP 탐색 중에는 `browser_run_code_unsafe` 안에서 확인 창을 띄우지 말고 `browser_click` 후 `browser_handle_dialog` accept 를 씁니다.)
+  3. `/admin/settings` 로 이동해 버튼 `위시리스트 초기화` 를 기다립니다(timeout 30초). 버튼을 눌러 `alertdialog`에서 포커스가 `취소`인지 본 뒤 `초기화` 를 누릅니다.
     - expect: 토스트 `위시리스트를 초기화했어요. 새 생일을 준비해 보세요.`(`data-type` `success`)가 보인다.
     - expect: URL 이 `/admin/settings` 로 정리된다(`?wishlistReset=1` 제거, 탐색 확인).
     - expect: 다시 렌더된 `이름`, `공개 주소`, `제목`, `테마`, `은행`, `예금주`, `계좌 공개` 가 초기화 전과 같다(`E2E 관리자`, `${admin.slug}`, `E2E 관리자님의 위시리스트`, `pixel_y2k`, `E2E은행`, `E2E 관리자`, `copy_only`).

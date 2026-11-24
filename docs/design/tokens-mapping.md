@@ -80,13 +80,14 @@
 
 ## 버튼 색
 
-2026-11-13에 버튼에 직접 적혀 있던 색을 `:root` 토큰으로 옮겼습니다. 값은 그때의 하드코드와 같습니다. `@theme inline`의 `--color-*` 다리는 그 변수를 가리켜 `bg-ink-deep`, `text-danger`, `bg-kakao` 같은 유틸이 나오게 합니다. 공개 테마는 이 다섯 값을 덮어쓰지 않습니다.
+2026-11-13에 버튼에 직접 적혀 있던 색을 `:root` 토큰으로 옮겼습니다. 값은 그때의 하드코드와 같습니다. `@theme inline`의 `--color-*` 다리는 그 변수를 가리켜 `bg-ink-deep`, `text-danger`, `bg-kakao` 같은 유틸이 나오게 합니다. 공개 테마는 이 여섯 값을 덮어쓰지 않습니다.
 
 | 의미 토큰 | `:root` 값 | 유틸 다리 | 바꾸기 전 |
 | --- | --- | --- | --- |
 | `--ink-deep` | `#111827` | `--color-ink-deep` | 홈·온보딩·404·오류의 진한 버튼 면 |
 | `--danger` | `#b91c1c` | `--color-danger` | 관리자 삭제·초기화 글자와 테두리 |
 | `--danger-tint` | `#fef2f2` | `--color-danger-tint` | 그 버튼의 호버 면 |
+| `--danger-strong` | `#991b1b` | `--color-danger-strong` | 확인창 위험 버튼(`danger-solid`)의 호버 면. 2026-11-24에 옮김 |
 | `--kakao` | `#fee500` | `--color-kakao` | 로그인 Kakao 버튼 면 |
 | `--kakao-hover` | `#f6dc00` | `--color-kakao-hover` | 그 버튼의 호버 면 |
 

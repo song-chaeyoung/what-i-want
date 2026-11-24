@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { requireUser } from "@/src/lib/auth/require-user";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
+import { ONBOARDING_FORM_ID } from "./form-id";
 import { OnboardingSubmitButton } from "./submit-button";
 
 export const metadata: Metadata = {
@@ -72,6 +73,7 @@ export default async function OnboardingPage({
             ) : null}
 
             <form
+              id={ONBOARDING_FORM_ID}
               action="/api/onboarding"
               method="post"
               className="mt-8 space-y-5"

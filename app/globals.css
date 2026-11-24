@@ -26,6 +26,7 @@
   --ink-deep: #111827;
   --danger: #b91c1c;
   --danger-tint: #fef2f2;
+  --danger-strong: #991b1b;
   --kakao: #fee500;
   --kakao-hover: #f6dc00;
   --ink-soft: #4b5563;
@@ -124,6 +125,7 @@
   --color-ink-deep: var(--ink-deep);
   --color-danger: var(--danger);
   --color-danger-tint: var(--danger-tint);
+  --color-danger-strong: var(--danger-strong);
   --color-kakao: var(--kakao);
   --color-kakao-hover: var(--kakao-hover);
   --color-line-strong: var(--line-strong);

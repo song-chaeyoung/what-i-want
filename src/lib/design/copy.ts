@@ -157,6 +157,32 @@ export const ADMIN_COPY = {
   deleteBankAccountSuccess: "계좌 정보를 삭제했어요.",
   deleteBankAccountError:
     "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
+  deleteWishButton: "삭제",
+  deleteWishConfirm: {
+    title: "이 선물을 삭제할까요?",
+    descriptionWithAmount:
+      "이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.",
+    descriptionWithoutAmount: "삭제하면 되돌릴 수 없어요.",
+    confirm: "삭제",
+    pending: "삭제하는 중…",
+  },
+  hideMessageButton: "숨기기",
+  hideMessageConfirm: {
+    title: "이 메시지를 숨길까요?",
+    descriptionWithAmount:
+      "함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
+    descriptionWithoutAmount: "숨긴 메시지 목록에서 복구할 수 있어요.",
+    confirm: "숨기기",
+    pending: "숨기는 중…",
+  },
+  resetWishlistButton: "위시리스트 초기화",
+  resetWishlistConfirm: {
+    title: "위시리스트를 초기화할까요?",
+    description:
+      "등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.",
+    confirm: "초기화",
+    pending: "초기화하는 중…",
+  },
 } as const;
 
 export const WITHDRAWAL_COPY = {
@@ -174,6 +200,20 @@ export const WITHDRAWAL_COPY = {
   success: "탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.",
   error: "탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.",
 } as const;
+
+export const ONBOARDING_COPY = {
+  underAgeConfirm: {
+    description:
+      "만 14세 미만은 가입할 수 없어서, 이대로 제출하면 로그인 정보가 바로 삭제돼요.",
+    confirm: "이 생일로 제출",
+    pending: "제출하는 중…",
+    cancel: "연도 고치기",
+  },
+} as const;
+
+export function underAgeConfirmTitle(year: string): string {
+  return `${year}년생이 맞나요?`;
+}
 
 export function formatWishCount(count: number): string {
   return `${count}개`;

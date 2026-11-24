@@ -1,6 +1,6 @@
 "use client"
 
-import { useRef, useState } from "react"
+import { useRef, useState, type ComponentProps } from "react"
 import { Button } from "@/components/ui/button"
 import {
   AlertDialog,
@@ -14,15 +14,33 @@ import {
 
 const actionButtonClassName = "h-11 flex-1 sm:h-9 sm:flex-none"
 
-type ConfirmDialogProps = {
+type ButtonVariant = NonNullable<ComponentProps<typeof Button>["variant"]>
+
+type ConfirmDialogSharedProps = {
   tone: "danger" | "default"
   title: string
   description: string
   confirmLabel: string
   pendingLabel: string
   formId: string
-  triggerLabel: string
+  cancelLabel?: string
 }
+
+type ConfirmDialogProps = ConfirmDialogSharedProps &
+  (
+    | {
+        triggerLabel: string
+        triggerVariant?: ButtonVariant
+        open?: undefined
+        onOpenChange?: undefined
+      }
+    | {
+        open: boolean
+        onOpenChange: (open: boolean) => void
+        triggerLabel?: undefined
+        triggerVariant?: undefined
+      }
+  )
 
 export function ConfirmDialog({
   tone,
@@ -31,12 +49,27 @@ export function ConfirmDialog({
   confirmLabel,
   pendingLabel,
   formId,
-  triggerLabel,
+  cancelLabel = "취소",
+  ...props
 }: ConfirmDialogProps) {
-  const [open, setOpen] = useState(false)
+  const [uncontrolledOpen, setUncontrolledOpen] = useState(false)
   const [pending, setPending] = useState(false)
   const pendingRef = useRef(false)
   const cancelRef = useRef<HTMLButtonElement>(null)
+  const isControlled = props.open !== undefined
+  const open = isControlled ? props.open : uncontrolledOpen
+  const triggerVariant =
+    "triggerVariant" in props && props.triggerVariant
+      ? props.triggerVariant
+      : "danger"
+
+  function setOpen(nextOpen: boolean) {
+    if (!isControlled) {
+      setUncontrolledOpen(nextOpen)
+    }
+
+    props.onOpenChange?.(nextOpen)
+  }
 
   function handleOpenChange(nextOpen: boolean) {
     if (pendingRef.current && !nextOpen) {
@@ -44,6 +77,7 @@ export function ConfirmDialog({
     }
 
     setOpen(nextOpen)
+
     if (!nextOpen) {
       pendingRef.current = false
       setPending(false)
@@ -67,16 +101,25 @@ export function ConfirmDialog({
 
   return (
     <AlertDialog open={open} onOpenChange={handleOpenChange}>
-      <AlertDialogTrigger asChild>
-        <Button type="button" variant="danger">
-          {triggerLabel}
-        </Button>
-      </AlertDialogTrigger>
+      {props.triggerLabel ? (
+        <AlertDialogTrigger asChild>
+          <Button type="button" variant={triggerVariant}>
+            {props.triggerLabel}
+          </Button>
+        </AlertDialogTrigger>
+      ) : null}
       <AlertDialogContent
         onOpenAutoFocus={(event) => {
           event.preventDefault()
           cancelRef.current?.focus()
         }}
+        onCloseAutoFocus={
+          isControlled
+            ? (event) => {
+                event.preventDefault()
+              }
+            : undefined
+        }
         onEscapeKeyDown={(event) => {
           if (pendingRef.current) {
             event.preventDefault()
@@ -94,7 +137,7 @@ export function ConfirmDialog({
               className={actionButtonClassName}
               disabled={pending}
             >
-              취소
+              {cancelLabel}
             </Button>
           </AlertDialogCancel>
           <AlertDialogAction asChild>
