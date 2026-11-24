@@ -72,45 +72,6 @@ export function BirthdayPicker({
     return () => form.removeEventListener("submit", confirmUnderMinimumAge);
   }, [birthdayValue, isUnderMinimumAge]);
 
-  useEffect(() => {
-    if (!open || !focusYearRef.current) {
-      return;
-    }
-
-    const focusYear = () => {
-      const year = document.querySelector<HTMLSelectElement>(
-        'select[aria-label="연도 선택"]',
-      );
-
-      if (!year) {
-        return false;
-      }
-
-      year.focus();
-      if (document.activeElement === year) {
-        focusYearRef.current = false;
-      }
-
-      return document.activeElement === year;
-    };
-
-    if (focusYear()) {
-      return;
-    }
-
-    const frame = window.requestAnimationFrame(() => {
-      focusYear();
-    });
-    const timer = window.setTimeout(() => {
-      focusYear();
-    }, 30);
-
-    return () => {
-      window.cancelAnimationFrame(frame);
-      window.clearTimeout(timer);
-    };
-  }, [open]);
-
   function handleConfirmOpenChange(nextOpen: boolean) {
     confirmOpenRef.current = nextOpen;
     setConfirmOpen(nextOpen);
@@ -162,15 +123,12 @@ export function BirthdayPicker({
               return;
             }
 
+            focusYearRef.current = false;
             event.preventDefault();
             const year = (event.currentTarget as HTMLElement).querySelector<HTMLSelectElement>(
               'select[aria-label="연도 선택"]',
             );
             year?.focus();
-
-            if (year && document.activeElement === year) {
-              focusYearRef.current = false;
-            }
           }}
         >
           <Calendar
