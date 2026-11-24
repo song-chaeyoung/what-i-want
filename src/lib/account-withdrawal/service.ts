@@ -35,6 +35,10 @@ export async function withdrawAccount(
     const unlinked = await unlink(kakaoUserId);
 
     if (!unlinked.ok) {
+      console.error("회원 탈퇴 전 카카오 연결 해제에 실패했습니다.", {
+        userId,
+        reason: unlinked.reason,
+      });
       return { ok: false, error: "kakao_unlink_failed" };
     }
   }

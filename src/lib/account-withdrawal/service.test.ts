@@ -67,12 +67,22 @@ describe("account withdrawal service", () => {
       ok: false as const,
       reason: "http_error" as const,
     }));
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
 
-    await expect(
-      withdrawAccount("user-1", repository, { unlinkKakaoUser: unlink }),
-    ).resolves.toEqual({ ok: false, error: "kakao_unlink_failed" });
-    expect(unlink).toHaveBeenCalledWith("555");
-    expect(repository.deletedUserIds).toEqual([]);
+    try {
+      await expect(
+        withdrawAccount("user-1", repository, { unlinkKakaoUser: unlink }),
+      ).resolves.toEqual({ ok: false, error: "kakao_unlink_failed" });
+      expect(unlink).toHaveBeenCalledWith("555");
+      expect(repository.deletedUserIds).toEqual([]);
+      expect(errorLog).toHaveBeenCalledWith(
+        "회원 탈퇴 전 카카오 연결 해제에 실패했습니다.",
+        { userId: "user-1", reason: "http_error" },
+      );
+      expect(JSON.stringify(errorLog.mock.calls)).not.toContain("555");
+    } finally {
+      errorLog.mockRestore();
+    }
   });
 
   test("deletes a Kakao user after unlinking succeeds", async () => {
