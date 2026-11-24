@@ -180,7 +180,6 @@ describe("visual system copy", () => {
   });
 
   test("defines onboarding under-age confirm copy", () => {
-    expect(ONBOARDING_COPY.formId).toBe("onboarding-form");
     expect(underAgeConfirmTitle("2015")).toBe("2015년생이 맞나요?");
     expect(ONBOARDING_COPY.underAgeConfirm).toEqual({
       description:

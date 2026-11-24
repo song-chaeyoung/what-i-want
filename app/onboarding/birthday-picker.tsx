@@ -18,6 +18,7 @@ import {
 } from "@/src/lib/design/copy";
 import { isUnderMinimumSignupAge } from "@/src/lib/onboarding/age";
 import { getKstDateKey } from "@/src/lib/public-wishlist/birthday";
+import { ONBOARDING_FORM_ID } from "./form-id";
 
 type BirthdayPickerProps = {
   id?: string;
@@ -227,7 +228,7 @@ export function BirthdayPicker({
         confirmLabel={ONBOARDING_COPY.underAgeConfirm.confirm}
         pendingLabel={ONBOARDING_COPY.underAgeConfirm.pending}
         cancelLabel={ONBOARDING_COPY.underAgeConfirm.cancel}
-        formId={ONBOARDING_COPY.formId}
+        formId={ONBOARDING_FORM_ID}
         open={confirmOpen}
         onOpenChange={handleConfirmOpenChange}
       />

@@ -202,7 +202,6 @@ export const WITHDRAWAL_COPY = {
 } as const;
 
 export const ONBOARDING_COPY = {
-  formId: "onboarding-form",
   underAgeConfirm: {
     description:
       "만 14세 미만은 가입할 수 없어서, 이대로 제출하면 로그인 정보가 바로 삭제돼요.",

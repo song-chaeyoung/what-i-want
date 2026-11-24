@@ -19,7 +19,8 @@ describe("onboarding UI contract", () => {
     const source = readSource(pagePath);
 
     expect(source).toContain('import { BirthdayPicker } from "./birthday-picker";');
-    expect(source).toContain("id={ONBOARDING_COPY.formId}");
+    expect(source).toContain('import { ONBOARDING_FORM_ID } from "./form-id";');
+    expect(source).toContain("id={ONBOARDING_FORM_ID}");
     expect(source).toContain('action="/api/onboarding"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="displayName"');
@@ -152,7 +153,8 @@ describe("onboarding UI contract", () => {
     expect(source).toContain('tone="danger"');
     expect(source).toContain("open={confirmOpen}");
     expect(source).toContain("onOpenChange={handleConfirmOpenChange}");
-    expect(source).toContain("formId={ONBOARDING_COPY.formId}");
+    expect(source).toContain('import { ONBOARDING_FORM_ID } from "./form-id";');
+    expect(source).toContain("formId={ONBOARDING_FORM_ID}");
     expect(source).toContain("underAgeConfirmTitle(birthYear)");
     expect(source).toContain('select[aria-label="연도 선택"]');
     expect(source).not.toContain(["window", "confirm"].join("."));
