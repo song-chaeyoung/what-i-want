@@ -30,16 +30,14 @@ describe("button variant contract", () => {
   });
 
   test("defines app button variants without hex colors", () => {
-    expect(buttonSource.replace("hover:bg-[#991b1b]", "")).not.toMatch(
-      /#[0-9a-fA-F]{3,8}/,
-    );
+    expect(buttonSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
     expect(buttonVariants({ variant: "danger-solid" })).toContain("bg-danger");
     expect(buttonVariants({ variant: "danger-solid" })).toContain(
       "border-danger",
     );
     expect(buttonVariants({ variant: "danger-solid" })).toContain("text-white");
     expect(buttonVariants({ variant: "danger-solid" })).toContain(
-      "hover:bg-[#991b1b]",
+      "hover:bg-danger-strong",
     );
 
     const cta = buttonVariants({ variant: "cta", size: "none" });
@@ -99,11 +97,13 @@ describe("button variant contract", () => {
       "--ink-deep: #111827;",
       "--danger: #b91c1c;",
       "--danger-tint: #fef2f2;",
+      "--danger-strong: #991b1b;",
       "--kakao: #fee500;",
       "--kakao-hover: #f6dc00;",
       "--color-ink-deep: var(--ink-deep);",
       "--color-danger: var(--danger);",
       "--color-danger-tint: var(--danger-tint);",
+      "--color-danger-strong: var(--danger-strong);",
       "--color-kakao: var(--kakao);",
       "--color-kakao-hover: var(--kakao-hover);",
       "--color-line-strong: var(--line-strong);",

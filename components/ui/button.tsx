@@ -29,7 +29,7 @@ const buttonVariants = cva(
         danger:
           "h-9 rounded-md border border-danger bg-white px-3 text-sm font-semibold whitespace-normal text-danger transition-colors hover:bg-danger-tint",
         "danger-solid":
-          "h-9 rounded-md border border-danger bg-danger px-3.5 text-sm font-semibold whitespace-normal text-white transition-colors hover:bg-[#991b1b]",
+          "h-9 rounded-md border border-danger bg-danger px-3.5 text-sm font-semibold whitespace-normal text-white transition-colors hover:bg-danger-strong",
         subtle:
           "h-8 rounded-md border border-line bg-white px-3 text-xs font-semibold whitespace-normal text-zinc-500 transition-colors hover:bg-zinc-100 hover:text-zinc-700",
         kakao:

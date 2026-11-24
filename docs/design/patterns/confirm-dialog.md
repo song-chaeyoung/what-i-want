@@ -28,7 +28,7 @@
 - 제목: `text-lg font-black break-keep text-ink`
 - 설명: `mt-2 text-sm font-medium leading-6 break-keep text-zinc-600`
 - 버튼 줄: `mt-5 flex gap-2 sm:justify-end`. 모바일에서는 두 버튼이 `flex-1 h-11`로 반씩 차지하고, `sm` 이상에서는 내용 너비 `h-9`입니다.
-- 위험 확인 버튼: Button 변형 `danger-solid`. `h-9 rounded-md border border-danger bg-danger px-3.5 text-sm font-semibold whitespace-normal text-white transition-colors hover:bg-[#991b1b]`
+- 위험 확인 버튼: Button 변형 `danger-solid`. `h-9 rounded-md border border-danger bg-danger px-3.5 text-sm font-semibold whitespace-normal text-white transition-colors hover:bg-danger-strong`. 호버 면은 `--danger-strong`(`#991b1b`)입니다.
 
 ## 동작
 

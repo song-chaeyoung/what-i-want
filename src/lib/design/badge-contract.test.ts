@@ -46,7 +46,6 @@ const themeCss = read("app/public-themes.css");
 const allowedHex = new Map<string, string[] | "any">([
   ["app/opengraph-image.tsx", "any"],
   ["app/wishlist/[slug]/opengraph-image.tsx", "any"],
-  ["components/ui/button.tsx", ["#991b1b"]],
 ]);
 
 describe("badge and notice contract", () => {
