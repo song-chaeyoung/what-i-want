@@ -1,6 +1,6 @@
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import { db, type Database } from "@/src/lib/db/client";
-import { users, wishlists } from "@/src/lib/db/schema";
+import { accounts, users, wishlists } from "@/src/lib/db/schema";
 
 export type DeletedAccount = {
   wishlistSlug: string | null;
@@ -8,6 +8,16 @@ export type DeletedAccount = {
 
 export class DrizzleAccountWithdrawalRepository {
   constructor(private readonly database: Database = db) {}
+
+  async findKakaoProviderAccountId(userId: string): Promise<string | null> {
+    const [account] = await this.database
+      .select({ providerAccountId: accounts.providerAccountId })
+      .from(accounts)
+      .where(and(eq(accounts.userId, userId), eq(accounts.provider, "kakao")))
+      .limit(1);
+
+    return account?.providerAccountId ?? null;
+  }
 
   // users 행을 지우면 스키마의 onDelete cascade로 함께 사라지는 테이블:
   // accounts, sessions, authenticators, profiles, bank_accounts, wishlists,

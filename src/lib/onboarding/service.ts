@@ -4,6 +4,10 @@ import type {
 } from "./types";
 import type { CompleteOnboardingError } from "./errors";
 import { getSignupBirthdayError } from "./age";
+import {
+  unlinkKakaoUser,
+  type KakaoUnlinkResult,
+} from "@/src/lib/kakao/unlink";
 import { createRandomWishlistSlug } from "@/src/lib/wishlist/slug";
 import { DEFAULT_PUBLIC_THEME_ID } from "@/src/lib/wishlist/theme";
 
@@ -20,6 +24,7 @@ export type CompleteOnboardingInput = {
 type CompleteOnboardingOptions = {
   createWishlistSlug?: () => string;
   now?: Date;
+  unlinkKakaoUser?: (kakaoUserId: string) => Promise<KakaoUnlinkResult>;
 };
 
 export type CompleteOnboardingResult =
@@ -65,8 +70,22 @@ export async function completeOnboarding(
   // 만 14세 미만은 받지 않으므로 소셜 로그인 때 저장된 정보를 바로 지운다.
   if (birthdayError === "under_minimum_age") {
     // 그사이 다른 요청이 온보딩을 마쳤다면 지우지 않았으므로 삭제 안내를 하지 않는다.
-    if (!(await repository.deleteIncompleteUser(input.userId))) {
+    const deletion = await repository.deleteIncompleteUser(input.userId);
+
+    if (!deletion.deleted) {
       return { ok: false, error: "already_completed" };
+    }
+
+    if (deletion.kakaoProviderAccountId) {
+      const unlink = options.unlinkKakaoUser ?? unlinkKakaoUser;
+      const unlinked = await unlink(deletion.kakaoProviderAccountId);
+
+      if (!unlinked.ok) {
+        console.error("만 14세 미만 삭제 뒤 카카오 연결 해제에 실패했습니다.", {
+          userId: input.userId,
+          reason: unlinked.reason,
+        });
+      }
     }
 
     return { ok: false, error: "under_minimum_age" };

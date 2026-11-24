@@ -25,6 +25,7 @@ export async function POST(request: Request): Promise<Response> {
       new DrizzleAccountWithdrawalRepository(),
     );
 
+    // kakao_unlink_failed도 여기로 온다. 그 경우 서비스가 users 행을 지우지 않았다.
     if (!result.ok) {
       return redirectWithError(requestUrl);
     }

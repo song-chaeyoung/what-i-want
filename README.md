@@ -84,6 +84,7 @@
 
 - `DATABASE_URL`: 앱 런타임에서 사용하는 Postgres 연결 문자열입니다. 배포 환경에서는 Neon pooled URL을 사용합니다.
 - `DATABASE_DIRECT_URL`: Drizzle schema push와 migration에서 사용하는 direct Postgres 연결 문자열입니다.
+- `KAKAO_ADMIN_KEY`: 카카오 로그인 사용자의 연결을 끊는 Admin 키입니다. 설정의 회원 탈퇴는 연결 해제가 성공한 뒤에만 계정을 지우고, 만 14세 미만 자동 삭제는 계정을 지운 뒤 연결을 끊습니다. 서버에서만 읽으며 비어 있으면 호출하지 않습니다. 그 경우 카카오 가입자는 탈퇴할 수 없습니다.
 
 스키마 변경은 `pnpm db:generate`로 SQL을 생성하고 검토한 뒤, 개발 환경에서 `pnpm db:migrate`로 적용·검증합니다. 운영 반영과 과거 `pnpm db:push`로 구성한 DB의 baseline 전환은 [DB 마이그레이션 운영 가이드](docs/db-migrations.md)를 따릅니다. 실제 DB의 적용 상태는 진단 결과로 확인하며, 다른 DB의 데이터 이전은 별도 export/import 계획이 필요합니다.
 

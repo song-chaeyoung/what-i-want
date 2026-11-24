@@ -48,6 +48,21 @@ describe("account withdrawal route", () => {
     expect(location.search).toBe("?withdrawn=1");
   });
 
+  test("keeps the account and shows withdraw_failed when Kakao unlink fails", async () => {
+    withdrawAccount.mockResolvedValue({
+      ok: false,
+      error: "kakao_unlink_failed",
+    });
+
+    const response = await POST(withdrawRequest());
+    const location = new URL(response.headers.get("location") ?? "");
+
+    expect(response.status).toBe(307);
+    expect(location.pathname).toBe("/admin/settings");
+    expect(location.search).toBe("?error=withdraw_failed");
+    expect(signOut).not.toHaveBeenCalled();
+  });
+
   test("rethrows the signOut redirect", async () => {
     const redirectError = Object.assign(new Error("NEXT_REDIRECT"), {
       digest: "NEXT_REDIRECT;replace;/?withdrawn=1;307;",

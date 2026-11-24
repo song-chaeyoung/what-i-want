@@ -1,8 +1,10 @@
-import { describe, expect, test } from "vitest";
+import { describe, expect, test, vi } from "vitest";
+import type { KakaoUnlinkResult } from "@/src/lib/kakao/unlink";
 import { completeOnboarding } from "./service";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
+  DeleteIncompleteUserResult,
   OnboardingRepository,
 } from "./types";
 
@@ -14,6 +16,7 @@ class FakeOnboardingRepository implements OnboardingRepository {
   deletedUserIds: string[] = [];
   // 삭제 직전에 다른 요청이 온보딩을 마친 경우를 흉내 낸다.
   completedBeforeDelete = false;
+  kakaoProviderAccountId: string | null = null;
   persistResult: CompleteOnboardingPersistResult = { ok: true };
 
   async hasCompletedOnboarding(): Promise<boolean> {
@@ -32,13 +35,18 @@ class FakeOnboardingRepository implements OnboardingRepository {
     return this.persistResult;
   }
 
-  async deleteIncompleteUser(userId: string): Promise<boolean> {
+  async deleteIncompleteUser(
+    userId: string,
+  ): Promise<DeleteIncompleteUserResult> {
     if (this.completed || this.completedBeforeDelete) {
-      return false;
+      return { deleted: false, kakaoProviderAccountId: null };
     }
 
     this.deletedUserIds.push(userId);
-    return true;
+    return {
+      deleted: true,
+      kakaoProviderAccountId: this.kakaoProviderAccountId,
+    };
   }
 }
 
@@ -297,11 +305,21 @@ describe("completeOnboarding", () => {
       {
         completed = false,
         completedBeforeDelete = false,
-      }: { completed?: boolean; completedBeforeDelete?: boolean } = {},
+        kakaoProviderAccountId = null,
+        unlinkResult = { ok: true } as KakaoUnlinkResult,
+      }: {
+        completed?: boolean;
+        completedBeforeDelete?: boolean;
+        kakaoProviderAccountId?: string | null;
+        unlinkResult?: KakaoUnlinkResult;
+      } = {},
     ) {
       const repository = new FakeOnboardingRepository();
       repository.completed = completed;
       repository.completedBeforeDelete = completedBeforeDelete;
+      repository.kakaoProviderAccountId = kakaoProviderAccountId;
+      const unlink = vi.fn(async () => unlinkResult);
+      const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
       const result = await completeOnboarding(
         {
           userId: "user-1",
@@ -313,13 +331,18 @@ describe("completeOnboarding", () => {
         {
           createWishlistSlug: () => "w-a3f91c0e7b42d8aa",
           now,
+          unlinkKakaoUser: unlink,
         },
       );
+      const errorCalls = errorLog.mock.calls.slice();
+      errorLog.mockRestore();
 
       return {
         result,
         records: repository.records,
         deletedUserIds: repository.deletedUserIds,
+        unlink,
+        errorCalls,
       };
     }
 
@@ -377,6 +400,62 @@ describe("completeOnboarding", () => {
       expect(result).toEqual({ ok: false, error: "already_completed" });
       expect(records).toEqual([]);
       expect(deletedUserIds).toEqual([]);
+    });
+
+    test("still deletes an under-14 Kakao user when unlinking fails", async () => {
+      const { result, deletedUserIds, unlink, errorCalls } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+        {
+          kakaoProviderAccountId: "555",
+          unlinkResult: { ok: false, reason: "http_error" },
+        },
+      );
+
+      expect(result).toEqual({ ok: false, error: "under_minimum_age" });
+      expect(deletedUserIds).toEqual(["user-1"]);
+      expect(unlink).toHaveBeenCalledWith("555");
+      expect(errorCalls).toEqual([
+        [
+          "만 14세 미만 삭제 뒤 카카오 연결 해제에 실패했습니다.",
+          { userId: "user-1", reason: "http_error" },
+        ],
+      ]);
+    });
+
+    test("does not unlink when the under-14 user has no Kakao account", async () => {
+      const { result, deletedUserIds, unlink } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+      );
+
+      expect(result).toEqual({ ok: false, error: "under_minimum_age" });
+      expect(deletedUserIds).toEqual(["user-1"]);
+      expect(unlink).not.toHaveBeenCalled();
+    });
+
+    test("does not unlink a user who already completed onboarding", async () => {
+      const { result, deletedUserIds, unlink } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+        { completed: true, kakaoProviderAccountId: "555" },
+      );
+
+      expect(result).toEqual({ ok: false, error: "already_completed" });
+      expect(deletedUserIds).toEqual([]);
+      expect(unlink).not.toHaveBeenCalled();
+    });
+
+    test("does not unlink when a concurrent request completed onboarding", async () => {
+      const { result, deletedUserIds, unlink } = await submit(
+        { birthday: "2012-10-25", ageConfirmed: true },
+        kstMidnight,
+        { completedBeforeDelete: true, kakaoProviderAccountId: "555" },
+      );
+
+      expect(result).toEqual({ ok: false, error: "already_completed" });
+      expect(deletedUserIds).toEqual([]);
+      expect(unlink).not.toHaveBeenCalled();
     });
 
     test("rejects a future birthday as invalid without deleting the user", async () => {
