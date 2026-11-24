@@ -6,6 +6,7 @@ import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { requireUser } from "@/src/lib/auth/require-user";
+import { ONBOARDING_COPY } from "@/src/lib/design/copy";
 import { getOnboardingState } from "@/src/lib/onboarding/repository";
 import { BirthdayPicker } from "./birthday-picker";
 import { OnboardingSubmitButton } from "./submit-button";
@@ -72,6 +73,7 @@ export default async function OnboardingPage({
             ) : null}
 
             <form
+              id={ONBOARDING_COPY.formId}
               action="/api/onboarding"
               method="post"
               className="mt-8 space-y-5"

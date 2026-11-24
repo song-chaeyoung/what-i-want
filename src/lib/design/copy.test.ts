@@ -1,12 +1,14 @@
 import { describe, expect, test } from "vitest";
 import {
   ADMIN_COPY,
+  ONBOARDING_COPY,
   WITHDRAWAL_COPY,
   BRAND_NAME,
   HOME_COPY,
   PUBLIC_WISHLIST_COPY,
   formatWishCount,
   getPublicParticipationNotice,
+  underAgeConfirmTitle,
 } from "./copy";
 
 describe("visual system copy", () => {
@@ -126,6 +128,67 @@ describe("visual system copy", () => {
     expect(ADMIN_COPY.deleteBankAccountError).toBe(
       "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
     );
+    expect(ADMIN_COPY.deleteWishButton).toBe("삭제");
+    expect(ADMIN_COPY.deleteWishConfirm).toEqual({
+      title: "이 선물을 삭제할까요?",
+      descriptionWithAmount:
+        "이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.",
+      descriptionWithoutAmount: "삭제하면 되돌릴 수 없어요.",
+      confirm: "삭제",
+      pending: "삭제하는 중…",
+    });
+    expect(
+      `${ADMIN_COPY.deleteWishConfirm.title} ${ADMIN_COPY.deleteWishConfirm.descriptionWithAmount}`,
+    ).toBe(
+      "이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.",
+    );
+    expect(
+      `${ADMIN_COPY.deleteWishConfirm.title} ${ADMIN_COPY.deleteWishConfirm.descriptionWithoutAmount}`,
+    ).toBe("이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.");
+    expect(ADMIN_COPY.hideMessageButton).toBe("숨기기");
+    expect(ADMIN_COPY.hideMessageConfirm).toEqual({
+      title: "이 메시지를 숨길까요?",
+      descriptionWithAmount:
+        "함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
+      descriptionWithoutAmount: "숨긴 메시지 목록에서 복구할 수 있어요.",
+      confirm: "숨기기",
+      pending: "숨기는 중…",
+    });
+    expect(
+      `${ADMIN_COPY.hideMessageConfirm.title} ${ADMIN_COPY.hideMessageConfirm.descriptionWithAmount}`,
+    ).toBe(
+      "이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
+    );
+    expect(
+      `${ADMIN_COPY.hideMessageConfirm.title} ${ADMIN_COPY.hideMessageConfirm.descriptionWithoutAmount}`,
+    ).toBe(
+      "이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.",
+    );
+    expect(ADMIN_COPY.resetWishlistButton).toBe("위시리스트 초기화");
+    expect(ADMIN_COPY.resetWishlistConfirm).toEqual({
+      title: "위시리스트를 초기화할까요?",
+      description:
+        "등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.",
+      confirm: "초기화",
+      pending: "초기화하는 중…",
+    });
+    expect(
+      `${ADMIN_COPY.resetWishlistConfirm.title} ${ADMIN_COPY.resetWishlistConfirm.description}`,
+    ).toBe(
+      "위시리스트를 초기화할까요? 등록한 선물, 받은 메시지, 모인 금액 기록이 모두 삭제되고 되돌릴 수 없어요. 프로필, 공개 주소, 테마, 계좌 안내는 유지돼요.",
+    );
+  });
+
+  test("defines onboarding under-age confirm copy", () => {
+    expect(ONBOARDING_COPY.formId).toBe("onboarding-form");
+    expect(underAgeConfirmTitle("2015")).toBe("2015년생이 맞나요?");
+    expect(ONBOARDING_COPY.underAgeConfirm).toEqual({
+      description:
+        "만 14세 미만은 가입할 수 없어서, 이대로 제출하면 로그인 정보가 바로 삭제돼요.",
+      confirm: "이 생일로 제출",
+      pending: "제출하는 중…",
+      cancel: "연도 고치기",
+    });
   });
 
   test("defines withdrawal copy", () => {

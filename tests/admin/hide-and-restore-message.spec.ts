@@ -52,19 +52,21 @@ test.describe("Message Management", () => {
     await expect(plainRow).toContainText("선물 없음");
     await expect(plainRow).toContainText("금액 없음");
 
-    // 2. `page.once('dialog', ...)` 로 메시지를 기록하고 `accept()` 하도록 건 뒤 `이어폰에 보태요` 행의 `숨기기` 를 누릅니다.
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogMessage = dialog.message();
-      await dialog.accept();
+    // 2. `이어폰에 보태요` 행의 `숨기기` 를 누르고 확인창에서 숨긴다.
+    await fundedRow.getByRole("button", { name: "숨기기", exact: true }).click();
+    const dialog = page.getByRole("alertdialog", {
+      name: "이 메시지를 숨길까요?",
     });
-    await fundedRow.getByRole("button", { name: "숨기기" }).click();
-
-    // expect: 확인 창 메시지가 `이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.` 이다.
-    expect(dialogMessage).toBe(
-      "이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
-    );
-
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByText(
+        "함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요.",
+      ),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await dialog.getByRole("button", { name: "숨기기", exact: true }).click();
     // expect: 토스트 `메시지를 숨겼어요.`(`data-type` `success`)가 보이고 URL 이 `/admin/messages` 로 정리된다.
     const hideToast = page
       .locator("[data-sonner-toast]")

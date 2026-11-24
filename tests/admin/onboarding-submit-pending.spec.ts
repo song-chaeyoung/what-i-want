@@ -1,6 +1,7 @@
 // spec: specs/admin-management.md
 // seed: tests/admin/seed-onboarding.spec.ts
 
+import { ONBOARDING_COPY, underAgeConfirmTitle } from "@/src/lib/design/copy";
 import { test, expect } from "../fixtures/admin";
 
 test.describe("Onboarding", () => {
@@ -134,10 +135,41 @@ test.describe("Onboarding", () => {
       'form[action="/api/onboarding"] button[type="submit"]',
     );
 
-    // 3. 제출하고 확인창을 취소합니다. 한 번 더 해도 같습니다.
+    // 3. 제출하고 확인창을 취소합니다. Esc와 `연도 고치기` 모두 제출하지 않습니다.
+    const dialog = page.getByRole("alertdialog", {
+      name: underAgeConfirmTitle("2015"),
+    });
+    const yearSelect = page.getByRole("combobox", { name: "연도 선택" });
+
     for (let attempt = 0; attempt < 2; attempt += 1) {
-      page.once("dialog", (dialog) => dialog.dismiss());
       await submitButton.click();
+      await expect(dialog).toBeVisible();
+      await expect(
+        dialog.getByText(ONBOARDING_COPY.underAgeConfirm.description),
+      ).toBeVisible();
+      const fixYear = dialog.getByRole("button", {
+        name: ONBOARDING_COPY.underAgeConfirm.cancel,
+        exact: true,
+      });
+      await expect(fixYear).toBeFocused();
+      await expect(
+        dialog.getByRole("button", {
+          name: ONBOARDING_COPY.underAgeConfirm.confirm,
+          exact: true,
+        }),
+      ).toBeVisible();
+
+      if (attempt === 0) {
+        await page.mouse.click(8, 8);
+        await expect(dialog).toBeVisible();
+        await page.keyboard.press("Escape");
+      } else {
+        await fixYear.click();
+      }
+
+      await expect(dialog).toBeHidden();
+      await expect(yearSelect).toBeFocused();
+      await page.keyboard.press("Escape");
 
       // expect: 버튼은 잠기지 않고 요청은 나가지 않는다.
       await expect(submitButton).toBeEnabled();

@@ -112,10 +112,15 @@ test.describe("Wishlist Reset", () => {
     const resetButton = page.getByRole("button", { name: "위시리스트 초기화" });
     await expect(resetButton).toBeVisible({ timeout: 30_000 });
 
-    page.once("dialog", async (dialog) => {
-      await dialog.accept();
-    });
     await resetButton.click();
+    const dialog = page.getByRole("alertdialog", {
+      name: "위시리스트를 초기화할까요?",
+    });
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await dialog.getByRole("button", { name: "초기화", exact: true }).click();
 
     // expect: 토스트 `위시리스트를 초기화했어요. 새 생일을 준비해 보세요.`(success)가 보인다.
     const toast = page

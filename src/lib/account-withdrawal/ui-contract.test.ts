@@ -38,7 +38,7 @@ describe("account withdrawal UI contract", () => {
     );
     expect(formSource).toContain('id="withdraw-account-form"');
     expect(formSource).toContain('action="/api/admin/account/withdraw"');
-    expect(formSource).not.toContain("window.confirm");
+    expect(formSource).not.toContain(["window", "confirm"].join("."));
     expect(formSource).not.toContain("<Button");
     expect(routeSource).toContain("withdrawAccount(");
     expect(routeSource).toContain("session.user.id");

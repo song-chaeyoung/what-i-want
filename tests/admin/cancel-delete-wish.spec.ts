@@ -3,6 +3,7 @@
 
 import { eq } from "drizzle-orm";
 import { fundingLogs, wishItems } from "@/src/lib/db/schema";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { test, expect } from "../fixtures/admin";
 
 test.describe("Wish Management", () => {
@@ -28,23 +29,32 @@ test.describe("Wish Management", () => {
       page.getByRole("heading", { level: 3, name: "무선 이어폰" }),
     ).toBeVisible({ timeout: 30_000 });
 
-    // 2. `page.once('dialog', ...)` 로 메시지를 기록하고 `dismiss()` 하도록 건 뒤, `무선 이어폰` 카드를 열어 버튼 `삭제` 를 누릅니다.
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogMessage = dialog.message();
-      await dialog.dismiss();
-    });
-
+    // 2. `무선 이어폰` 카드를 열어 버튼 `삭제` 를 누르고, 확인창은 Esc와 취소로 닫는다.
     const card = page.locator("details").filter({
       has: page.getByRole("heading", { level: 3, name: "무선 이어폰" }),
     });
     await card.locator("summary").click();
-    await card.getByRole("button", { name: "삭제" }).click();
+    const deleteButton = card.getByRole("button", { name: "삭제", exact: true });
+    const dialog = page.getByRole("alertdialog", {
+      name: ADMIN_COPY.deleteWishConfirm.title,
+    });
 
-    // expect: 확인 창 메시지가 모인 금액이 있는 선물 문구이다(코드 근거).
-    expect(dialogMessage).toBe(
-      "이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요.",
-    );
+    await deleteButton.click();
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByText(ADMIN_COPY.deleteWishConfirm.descriptionWithAmount),
+    ).toBeVisible();
+    const cancelButton = dialog.getByRole("button", { name: "취소", exact: true });
+    await expect(cancelButton).toBeFocused();
+    await page.mouse.click(8, 8);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(deleteButton).toBeFocused();
+
+    await deleteButton.click();
+    await dialog.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(dialog).toBeHidden();
 
     // expect: 토스트가 나타나지 않고(`[data-sonner-toast]` count 0), URL 이 `/admin/wishes` 그대로이며, 카드 `무선 이어폰` 이 남는다.
     await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);

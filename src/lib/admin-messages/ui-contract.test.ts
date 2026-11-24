@@ -34,6 +34,21 @@ describe("admin messages UI contract", () => {
     );
   });
 
+  test("hides a message through a confirm dialog without changing the post", () => {
+    const source = readFileSync(
+      join(process.cwd(), "app/admin/messages/hide-message-form.tsx"),
+      "utf8",
+    );
+
+    expect(source).toContain("<ConfirmDialog");
+    expect(source).toContain('tone="default"');
+    expect(source).toContain('triggerVariant="subtle"');
+    expect(source).toContain('name="intent" value="hide"');
+    expect(source).toContain("action={`/api/admin/messages/${messageId}`}");
+    expect(source).toContain("ADMIN_COPY.hideMessageConfirm.title");
+    expect(source).not.toContain(["window", "confirm"].join("."));
+  });
+
   test("shows the full message body with line breaks preserved", () => {
     const source = readFileSync(adminMessagesPagePath, "utf8");
 

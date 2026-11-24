@@ -1,6 +1,5 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 
 export function DeleteWishForm({
   wishId,
@@ -9,25 +8,33 @@ export function DeleteWishForm({
   wishId: string;
   hasAmount: boolean;
 }) {
-  const confirmMessage = hasAmount
-    ? "이 선물을 삭제할까요? 이 선물에 모인 금액 기록도 함께 삭제되고 되돌릴 수 없어요. 받은 메시지는 메시지함에 남아요."
-    : "이 선물을 삭제할까요? 삭제하면 되돌릴 수 없어요.";
+  const formId = `delete-wish-${wishId}`;
 
   return (
-    <form
-      action={`/api/admin/wishes/${wishId}`}
-      method="post"
-      className="mt-3"
-      onSubmit={(event) => {
-        if (!window.confirm(confirmMessage)) {
-          event.preventDefault();
-        }
-      }}
-    >
-      <input type="hidden" name="_method" value="delete" />
-      <Button type="submit" variant="danger">
-        삭제
-      </Button>
-    </form>
+    <>
+      <form
+        id={formId}
+        action={`/api/admin/wishes/${wishId}`}
+        method="post"
+        className="hidden"
+      >
+        <input type="hidden" name="_method" value="delete" />
+      </form>
+      <div className="mt-3">
+        <ConfirmDialog
+          tone="danger"
+          title={ADMIN_COPY.deleteWishConfirm.title}
+          description={
+            hasAmount
+              ? ADMIN_COPY.deleteWishConfirm.descriptionWithAmount
+              : ADMIN_COPY.deleteWishConfirm.descriptionWithoutAmount
+          }
+          confirmLabel={ADMIN_COPY.deleteWishConfirm.confirm}
+          pendingLabel={ADMIN_COPY.deleteWishConfirm.pending}
+          formId={formId}
+          triggerLabel={ADMIN_COPY.deleteWishButton}
+        />
+      </div>
+    </>
   );
 }

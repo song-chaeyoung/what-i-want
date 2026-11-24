@@ -1,6 +1,5 @@
-"use client";
-
-import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 
 export function HideMessageForm({
   messageId,
@@ -9,24 +8,32 @@ export function HideMessageForm({
   messageId: string;
   hasAmount: boolean;
 }) {
-  const confirmMessage = hasAmount
-    ? "이 메시지를 숨길까요? 함께 보낸 마음 금액은 모인 금액에서 빠지고, 숨긴 메시지 목록에서 복구할 수 있어요."
-    : "이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.";
+  const formId = `hide-message-${messageId}`;
 
   return (
-    <form
-      action={`/api/admin/messages/${messageId}`}
-      method="post"
-      onSubmit={(event) => {
-        if (!window.confirm(confirmMessage)) {
-          event.preventDefault();
+    <>
+      <form
+        id={formId}
+        action={`/api/admin/messages/${messageId}`}
+        method="post"
+        className="hidden"
+      >
+        <input type="hidden" name="intent" value="hide" />
+      </form>
+      <ConfirmDialog
+        tone="default"
+        triggerVariant="subtle"
+        title={ADMIN_COPY.hideMessageConfirm.title}
+        description={
+          hasAmount
+            ? ADMIN_COPY.hideMessageConfirm.descriptionWithAmount
+            : ADMIN_COPY.hideMessageConfirm.descriptionWithoutAmount
         }
-      }}
-    >
-      <input type="hidden" name="intent" value="hide" />
-      <Button type="submit" variant="subtle">
-        숨기기
-      </Button>
-    </form>
+        confirmLabel={ADMIN_COPY.hideMessageConfirm.confirm}
+        pendingLabel={ADMIN_COPY.hideMessageConfirm.pending}
+        formId={formId}
+        triggerLabel={ADMIN_COPY.hideMessageButton}
+      />
+    </>
   );
 }

@@ -84,6 +84,22 @@ describe("admin settings UI contract", () => {
     expect(routeSource).toContain('"accountVisibility"');
   });
 
+  test("resets the wishlist through a confirm dialog outside the settings form", () => {
+    const formSource = readFileSync(
+      join(process.cwd(), "app/admin/settings/reset-wishlist-form.tsx"),
+      "utf8",
+    );
+
+    expect(formSource).toContain('id="reset-wishlist-form"');
+    expect(formSource).toContain('action="/api/admin/wishlist/reset"');
+    expect(formSource).toContain('method="post"');
+    expect(formSource).toContain("<ConfirmDialog");
+    expect(formSource).toContain('tone="danger"');
+    expect(formSource).toContain('formId="reset-wishlist-form"');
+    expect(formSource).toContain("ADMIN_COPY.resetWishlistConfirm.title");
+    expect(formSource).not.toContain(["window", "confirm"].join("."));
+  });
+
   test("deletes a saved bank account from a form outside the settings form", () => {
     const pageSource = readFileSync(adminSettingsPagePath, "utf8");
     const formSource = readFileSync(
@@ -106,7 +122,7 @@ describe("admin settings UI contract", () => {
     expect(formSource).toContain('id="delete-bank-account-form"');
     expect(formSource).toContain('action="/api/admin/settings/bank-account"');
     expect(formSource).toContain('name="_method" value="delete"');
-    expect(formSource).not.toContain("window.confirm");
+    expect(formSource).not.toContain(["window", "confirm"].join("."));
     expect(formSource).not.toContain("<Button");
     expect(routeSource).toContain("session.user.id");
     expect(routeSource).toContain("deleteBankAccount");

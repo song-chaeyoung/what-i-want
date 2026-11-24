@@ -3,6 +3,7 @@
 
 import { eq } from "drizzle-orm";
 import { messages } from "@/src/lib/db/schema";
+import { ADMIN_COPY } from "@/src/lib/design/copy";
 import { test, expect } from "../fixtures/admin";
 
 test.describe("Message Management", () => {
@@ -17,18 +18,28 @@ test.describe("Message Management", () => {
     const row = page.getByRole("article").filter({ hasText: "생일 축하해!" });
     await expect(row).toBeVisible({ timeout: 30_000 });
 
-    // 2. `page.once('dialog', ...)` 로 메시지를 기록하고 `dismiss()` 하도록 건 뒤 행의 `숨기기` 를 누릅니다.
-    let dialogMessage = "";
-    page.once("dialog", async (dialog) => {
-      dialogMessage = dialog.message();
-      await dialog.dismiss();
+    // 2. 행의 `숨기기` 를 누르고 확인창은 Esc와 취소로 닫는다.
+    const hideButton = row.getByRole("button", { name: "숨기기", exact: true });
+    const dialog = page.getByRole("alertdialog", {
+      name: ADMIN_COPY.hideMessageConfirm.title,
     });
-    await row.getByRole("button", { name: "숨기기" }).click();
+    await hideButton.click();
+    await expect(dialog).toBeVisible();
+    await expect(
+      dialog.getByText(ADMIN_COPY.hideMessageConfirm.descriptionWithoutAmount),
+    ).toBeVisible();
+    await expect(
+      dialog.getByRole("button", { name: "취소", exact: true }),
+    ).toBeFocused();
+    await page.mouse.click(8, 8);
+    await expect(dialog).toBeVisible();
+    await page.keyboard.press("Escape");
+    await expect(dialog).toBeHidden();
+    await expect(hideButton).toBeFocused();
 
-    // expect: 확인 창 메시지가 `이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.` 이다(금액 없는 메시지 문구, 코드 근거).
-    expect(dialogMessage).toBe(
-      "이 메시지를 숨길까요? 숨긴 메시지 목록에서 복구할 수 있어요.",
-    );
+    await hideButton.click();
+    await dialog.getByRole("button", { name: "취소", exact: true }).click();
+    await expect(dialog).toBeHidden();
 
     // expect: 토스트가 나타나지 않고(`[data-sonner-toast]` count 0), URL 이 `/admin/messages` 그대로이며, 행 `생일 축하해!` 가 남는다.
     await expect(page.locator("[data-sonner-toast]")).toHaveCount(0);

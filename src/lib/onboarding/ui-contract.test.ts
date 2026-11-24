@@ -19,6 +19,7 @@ describe("onboarding UI contract", () => {
     const source = readSource(pagePath);
 
     expect(source).toContain('import { BirthdayPicker } from "./birthday-picker";');
+    expect(source).toContain("id={ONBOARDING_COPY.formId}");
     expect(source).toContain('action="/api/onboarding"');
     expect(source).toContain('method="post"');
     expect(source).toContain('name="displayName"');
@@ -146,8 +147,15 @@ describe("onboarding UI contract", () => {
 
     expect(source).toContain("const form = inputRef.current?.form;");
     expect(source).toContain('form.addEventListener("submit", confirmUnderMinimumAge);');
-    expect(source).toContain("window.confirm(");
     expect(source).toContain("event.preventDefault();");
+    expect(source).toContain("<ConfirmDialog");
+    expect(source).toContain('tone="danger"');
+    expect(source).toContain("open={confirmOpen}");
+    expect(source).toContain("onOpenChange={handleConfirmOpenChange}");
+    expect(source).toContain("formId={ONBOARDING_COPY.formId}");
+    expect(source).toContain("underAgeConfirmTitle(birthYear)");
+    expect(source).toContain('select[aria-label="연도 선택"]');
+    expect(source).not.toContain(["window", "confirm"].join("."));
   });
 
   test("locks the submit button and relabels it while the form is pending", () => {
