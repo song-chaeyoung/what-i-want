@@ -2,11 +2,12 @@ import { and, eq, isNotNull } from "drizzle-orm";
 import type {
   CompleteOnboardingPersistResult,
   CompleteOnboardingRecord,
+  DeleteIncompleteUserResult,
   OnboardingRepository,
   OnboardingState,
 } from "./types";
 import { db, type Database } from "@/src/lib/db/client";
-import { profiles, users, wishlists } from "@/src/lib/db/schema";
+import { accounts, profiles, users, wishlists } from "@/src/lib/db/schema";
 
 export class DrizzleOnboardingRepository implements OnboardingRepository {
   constructor(private readonly database: Database = db) {}
@@ -92,7 +93,9 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
   // 온보딩을 마친 회원은 지우지 않는다. accounts·sessions는 cascade로 함께 삭제된다.
   // 동시에 진행 중인 온보딩 완료가 있으면 그 트랜잭션이 users 행을 잠그고 있으므로,
   // 행을 먼저 FOR UPDATE로 잠근 뒤 완료 여부를 다시 읽어야 방금 완료된 회원을 지우지 않는다.
-  async deleteIncompleteUser(userId: string): Promise<boolean> {
+  async deleteIncompleteUser(
+    userId: string,
+  ): Promise<DeleteIncompleteUserResult> {
     return this.database.transaction(async (tx) => {
       const [user] = await tx
         .select({ id: users.id })
@@ -101,8 +104,9 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
         .for("update");
 
       // 동시에 제출된 다른 14세 미만 요청이 먼저 지운 경우다. 계정이 없어졌으므로 삭제로 본다.
+      // 그 요청이 카카오 회원번호를 이미 읽었으므로 여기서는 다시 연결을 끊지 않는다.
       if (!user) {
-        return true;
+        return { deleted: true, kakaoProviderAccountId: null };
       }
 
       const [completed] = await tx
@@ -117,11 +121,20 @@ export class DrizzleOnboardingRepository implements OnboardingRepository {
         .limit(1);
 
       if (completed) {
-        return false;
+        return { deleted: false, kakaoProviderAccountId: null };
       }
 
+      const [kakaoAccount] = await tx
+        .select({ providerAccountId: accounts.providerAccountId })
+        .from(accounts)
+        .where(and(eq(accounts.userId, userId), eq(accounts.provider, "kakao")))
+        .limit(1);
+
       await tx.delete(users).where(eq(users.id, userId));
-      return true;
+      return {
+        deleted: true,
+        kakaoProviderAccountId: kakaoAccount?.providerAccountId ?? null,
+      };
     });
   }
 }

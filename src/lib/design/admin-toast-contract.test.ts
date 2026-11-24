@@ -56,6 +56,12 @@ describe("admin toast contract", () => {
     expect(source).toContain(
       'messageRestored: { type: "success", message: "메시지를 복구했어요." }',
     );
+    expect(source).toContain("accountDeleted: {");
+    expect(source).toContain("message: ADMIN_COPY.deleteBankAccountSuccess");
+    expect(source).toContain(
+      "bank_account_delete_failed: ADMIN_COPY.deleteBankAccountError",
+    );
+    expect(source).toContain("withdraw_failed: WITHDRAWAL_COPY.error");
     expect(source).toContain('error: { type: "error", message: "요청을 처리하지 못했어요." }');
     expect(source).toContain("toastConfigList.forEach((toastConfig) => {");
     expect(source).toContain("toast[toastConfig.type](");

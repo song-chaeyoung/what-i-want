@@ -53,4 +53,5 @@ export interface SettingsRepository {
     ownerId: string,
     record: UpdateSettingsRecord,
   ): Promise<SettingsRecord>;
+  deleteBankAccount(ownerId: string): Promise<boolean>;
 }

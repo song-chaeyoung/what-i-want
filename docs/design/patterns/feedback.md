@@ -2,7 +2,7 @@
 
 코드 대조일: 2026-10-30
 
-[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [위시 카드](wish-card.md) · [온보딩](onboarding.md) · [메시지함](messages.md) · [공유 흐름](share-flow.md)
+[디자인 가이드](../README.md) · [기초 규칙](../foundations.md) · [폼](form.md) · [확인창](confirm-dialog.md) · [위시 카드](wish-card.md) · [온보딩](onboarding.md) · [메시지함](messages.md) · [공유 흐름](share-flow.md)
 
 이 문서는 사용자가 기다림·처리 결과·빈 목록·확인 행동을 이해하도록 기존 표현을 선택하는 안내입니다. 같은 기능의 기존 문맥을 우선하며, 현재 구현의 존재와 품질 검증 완료를 구분합니다. 새 표시 시간 기준이나 모달·로딩 정책은 정하지 않습니다.
 
@@ -61,6 +61,8 @@
 - **금액 참여 후 계좌 안내:** [AccountRevealModal](../../../components/public-wishlist-toast-events.tsx)은 커스텀 `role="dialog"`와 닫기 버튼입니다. Radix 안내와 같은 포커스 트랩·Escape·복원 처리를 확인할 수 없으므로 접근성 재사용 사례로 일반화하지 않습니다.
 - **참여 숨김:** [HideMessageForm](../../../app/admin/messages/hide-message-form.tsx)은 `window.confirm`으로 금액 차감과 복구 가능 여부를 안내한 뒤 POST합니다.
 - **선물 삭제:** [DeleteWishForm](../../../app/admin/wishes/delete-wish-form.tsx)은 `window.confirm`으로 되돌릴 수 없음을 알리고, 모인 금액이 있으면 금액 기록도 함께 지워지고 메시지는 남는다고 안내한 뒤 POST합니다(2026-11-21 추가). 실제 삭제 범위 근거: [스키마의 `funding_logs` cascade·`messages.wish_item_id` set null](../../../src/lib/db/schema/service.ts).
+- **계좌 삭제:** 계좌가 저장돼 있을 때만 [설정](../../../app/admin/settings/page.tsx)의 계좌 공개 칸 아래에 `계좌 삭제` 버튼이 보입니다(2026-11-22). 버튼은 [확인창](confirm-dialog.md)을 열고, 확인하면 큰 설정 폼 밖에 있는 [DeleteBankAccountForm](../../../app/admin/settings/delete-bank-account-form.tsx)을 제출합니다. 여는 버튼은 Button `danger`이고 확인 버튼은 `danger-solid`입니다. 확인 문구와 성공·실패 토스트는 [ADMIN_COPY](../../../src/lib/design/copy.ts)에 있습니다. 세 칸을 비우고 저장하는 경로는 계좌 행을 지우지 않습니다.
+- **회원 탈퇴:** `계정` 섹션 다음의 별도 섹션에서 Button `danger` `회원 탈퇴`가 [확인창](confirm-dialog.md)을 엽니다. 확인하면 바깥 폼 `withdraw-account-form`을 제출하고, 본인 `users` 행을 지우면 관련 행은 cascade로 함께 삭제되고, 로그아웃 뒤 첫 화면에서 성공 토스트를 한 번 보여 줍니다. 카카오 계정이 있으면 삭제 전에 [카카오 연결 해제](../../../src/lib/kakao/unlink.ts)를 먼저 부릅니다. 연결 해제에 실패하면 계정은 지우지 않고 `?error=withdraw_failed`로 돌아와 `탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.`를 보여 줍니다. 앱에 연결되지 않은 사용자(`-101`)는 성공으로 보고 삭제를 진행합니다. Google 계정만 있으면 카카오를 호출하지 않습니다. 문구는 [WITHDRAWAL_COPY](../../../src/lib/design/copy.ts)에 있습니다.
 - **위시리스트 초기화:** [ResetWishlistForm](../../../app/admin/settings/reset-wishlist-form.tsx)은 삭제 대상과 유지 대상을 확인한 뒤 POST합니다. 프로필·공개 주소·테마·계좌 안내는 유지합니다. 실제 삭제 범위 근거: [reset repository](../../../src/lib/wishlist-reset/repository.ts).
 - **온보딩 연령 확인:** [BirthdayPicker](../../../app/onboarding/birthday-picker.tsx)는 만 14세 미만으로 판단되는 날짜 선택 시 경고를 표시하고, 해당 폼 제출 시 브라우저 확인을 제공합니다. 실제 거절·삭제 판단은 [서버 서비스](../../../src/lib/onboarding/service.ts)에 있습니다. 브라우저 확인을 서버 검증 대신 사용하지 않습니다.
 

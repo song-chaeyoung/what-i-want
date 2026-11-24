@@ -1,6 +1,7 @@
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import { decryptAccountNumber } from "./account-crypto";
 import {
+  deleteBankAccount,
   getSettings,
   updateSettings,
   type UpdateSettingsInput,
@@ -17,6 +18,7 @@ class FakeSettingsRepository implements SettingsRepository {
   slugAvailable = true;
   requestedSlugChecks: Array<{ slug: string; ownerId: string }> = [];
   updated: UpdateSettingsRecord[] = [];
+  deletedOwnerIds: string[] = [];
 
   async getSettingsByOwnerId(): Promise<SettingsRecord | null> {
     return this.settings;
@@ -61,6 +63,17 @@ class FakeSettingsRepository implements SettingsRepository {
     this.settings = updated;
     expect(ownerId).toBe("user-1");
     return updated;
+  }
+
+  async deleteBankAccount(ownerId: string): Promise<boolean> {
+    this.deletedOwnerIds.push(ownerId);
+
+    if (ownerId !== "user-1" || !this.settings?.bankAccount) {
+      return false;
+    }
+
+    this.settings = { ...this.settings, bankAccount: null };
+    return true;
   }
 }
 
@@ -559,6 +572,67 @@ describe("admin settings service", () => {
 
     expect(result).toEqual({ ok: false, error: "account_number_required" });
     expect(repository.updated).toEqual([]);
+  });
+
+  test("still rejects clearing every bank field while an account is saved", async () => {
+    const repository = new FakeSettingsRepository();
+
+    await expect(
+      updateSettings(makeInput(), repository, "secret"),
+    ).resolves.toEqual({ ok: false, error: "bank_name_required" });
+    expect(repository.updated).toEqual([]);
+    expect(repository.deletedOwnerIds).toEqual([]);
+    expect(repository.settings?.bankAccount?.bankName).toBe("신한은행");
+  });
+
+  test("deletes only the owner's bank account and then saves a new one", async () => {
+    const repository = new FakeSettingsRepository();
+    const secret = "test-secret-test-secret-test-secret-test-secret";
+
+    await expect(deleteBankAccount("other-user", repository)).resolves.toEqual({
+      ok: false,
+      error: "bank_account_not_found",
+    });
+    expect(repository.settings?.bankAccount?.accountNumberEncrypted).toBe(
+      "v1:ciphertext",
+    );
+
+    await expect(deleteBankAccount("user-1", repository)).resolves.toEqual({
+      ok: true,
+    });
+    expect(repository.settings?.bankAccount).toBeNull();
+    expect(repository.deletedOwnerIds).toEqual(["other-user", "user-1"]);
+
+    await expect(deleteBankAccount("user-1", repository)).resolves.toEqual({
+      ok: false,
+      error: "bank_account_not_found",
+    });
+
+    const saved = await updateSettings(
+      makeInput({
+        bankName: "국민은행",
+        accountHolder: "차차",
+        accountNumber: "3333-12-1234567",
+      }),
+      repository,
+      secret,
+    );
+
+    expect(saved).toMatchObject({
+      ok: true,
+      settings: {
+        bankAccount: {
+          bankName: "국민은행",
+          accountHolder: "차차",
+        },
+      },
+    });
+    expect(
+      decryptAccountNumber(
+        repository.updated[0].bankAccount?.accountNumberEncrypted ?? "",
+        secret,
+      ),
+    ).toBe("3333-12-1234567");
   });
 });
 

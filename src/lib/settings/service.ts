@@ -129,6 +129,26 @@ export async function updateSettings(
   };
 }
 
+export type DeleteBankAccountResult =
+  | {
+      ok: true;
+    }
+  | {
+      ok: false;
+      error: "bank_account_not_found";
+    };
+
+export async function deleteBankAccount(
+  ownerId: string,
+  repository: SettingsRepository,
+): Promise<DeleteBankAccountResult> {
+  if (!(await repository.deleteBankAccount(ownerId))) {
+    return { ok: false, error: "bank_account_not_found" };
+  }
+
+  return { ok: true };
+}
+
 async function normalizeSettingsInput(
   input: UpdateSettingsInput,
   current: SettingsRecord,

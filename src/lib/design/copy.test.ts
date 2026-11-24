@@ -1,6 +1,7 @@
 import { describe, expect, test } from "vitest";
 import {
   ADMIN_COPY,
+  WITHDRAWAL_COPY,
   BRAND_NAME,
   HOME_COPY,
   PUBLIC_WISHLIST_COPY,
@@ -107,6 +108,46 @@ describe("visual system copy", () => {
     );
     expect(ADMIN_COPY.accountVisibilityHiddenHint).toBe(
       "공개 페이지에 계좌가 보이지 않아요.",
+    );
+    expect(ADMIN_COPY.deleteBankAccountButton).toBe("계좌 삭제");
+    expect(ADMIN_COPY.deleteBankAccountConfirm).toEqual({
+      title: "계좌 정보를 삭제할까요?",
+      description:
+        "은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+      confirm: "삭제",
+      pending: "삭제하는 중…",
+    });
+    expect(
+      `${ADMIN_COPY.deleteBankAccountConfirm.title} ${ADMIN_COPY.deleteBankAccountConfirm.description}`,
+    ).toBe(
+      "계좌 정보를 삭제할까요? 은행, 예금주, 계좌번호가 모두 지워지고 되돌릴 수 없어요. 공개 위시리스트에도 계좌가 보이지 않아요.",
+    );
+    expect(ADMIN_COPY.deleteBankAccountSuccess).toBe("계좌 정보를 삭제했어요.");
+    expect(ADMIN_COPY.deleteBankAccountError).toBe(
+      "계좌 정보를 삭제하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    );
+  });
+
+  test("defines withdrawal copy", () => {
+    expect(WITHDRAWAL_COPY).toEqual({
+      sectionTitle: "회원 탈퇴",
+      sectionDescription:
+        "계정과 위시리스트, 선물, 받은 메시지, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요.",
+      button: "회원 탈퇴",
+      confirm: {
+        title: "정말 탈퇴할까요?",
+        description:
+          "계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.",
+        confirm: "탈퇴",
+        pending: "탈퇴하는 중…",
+      },
+      success: "탈퇴가 끝났어요. 그동안 이용해 주셔서 고마워요.",
+      error: "탈퇴하지 못했어요. 잠시 후 다시 시도해 주세요.",
+    });
+    expect(
+      `${WITHDRAWAL_COPY.confirm.title} ${WITHDRAWAL_COPY.confirm.description}`,
+    ).toBe(
+      "정말 탈퇴할까요? 계정, 위시리스트, 선물, 받은 메시지, 모인 금액 기록, 계좌 정보가 바로 모두 삭제되고 되돌릴 수 없어요. 탈퇴한 뒤에는 다른 사람이 같은 공개 주소를 쓸 수 있어서, 예전에 공유한 링크가 다른 사람의 위시리스트로 열릴 수 있어요.",
     );
   });
 

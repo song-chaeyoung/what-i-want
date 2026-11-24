@@ -22,18 +22,22 @@ describe("onboarding persistence contract", () => {
     const completedCheckIndex = source.indexOf(
       "isNotNull(profiles.onboardingCompletedAt)",
     );
+    const kakaoReadIndex = source.indexOf('eq(accounts.provider, "kakao")');
     const deleteIndex = source.indexOf(".delete(users)");
 
     expect(source).toContain(".transaction(");
     expect(lockIndex).toBeGreaterThan(-1);
     expect(completedCheckIndex).toBeGreaterThan(lockIndex);
-    expect(deleteIndex).toBeGreaterThan(completedCheckIndex);
+    expect(kakaoReadIndex).toBeGreaterThan(completedCheckIndex);
+    expect(deleteIndex).toBeGreaterThan(kakaoReadIndex);
   });
 
   test("treats a user deleted by a concurrent request as deleted", () => {
     const source = readDeleteIncompleteUserSource();
 
-    expect(source).toMatch(/if \(!user\) \{\s*return true;/);
+    expect(source).toMatch(
+      /if \(!user\) \{\s*return \{ deleted: true, kakaoProviderAccountId: null \};/,
+    );
   });
 
   test("maps a foreign key violation after concurrent deletion to the age notice", () => {

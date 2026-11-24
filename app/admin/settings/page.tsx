@@ -3,7 +3,7 @@ import { requireUser } from "@/src/lib/auth/require-user";
 import { getLatestSignupBirthday } from "@/src/lib/onboarding/age";
 import { PUBLIC_THEME_IDS, type PublicThemeId } from "@/src/lib/wishlist/theme";
 import { DrizzleSettingsRepository } from "@/src/lib/settings/repository";
-import { ADMIN_COPY } from "@/src/lib/design/copy";
+import { ADMIN_COPY, WITHDRAWAL_COPY } from "@/src/lib/design/copy";
 import { ACCOUNT_NUMBER_INPUT_PATTERN } from "@/src/lib/settings/account-number";
 import { getSettings, type SettingsError } from "@/src/lib/settings/service";
 import {
@@ -11,12 +11,15 @@ import {
   type WishlistVisibility,
 } from "@/src/lib/settings/types";
 import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ui/confirm-dialog";
 import { Card } from "@/components/ui/card";
 import { Input, inputVariants } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { AdminToastMessage } from "../admin-toast-message";
 import { AccountVisibilityField } from "./account-visibility-field";
+import { DeleteBankAccountForm } from "./delete-bank-account-form";
 import { ResetWishlistForm } from "./reset-wishlist-form";
+import { WithdrawAccountForm } from "./withdraw-account-form";
 import { AdminField } from "../admin-ui";
 
 const errorMessages: Record<SettingsError, string> = {
@@ -260,6 +263,19 @@ export default async function AdminSettingsPage() {
               disabled={settings.bankAccount === null}
             />
           </SettingsRow>
+          {settings.bankAccount ? (
+            <SettingsRow>
+              <ConfirmDialog
+                tone="danger"
+                title={ADMIN_COPY.deleteBankAccountConfirm.title}
+                description={ADMIN_COPY.deleteBankAccountConfirm.description}
+                confirmLabel={ADMIN_COPY.deleteBankAccountConfirm.confirm}
+                pendingLabel={ADMIN_COPY.deleteBankAccountConfirm.pending}
+                formId="delete-bank-account-form"
+                triggerLabel={ADMIN_COPY.deleteBankAccountButton}
+              />
+            </SettingsRow>
+          ) : null}
         </SettingsSection>
 
         <div className="sticky bottom-0 -mx-4 flex justify-end border-t border-line bg-admin-bg/95 px-4 py-3 backdrop-blur sm:-mx-7 sm:px-7">
@@ -268,6 +284,8 @@ export default async function AdminSettingsPage() {
           </Button>
         </div>
       </form>
+
+      {settings.bankAccount ? <DeleteBankAccountForm /> : null}
 
       <SettingsSection
         title="새 생일 준비"
@@ -290,6 +308,25 @@ export default async function AdminSettingsPage() {
           </form>
         </SettingsRow>
       </SettingsSection>
+
+      <SettingsSection
+        title={WITHDRAWAL_COPY.sectionTitle}
+        description={WITHDRAWAL_COPY.sectionDescription}
+      >
+        <SettingsRow>
+          <ConfirmDialog
+            tone="danger"
+            title={WITHDRAWAL_COPY.confirm.title}
+            description={WITHDRAWAL_COPY.confirm.description}
+            confirmLabel={WITHDRAWAL_COPY.confirm.confirm}
+            pendingLabel={WITHDRAWAL_COPY.confirm.pending}
+            formId="withdraw-account-form"
+            triggerLabel={WITHDRAWAL_COPY.button}
+          />
+        </SettingsRow>
+      </SettingsSection>
+
+      <WithdrawAccountForm />
     </section>
   );
 }

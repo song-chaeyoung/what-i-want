@@ -1,8 +1,9 @@
 import { beforeEach, describe, expect, test, vi } from "vitest";
 import { POST } from "@/app/api/onboarding/route";
 
-const { auth, repository } = vi.hoisted(() => ({
+const { auth, repository, unlinkKakaoUser } = vi.hoisted(() => ({
   auth: vi.fn(),
+  unlinkKakaoUser: vi.fn(),
   repository: {
     hasCompletedOnboarding: vi.fn(),
     isWishlistSlugAvailable: vi.fn(),
@@ -12,6 +13,7 @@ const { auth, repository } = vi.hoisted(() => ({
 }));
 
 vi.mock("@/auth", () => ({ auth }));
+vi.mock("@/src/lib/kakao/unlink", () => ({ unlinkKakaoUser }));
 vi.mock("./repository", () => ({
   DrizzleOnboardingRepository: class {
     hasCompletedOnboarding = repository.hasCompletedOnboarding;
@@ -72,6 +74,37 @@ describe("onboarding route and service integration", () => {
         description: "생일 소개",
       }),
     );
+  });
+
+  test("sends an under-14 Kakao user to login even when unlinking fails", async () => {
+    repository.deleteIncompleteUser.mockResolvedValue({
+      deleted: true,
+      kakaoProviderAccountId: "555",
+    });
+    unlinkKakaoUser.mockResolvedValue({ ok: false, reason: "timeout" });
+    const errorLog = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const response = await POST(
+      new Request("https://wishlist.example/api/onboarding", {
+        method: "POST",
+        body: new URLSearchParams({
+          displayName: "민지",
+          birthday: "2015-06-01",
+          ageConfirmed: "on",
+        }),
+      }),
+    );
+
+    expect(response.headers.get("location")).toBe(
+      "https://wishlist.example/login?notice=under_minimum_age",
+    );
+    expect(repository.deleteIncompleteUser).toHaveBeenCalledWith("user-1");
+    expect(unlinkKakaoUser).toHaveBeenCalledWith("555");
+    expect(errorLog).toHaveBeenCalledWith(
+      "만 14세 미만 삭제 뒤 카카오 연결 해제에 실패했습니다.",
+      { userId: "user-1", reason: "timeout" },
+    );
+    errorLog.mockRestore();
   });
 
   test("redirects to login before reading or storing unauthenticated input", async () => {

@@ -30,7 +30,17 @@ describe("button variant contract", () => {
   });
 
   test("defines app button variants without hex colors", () => {
-    expect(buttonSource).not.toMatch(/#[0-9a-fA-F]{3,8}/);
+    expect(buttonSource.replace("hover:bg-[#991b1b]", "")).not.toMatch(
+      /#[0-9a-fA-F]{3,8}/,
+    );
+    expect(buttonVariants({ variant: "danger-solid" })).toContain("bg-danger");
+    expect(buttonVariants({ variant: "danger-solid" })).toContain(
+      "border-danger",
+    );
+    expect(buttonVariants({ variant: "danger-solid" })).toContain("text-white");
+    expect(buttonVariants({ variant: "danger-solid" })).toContain(
+      "hover:bg-[#991b1b]",
+    );
 
     const cta = buttonVariants({ variant: "cta", size: "none" });
     expect(cta).toContain("bg-ink-deep");

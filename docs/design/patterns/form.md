@@ -39,7 +39,7 @@
 
 | 문맥 | 실제 제출 경로 | 대기·성공·실패 |
 | --- | --- | --- |
-| 관리자 선물·설정 | 네이티브 `method="post"` → Route Handler → 서비스 | 성공·오류 코드를 redirect 쿼리로 전달하고 [AdminToastEvents](../../../app/admin/admin-toast-events.tsx)가 표시합니다. 일반 저장 버튼에는 공통 pending 처리가 없습니다. [선물 POST](../../../app/api/admin/wishes/route.ts), [설정 POST](../../../app/api/admin/settings/route.ts). |
+| 관리자 선물·설정 | 네이티브 `method="post"` → Route Handler → 서비스 | 성공·오류 코드를 redirect 쿼리로 전달하고 [AdminToastEvents](../../../app/admin/admin-toast-events.tsx)가 표시합니다. 일반 저장 버튼에는 공통 pending 처리가 없습니다. [선물 POST](../../../app/api/admin/wishes/route.ts), [설정 POST](../../../app/api/admin/settings/route.ts). 계좌 삭제는 설정 폼 안에 폼을 중첩하지 않고, 계좌 공개 칸 아래 버튼이 확인한 뒤 바깥 폼 `delete-bank-account-form`을 제출합니다. 회원 탈퇴도 `계정` 섹션 밖 폼 `withdraw-account-form`을 같은 방식으로 제출합니다(2026-11-22). |
 | 온보딩 | 네이티브 POST → `/api/onboarding` | 성공 시 관리자 진입, 오류 시 페이지의 인라인 안내입니다. 연령 제한으로 계정 삭제 시 로그인 notice로 이동합니다. [온보딩 route](../../../app/api/onboarding/route.ts). |
 | 공개 참여 | `submitParticipationAction.bind(null, slug)` → 참여 서비스 | [submit 버튼](../../../components/public-participation-submit-button.tsx)이 `useFormStatus`로 비활성화·`보내는 중...`을 표시합니다. 성공은 `sent`, 실패는 `error` redirect 후 [공개 피드백](../../../components/public-wishlist-toast-events.tsx)이 처리합니다. |
 | 상품 정보 불러오기 | `type="button"` → 링크 미리보기 fetch | [LinkAutofillButton](../../../app/admin/wishes/link-autofill-button.tsx)은 로딩 중 비활성화하며 빈 필드만 채웁니다. 성공 안내는 저장 완료가 아니라 저장 전 확인 요청입니다. |

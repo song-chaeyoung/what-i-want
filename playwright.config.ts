@@ -33,6 +33,8 @@ export default defineConfig({
       DATABASE_URL: E2E_DATABASE_URL,
       ACCOUNT_ENCRYPTION_SECRET: E2E_ACCOUNT_ENCRYPTION_SECRET,
       AUTH_URL: baseURL,
+      // E2E 사용자는 accounts 행이 없고, 이 서버는 카카오 Admin 키도 없다.
+      KAKAO_ADMIN_KEY: "",
     },
     url: baseURL,
     reuseExistingServer: false,
